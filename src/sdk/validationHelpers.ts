@@ -640,7 +640,7 @@ export function validateProveCertificateArgs(args: bsv.ProveCertificateArgs): Va
     subject: validateOptionalHexString(args.certificate.subject, 'certificate.subject'),
     revocationOutpoint: validateOptionalOutpointString(args.certificate.revocationOutpoint, 'certificate.revocationOutpoint'),
     signature: validateOptionalHexString(args.certificate.signature, 'certificate.signature'),
-    fieldsToReveal: defaultEmpty(args.fieldsToReveal).map(fieldName => validateStringLength(`fieldsToReveal ${fieldName}`, 'valid field name', 1, 50)),
+    fieldsToReveal: defaultEmpty(args.fieldsToReveal).map(fieldName => validateStringLength(fieldName, `fieldsToReveal ${fieldName}`, 1, 50)),
     verifier: validateHexString(args.verifier, 'verifier'),
     privileged: defaultFalse(args.privileged),
     privilegedReason: validateOptionalStringLength(args.privilegedReason, 'privilegedReason', 5, 50)
@@ -787,8 +787,6 @@ export function validateListActionsArgs(args: bsv.ListActionsArgs): ValidListAct
     offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
     seekPermission: defaultTrue(args.seekPermission)
   }
-
-  if (vargs.labels.length < 1) throw new sdk.WERR_INVALID_PARAMETER('labels', 'at least one label')
 
   return vargs
 }
