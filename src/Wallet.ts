@@ -3,7 +3,6 @@ import {
     BeefParty,
     Utils,
     WalletInterface,
-    KeyDeriverApi,
     ProtoWallet,
     TrustSelf,
     OriginatorDomainNameStringUnder250Bytes,
@@ -49,7 +48,14 @@ import {
     WalletDecryptArgs,
     WalletDecryptResult,
     WalletEncryptArgs,
-    WalletEncryptResult
+    WalletEncryptResult,
+    AbortActionArgs,
+    AbortActionResult,
+    SignActionResult,
+    SignActionArgs,
+    InternalizeActionArgs,
+    InternalizeActionResult,
+    PubKeyHex
 } from "@bsv/sdk";
 import { sdk, toWalletNetwork, Monitor } from './index.client'
 
@@ -63,13 +69,9 @@ export class Wallet implements WalletInterface {
     userParty: string
     proto: ProtoWallet
 
-    constructor(signer: sdk.WalletSigner, keyDeriver?: KeyDeriverApi, services?: sdk.WalletServices, monitor?: Monitor) {
-        if (!keyDeriver)
-            throw new sdk.WERR_INVALID_PARAMETER('keyDeriver', 'valid')
-        this.proto = new ProtoWallet(keyDeriver)
+    constructor(signer: sdk.WalletSigner, services?: sdk.WalletServices, monitor?: Monitor) {
+        this.proto = new ProtoWallet(signer.keyDeriver)
         this.signer = signer
-        // Give signer access to our keyDeriver
-        this.signer.keyDeriver = keyDeriver
         this.services = services
         this.monitor = monitor
 
@@ -80,6 +82,10 @@ export class Wallet implements WalletInterface {
         if (services) {
             signer.setServices(services)
         }
+    }
+
+    async getIdentityKey() : Promise<PubKeyHex> {
+        return (await this.getPublicKey({ identityKey: true })).publicKey
     }
 
     getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> {

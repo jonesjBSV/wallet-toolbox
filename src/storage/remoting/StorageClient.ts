@@ -20,8 +20,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
     // Track ephemeral (in-memory) "settings" if you wish to align with isAvailable() checks
     public settings?: table.Settings
 
-    constructor(wallet: bsv.Wallet, endpointUrl: string) {
-        this.authClient = new AuthFetch(wallet as bsv.Wallet)
+    constructor(wallet: bsv.WalletInterface, endpointUrl: string) {
+        this.authClient = new AuthFetch(wallet)
         this.endpointUrl = endpointUrl
     }
 

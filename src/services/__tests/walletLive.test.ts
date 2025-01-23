@@ -210,7 +210,7 @@ async function confirmSpendableOutputs(storage: StorageKnex, services: Services)
   return { invalidSpendableOutputs }
 }
 
-export async function createWalletPaymentAction(args: { toIdentityKey: string; outputSatoshis: number; keyDeriver: bsv.KeyDeriverApi; wallet: bsv.Wallet; logResult?: boolean }): Promise<{
+export async function createWalletPaymentAction(args: { toIdentityKey: string; outputSatoshis: number; keyDeriver: bsv.KeyDeriverApi; wallet: bsv.WalletInterface; logResult?: boolean }): Promise<{
   senderIdentityKey: string
   vout: number
   txid: string

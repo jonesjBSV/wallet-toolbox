@@ -57,13 +57,13 @@ export class StorageServer {
     })
 
     const options: AuthMiddlewareOptions = {
-      wallet: this.wallet as bsv.Wallet
+      wallet: this.wallet as bsv.WalletInterface
     }
     this.app.use(createAuthMiddleware(options))
     if (this.monetize) {
       this.app.use(
         createPaymentMiddleware({
-          wallet: this.wallet as bsv.Wallet,
+          wallet: this.wallet,
           calculateRequestPrice: this.calculateRequestPrice || (() => 100)
         })
       )

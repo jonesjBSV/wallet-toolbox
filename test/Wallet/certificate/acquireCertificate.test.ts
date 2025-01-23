@@ -37,11 +37,11 @@ describe('acquireCertificate tests', () => {
         const { wallet, storage } = await _tu.createSQLiteTestWallet({ databaseName: 'acquireCertificate2', dropAll: true })
 
         // Make a test certificate from a random certifier for the wallet's identityKey
-        const subject = wallet.keyDeriver.identityKey
+        const subject = wallet.signer.keyDeriver.identityKey
         const { cert, certifier } = _tu.makeSampleCert(subject)
 
         // Act as the certifier: create a wallet for them...
-        const certifierWallet = new bsv.ProtoWallet(certifier)
+        const certifierWallet = new bsv.CompletedProtoWallet(certifier)
         // load the plaintext certificate into a CertOps object
         const co = new sdk.CertOps(certifierWallet, cert)
         // encrypt and sign the certificate

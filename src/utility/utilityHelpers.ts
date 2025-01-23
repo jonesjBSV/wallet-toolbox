@@ -3,6 +3,10 @@ import { Beef, Hash, PrivateKey, PublicKey, Random, Script, Transaction, Utils }
 import { sdk } from "../index.client";
 import { Chain } from "../sdk/types";
 
+export async function getIdentityKey(wallet: bsv.WalletInterface): Promise<bsv.PubKeyHex> {
+  return (await wallet.getPublicKey({ identityKey: true })).publicKey
+}
+
 export function toWalletNetwork(chain: Chain): bsv.WalletNetwork {
     return chain === 'main' ? 'mainnet' : 'testnet';
 }
