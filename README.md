@@ -1,4 +1,4 @@
-# wallet-storage
+# BSV BLOCHCHAIN | WALLET TOOLBOX
 
 BRC100 conforming wallet, wallet storage and wallet signer components.
 
