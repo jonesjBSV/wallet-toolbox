@@ -28,7 +28,7 @@ export async function proveCertificate(
   if (lcr.certificates.length != 1)
     throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
   const storageCert = lcr.certificates[0]
-  const wallet = new bsv.ProtoWallet(signer.keyDeriver!)
+  const wallet = new bsv.CompletedProtoWallet(signer.keyDeriver!)
   const co = await sdk.CertOps.fromCounterparty(wallet, {
     certificate: { ...storageCert },
     keyring: storageCert.keyring!,

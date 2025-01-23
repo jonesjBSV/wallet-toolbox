@@ -1,5 +1,5 @@
 import * as bsv from '@bsv/sdk'
-import { sdk } from '../index.client'
+import { getIdentityKey, sdk } from '../index.client'
 import { SymmetricKey, Utils } from "@bsv/sdk";
 import { WERR_INVALID_OPERATION } from './WERR_errors';
 
@@ -9,14 +9,14 @@ export class CertOps extends bsv.Certificate {
     _decryptedFields?: Record<bsv.CertificateFieldNameUnder50Bytes, string>
 
     constructor(
-        public wallet: bsv.ProtoWallet,
+        public wallet: bsv.WalletInterface,
         wc: bsv.WalletCertificate,
     ) {
         super(wc.type, wc.serialNumber, wc.subject, wc.certifier, wc.revocationOutpoint, wc.fields, wc.signature)
     }
 
     static async fromCounterparty(
-        wallet: bsv.ProtoWallet,
+        wallet: bsv.WalletInterface,
         e: {
             certificate: bsv.WalletCertificate,
             keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>,
@@ -35,7 +35,7 @@ export class CertOps extends bsv.Certificate {
     }
 
     static async fromCertifier(
-        wallet: bsv.ProtoWallet,
+        wallet: bsv.WalletInterface,
         e: { certificate: bsv.WalletCertificate, keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string> }
     )
     : Promise<CertOps>
@@ -44,7 +44,7 @@ export class CertOps extends bsv.Certificate {
     }
 
     static async fromEncrypted(
-        wallet: bsv.ProtoWallet,
+        wallet: bsv.WalletInterface,
         wc: bsv.WalletCertificate,
         keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>
     )
@@ -59,7 +59,7 @@ export class CertOps extends bsv.Certificate {
     }
 
     static async fromDecrypted(
-        wallet: bsv.ProtoWallet,
+        wallet: bsv.WalletInterface,
         wc: bsv.WalletCertificate
     ) : Promise<CertOps>
     {
@@ -168,7 +168,7 @@ export class CertOps extends bsv.Certificate {
         const certificate = this.toWalletCertificate()
         const keyring = await this.createKeyringForVerifier(counterparty, fieldsToReveal)
         // The exported counterparty is who we are to them...
-        return { certificate, keyring, counterparty: this.wallet.keyDeriver.identityKey }
+        return { certificate, keyring, counterparty: await getIdentityKey(this.wallet) }
     }
 
     /**
@@ -179,7 +179,6 @@ export class CertOps extends bsv.Certificate {
     *
     * @param {bsv.PubKeyHex} verifierIdentityKey - The public identity key of the verifier who will receive access to the specified fields.
     * @param {bsv.CertificateFieldNameUnder50Bytes[]} fieldsToReveal - An array of field names to be revealed to the verifier. Must be a subset of the certificate's fields.
-    * @param {bsv.OriginatorDomainNameStringUnder250Bytes} [originator] - Optional originator identifier, used if additional context is needed for decryption and encryption operations.
     * @returns {Promise<Record<bsv.CertificateFieldNameUnder50Bytes[], bsv.Base64String>} - A new certificate structure containing the original encrypted fields, the verifier-specific field decryption keyring, and essential certificate metadata.
     * @throws {WERR_INVALID_PARAMETER} Throws an error if:
     *   - fieldsToReveal is empty or a field in `fieldsToReveal` does not exist in the certificate.
@@ -187,8 +186,7 @@ export class CertOps extends bsv.Certificate {
     */
     async createKeyringForVerifier(
         verifierIdentityKey: bsv.PubKeyHex,
-        fieldsToReveal: bsv.CertificateFieldNameUnder50Bytes[],
-        originator?: bsv.OriginatorDomainNameStringUnder250Bytes
+        fieldsToReveal: bsv.CertificateFieldNameUnder50Bytes[]
     )
     : Promise<Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>>
     {
@@ -207,7 +205,7 @@ export class CertOps extends bsv.Certificate {
                 ciphertext: Utils.toArray(encryptedFieldKey, 'base64'),
                 counterparty: this.certifier,
                 ...protocol
-            }, originator)
+            })
 
             // Verify that derived key actually decrypts requested field
             try {
@@ -221,7 +219,7 @@ export class CertOps extends bsv.Certificate {
                 plaintext: fieldKey,
                 counterparty: verifierIdentityKey,
                 ...protocol
-            }, originator)
+            })
 
             // Add encryptedFieldRevelationKey to fieldRevelationKeyring
             fieldRevelationKeyring[fieldName] = Utils.toBase64(encryptedFieldRevelationKey)
@@ -236,7 +234,7 @@ export class CertOps extends bsv.Certificate {
      * update the signature using the certifier's private key.
      */
     async encryptAndSignNewCertificate() : Promise<void> {
-        if (this.wallet.keyDeriver.identityKey !== this.certifier)
+        if (await getIdentityKey(this.wallet) !== this.certifier)
             throw new sdk.WERR_INVALID_PARAMETER('wallet', 'the certifier for new certificate issuance.')
 
         await this.encryptFields(this.subject)

@@ -50,7 +50,7 @@ export abstract class TestUtilsWalletStorage {
     address: string,
     satoshis: number,
     noSendChange: string[] | undefined,
-    wallet: bsv.Wallet
+    wallet: bsv.WalletInterface
   ): Promise<{
     noSendChange: string[]
     txid: string
@@ -65,7 +65,7 @@ export abstract class TestUtilsWalletStorage {
     address: string,
     satoshis: number,
     noSendChange: string[] | undefined,
-    wallet: bsv.Wallet
+    wallet: bsv.WalletInterface
   ): Promise<{
     noSendChange: string[]
     txid: string
@@ -171,7 +171,7 @@ export abstract class TestUtilsWalletStorage {
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
-    const wallet = new Wallet(signer, keyDeriver, services, monitor)
+    const wallet = new Wallet(signer, services, monitor)
     const r: TestWalletOnly = {
       rootKey,
       identityKey,
@@ -431,7 +431,7 @@ export abstract class TestUtilsWalletStorage {
     const services = new Services(chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
-    const wallet = new Wallet(signer, keyDeriver, services, monitor)
+    const wallet = new Wallet(signer, services, monitor)
     const userId = verifyTruthy(await activeStorage.findUserByIdentityKey(identityKey)).userId
     const r: TestWallet<{}> = {
       rootKey,
