@@ -848,8 +848,49 @@ export abstract class TestUtilsWalletStorage {
     }
   }
 
-  static async createTestSetup2(storage: StorageProvider, u1IdentityKey?: string): Promise<TestSetup2> {
-    //storage.insertTransaction()
+  static async createTestSetup2(storage: StorageProvider, u1IdentityKey?: string, tx1?: Partial<table.Transaction>, b1: Partial<table.OutputBasket>, l1: Partial<table.TxLabel>, lm1: Partial<table.TxLabelMap>): Promise<TestSetup2> {
+    const u1userId = 1
+    const now = new Date()
+    const created_at = now
+    const updated_at = now
+    const u1 = storage.insertUser({ created_at, updated_at, userId: u1userId, identityKey: u1IdentityKey! })
+    const u1tx1 = storage.insertTransaction({
+      created_at: now,
+      updated_at: now,
+      transactionId: tx1?.transactionId!,
+      userId: u1userId,
+      status: tx1?.status!,
+      reference: tx1?.reference!,
+      isOutgoing: tx1?.isOutgoing!,
+      satoshis: tx1?.satoshis!,
+      description: tx1?.description!
+    })
+    const u1o1b1 = await storage.insertOutputBasket({
+      created_at: now,
+      updated_at: now,
+      basketId: b1.basketId!,
+      userId: u1userId,
+      name: b1.name!,
+      numberOfDesiredUTXOs: 0,
+      minimumDesiredUTXOValue: 0,
+      isDeleted: false
+    })
+    const u1tx1l1 = await storage.insertTxLabel({
+      created_at: now,
+      updated_at: now,
+      txLabelId: l1.txLabelId!,
+      userId: u1userId,
+      label: l1.label!,
+      isDeleted: false
+    })
+    const u1tx1lm1 = await storage.insertTxLabelMap({
+      created_at: now,
+      updated_at: now,
+      txLabelId: l1.txLabelId!,
+      isDeleted: false,
+      transactionId: tx1?.transactionId!
+    })
+
     return {}
   }
 
