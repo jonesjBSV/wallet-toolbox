@@ -29,8 +29,8 @@ import {
  * This class manages a privileged (i.e., very sensitive) private key, obtained from
  * an external function (`keyGetter`), which might be backed by HSMs, secure enclaves,
  * or other secure storage. The manager retains the key in memory only for a limited
- * duration (`retentionPeriod`), and uses best-effort obfuscation techniques to keep
- * the raw key material hard to access at runtime.
+ * duration (`retentionPeriod`), uses XOR-based chunk-splitting obfuscation, and
+ * includes decoy data to raise the difficulty of discovering the real key in memory.
  *
  * IMPORTANT: While these measures raise the bar for attackers, JavaScript environments
  * do not provide perfect in-memory secrecy.
@@ -50,16 +50,28 @@ export class PrivilegedKeyManager {
     private retentionPeriod: number;
 
     /**
-     * Obfuscated private key bytes. This is ephemeral and destroyed
-     * after the retention period. The actual key is never stored in
-     * plaintext form here.
+     * A list of dynamically generated property names used to store
+     * real key chunks (XORed with random pads).
      */
-    private obfuscatedKey: Uint8Array | undefined;
+    private chunkPropNames: string[] = [];
 
     /**
-     * Random pad used to XOR/un-XOR the private key bytes.
+     * A list of dynamically generated property names used to store
+     * the random pads that correspond to the real key chunks.
      */
-    private obfuscationPad: Uint8Array | undefined;
+    private chunkPadPropNames: string[] = [];
+
+    /**
+     * A list of decoy property names that will be removed
+     * when the real key is destroyed.
+     */
+    private decoyPropNamesDestroy: string[] = [];
+
+    /**
+     * A list of decoy property names that remain in memory
+     * even after the real key is destroyed (just to cause confusion).
+     */
+    private decoyPropNamesRemain: string[] = [];
 
     /**
      * Handle to the timer that will remove the key from memory
@@ -69,30 +81,70 @@ export class PrivilegedKeyManager {
     private destroyTimer: any | undefined;
 
     /**
+     * Number of chunks to split the 32-byte key into.
+     * Adjust to increase or decrease obfuscation complexity.
+     */
+    private readonly CHUNK_COUNT = 4;
+
+    /**
      * @param keyGetter - Asynchronous function that retrieves the PrivateKey from a secure environment.
      * @param retentionPeriod - Time in milliseconds to retain the obfuscated key in memory before zeroizing.
      */
     constructor(keyGetter: (reason: string) => Promise<PrivateKey>, retentionPeriod = 120_000) {
         this.keyGetter = keyGetter;
         this.retentionPeriod = retentionPeriod;
+
+        // Initialize some random decoy properties that always remain:
+        for (let i = 0; i < 2; i++) {
+            const propName = this.generateRandomPropName();
+            // Store random garbage to cause confusion
+            (this as any)[propName] = Uint8Array.from(Random(16));
+            this.decoyPropNamesRemain.push(propName);
+        }
     }
 
     /**
      * Safely destroys the in-memory obfuscated key material by zeroizing
-     * and unsetting related fields.
+     * and deleting related fields. Also destroys some (but not all) decoy
+     * properties to further confuse an attacker.
      */
     private destroyKey(): void {
-        if (this.obfuscatedKey) {
-            this.obfuscatedKey.fill(0);
-            this.obfuscatedKey = undefined;
-        }
-        if (this.obfuscationPad) {
-            this.obfuscationPad.fill(0);
-            this.obfuscationPad = undefined;
-        }
-        if (this.destroyTimer) {
-            clearTimeout(this.destroyTimer);
-            this.destroyTimer = undefined;
+        try {
+            // Zero out real chunk data
+            for (const name of this.chunkPropNames) {
+                const data: Uint8Array | undefined = (this as any)[name];
+                if (data) {
+                    data.fill(0);
+                }
+                delete (this as any)[name];
+            }
+            for (const name of this.chunkPadPropNames) {
+                const data: Uint8Array | undefined = (this as any)[name];
+                if (data) {
+                    data.fill(0);
+                }
+                delete (this as any)[name];
+            }
+
+            // Destroy some decoys
+            for (const name of this.decoyPropNamesDestroy) {
+                const data: Uint8Array | undefined = (this as any)[name];
+                if (data) {
+                    data.fill(0);
+                }
+                delete (this as any)[name];
+            }
+
+            // Clear arrays of property names
+            this.chunkPropNames = [];
+            this.chunkPadPropNames = [];
+            this.decoyPropNamesDestroy = [];
+        } catch (_) {
+        } finally {
+            if (this.destroyTimer) {
+                clearTimeout(this.destroyTimer);
+                this.destroyTimer = undefined;
+            }
         }
     }
 
@@ -103,7 +155,6 @@ export class PrivilegedKeyManager {
      * for exactly the desired window after its most recent acquisition.
      */
     private scheduleKeyDestruction(): void {
-        // Clear any existing timer to avoid multiple overlapping timers.
         if (this.destroyTimer) {
             clearTimeout(this.destroyTimer);
         }
@@ -113,126 +164,186 @@ export class PrivilegedKeyManager {
     }
 
     /**
-     * XOR-based obfuscation. This function takes the raw key bytes
-     * and a random pad of identical length, then returns the XOR
-     * combination for storage in memory. This is a minimal effort
-     * obfuscation that prevents immediate reading of the raw key in
-     * memory, but is by no means cryptographically unbreakable if
-     * an attacker can read both the obfuscated bytes and the pad.
-     *
-     * @param keyBytes - Raw key bytes (32 bytes typically).
-     * @param padBytes - Random pad bytes of the same length.
+     * XOR-based obfuscation on a per-chunk basis.
+     * This function takes two equal-length byte arrays
+     * and returns the XOR combination.
      */
-    private static xorBytes(keyBytes: Uint8Array, padBytes: Uint8Array): Uint8Array {
-        const out = new Uint8Array(keyBytes.length);
-        for (let i = 0; i < keyBytes.length; i++) {
-            out[i] = keyBytes[i] ^ padBytes[i];
+    private static xorBytes(a: Uint8Array, b: Uint8Array): Uint8Array {
+        const out = new Uint8Array(a.length);
+        for (let i = 0; i < a.length; i++) {
+            out[i] = a[i] ^ b[i];
         }
         return out;
     }
 
     /**
+     * Splits the 32-byte key into `this.CHUNK_COUNT` smaller chunks
+     * (mostly equal length; the last chunk picks up leftover bytes
+     * if 32 is not evenly divisible).
+     */
+    private splitKeyIntoChunks(keyBytes: Uint8Array): Uint8Array[] {
+        const chunkSize = Math.floor(keyBytes.length / this.CHUNK_COUNT);
+        const chunks: Uint8Array[] = [];
+        let offset = 0;
+
+        for (let i = 0; i < this.CHUNK_COUNT; i++) {
+            const size = (i === this.CHUNK_COUNT - 1)
+                ? keyBytes.length - offset
+                : chunkSize;
+            chunks.push(keyBytes.slice(offset, offset + size));
+            offset += size;
+        }
+        return chunks;
+    }
+
+    /**
+     * Reassembles the chunks from the dynamic properties, XORs them
+     * with their corresponding pads, and returns a single 32-byte
+     * Uint8Array representing the raw key.
+     */
+    private reassembleKeyFromChunks(): Uint8Array | null {
+        try {
+            const chunkArrays: Uint8Array[] = [];
+            for (let i = 0; i < this.chunkPropNames.length; i++) {
+                const chunkEnc = (this as any)[this.chunkPropNames[i]] as Uint8Array;
+                const chunkPad = (this as any)[this.chunkPadPropNames[i]] as Uint8Array;
+                if (!chunkEnc || !chunkPad || chunkEnc.length !== chunkPad.length) {
+                    return null;
+                }
+                const rawChunk = PrivilegedKeyManager.xorBytes(chunkEnc, chunkPad);
+                chunkArrays.push(rawChunk);
+            }
+            // Concat them back to a single 32-byte array:
+            const totalLength = chunkArrays.reduce((sum, c) => sum + c.length, 0);
+            const rawKey = new Uint8Array(totalLength);
+            let offset = 0;
+            for (const chunk of chunkArrays) {
+                rawKey.set(chunk, offset);
+                offset += chunk.length;
+                // Attempt to zero the ephemeral chunk
+                chunk.fill(0);
+            }
+            return rawKey;
+        } catch (_) {
+            // If any property is missing or type mismatch, we return null
+            return null;
+        }
+    }
+
+    /**
+     * Generates a random property name to store key chunks or decoy data.
+     */
+    private generateRandomPropName(): string {
+        // E.g., 8 random hex characters for the property name
+        const randomHex = Utils.toHex(Random(4));
+        return `_${randomHex}_${Math.floor(Math.random() * 1e6)}`;
+    }
+
+    /**
      * Returns the privileged key needed to perform cryptographic operations.
-     * Uses an in-memory (obfuscated) cache if it exists; otherwise calls out
-     * to the `keyGetter`, obfuscates, and stores the key.
-     *
-     * The underlying raw key is revealed **only** within this function's local
-     * scope and ephemeral variables during usage, after which we zero them out
-     * or let them go out of scope. The class only retains the XOR-obfuscated
-     * version in memory.
+     * Uses in-memory chunk-based obfuscation if the key was already fetched.
+     * Otherwise, it calls out to `keyGetter`, splits the key, XORs each chunk
+     * with a random pad, and stores them under dynamic property names. Also
+     * populates new decoy properties (some destroyed with the key, some remain).
      *
      * @param reason - The reason for why the key is needed, passed to keyGetter.
      * @returns The PrivateKey object needed for cryptographic operations.
      */
     private async getPrivilegedKey(reason: string): Promise<PrivateKey> {
-        // If we already have an obfuscated key and pad in memory, just de-obfuscate them.
-        if (this.obfuscatedKey && this.obfuscationPad) {
-            const rawKeyBytes = PrivilegedKeyManager.xorBytes(this.obfuscatedKey, this.obfuscationPad);
-            const hexKey = Utils.toHex([...rawKeyBytes]);
-            // Attempt to zero the ephemeral copy of rawKeyBytes. (JS engines can optimize away these writes.)
-            rawKeyBytes.fill(0);
-
-            // Re-schedule the destruction timer to keep the key around for another retentionPeriod
-            this.scheduleKeyDestruction();
-
-            return new PrivateKey(hexKey, 16);
+        // Check if we already have real chunk properties
+        if (this.chunkPropNames.length > 0 && this.chunkPadPropNames.length > 0) {
+            // Attempt to reassemble
+            const rawKeyBytes = this.reassembleKeyFromChunks();
+            if (rawKeyBytes && rawKeyBytes.length === 32) {
+                const hexKey = Utils.toHex([...rawKeyBytes]);
+                rawKeyBytes.fill(0); // Zero ephemeral copy
+                this.scheduleKeyDestruction();
+                return new PrivateKey(hexKey, 16);
+            }
         }
 
-        // Otherwise, fetch a fresh key from the secure environment:
+        // Otherwise, fetch a fresh key from the secure environment
         const fetchedKey = await this.keyGetter(reason);
-        // Convert to raw bytes:
         const keyHex = fetchedKey.toHex();
+        // Convert the hex string to raw bytes. Should be 32 bytes for typical ECDSA keys.
         const keyBytes = Uint8Array.from(Utils.toArray(keyHex));
 
-        // Obfuscate the key with XOR to store in memory:
-        this.obfuscationPad = Uint8Array.from(Random(32));
-        this.obfuscatedKey = PrivilegedKeyManager.xorBytes(keyBytes, this.obfuscationPad);
+        // Split the key
+        const chunks = this.splitKeyIntoChunks(keyBytes);
 
-        // Zero out ephemeral variables to reduce risk:
+        // Clean up any old data first
+        this.destroyKey();
+
+        // Store new chunk data under random property names
+        for (let i = 0; i < chunks.length; i++) {
+            const chunkProp = this.generateRandomPropName();
+            const padProp = this.generateRandomPropName();
+            this.chunkPropNames.push(chunkProp);
+            this.chunkPadPropNames.push(padProp);
+
+            // Generate random pad of the same length as the chunk
+            const pad = Uint8Array.from(Random(chunks[i].length));
+            // XOR the chunk to obfuscate
+            const obf = PrivilegedKeyManager.xorBytes(chunks[i], pad);
+
+            // Store them in dynamic properties
+            (this as any)[chunkProp] = obf;
+            (this as any)[padProp] = pad;
+        }
+
+        // Generate some decoy properties that will be destroyed with the key
+        for (let i = 0; i < 2; i++) {
+            const decoyProp = this.generateRandomPropName();
+            (this as any)[decoyProp] = Uint8Array.from(Random(32));
+            this.decoyPropNamesDestroy.push(decoyProp);
+        }
+
+        // Zero out ephemeral original
         keyBytes.fill(0);
 
-        // Start or reset the destruction timer:
+        // Schedule destruction
         this.scheduleKeyDestruction();
 
-        // Return a fresh PrivateKey for the caller to use:
         return fetchedKey;
     }
 
     async getPublicKey(args: GetPublicKeyArgs): Promise<{ publicKey: PubKeyHex }> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.getPublicKey(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).getPublicKey(args);
     }
 
     async revealCounterpartyKeyLinkage(
         args: RevealCounterpartyKeyLinkageArgs
     ): Promise<RevealCounterpartyKeyLinkageResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.revealCounterpartyKeyLinkage(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).revealCounterpartyKeyLinkage(args);
     }
 
     async revealSpecificKeyLinkage(
         args: RevealSpecificKeyLinkageArgs
     ): Promise<RevealSpecificKeyLinkageResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.revealSpecificKeyLinkage(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).revealSpecificKeyLinkage(args);
     }
 
     async encrypt(args: WalletEncryptArgs): Promise<WalletEncryptResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.encrypt(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).encrypt(args);
     }
 
     async decrypt(args: WalletDecryptArgs): Promise<WalletDecryptResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.decrypt(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).decrypt(args);
     }
 
     async createHmac(args: CreateHmacArgs): Promise<CreateHmacResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.createHmac(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).createHmac(args);
     }
 
     async verifyHmac(args: VerifyHmacArgs): Promise<VerifyHmacResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.verifyHmac(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).verifyHmac(args);
     }
 
     async createSignature(args: CreateSignatureArgs): Promise<CreateSignatureResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.createSignature(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).createSignature(args);
     }
 
     async verifySignature(args: VerifySignatureArgs): Promise<VerifySignatureResult> {
-        const p = await this.getPrivilegedKey(args.privilegedReason as string);
-        const proto = new ProtoWallet(p);
-        return proto.verifySignature(args);
+        return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).verifySignature(args);
     }
 }
