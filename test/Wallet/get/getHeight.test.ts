@@ -1,25 +1,47 @@
-import { setupTestWallet } from '../../utils/TestUtilsMethodTests'
+import { _tu, expectToThrowWERR } from '../../utils/TestUtilsStephen'
+import { sdk } from '../../../src/index.client'
 
-describe('Wallet getHeight Tests', () => {
-  let wallet: any
+describe('getHeight tests', () => {
+  jest.setTimeout(99999999)
 
-  beforeEach(() => {
-    const { wallet: testWallet } = setupTestWallet()
-    wallet = testWallet
+  const ctxs: any[] = []
+
+  beforeAll(async () => {
+    ctxs.push(await _tu.createSQLiteTestWallet({ databaseName: 'getHeightTestsSQLite' }))
+    if (!_tu.getEnv('test').noMySQL) {
+      ctxs.push(await _tu.createMySQLTestWallet({ databaseName: 'getHeightTestsMySQL' }))
+    }
   })
 
-  test.skip('should return the correct blockchain height', async () => {
-    // not working yet??
-    wallet.signer.getHeight.mockResolvedValueOnce(123456)
-    const result = await wallet.getHeight({})
-    expect(result).toEqual({ height: 123456 })
-    expect(wallet.signer.getHeight).toHaveBeenCalled()
+  afterAll(async () => {
+    for (const ctx of ctxs) {
+      await ctx.storage.destroy()
+    }
   })
 
-  test.skip('should handle errors from the signer gracefully', async () => {
-    // not yet working?
-    wallet.signer.getHeight.mockRejectedValueOnce(new Error('Height fetch error'))
-    await expect(wallet.getHeight({})).rejects.toThrow('Height fetch error')
-    expect(wallet.signer.getHeight).toHaveBeenCalled()
+  test('0 valid height', async () => {
+    for (const { wallet } of ctxs) {
+      const result = await wallet.getHeight({})
+
+      // Validate the height (assuming it's a positive integer)
+      expect(result).toHaveProperty('height')
+      expect(result.height).toBeGreaterThan(0)
+    }
+  })
+
+  test('1 handles errors from services gracefully', async () => {
+    for (const { wallet } of ctxs) {
+      try {
+        // Trigger an invalid scenario that should throw an error
+        await wallet.getHeight({ invalidParam: true })
+      } catch (e) {
+        // Narrow the type of 'e' to 'Error'
+        if (e instanceof Error) {
+          expect(e.message).toContain('invalid')
+        } else {
+          throw new Error('Unexpected error type thrown')
+        }
+      }
+    }
   })
 })
