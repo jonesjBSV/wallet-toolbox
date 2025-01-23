@@ -1,44 +1,57 @@
-import { setupTestWallet } from '../../utils/TestUtilsMethodTests'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
+import { sdk } from '../../../src/index.client'
+import * as bsv from '@bsv/sdk'
 
-describe.skip('Wallet getHeaderForHeight Tests', () => {
-  // none of these tests pass.... not clear what failures indicate.
-  let wallet: any
+describe('getHeaderForHeight tests', () => {
+  jest.setTimeout(99999999)
 
-  beforeEach(() => {
-    const { wallet: testWallet, mockSigner } = setupTestWallet()
-    wallet = testWallet
+  const env = _tu.getEnv('test')
+  const ctxs: TestWalletNoSetup[] = []
 
-    // Set up a mock for getHeaderForHeight
-    mockSigner.getHeaderForHeight.mockImplementation((height: number) => {
-      if (height < 0) {
-        throw new Error('Invalid height')
-      }
-      return Buffer.from('header-data')
-    })
+  beforeAll(async () => {
+    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('getHeaderForHeightTests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('getHeaderForHeightTests'))
   })
 
-  test('should return the correct block header for a given height', async () => {
-    const mockHeader = Buffer.from('header-data').toString('hex')
-    wallet.signer.getHeaderForHeight.mockResolvedValueOnce(Buffer.from('header-data'))
-
-    const result = await wallet.getHeaderForHeight({ height: 100 })
-    expect(result).toEqual({ header: mockHeader })
-    expect(wallet.signer.getHeaderForHeight).toHaveBeenCalledWith(100)
+  afterAll(async () => {
+    for (const ctx of ctxs) {
+      await ctx.storage.destroy()
+    }
   })
 
-  test.skip('should throw an error for invalid heights', async () => {
-    // not working yet??
-    wallet.signer.getHeaderForHeight.mockResolvedValueOnce(null)
-
-    await expect(wallet.getHeaderForHeight({ height: -1 })).rejects.toThrow('The args.height parameter must be a valid block height. -1 is invalid.')
-    expect(wallet.signer.getHeaderForHeight).toHaveBeenCalledWith(-1)
+  test('0 invalid params', async () => {
+    for (const { wallet } of ctxs) {
+      await expect(wallet.getHeaderForHeight({ height: -1 })).rejects.toThrow(Error)
+    }
   })
 
-  test.skip('should handle unexpected errors from the signer', async () => {
-    // not working yet?
-    wallet.signer.getHeaderForHeight.mockRejectedValueOnce(new Error('Header fetch error'))
+  test('1 valid block height', async () => {
+    for (const { wallet, services } of ctxs) {
+      const mockSerializedHeader = Buffer.from('mock-header-data')
+      services.getHeaderForHeight = jest.fn().mockResolvedValue(mockSerializedHeader)
 
-    await expect(wallet.getHeaderForHeight({ height: 100 })).rejects.toThrow('Header fetch error')
-    expect(wallet.signer.getHeaderForHeight).toHaveBeenCalledWith(100)
+      const height = 100
+      const result = await wallet.getHeaderForHeight({ height })
+      expect(result).toEqual({ header: mockSerializedHeader.toString('hex') })
+      expect(services.getHeaderForHeight).toHaveBeenCalledWith(height)
+    }
+  })
+
+  test('2 unexpected service errors', async () => {
+    for (const { wallet, services } of ctxs) {
+      services.getHeaderForHeight = jest.fn().mockRejectedValue(new Error('Service error'))
+
+      await expect(wallet.getHeaderForHeight({ height: 100 })).rejects.toThrow(Error)
+    }
+  })
+
+  test('3 valid block height, empty header', async () => {
+    // Expected to handle empty headers gracefully rather than throwing an error
+    for (const { wallet, services } of ctxs) {
+      services.getHeaderForHeight = jest.fn().mockResolvedValue(Buffer.alloc(0)) // Empty header
+
+      const result = await wallet.getHeaderForHeight({ height: 100 })
+      expect(result.header).toBe('') // Empty header in hex format
+    }
   })
 })
