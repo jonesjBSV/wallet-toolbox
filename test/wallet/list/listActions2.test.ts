@@ -1,6 +1,6 @@
 import * as bsv from '@bsv/sdk'
 import { sdk, StorageProvider, table } from '../../../src/index.client'
-import { _tu, expectToThrowWERR, TestSetup1, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestSetup1, TestSetup2, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { asBuffer, StorageKnex } from '../../../src'
 import { Script, Transaction, TransactionInput } from '@bsv/sdk'
 
@@ -9,25 +9,27 @@ describe.skip('listActions tests', () => {
 
   const storages: StorageProvider[] = []
   const chain: sdk.Chain = 'test'
-  const setups: { setup: TestSetup1; storage: StorageProvider }[] = []
+  const setups: { setup: TestSetup2; storage: StorageProvider }[] = []
 
   const env = _tu.getEnv('test')
   const ctxs: TestWalletNoSetup[] = []
+  const testName = () => expect.getState().currentTestName || 'test'
+  const name = testName.name
 
   beforeAll(async () => {
     if (!env.noMySQL) {
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy('listActionsTests'))
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy(name))
     }
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('listActionsTests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(name))
 
     for (const ctx of ctxs) {
       const { activeStorage } = ctx
       await activeStorage.dropAllData()
-      await activeStorage.migrate('insert tests', '1'.repeat(64))
-      //setups.push({ storage: activeStorage, setup: await _tu.createTestSetup2(activeStorage) })
+      await activeStorage.migrate('insert tests', '3'.repeat(64))
+      setups.push({ storage: activeStorage, setup: await _tu.createTestSetup2(activeStorage) })
     }
-
     expect(setups).toBeTruthy() // Ensure setups were initialized correctly
+
     for (const { storage, setup } of setups) {
     }
   })
@@ -40,7 +42,6 @@ describe.skip('listActions tests', () => {
 
   test('12_no labels default any', async () => {
     for (const { wallet } of ctxs) {
-      //setup.u1label1.label = 'label1'
       const args: bsv.ListActionsArgs = {
         labels: []
       }
@@ -93,16 +94,13 @@ describe.skip('listActions tests', () => {
 
   test('17_label does not exist default any', async () => {
     for (const { wallet } of ctxs) {
-      for (const { storage, setup } of setups) {
-        setup.u1label1.label = 'label1'
-        const args: bsv.ListActionsArgs = {
-          labels: ['nonexistantlabel']
-        }
-
-        const expectedResult = JSON.parse('{"totalActions":0,"actions":[]}')
-
-        expect(await wallet.listActions(args)).toEqual(expectedResult)
+      const args: bsv.ListActionsArgs = {
+        labels: ['nonexistantlabel']
       }
+
+      const expectedResult = JSON.parse('{"totalActions":0,"actions":[]}')
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
 

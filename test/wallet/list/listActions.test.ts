@@ -13,12 +13,14 @@ describe('listActions tests', () => {
 
   const env = _tu.getEnv('test')
   const ctxs: TestWalletNoSetup[] = []
+  const testName = () => expect.getState().currentTestName || 'test'
+  const name = testName.name
 
   beforeAll(async () => {
     if (!env.noMySQL) {
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy('listActionsTests'))
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy(name))
     }
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('listActionsTests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(name))
   })
 
   afterAll(async () => {
