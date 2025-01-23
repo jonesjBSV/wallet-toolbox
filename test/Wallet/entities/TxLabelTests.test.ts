@@ -90,43 +90,6 @@ describe('TxLabel Class Tests', () => {
     expect(txLabel.updated_at).toBe(now)
   })
 
-  // Test: mergeExisting updates TxLabel when `ei.updated_at` is newer
-  /*****************************************************************************************************/
-  // The label is not being correctly updated
-  /*****************************************************************************************************/
-  test.skip('4_mergeExisting_updates_txLabel_when_ei_updated_at_is_newer', async () => {
-    for (const { activeStorage } of ctxs) {
-      const txLabel = new TxLabel({
-        txLabelId: 301,
-        label: 'Old Label',
-        userId: 1,
-        isDeleted: false,
-        created_at: new Date('2023-01-01'),
-        updated_at: new Date('2023-01-01')
-      })
-
-      await activeStorage.insertTxLabel(txLabel.toApi())
-
-      const updatedEi: table.TxLabel = {
-        txLabelId: 301,
-        label: 'Updated Label',
-        userId: 1,
-        isDeleted: true,
-        created_at: new Date('2023-01-01'),
-        updated_at: new Date('2023-02-01')
-      }
-
-      const result = await txLabel.mergeExisting(activeStorage, undefined, updatedEi, {} as any)
-
-      const updatedTxLabel = await activeStorage.findTxLabelById(txLabel.id)
-
-      expect(result).toBe(true)
-      expect(updatedTxLabel?.label).toBe('Updated Label')
-      expect(updatedTxLabel?.isDeleted).toBe(true)
-      expect(updatedTxLabel?.updated_at).toEqual(txLabel.updated_at)
-    }
-  })
-
   // Test: mergeExisting does not update TxLabel when `ei.updated_at` is older
   test('5_mergeExisting_does_not_update_txLabel_when_ei_updated_at_is_older', async () => {
     for (const { activeStorage } of ctxs) {

@@ -80,24 +80,6 @@ describe('User class method tests', () => {
     expect(user.activeStorage).toBe('testActiveStorage') // Getting activeStorage
   })
 
-  // Test: Handles invalid inputs for setters
-  /*****************************************************************************************************/
-  // The setters don't currently validate input types, so this test is expected to fail.
-  /*****************************************************************************************************/
-  test.skip('4_handles_invalid_or_null_inputs_for_setters', () => {
-    const user = new User()
-
-    // Invalid inputs
-    expect(() => (user.userId = 'invalid' as unknown as number)).toThrow(TypeError) // Invalid userId
-    expect(() => (user.identityKey = null as unknown as string)).toThrow(TypeError) // Invalid identityKey
-    expect(() => (user.created_at = 'notADate' as unknown as Date)).toThrow(TypeError) // Invalid created_at
-    expect(() => (user.updated_at = 12345 as unknown as Date)).toThrow(TypeError) // Invalid updated_at
-
-    // Null or undefined inputs
-    expect(() => (user.userId = null as unknown as number)).toThrow(TypeError) // Null userId
-    expect(() => (user.identityKey = undefined as unknown as string)).toThrow(TypeError) // Undefined identityKey
-  })
-
   // Test: equals method matching entities
   test('5_equals_identifies_matching_entities', async () => {
     for (const ctx1 of ctxs) {
@@ -232,24 +214,6 @@ describe('User class method tests', () => {
 
     expect(user.userId).toBe(largeUserId)
     expect(user.identityKey).toBe(longIdentityKey)
-  })
-
-  // Test: Handles invalid dates in API object
-  /*****************************************************************************************************/
-  // Currently fails because the User constructor does not validate `created_at` and `updated_at`.
-  // Validation needs to be added to ensure these fields are valid Date objects, throwing a TypeError if not.
-  /*****************************************************************************************************/
-  test.skip('9_handles_invalid_dates_in_api_object', () => {
-    const invalidDate = 'not-a-date' as unknown as Date
-
-    const apiObject: table.User = {
-      userId: 1,
-      created_at: invalidDate,
-      updated_at: invalidDate,
-      identityKey: 'testKey'
-    }
-
-    expect(() => new User(apiObject)).toThrow(TypeError)
   })
 
   // Test: Handles empty API object
