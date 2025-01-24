@@ -1,16 +1,33 @@
-import { Certificate as BsvCertificate, CompletedProtoWallet, KeyDeriver, PrivateKey, Utils, WalletCertificate } from "@bsv/sdk"
+import { Certificate as BsvCertificate, CompletedProtoWallet, KeyDeriver, MasterCertificate, PrivateKey, Utils, WalletCertificate } from "@bsv/sdk"
 import { sdk } from '../../index.all'
 
-describe('CertOps tests', () => {
+describe('CertificateLifeCycle tests', () => {
     jest.setTimeout(99999999)
 
 
     test('0 encrypt decrypt sign verify', async () => {
-        const { cert, certifier, subject } = makeSampleCert()
+        const subjectWallet = new CompletedProtoWallet(PrivateKey.fromRandom())
+        const { cert, certifier, subject } = makeSampleCert(subjectWallet.keyDeriver.rootKey.toString())
 
         const c = new BsvCertificate(cert.type, cert.serialNumber, cert.subject, cert.certifier, cert.revocationOutpoint, cert.fields)
 
         const certifierWallet = new CompletedProtoWallet(certifier)
+
+        const imc = await MasterCertificate.issueCertificateForSubject(certifierWallet, c.subject, c.fields, c.type, async () => c.revocationOutpoint)
+        const imcSignature = imc.signature
+        await expect(imc.sign(certifierWallet)).rejects.toThrow('Certificate has already been signed')
+        expect(imcSignature).toBeTruthy()
+        expect(imcSignature).toBe(imc.signature)
+        const imcVerified = await imc.verify()
+        expect(imcVerified).toBe(true)
+        const dfs = await imc.decryptFields(subjectWallet)
+        for (const fn of Object.keys(cert.fields)) {
+            // decrypted fields should be original un-encrypted fields
+            expect(cert.fields[fn]).toBe(dfs[fn])
+            // issued certificate fields should encrypted, not the original un-encrypted fields
+            expect(cert.fields[fn]).not.toBe(imc.fields[fn])
+        }
+
         await c.sign(certifierWallet)
         const verified = await c.verify()
         expect(verified).toBe(true)
@@ -113,9 +130,9 @@ describe('CertOps tests', () => {
 
 })
         
-function makeSampleCert(): { cert: WalletCertificate, subject: PrivateKey, certifier: PrivateKey }
+function makeSampleCert(subjectRootKeyHex?: string): { cert: WalletCertificate, subject: PrivateKey, certifier: PrivateKey }
 {
-    const subject = PrivateKey.fromRandom()
+    const subject = subjectRootKeyHex ? PrivateKey.fromString(subjectRootKeyHex) : PrivateKey.fromRandom()
     const certifier = PrivateKey.fromRandom()
     const verifier = PrivateKey.fromRandom()
     const cert: WalletCertificate = {
