@@ -171,6 +171,7 @@ export abstract class TestUtilsWalletStorage {
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
+    monitor.addDefaultTasks()
     const wallet = new Wallet(signer, services, monitor)
     const r: TestWalletOnly = {
       rootKey,

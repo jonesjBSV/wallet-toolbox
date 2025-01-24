@@ -164,6 +164,12 @@ describe('walletLive test', () => {
     expect(rw.accepted).toBe(true)
   })
 
+  test('6b run liveWallet Monitor once', async () => {
+    const liveCtx = ctxs[0]
+    await liveCtx.monitor.runOnce()
+    expect(1 === 1)
+  })
+
   // End of describe
 })
 
