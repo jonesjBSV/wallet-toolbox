@@ -156,7 +156,7 @@ export class PrivilegedKeyManager {
      * for exactly the desired window after its most recent acquisition.
      */
     private scheduleKeyDestruction(): void {
-        if (this.destroyTimer) {
+        if (this.destroyTimer) { // TODO: Consider a constructor flag to avoid clearing timers for higher security
             clearTimeout(this.destroyTimer);
         }
         this.destroyTimer = setTimeout(() => {
@@ -249,7 +249,7 @@ export class PrivilegedKeyManager {
      * with zeros if its numeric value has fewer than 32 bytes.
      */
     private get32ByteRepresentation(privKey: PrivateKey): Uint8Array {
-        // The internal "toBuffer()" can be up to 32 bytes, but sometimes fewer
+        // The internal "toArray()" can be up to 32 bytes, but sometimes fewer
         // if the numeric value has leading zeros.
         const buf = privKey.toArray();
         if (buf.length > 32) {
