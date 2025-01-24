@@ -17,9 +17,9 @@
     "BRC100"
   ],
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test": "jest --testPathIgnorePatterns=man.test.ts",
+    "test:watch": "jest --testPathIgnorePatterns=man.test.ts --watch",
+    "test:coverage": "jest --testPathIgnorePatterns=man.test.ts --coverage",
     "build": "tsc --build",
     "doc": "ts2md"
   },
