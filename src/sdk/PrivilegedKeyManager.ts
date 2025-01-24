@@ -168,7 +168,7 @@ export class PrivilegedKeyManager {
      * This function takes two equal-length byte arrays
      * and returns the XOR combination.
      */
-    private static xorBytes(a: Uint8Array, b: Uint8Array): Uint8Array {
+    private xorBytes(a: Uint8Array, b: Uint8Array): Uint8Array {
         const out = new Uint8Array(a.length);
         for (let i = 0; i < a.length; i++) {
             out[i] = a[i] ^ b[i];
@@ -210,7 +210,7 @@ export class PrivilegedKeyManager {
                 if (!chunkEnc || !chunkPad || chunkEnc.length !== chunkPad.length) {
                     return null;
                 }
-                const rawChunk = PrivilegedKeyManager.xorBytes(chunkEnc, chunkPad);
+                const rawChunk = this.xorBytes(chunkEnc, chunkPad);
                 chunkArrays.push(rawChunk);
             }
             // Concat them back to a single 32-byte array:
@@ -258,7 +258,7 @@ export class PrivilegedKeyManager {
                 const hexKey = Utils.toHex([...rawKeyBytes]);
                 rawKeyBytes.fill(0); // Zero ephemeral copy
                 this.scheduleKeyDestruction();
-                return new PrivateKey(hexKey, 16);
+                return new PrivateKey(hexKey, 'hex');
             }
         }
 
@@ -284,7 +284,7 @@ export class PrivilegedKeyManager {
             // Generate random pad of the same length as the chunk
             const pad = Uint8Array.from(Random(chunks[i].length));
             // XOR the chunk to obfuscate
-            const obf = PrivilegedKeyManager.xorBytes(chunks[i], pad);
+            const obf = this.xorBytes(chunks[i], pad);
 
             // Store them in dynamic properties
             (this as any)[chunkProp] = obf;

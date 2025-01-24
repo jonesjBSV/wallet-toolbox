@@ -1,7 +1,13 @@
 import { PrivilegedKeyManager } from '../PrivilegedKeyManager'
-import { Utils, PrivateKey, Hash } from '@bsv/sdk'
+import { Utils, PrivateKey, Hash, Random } from '@bsv/sdk'
 
 const sampleData = [3, 1, 4, 1, 5, 9]
+
+// A helper function to get a 32-byte hex
+function getRandom32ByteHex(): string {
+    const rawBytes = Random(32);
+    return Utils.toHex(rawBytes);
+}
 
 describe('PrivilegedKeyManager', () => {
     it('Validates the BRC-3 compliance vector', async () => {
@@ -453,4 +459,194 @@ describe('PrivilegedKeyManager', () => {
             expect(linkage).toEqual(expectedLinkage)
         })
     })
+    describe('PrivilegedKeyManager - Internal Logic Tests', () => {
+        beforeEach(() => {
+            jest.useFakeTimers();
+        });
+        afterEach(() => {
+            jest.clearAllTimers();
+            jest.useRealTimers();
+        });
+        it('Calls keyGetter only once if getPrivilegedKey is invoked multiple times within retention period', async () => {
+            // Create a mock keyGetter that returns a PrivateKey
+            const keyGetterMock = jest.fn(async (reason: string) => {
+                return new PrivateKey(getRandom32ByteHex(), 'hex');
+            });
+
+            // Retention period is 100 ms for testing
+            const km = new PrivilegedKeyManager(keyGetterMock, 100);
+
+            // 1) First call, should call keyGetter once
+            const key1 = await (km as any).getPrivilegedKey('first reason');
+            expect(keyGetterMock).toHaveBeenCalledTimes(1);
+
+            // 2) Second call, if within retention, should NOT call keyGetter again
+            const key2 = await (km as any).getPrivilegedKey('second reason');
+            expect(keyGetterMock).toHaveBeenCalledTimes(1);
+
+            // 3) Check that both keys match the same underlying private key
+            expect(key1.toHex()).toBe(key2.toHex());
+        });
+
+        it('Destroys key after retention period elapses', async () => {
+            const keyGetterMock = jest.fn(async (reason: string) => {
+                return new PrivateKey(getRandom32ByteHex(), 'hex');
+            });
+
+            const retentionMs = 200;
+            const km = new PrivilegedKeyManager(keyGetterMock, retentionMs);
+
+            // Acquire the key
+            await (km as any).getPrivilegedKey('test reason');
+
+            // We have chunkPropNames set
+            expect((km as any).chunkPropNames.length).toBeGreaterThan(0);
+
+            // Fast-forward time beyond the retention period
+            jest.advanceTimersByTime(retentionMs + 1);
+
+            // The destroyKey logic should have run
+            expect((km as any).chunkPropNames.length).toBe(0);
+            expect((km as any).chunkPadPropNames.length).toBe(0);
+            expect((km as any).decoyPropNamesDestroy.length).toBe(0);
+        });
+
+        it('Explicitly calls destroyKey() and removes all chunk properties', async () => {
+            const keyGetterMock = jest.fn(async (reason: string) => {
+                return new PrivateKey(getRandom32ByteHex(), 'hex');
+            });
+            const km = new PrivilegedKeyManager(keyGetterMock, 5000);
+
+            // Acquire the key
+            await (km as any).getPrivilegedKey('destroy test');
+
+            // Verify chunk props exist
+            expect((km as any).chunkPropNames.length).toBeGreaterThan(0);
+            expect((km as any).chunkPadPropNames.length).toBeGreaterThan(0);
+
+            // Explicitly call destroyKey
+            (km as any).destroyKey();
+
+            // Now chunkPropNames and chunkPadPropNames should be cleared
+            expect((km as any).chunkPropNames.length).toBe(0);
+            expect((km as any).chunkPadPropNames.length).toBe(0);
+        });
+
+        it('Reuses in-memory obfuscated key if data is valid, otherwise fetches a new key', async () => {
+            const mockHex = getRandom32ByteHex();
+            const keyGetterMock = jest.fn(async () => new PrivateKey(mockHex, 'hex'));
+
+            const km = new PrivilegedKeyManager(keyGetterMock, 5000);
+
+            // 1) First retrieval => calls keyGetter
+            const key1 = await (km as any).getPrivilegedKey('reuse test');
+            expect(keyGetterMock).toHaveBeenCalledTimes(1);
+            expect(key1.toHex()).toBe(mockHex);
+
+            // 2) Tamper with chunk data so reassembleKeyFromChunks returns null
+            // We can zero out one chunk or remove it
+            (km as any)[(km as any).chunkPropNames[0]] = undefined;
+
+            // 3) Second retrieval => chunk data is invalid => calls keyGetter again
+            const key2 = await (km as any).getPrivilegedKey('reuse test 2');
+            expect(keyGetterMock).toHaveBeenCalledTimes(2);
+            // The newly fetched key must still match mockHex,
+            // because the mock always returns the same key.
+            expect(key2.toHex()).toBe(mockHex);
+        });
+
+        it('Ensures chunk-splitting logic is correct for a 32-byte key', () => {
+            const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
+
+            const testBytes = new Uint8Array(32);
+            // Fill with some pattern, e.g. 0..31
+            testBytes.forEach((_, i) => { testBytes[i] = i; });
+
+            const chunks = (km as any).splitKeyIntoChunks(testBytes);
+            expect(chunks.length).toBe((km as any).CHUNK_COUNT);
+
+            // By default CHUNK_COUNT = 4
+            // Typically each chunk would be 8 bytes (for a 32-byte key).
+            chunks.forEach((chunk: Uint8Array, i: number) => {
+                if (i < 3) {
+                    expect(chunk.length).toBe(8);
+                } else {
+                    // last chunk picks up leftover
+                    expect(chunk.length).toBe(8);
+                }
+            });
+
+            // Reassemble logic typically is done by reassembleKeyFromChunks,
+            // but let's test it in isolation. We'll XOR with random pads,
+            // store them, reassemble, etc.
+
+            // For demonstration, we can do a quick test:
+            const pad = chunks.map((c: Uint8Array) => Uint8Array.from(Random(c.length)));
+            const obfuscated = chunks.map((c: Uint8Array, i: number) => (km as any).xorBytes(c, pad[i]));
+
+            // Then "store" and reassemble
+            (km as any).chunkPropNames = [];
+            (km as any).chunkPadPropNames = [];
+            obfuscated.forEach((obf: Uint8Array, i: number) => {
+                const chunkProp = `chunk${i}`;
+                const padProp = `pad${i}`;
+                (km as any).chunkPropNames.push(chunkProp);
+                (km as any).chunkPadPropNames.push(padProp);
+                (km as any)[chunkProp] = obf;
+                (km as any)[padProp] = pad[i];
+            });
+            const reassembled = (km as any).reassembleKeyFromChunks();
+            expect(reassembled.length).toBe(32);
+            expect(Array.from(reassembled)).toEqual(Array.from(testBytes));
+        });
+
+        it('XOR function works as expected', () => {
+            const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
+            const a = Uint8Array.from([0, 1, 255]);
+            const b = Uint8Array.from([255, 1, 0]);
+
+            const result = (km as any).xorBytes(a, b);
+            // 0 ^ 255 = 255, 1 ^ 1 = 0, 255 ^ 0 = 255
+            expect(Array.from(result)).toEqual([255, 0, 255]);
+
+            // XOR with zero array => same array
+            const zero = new Uint8Array(3);
+            const result2 = (km as any).xorBytes(a, zero);
+            expect(Array.from(result2)).toEqual([0, 1, 255]);
+        });
+
+        it('Generates random property names', () => {
+            const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
+            const prop1 = (km as any).generateRandomPropName();
+            const prop2 = (km as any).generateRandomPropName();
+            expect(prop1).not.toBe(prop2);
+            // Just check format (roughly)
+            expect(prop1).toMatch(/^_[0-9a-f]{8}_[0-9]{1,6}$/);
+            expect(prop2).toMatch(/^_[0-9a-f]{8}_[0-9]{1,6}$/);
+        });
+
+        it('Sets up initial decoy properties in the constructor', () => {
+            const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
+            // decoyPropNamesRemain has length 2
+            expect((km as any).decoyPropNamesRemain.length).toBe(2);
+            // Validate those properties actually exist on the object
+            for (const propName of (km as any).decoyPropNamesRemain) {
+                expect((km as any)[propName]).toBeInstanceOf(Uint8Array);
+                expect((km as any)[propName].length).toBe(16);
+            }
+        });
+
+        it('New decoy properties are created on each key fetch and destroyed on destroy', async () => {
+            const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
+            await (km as any).getPrivilegedKey('decoy test');
+
+            // We should have 2 decoy props that remain, plus 2 that are "destroyable"
+            expect((km as any).decoyPropNamesRemain.length).toBe(2);
+            expect((km as any).decoyPropNamesDestroy.length).toBe(2);
+
+            // Destroy them
+            (km as any).destroyKey();
+            expect((km as any).decoyPropNamesDestroy.length).toBe(0);
+        });
+    });
 })
