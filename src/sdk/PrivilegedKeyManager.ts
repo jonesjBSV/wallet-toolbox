@@ -140,6 +140,7 @@ export class PrivilegedKeyManager {
             this.chunkPadPropNames = [];
             this.decoyPropNamesDestroy = [];
         } catch (_) {
+            // Swallow any errors in the destruction process
         } finally {
             if (this.destroyTimer) {
                 clearTimeout(this.destroyTimer);
@@ -215,6 +216,10 @@ export class PrivilegedKeyManager {
             }
             // Concat them back to a single 32-byte array:
             const totalLength = chunkArrays.reduce((sum, c) => sum + c.length, 0);
+            if (totalLength !== 32) {
+                // We only handle 32-byte keys
+                return null;
+            }
             const rawKey = new Uint8Array(totalLength);
             let offset = 0;
             for (const chunk of chunkArrays) {
@@ -240,22 +245,40 @@ export class PrivilegedKeyManager {
     }
 
     /**
+     * Forces a PrivateKey to be represented as exactly 32 bytes, left-padding
+     * with zeros if its numeric value has fewer than 32 bytes.
+     */
+    private get32ByteRepresentation(privKey: PrivateKey): Uint8Array {
+        // The internal "toBuffer()" can be up to 32 bytes, but sometimes fewer
+        // if the numeric value has leading zeros.
+        const buf = privKey.toArray();
+        if (buf.length > 32) {
+            throw new Error('PrivilegedKeyManager: Expected a 32-byte key, but got more.');
+        }
+        // Left-pad with zeros if needed
+        const keyBytes = new Uint8Array(32);
+        keyBytes.set(buf, 32 - buf.length);
+        return keyBytes;
+    }
+
+    /**
      * Returns the privileged key needed to perform cryptographic operations.
      * Uses in-memory chunk-based obfuscation if the key was already fetched.
-     * Otherwise, it calls out to `keyGetter`, splits the key, XORs each chunk
-     * with a random pad, and stores them under dynamic property names. Also
-     * populates new decoy properties (some destroyed with the key, some remain).
+     * Otherwise, it calls out to `keyGetter`, splits the 32-byte representation
+     * of the key, XORs each chunk with a random pad, and stores them under
+     * dynamic property names. Also populates new decoy properties.
      *
      * @param reason - The reason for why the key is needed, passed to keyGetter.
      * @returns The PrivateKey object needed for cryptographic operations.
      */
     private async getPrivilegedKey(reason: string): Promise<PrivateKey> {
-        // Check if we already have real chunk properties
+        // If we already have chunk properties, try reassemble
         if (this.chunkPropNames.length > 0 && this.chunkPadPropNames.length > 0) {
-            // Attempt to reassemble
             const rawKeyBytes = this.reassembleKeyFromChunks();
             if (rawKeyBytes && rawKeyBytes.length === 32) {
-                const hexKey = Utils.toHex([...rawKeyBytes]);
+                // Convert 32 raw bytes back to a PrivateKey
+                // (Leading zeros are preserved, but PrivateKey() will parse it as a big integer.)
+                const hexKey = Utils.toHex([...rawKeyBytes]); // 64 hex chars
                 rawKeyBytes.fill(0); // Zero ephemeral copy
                 this.scheduleKeyDestruction();
                 return new PrivateKey(hexKey, 'hex');
@@ -264,15 +287,15 @@ export class PrivilegedKeyManager {
 
         // Otherwise, fetch a fresh key from the secure environment
         const fetchedKey = await this.keyGetter(reason);
-        const keyHex = fetchedKey.toHex();
-        // Convert the hex string to raw bytes. Should be 32 bytes for typical ECDSA keys.
-        const keyBytes = Uint8Array.from(Utils.toArray(keyHex));
+
+        // Force 32‑byte representation (left-pad if necessary)
+        const keyBytes = this.get32ByteRepresentation(fetchedKey);
+
+        // Clean up any old data first (in case we had something stale)
+        this.destroyKey();
 
         // Split the key
         const chunks = this.splitKeyIntoChunks(keyBytes);
-
-        // Clean up any old data first
-        this.destroyKey();
 
         // Store new chunk data under random property names
         for (let i = 0; i < chunks.length; i++) {
@@ -304,6 +327,7 @@ export class PrivilegedKeyManager {
         // Schedule destruction
         this.scheduleKeyDestruction();
 
+        // Return the newly fetched key as a normal PrivateKey
         return fetchedKey;
     }
 
