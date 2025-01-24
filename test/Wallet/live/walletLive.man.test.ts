@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Beef, CreateActionArgs, InternalizeActionArgs, KeyDeriverApi, PrivateKey, Utils, WalletInterface } from '@bsv/sdk'
+import { Beef, CreateActionArgs, InternalizeActionArgs, KeyDeriver, KeyDeriverApi, PrivateKey, Utils, WalletInterface } from '@bsv/sdk'
 import { Services, asString, StorageKnex, sdk, table, verifyOne, verifyId, ScriptTemplateSABPPP, randomBytesBase64 } from '../../../src/index.all'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+
+import dotenv from 'dotenv'
+import { StorageGetBeefOptions } from '../../../src/sdk';
+dotenv.config();
 
 describe('walletLive test', () => {
   jest.setTimeout(99999999)
@@ -11,7 +15,7 @@ describe('walletLive test', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    ctxs.push(await _tu.createLiveWalletSQLiteWARNING())
+//    ctxs.push(await _tu.createLiveWalletSQLiteWARNING())
   })
 
   afterAll(async () => {
@@ -179,6 +183,48 @@ describe('walletLive test', () => {
     expect(1 === 1)
   })
 
+  test('6c send a wallet payment from live to your own wallet', async () => {
+    const myIdentityKey = env.identityKey
+    const myRootKeyHex = env.devKeys[myIdentityKey]
+    if (!myIdentityKey || !myRootKeyHex) throw new sdk.WERR_INVALID_OPERATION(`Requires a .env file with MY_${env.chain.toUpperCase()}_IDENTITY and corresponding DEV_KEYS entries.`);
+
+    const toIdentityKey: string = '02947542cf31c8d91c303bba8f981ee9595c414e63c185d495a97c558aa7b2e522'
+    const r = createWalletPaymentOutput({ toIdentityKey, fromRootKeyHex: myRootKeyHex, logResult: true })
+    console.log(`\n${JSON.stringify(r)}\n`)
+  })
+
+  test('6d make atomicBEEF for known txid', async () => {
+    const txid = '6b9e8ed767ed6e6366527ddf8707637f3aaee1093085985c1dd04f347a3c25be'
+    const beef = new Beef()
+    beef.mergeTxidOnly(txid)
+    console.log(`
+BEEF for known txid ${txid}
+
+${Utils.toHex(beef.toBinaryAtomic(txid))}
+
+`)
+  })
+
+  test('6e make atomicBEEF for txid from staging-dojo', async () => {
+    const myIdentityKey = env.identityKey
+    const myRootKeyHex = env.devKeys[myIdentityKey]
+    const txid = '6b9e8ed767ed6e6366527ddf8707637f3aaee1093085985c1dd04f347a3c25be'
+    const connection = JSON.parse(process.env.TEST_CLOUD_MYSQL_CONNECTION || '')
+    const knex = _tu.createMySQLFromConnection(connection)
+    const ctx = await _tu.createKnexTestWallet({ knex, chain: 'test', databaseName: 'staging_wallet_storage', rootKeyHex: myRootKeyHex })
+
+    const beef = await ctx.activeStorage.getBeefForTransaction(txid, {})
+    console.log(`
+${beef.toLogString()}
+
+AtomicBEEF for known txid ${txid}
+
+${Utils.toHex(beef.toBinaryAtomic(txid))}
+
+`)
+      await ctx.activeStorage.destroy()
+  })
+
   // End of describe
 })
 
@@ -225,7 +271,52 @@ async function confirmSpendableOutputs(storage: StorageKnex, services: Services)
   return { invalidSpendableOutputs }
 }
 
-export async function createWalletPaymentAction(args: { toIdentityKey: string; outputSatoshis: number; keyDeriver: KeyDeriverApi; wallet: WalletInterface; logResult?: boolean }): Promise<{
+export function createWalletPaymentOutput(args: {
+  toIdentityKey: string
+  fromRootKeyHex: string
+  logResult?: boolean
+}) : {
+    senderIdentityKey: string,
+    derivationPrefix: string,
+    derivationSuffix: string,
+    lockingScript: string
+  } {
+  const t = new ScriptTemplateSABPPP({
+    derivationPrefix: randomBytesBase64(8),
+    derivationSuffix: randomBytesBase64(8),
+    keyDeriver: new KeyDeriver(PrivateKey.fromString(args.fromRootKeyHex))
+  })
+
+  const lockingScript = t.lock(args.fromRootKeyHex, args.toIdentityKey)
+
+  const r = {
+    senderIdentityKey: t.params.keyDeriver.identityKey,
+    derivationPrefix: t.params.derivationPrefix!,
+    derivationSuffix: t.params.derivationSuffix!,
+    lockingScript: lockingScript.toHex()
+  }
+  if (args.logResult) {
+    console.log(`
+// createWalletPaymentOutput
+const r = {
+  senderIdentityKey: '${r.senderIdentityKey}',
+  derivationPrefix: '${r.derivationPrefix}',
+  derivationSuffix: '${r.derivationSuffix}'
+  lockingScript: '${r.lockingScript}'
+}`)
+  }
+
+  return r
+}
+
+export async function createWalletPaymentAction(args: {
+  toIdentityKey: string
+  outputSatoshis: number
+  keyDeriver: KeyDeriverApi
+  wallet: WalletInterface
+  logResult?: boolean
+})
+: Promise<{
   senderIdentityKey: string
   vout: number
   txid: string
