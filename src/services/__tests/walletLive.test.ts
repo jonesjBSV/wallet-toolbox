@@ -3,7 +3,7 @@ import * as bsv from '@bsv/sdk'
 import { Services, asString, StorageKnex, sdk, table, verifyOne, verifyId, ScriptTemplateSABPPP, randomBytesBase64 } from '../../index.all'
 import { _tu, TestWalletNoSetup } from '../../../test/utils/TestUtilsWalletStorage'
 
-describe('walletLive test', () => {
+describe.skip('walletLive test', () => {
   jest.setTimeout(99999999)
 
   const env = _tu.getEnv('test')
@@ -113,7 +113,7 @@ describe('walletLive test', () => {
     console.log(log)
   })
 
-  test('6 send a wallet payment from live to your own wallet', async () => {
+  test.skip('6 send a wallet payment from live to your own wallet', async () => {
     const liveCtx = ctxs[0]
     const myIdentityKey = env.identityKey
     const myRootKeyHex = env.devKeys[myIdentityKey]
