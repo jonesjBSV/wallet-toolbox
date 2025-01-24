@@ -68,12 +68,14 @@ export class Wallet implements WalletInterface {
     trustSelf?: TrustSelf
     userParty: string
     proto: ProtoWallet
+    privilegedKeyManager?: sdk.PrivilegedKeyManager
 
-    constructor(signer: sdk.WalletSigner, services?: sdk.WalletServices, monitor?: Monitor) {
+    constructor(signer: sdk.WalletSigner, services?: sdk.WalletServices, monitor?: Monitor, privilegedKeyManager?: sdk.PrivilegedKeyManager) {
         this.proto = new ProtoWallet(signer.keyDeriver)
         this.signer = signer
         this.services = services
         this.monitor = monitor
+        this.privilegedKeyManager = privilegedKeyManager
 
         this.userParty = `user ${signer.getClientChangeKeyPair().publicKey}`
         this.beef = new BeefParty([this.userParty])
@@ -84,61 +86,88 @@ export class Wallet implements WalletInterface {
         }
     }
 
-    async getIdentityKey() : Promise<PubKeyHex> {
+    async getIdentityKey(): Promise<PubKeyHex> {
         return (await this.getPublicKey({ identityKey: true })).publicKey
     }
 
     getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.getPublicKey(args)
         }
         return this.proto.getPublicKey(args)
     }
     revealCounterpartyKeyLinkage(args: RevealCounterpartyKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealCounterpartyKeyLinkageResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.revealCounterpartyKeyLinkage(args)
         }
         return this.proto.revealCounterpartyKeyLinkage(args)
     }
     revealSpecificKeyLinkage(args: RevealSpecificKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealSpecificKeyLinkageResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.revealSpecificKeyLinkage(args)
         }
         return this.proto.revealSpecificKeyLinkage(args)
     }
     encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.encrypt(args)
         }
         return this.proto.encrypt(args)
     }
     decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.decrypt(args)
         }
         return this.proto.decrypt(args)
     }
     createHmac(args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateHmacResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.createHmac(args)
         }
         return this.proto.createHmac(args)
     }
     verifyHmac(args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifyHmacResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.verifyHmac(args)
         }
         return this.proto.verifyHmac(args)
     }
     createSignature(args: CreateSignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateSignatureResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.createSignature(args)
         }
         return this.proto.createSignature(args)
     }
     verifySignature(args: VerifySignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifySignatureResult> {
         if (args.privileged) {
-            // TODO
+            if (!this.privilegedKeyManager) {
+                throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+            }
+            return this.privilegedKeyManager.verifySignature(args)
         }
         return this.proto.verifySignature(args)
     }
