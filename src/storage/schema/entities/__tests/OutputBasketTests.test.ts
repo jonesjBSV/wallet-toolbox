@@ -1,6 +1,6 @@
-import { entity, table, sdk } from '../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
-import { OutputBasket } from '../../../src/storage/schema/entities/OutputBasket'
+import { entity, table, sdk } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import { OutputBasket } from '../../../../../src/storage/schema/entities/OutputBasket'
 
 describe('OutputBasket class method tests', () => {
   jest.setTimeout(99999999)

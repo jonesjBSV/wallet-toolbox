@@ -1,5 +1,5 @@
-import { stampLog, stampLogFormat } from '../../../src/utility/stampLog'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { stampLog, stampLogFormat } from '../../../../../src/utility/stampLog'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 
 describe('stampLog and stampLogFormat Tests', () => {
   jest.setTimeout(99999999)

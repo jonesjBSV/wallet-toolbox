@@ -1,4 +1,4 @@
-import { _tu, expectToThrowWERR } from '../../utils/TestUtilsStephen'
+import { _tu, expectToThrowWERR } from '../../utils/TestUtilsWalletStorage'
 import { sdk } from '../../../src/index.client'
 
 describe('getHeight tests', () => {

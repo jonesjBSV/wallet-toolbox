@@ -1,4 +1,4 @@
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
+import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('getHeaderForHeight tests', () => {
   jest.setTimeout(99999999)

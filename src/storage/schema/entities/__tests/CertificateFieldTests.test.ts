@@ -1,6 +1,6 @@
-import { entity, table, sdk } from '../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
-import { CertificateField } from '../../../src/storage/schema/entities/CertificateField'
+import { entity, table, sdk } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import { CertificateField } from '../../../../../src/storage/schema/entities/CertificateField'
 
 describe('CertificateField class method tests', () => {
   jest.setTimeout(99999999)

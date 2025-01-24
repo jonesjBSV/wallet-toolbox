@@ -1,6 +1,6 @@
-import { TxLabel } from '../../../src/storage/schema/entities/TxLabel'
-import { table, entity } from '../../../src'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
+import { TxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
+import { entity, table, sdk } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 
 describe('TxLabel Class Tests', () => {
   jest.setTimeout(99999999) // Extend timeout for database operations

@@ -1,7 +1,6 @@
-import { User } from '../../../src/storage/schema/entities/User'
-import { table, entity } from '../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup, expectToThrowWERR } from '../../utils/TestUtilsStephen'
-
+import { User } from '../../../../../src/storage/schema/entities/User'
+import { entity, table, sdk } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 describe('User class method tests', () => {
   jest.setTimeout(99999999) // Extend timeout for database operations
 

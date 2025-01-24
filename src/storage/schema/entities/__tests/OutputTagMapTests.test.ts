@@ -1,7 +1,7 @@
 import * as bsv from '@bsv/sdk'
-import { entity, table, sdk } from '../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
-import { OutputTagMap } from '../../../src/storage/schema/entities/OutputTagMap'
+import { entity, table, sdk } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import { OutputTagMap } from '../../../../../src/storage/schema/entities/OutputTagMap'
 
 describe('OutputTagMap class method tests', () => {
   jest.setTimeout(99999999)

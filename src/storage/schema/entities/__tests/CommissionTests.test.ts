@@ -1,6 +1,6 @@
-import { entity, table, sdk } from '../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
-import { Commission } from '../../../src/storage/schema/entities/Commission'
+import { entity, table, sdk } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import { Commission } from '../../../../../src/storage/schema/entities/Commission'
 
 describe('Commission class method tests', () => {
   jest.setTimeout(99999999)

@@ -1,6 +1,6 @@
-import { SyncState } from '../../../src/storage/schema/entities/SyncState'
-import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsStephen'
-import { entity, sdk, table } from '../../../src'
+import { SyncState } from '../../../../../src/storage/schema/entities/SyncState'
+import { entity, table, sdk } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 
 describe('SyncState class method tests', () => {
   jest.setTimeout(99999999)
