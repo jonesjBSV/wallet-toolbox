@@ -20,7 +20,7 @@ export interface PendingSignAction {
     reference: string;
     dcr: sdk.StorageCreateActionResult;
     args: sdk.ValidCreateActionArgs;
-    tx: bsv.Transaction;
+    tx: BsvTransaction;
     amount: number;
     pdi: PendingStorageInput[];
 }
@@ -54,31 +54,31 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export class WalletSigner implements sdk.WalletSigner {
     chain: sdk.Chain;
-    keyDeriver: bsv.KeyDeriverApi;
+    keyDeriver: KeyDeriverApi;
     storage: WalletStorageManager;
     _services?: sdk.WalletServices;
     identityKey: string;
     pendingSignActions: Record<string, PendingSignAction>;
-    constructor(chain: sdk.Chain, keyDeriver: bsv.KeyDeriver, storage: WalletStorageManager) 
-    getProtoWallet(): bsv.ProtoWallet 
+    constructor(chain: sdk.Chain, keyDeriver: KeyDeriver, storage: WalletStorageManager) 
+    getProtoWallet(): ProtoWallet 
     setServices(v: sdk.WalletServices) 
     getServices(): sdk.WalletServices 
     getStorageIdentity(): sdk.StorageIdentity 
     getClientChangeKeyPair(): sdk.KeyPair 
     async getChain(): Promise<sdk.Chain> 
-    async listActions(args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult> 
-    async listOutputs(args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult> 
-    async listCertificates(args: bsv.ListCertificatesArgs): Promise<bsv.ListCertificatesResult> 
-    async abortAction(args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult> 
-    async createAction(args: bsv.CreateActionArgs): Promise<bsv.CreateActionResult> 
-    async signAction(args: bsv.SignActionArgs): Promise<bsv.SignActionResult> 
-    async internalizeAction(args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
-    async relinquishOutput(args: bsv.RelinquishOutputArgs): Promise<bsv.RelinquishOutputResult> 
-    async relinquishCertificate(args: bsv.RelinquishCertificateArgs): Promise<bsv.RelinquishCertificateResult> 
-    async acquireDirectCertificate(args: bsv.AcquireCertificateArgs): Promise<bsv.AcquireCertificateResult> 
-    async proveCertificate(args: bsv.ProveCertificateArgs): Promise<bsv.ProveCertificateResult> 
-    async discoverByIdentityKey(args: bsv.DiscoverByIdentityKeyArgs): Promise<bsv.DiscoverCertificatesResult> 
-    async discoverByAttributes(args: bsv.DiscoverByAttributesArgs): Promise<bsv.DiscoverCertificatesResult> 
+    async listActions(args: ListActionsArgs): Promise<ListActionsResult> 
+    async listOutputs(args: ListOutputsArgs): Promise<ListOutputsResult> 
+    async listCertificates(args: ListCertificatesArgs): Promise<ListCertificatesResult> 
+    async abortAction(args: AbortActionArgs): Promise<AbortActionResult> 
+    async createAction(args: CreateActionArgs): Promise<CreateActionResult> 
+    async signAction(args: SignActionArgs): Promise<SignActionResult> 
+    async internalizeAction(args: InternalizeActionArgs): Promise<InternalizeActionResult> 
+    async relinquishOutput(args: RelinquishOutputArgs): Promise<RelinquishOutputResult> 
+    async relinquishCertificate(args: RelinquishCertificateArgs): Promise<RelinquishCertificateResult> 
+    async acquireDirectCertificate(args: AcquireCertificateArgs): Promise<AcquireCertificateResult> 
+    async proveCertificate(args: ProveCertificateArgs): Promise<ProveCertificateResult> 
+    async discoverByIdentityKey(args: DiscoverByIdentityKeyArgs): Promise<DiscoverCertificatesResult> 
+    async discoverByAttributes(args: DiscoverByAttributesArgs): Promise<DiscoverCertificatesResult> 
 }
 ```
 
@@ -108,7 +108,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: acquireDirectCertificate
 
 ```ts
-export async function acquireDirectCertificate(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidAcquireDirectCertificateArgs): Promise<bsv.AcquireCertificateResult> 
+export async function acquireDirectCertificate(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidAcquireDirectCertificateArgs): Promise<AcquireCertificateResult> 
 ```
 
 See also: [AcquireCertificateResult](#interface-acquirecertificateresult), [AuthId](#interface-authid), [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs), [WalletSigner](#class-walletsigner)
@@ -119,7 +119,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: completeSignedTransaction
 
 ```ts
-export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, bsv.SignActionSpend>, signer: WalletSigner): Promise<Transaction> 
+export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, signer: WalletSigner): Promise<Transaction> 
 ```
 
 See also: [PendingSignAction](#interface-pendingsignaction), [SignActionSpend](#interface-signactionspend), [WalletSigner](#class-walletsigner)
@@ -130,7 +130,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: completeSignedTransaction
 
 ```ts
-export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, bsv.SignActionSpend>, ninja: WalletSigner): Promise<bsv.Transaction> 
+export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, ninja: WalletSigner): Promise<BsvTransaction> 
 ```
 
 See also: [PendingSignAction](#interface-pendingsignaction), [SignActionSpend](#interface-signactionspend), [WalletSigner](#class-walletsigner)
@@ -141,7 +141,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: createAction
 
 ```ts
-export async function createAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs): Promise<bsv.CreateActionResult> 
+export async function createAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs): Promise<CreateActionResult> 
 ```
 
 See also: [AuthId](#interface-authid), [CreateActionResult](#interface-createactionresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [WalletSigner](#class-walletsigner)
@@ -177,7 +177,7 @@ When the transaction already exists, the description is updated. The isOutgoing 
 2. Targetting a previously "custom" non-change output converts it into a change output. This alters the transaction's `amount`, and the wallet balance.
 
 ```ts
-export async function internalizeAction(signer: WalletSigner, auth: sdk.AuthId, args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
+export async function internalizeAction(signer: WalletSigner, auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> 
 ```
 
 See also: [AuthId](#interface-authid), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [WalletSigner](#class-walletsigner)
@@ -188,7 +188,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: makeAtomicBeef
 
 ```ts
-export function makeAtomicBeef(tx: bsv.Transaction, beef: number[] | bsv.Beef): number[] 
+export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef): number[] 
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -197,7 +197,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: processAction
 
 ```ts
-export async function processAction(prior: PendingSignAction | undefined, signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs): Promise<bsv.SendWithResult[] | undefined> 
+export async function processAction(prior: PendingSignAction | undefined, signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs): Promise<SendWithResult[] | undefined> 
 ```
 
 See also: [AuthId](#interface-authid), [PendingSignAction](#interface-pendingsignaction), [SendWithResult](#interface-sendwithresult), [ValidProcessActionArgs](#interface-validprocessactionargs), [WalletSigner](#class-walletsigner)
@@ -208,7 +208,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: proveCertificate
 
 ```ts
-export async function proveCertificate(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProveCertificateArgs): Promise<bsv.ProveCertificateResult> 
+export async function proveCertificate(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProveCertificateArgs): Promise<ProveCertificateResult> 
 ```
 
 See also: [AuthId](#interface-authid), [ProveCertificateResult](#interface-provecertificateresult), [ValidProveCertificateArgs](#interface-validprovecertificateargs), [WalletSigner](#class-walletsigner)
@@ -219,7 +219,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: signAction
 
 ```ts
-export async function signAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs): Promise<bsv.SignActionResult> 
+export async function signAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs): Promise<SignActionResult> 
 ```
 
 See also: [AuthId](#interface-authid), [SignActionResult](#interface-signactionresult), [ValidSignActionArgs](#interface-validsignactionargs), [WalletSigner](#class-walletsigner)
