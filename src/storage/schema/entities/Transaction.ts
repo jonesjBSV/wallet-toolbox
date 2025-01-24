@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as bsv from '@bsv/sdk'
-import { arraysEqual, entity, optionalArraysEqual, sdk, table, verifyId, verifyOneOrNone } from '../../../index.client'
+import { Transaction as BsvTransaction, TransactionInput } from '@bsv/sdk'
+import { entity, optionalArraysEqual, sdk, table, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase } from '.'
 
 export class Transaction extends EntityBase<table.Transaction> {
@@ -8,16 +8,16 @@ export class Transaction extends EntityBase<table.Transaction> {
    * @returns @bsv/sdk Transaction object from parsed rawTx.
    * If rawTx is undefined, returns undefined.
    */
-  getBsvTx(): bsv.Transaction | undefined {
+  getBsvTx(): BsvTransaction | undefined {
     if (!this.rawTx) return undefined
-    return bsv.Transaction.fromBinary(this.rawTx)
+    return BsvTransaction.fromBinary(this.rawTx)
   }
 
   /**
    * @returns array of @bsv/sdk TransactionInput objects from parsed rawTx.
    * If rawTx is undefined, an empty array is returned.
    */
-  getBsvTxIns(): bsv.TransactionInput[] {
+  getBsvTxIns(): TransactionInput[] {
     const tx = this.getBsvTx()
     if (!tx) return []
     return tx.inputs
