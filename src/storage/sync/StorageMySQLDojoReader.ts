@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Utils } from '@bsv/sdk'
 import {
     asArray,
     asString,
@@ -629,6 +629,6 @@ function convertSyncStatus(status: DojoSyncStatus) : sdk.SyncStatus {
 
 function forceToBase64(s?: string | null) : string {
     if (!s) return randomBytesBase64(12);
-    if (isHexString(s)) return bsv.Utils.toBase64(asArray(s.trim()));
+    if (isHexString(s)) return Utils.toBase64(asArray(s.trim()));
     return s.trim()
 }

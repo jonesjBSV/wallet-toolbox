@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { AbortActionArgs, AbortActionResult, Beef, InternalizeActionArgs, InternalizeActionResult, ListActionsArgs, ListActionsResult, ListCertificatesResult, ListOutputsArgs, ListOutputsResult, RelinquishCertificateArgs, RelinquishOutputArgs, SendWithResult } from '@bsv/sdk'
 import { sdk, table } from "../index.client";
 
 /**
@@ -28,24 +28,24 @@ export interface WalletStorage {
 
    findOrInsertUser(identityKey: string) : Promise<{ user: table.User, isNew: boolean}>
 
-   abortAction(args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult>
+   abortAction(args: AbortActionArgs): Promise<AbortActionResult>
    createAction(args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult>
    processAction(args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults>
-   internalizeAction(args: bsv.InternalizeActionArgs) : Promise<bsv.InternalizeActionResult>
+   internalizeAction(args: InternalizeActionArgs) : Promise<InternalizeActionResult>
 
    findCertificates(args: sdk.FindCertificatesArgs ): Promise<table.Certificate[]>
    findOutputBaskets(args: sdk.FindOutputBasketsArgs ): Promise<table.OutputBasket[]>
    findOutputs(args: sdk.FindOutputsArgs ): Promise<table.Output[]>
    findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]>
 
-   listActions(args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult>
-   listCertificates(args: sdk.ValidListCertificatesArgs): Promise<bsv.ListCertificatesResult>
-   listOutputs(args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult>
+   listActions(args: ListActionsArgs): Promise<ListActionsResult>
+   listCertificates(args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>
+   listOutputs(args: ListOutputsArgs): Promise<ListOutputsResult>
 
    insertCertificate(certificate: table.CertificateX): Promise<number>
 
-   relinquishCertificate(args: bsv.RelinquishCertificateArgs) : Promise<number>
-   relinquishOutput(args: bsv.RelinquishOutputArgs) : Promise<number>
+   relinquishCertificate(args: RelinquishCertificateArgs) : Promise<number>
+   relinquishOutput(args: RelinquishOutputArgs) : Promise<number>
 
 }
 
@@ -77,15 +77,15 @@ export interface WalletStorageWriter extends WalletStorageReader {
 
    findOrInsertUser(identityKey: string) : Promise<{ user: table.User, isNew: boolean}>
 
-   abortAction(auth: sdk.AuthId, args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult>
+   abortAction(auth: sdk.AuthId, args: AbortActionArgs): Promise<AbortActionResult>
    createAction(auth: sdk.AuthId, args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult>
    processAction(auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults>
-   internalizeAction(auth: sdk.AuthId, args: bsv.InternalizeActionArgs) : Promise<bsv.InternalizeActionResult>
+   internalizeAction(auth: sdk.AuthId, args: InternalizeActionArgs) : Promise<InternalizeActionResult>
 
    insertCertificateAuth(auth: sdk.AuthId, certificate: table.CertificateX): Promise<number>
 
-   relinquishCertificate(auth: sdk.AuthId, args: bsv.RelinquishCertificateArgs) : Promise<number>
-   relinquishOutput(auth: sdk.AuthId, args: bsv.RelinquishOutputArgs) : Promise<number>
+   relinquishCertificate(auth: sdk.AuthId, args: RelinquishCertificateArgs) : Promise<number>
+   relinquishOutput(auth: sdk.AuthId, args: RelinquishOutputArgs) : Promise<number>
 }
 
 export interface WalletStorageReader {
@@ -99,9 +99,9 @@ export interface WalletStorageReader {
    findOutputsAuth(auth: sdk.AuthId, args: sdk.FindOutputsArgs ): Promise<table.Output[]>
    findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]>
 
-   listActions(auth: sdk.AuthId, args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult>
-   listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<bsv.ListCertificatesResult>
-   listOutputs(auth: sdk.AuthId, args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult>
+   listActions(auth: sdk.AuthId, args: ListActionsArgs): Promise<ListActionsResult>
+   listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>
+   listOutputs(auth: sdk.AuthId, args: ListOutputsArgs): Promise<ListOutputsResult>
 }
 
 export interface AuthId {
@@ -188,7 +188,7 @@ export interface StorageProcessActionArgs {
 }
 
 export interface StorageProcessActionResults {
-   sendWithResults?: bsv.SendWithResult[]
+   sendWithResults?: SendWithResult[]
    log?: string
 }
 
@@ -246,7 +246,7 @@ export interface StorageGetBeefOptions {
    /** list of txids to be included as txidOnly if referenced. Validity is known to caller. */
    knownTxids?: string[]
    /** optional. If defined, raw transactions and merkle paths required by txid are merged to this instance and returned. Otherwise a new Beef is constructed and returned. */
-   mergeToBeef?: bsv.Beef | number[]
+   mergeToBeef?: Beef | number[]
    /** optional. Default is false. `dojo.storage` is used for raw transaction and merkle proof lookup */
    ignoreStorage?: boolean
    /** optional. Default is false. `dojo.getServices` is used for raw transaction and merkle proof lookup */

@@ -1,4 +1,4 @@
-import * as bsv from "@bsv/sdk"
+import { ListCertificatesResult, OriginatorDomainNameStringUnder250Bytes } from "@bsv/sdk"
 import { StorageProvider, table } from "../index.client"
 import { sdk } from "../../index.client"
 
@@ -6,9 +6,9 @@ export async function listCertificates(
     storage: StorageProvider,
     auth: sdk.AuthId,
     vargs: sdk.ValidListCertificatesArgs,
-    originator?: bsv.OriginatorDomainNameStringUnder250Bytes,
+    originator?: OriginatorDomainNameStringUnder250Bytes,
 )
-: Promise<bsv.ListCertificatesResult>
+: Promise<ListCertificatesResult>
 {
     const paged: sdk.Paged = { limit: vargs.limit, offset: vargs.offset }
 
@@ -35,7 +35,7 @@ export async function listCertificates(
                 masterKeyring: Object.fromEntries(fields.map(f => ([f.fieldName, f.masterKey])))
             }
         }))
-        const r: bsv.ListCertificatesResult = {
+        const r: ListCertificatesResult = {
             totalCertificates: 0,
             certificates: certsWithFields.map(cwf => ({
                 type: cwf.type,

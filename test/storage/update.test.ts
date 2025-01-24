@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Base64String } from '@bsv/sdk'
 import { _tu, TestSetup1 } from '../utils/TestUtilsWalletStorage'
 import { sdk, StorageProvider, StorageKnex, table, verifyOne } from '../../src/index.all'
 import { log, normalizeDate, setLogging, triggerForeignKeyConstraintError, triggerUniqueConstraintError, updateTable, validateUpdateTime, verifyValues } from '../utils/testUtilsUpdate'
@@ -1687,7 +1687,7 @@ describe('update tests', () => {
             transactionId: record.transactionId,
             userId: record.userId ?? 1, // Default userId if missing
             provenTxId: 1, // Example value for update
-            reference: `updated_reference_string_${record.transactionId}==` as bsv.Base64String, // Ensure unique reference value
+            reference: `updated_reference_string_${record.transactionId}==` as Base64String, // Ensure unique reference value
             status: 'confirmed' as sdk.TransactionStatus, // Example status
             txid: `updated_txid_example_${record.transactionId}`, // Ensure unique txid
             created_at: new Date('2024-12-30T23:00:00Z'),

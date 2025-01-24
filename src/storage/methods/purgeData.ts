@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef } from '@bsv/sdk'
 import { Knex } from "knex"
 import { table } from "../index.client"
 import { sdk } from "../../index.client"
@@ -108,7 +108,7 @@ export async function purgeData(storage: StorageKnex, params: sdk.PurgeParams, t
         const age = params.purgeSpentAge || defaultAge
         const before = toSqlWhereDate(new Date(Date.now() - age))
 
-        const beef = new bsv.Beef()
+        const beef = new Beef()
         const utxos = await storage.findOutputs({ partial: { spendable: true }, txStatus: ['sending', 'unproven', 'completed', 'nosend']})
         for (const utxo of utxos) {
             // Figure out all the txids required to prove the validity of this utxo and merge proofs into beef.

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as bsv from '@bsv/sdk'
+import { Beef, CreateActionArgs, SignActionArgs } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
 
 import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
@@ -21,7 +21,7 @@ describe.skip('createActionbob1 test', () => {
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('createActionTests'))
     for (const { services } of ctxs) {
       // Mock the services postBeef to avoid actually broadcasting new transactions.
-      services.postBeef = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+      services.postBeef = jest.fn().mockImplementation((beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
         const r: sdk.PostBeefResult = {
           name: 'mock',
           status: 'success',
@@ -29,7 +29,7 @@ describe.skip('createActionbob1 test', () => {
         }
         return Promise.resolve([r])
       })
-      services.postTxs = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+      services.postTxs = jest.fn().mockImplementation((beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
         const r: sdk.PostBeefResult = {
           name: 'mock',
           status: 'success',
@@ -50,7 +50,7 @@ describe.skip('createActionbob1 test', () => {
     for (const { wallet } of ctxs) {
       {
         const log = `\n${testName()}\n`
-        const args: bsv.CreateActionArgs = {
+        const args: CreateActionArgs = {
           description: ''
         }
         // description is too short...
@@ -81,7 +81,7 @@ describe.skip('createActionbob1 test', () => {
       let noSendChange: string[] | undefined
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           outputs: [{ satoshis: outputSatoshis, lockingScript: _tu.getLockP2PKH(kp.address).toHex(), outputDescription: 'pay fred' }],
           options: {
@@ -103,7 +103,7 @@ describe.skip('createActionbob1 test', () => {
         const st = cr.signableTransaction!
         //expect(st.reference).toBeTruthy()
         // const tx = Transaction.fromAtomicBEEF(st.tx) // Transaction doesn't support V2 Beef yet.
-        const atomicBeef = bsv.Beef.fromBinary(st.tx)
+        const atomicBeef = Beef.fromBinary(st.tx)
         const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
         for (const input of tx.inputs) {
           expect(atomicBeef.findTxid(input.sourceTXID!)).toBeTruthy()
@@ -113,7 +113,7 @@ describe.skip('createActionbob1 test', () => {
         //expect(st.amount > 242 && st.amount < 300).toBe(true)
 
         // sign and complete
-        const signArgs: bsv.SignActionArgs = {
+        const signArgs: SignActionArgs = {
           reference: st.reference,
           spends: {},
           options: {
@@ -133,7 +133,7 @@ describe.skip('createActionbob1 test', () => {
         const unlock = _tu.getUnlockP2PKH(kp.privateKey, outputSatoshis)
         const unlockingScriptLength = await unlock.estimateLength()
 
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           inputs: [
             {
@@ -157,14 +157,14 @@ describe.skip('createActionbob1 test', () => {
         expect(cr.signableTransaction).toBeTruthy()
         const st = cr.signableTransaction!
         expect(st.reference).toBeTruthy()
-        const atomicBeef = bsv.Beef.fromBinary(st.tx)
+        const atomicBeef = Beef.fromBinary(st.tx)
         const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
 
         tx.inputs[0].unlockingScriptTemplate = unlock
         await tx.sign()
         const unlockingScript = tx.inputs[0].unlockingScript!.toHex()
 
-        const signArgs: bsv.SignActionArgs = {
+        const signArgs: SignActionArgs = {
           reference: st.reference,
           spends: { 0: { unlockingScript } },
           options: {
@@ -178,7 +178,7 @@ describe.skip('createActionbob1 test', () => {
         txid2 = sr.txid!
       }
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           options: {
             sendWith: [txid1, txid2]

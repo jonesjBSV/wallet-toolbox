@@ -1,4 +1,4 @@
-import * as bsv from "@bsv/sdk"
+import { Transaction as BsvTransaction, ActionStatus, ListActionsResult, WalletAction, WalletActionOutput, WalletActionInput } from "@bsv/sdk"
 import { table } from "../index.client"
 import { asString, sdk, verifyOne } from "../../index.client"
 import { StorageKnex } from "../StorageKnex"
@@ -8,14 +8,14 @@ export async function listActions(
     auth: sdk.AuthId,
     vargs: sdk.ValidListActionsArgs
 )
-: Promise<bsv.ListActionsResult>
+: Promise<ListActionsResult>
 {
     const limit = vargs.limit
     const offset = vargs.offset
 
     const k = storage.toDb(undefined)
 
-    const r: bsv.ListActionsResult = {
+    const r: ListActionsResult = {
         totalActions: 0,
         actions: []
     }
@@ -94,10 +94,10 @@ export async function listActions(
     }
 
     for (const tx of txs) {
-        const wtx: bsv.WalletAction = {
+        const wtx: WalletAction = {
             txid: tx.txid || '',
             satoshis: tx.satoshis || 0,
-            status: <bsv.ActionStatus>tx.status!,
+            status: <ActionStatus>tx.status!,
             isOutgoing: !!tx.isOutgoing,
             description: tx.description || '',
             version: tx.version || 0,
@@ -121,7 +121,7 @@ export async function listActions(
                 action.outputs = []
                 for (const o of outputs) {
                     await storage.extendOutput(o, true, true)
-                    const wo: bsv.WalletActionOutput = {
+                    const wo: WalletActionOutput = {
                         satoshis: o.satoshis || 0,
                         spendable: !!o.spendable,
                         tags: o.tags?.map(t => t.tag) || [],
@@ -139,9 +139,9 @@ export async function listActions(
                 action.inputs = []
                 if (inputs.length > 0) {
                     const rawTx = await storage.getRawTxOfKnownValidTransaction(tx.txid)
-                    let bsvTx: bsv.Transaction | undefined = undefined
+                    let bsvTx: BsvTransaction | undefined = undefined
                     if (rawTx) {
-                        bsvTx = bsv.Transaction.fromBinary(rawTx)
+                        bsvTx = BsvTransaction.fromBinary(rawTx)
                     }
                     for (const o of inputs) {
                         await storage.extendOutput(o, true, true)
@@ -149,7 +149,7 @@ export async function listActions(
                             v.sourceTXID === o.txid
                             && v.sourceOutputIndex === o.vout
                         )
-                        const wo: bsv.WalletActionInput = {
+                        const wo: WalletActionInput = {
                             sourceOutpoint: `${o.txid}.${o.vout}`,
                             sourceSatoshis: o.satoshis || 0,
                             inputDescription: o.outputDescription || '',

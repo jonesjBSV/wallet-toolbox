@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { CreateActionArgs, CreateActionOutput, CreateActionResult, KeyDeriver, P2PKH, PrivateKey, PublicKey, SignActionArgs, SignActionResult, Utils, WalletCertificate, WalletInterface } from '@bsv/sdk'
 import path from 'path'
 import { promises as fsp } from 'fs'
 import { asArray, randomBytesBase64, randomBytesHex, sdk, StorageProvider, StorageKnex, StorageSyncReader, table, verifyTruthy, Wallet, Monitor, MonitorOptions, Services, WalletSigner, WalletStorageManager, verifyOne, StorageClient } from '../../src/index.all'
@@ -50,12 +50,12 @@ export abstract class TestUtilsWalletStorage {
     address: string,
     satoshis: number,
     noSendChange: string[] | undefined,
-    wallet: bsv.Wallet
+    wallet: WalletInterface
   ): Promise<{
     noSendChange: string[]
     txid: string
-    cr: bsv.CreateActionResult
-    sr: bsv.SignActionResult
+    cr: CreateActionResult
+    sr: SignActionResult
   }> {
     return await _tu.createNoSendP2PKHTestOutpoints(1, address, satoshis, noSendChange, wallet)
   }
@@ -65,14 +65,14 @@ export abstract class TestUtilsWalletStorage {
     address: string,
     satoshis: number,
     noSendChange: string[] | undefined,
-    wallet: bsv.Wallet
+    wallet: WalletInterface
   ): Promise<{
     noSendChange: string[]
     txid: string
-    cr: bsv.CreateActionResult
-    sr: bsv.SignActionResult
+    cr: CreateActionResult
+    sr: SignActionResult
   }> {
-    const outputs: bsv.CreateActionOutput[] = []
+    const outputs: CreateActionOutput[] = []
     for (let i = 0; i < count; i++) {
       outputs.push({
         basket: `test-p2pkh-output-${i}`,
@@ -82,7 +82,7 @@ export abstract class TestUtilsWalletStorage {
       })
     }
 
-    const createArgs: bsv.CreateActionArgs = {
+    const createArgs: CreateActionArgs = {
       description: `to ${address}`,
       outputs,
       options: {
@@ -114,7 +114,7 @@ export abstract class TestUtilsWalletStorage {
     // Spending authorization check happens here...
     //expect(st.amount > 242 && st.amount < 300).toBe(true)
     // sign and complete
-    const signArgs: bsv.SignActionArgs = {
+    const signArgs: SignActionArgs = {
       reference: st.reference,
       spends: {},
       options: {
@@ -131,23 +131,23 @@ export abstract class TestUtilsWalletStorage {
     return { noSendChange, txid, cr, sr }
   }
 
-  static getKeyPair(priv?: string | bsv.PrivateKey): TestKeyPair {
-    if (priv === undefined) priv = bsv.PrivateKey.fromRandom()
-    else if (typeof priv === 'string') priv = new bsv.PrivateKey(priv, 'hex')
+  static getKeyPair(priv?: string | PrivateKey): TestKeyPair {
+    if (priv === undefined) priv = PrivateKey.fromRandom()
+    else if (typeof priv === 'string') priv = new PrivateKey(priv, 'hex')
 
-    const pub = bsv.PublicKey.fromPrivateKey(priv)
+    const pub = PublicKey.fromPrivateKey(priv)
     const address = pub.toAddress()
     return { privateKey: priv, publicKey: pub, address }
   }
 
   static getLockP2PKH(address: string) {
-    const p2pkh = new bsv.P2PKH()
+    const p2pkh = new P2PKH()
     const lock = p2pkh.lock(address)
     return lock
   }
 
-  static getUnlockP2PKH(priv: bsv.PrivateKey, satoshis: number) {
-    const p2pkh = new bsv.P2PKH()
+  static getUnlockP2PKH(priv: PrivateKey, satoshis: number) {
+    const p2pkh = new P2PKH()
     const lock = _tu.getLockP2PKH(_tu.getKeyPair(priv).address)
     // Prepare to pay with SIGHASH_ALL and without ANYONE_CAN_PAY.
     // In otherwords:
@@ -161,9 +161,9 @@ export abstract class TestUtilsWalletStorage {
   static async createWalletOnly(args: { chain?: sdk.Chain; rootKeyHex?: string; active?: sdk.WalletStorageProvider; backups?: sdk.WalletStorageProvider[] }): Promise<TestWalletOnly> {
     args.chain ||= 'test'
     args.rootKeyHex ||= '1'.repeat(64)
-    const rootKey = bsv.PrivateKey.fromHex(args.rootKeyHex)
+    const rootKey = PrivateKey.fromHex(args.rootKeyHex)
     const identityKey = rootKey.toPublicKey().toString()
-    const keyDeriver = new bsv.KeyDeriver(rootKey)
+    const keyDeriver = new KeyDeriver(rootKey)
     const chain = args.chain
     const storage = new WalletStorageManager(identityKey, args.active, args.backups)
     if (storage.stores.length > 0) await storage.makeAvailable()
@@ -171,7 +171,7 @@ export abstract class TestUtilsWalletStorage {
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
-    const wallet = new Wallet(signer, keyDeriver, services, monitor)
+    const wallet = new Wallet(signer, services, monitor)
     const r: TestWalletOnly = {
       rootKey,
       identityKey,
@@ -412,8 +412,8 @@ export abstract class TestUtilsWalletStorage {
     const chain: sdk.Chain = 'test'
     const rootKeyHex = _tu.legacyRootKeyHex
     const identityKey = '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
-    const rootKey = bsv.PrivateKey.fromHex(rootKeyHex)
-    const keyDeriver = new bsv.KeyDeriver(rootKey)
+    const rootKey = PrivateKey.fromHex(rootKeyHex)
+    const keyDeriver = new KeyDeriver(rootKey)
     const activeStorage = new StorageKnex({ chain, knex: walletKnex, commissionSatoshis: 0, commissionPubKeyHex: undefined, feeModel: { model: 'sat/kb', value: 1 } })
     if (useReader) await activeStorage.dropAllData()
     await activeStorage.migrate(databaseName, identityKey)
@@ -431,7 +431,7 @@ export abstract class TestUtilsWalletStorage {
     const services = new Services(chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
-    const wallet = new Wallet(signer, keyDeriver, services, monitor)
+    const wallet = new Wallet(signer, services, monitor)
     const userId = verifyTruthy(await activeStorage.findUserByIdentityKey(identityKey)).userId
     const r: TestWallet<{}> = {
       rootKey,
@@ -450,14 +450,14 @@ export abstract class TestUtilsWalletStorage {
     return r
   }
 
-  static makeSampleCert(subject?: string): { cert: bsv.WalletCertificate, subject: string, certifier: bsv.PrivateKey }
+  static makeSampleCert(subject?: string): { cert: WalletCertificate, subject: string, certifier: PrivateKey }
   {
-      subject ||= bsv.PrivateKey.fromRandom().toPublicKey().toString()
-      const certifier = bsv.PrivateKey.fromRandom()
-      const verifier = bsv.PrivateKey.fromRandom()
-      const cert: bsv.WalletCertificate = {
-          type: bsv.Utils.toBase64(new Array(32).fill(1)),
-          serialNumber: bsv.Utils.toBase64(new Array(32).fill(2)),
+      subject ||= PrivateKey.fromRandom().toPublicKey().toString()
+      const certifier = PrivateKey.fromRandom()
+      const verifier = PrivateKey.fromRandom()
+      const cert: WalletCertificate = {
+          type: Utils.toBase64(new Array(32).fill(1)),
+          serialNumber: Utils.toBase64(new Array(32).fill(2)),
           revocationOutpoint: 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef.1',
           subject,
           certifier: certifier.toPublicKey().toString(),
@@ -826,7 +826,7 @@ export abstract class TestUtilsWalletStorage {
   static mockPostServicesAsError(ctxs: TestWalletOnly[]): void {
     mockPostServices(ctxs, 'error')
   }
-  static mockPostServicesAsCallback(ctxs: TestWalletOnly[], callback: (beef: bsv.Beef, txids: string[]) => 'success' | 'error'): void {
+  static mockPostServicesAsCallback(ctxs: TestWalletOnly[], callback: (beef: Beef, txids: string[]) => 'success' | 'error'): void {
     mockPostServices(ctxs, 'error', callback)
   }
 
@@ -889,9 +889,9 @@ export interface TestWallet<T> extends TestWalletOnly {
   setup?: T
   userId: number
 
-  rootKey: bsv.PrivateKey
+  rootKey: PrivateKey
   identityKey: string
-  keyDeriver: bsv.KeyDeriver
+  keyDeriver: KeyDeriver
   chain: sdk.Chain
   storage: WalletStorageManager
   signer: WalletSigner
@@ -901,9 +901,9 @@ export interface TestWallet<T> extends TestWalletOnly {
 }
 
 export interface TestWalletOnly {
-  rootKey: bsv.PrivateKey
+  rootKey: PrivateKey
   identityKey: string
-  keyDeriver: bsv.KeyDeriver
+  keyDeriver: KeyDeriver
   chain: sdk.Chain
   storage: WalletStorageManager
   signer: WalletSigner
@@ -936,15 +936,15 @@ export async function expectToThrowWERR<R>(expectedClass: new (...args: any[]) =
 }
 
 export type TestKeyPair = {
-  privateKey: bsv.PrivateKey
-  publicKey: bsv.PublicKey
+  privateKey: PrivateKey
+  publicKey: PublicKey
   address: string
 }
 
-function mockPostServices(ctxs: TestWalletOnly[], status: 'success' | 'error' = 'success', callback?: (beef: bsv.Beef, txids: string[]) => 'success' | 'error'): void {
+function mockPostServices(ctxs: TestWalletOnly[], status: 'success' | 'error' = 'success', callback?: (beef: Beef, txids: string[]) => 'success' | 'error'): void {
   for (const { services } of ctxs) {
     // Mock the services postBeef to avoid actually broadcasting new transactions.
-    services.postBeef = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+    services.postBeef = jest.fn().mockImplementation((beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
       status = !callback ? status : callback(beef, txids)
       const r: sdk.PostBeefResult = {
         name: 'mock',
@@ -953,7 +953,7 @@ function mockPostServices(ctxs: TestWalletOnly[], status: 'success' | 'error' = 
       }
       return Promise.resolve([r])
     })
-    services.postTxs = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+    services.postTxs = jest.fn().mockImplementation((beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
       const r: sdk.PostBeefResult = {
         name: 'mock',
         status: 'success',

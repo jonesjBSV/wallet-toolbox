@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import * as bsv from '@bsv/sdk'
+import { Transaction as BsvTransaction, WalletPayment, BasketInsertion, InternalizeActionArgs, InternalizeActionResult, TransactionOutput, Beef } from '@bsv/sdk'
 import { entity, randomBytesBase64, sdk, stampLog, StorageProvider, table, verifyId, verifyOne, verifyOneOrNone } from "../../index.client"
 
-export interface StorageInternalizeActionResult extends bsv.InternalizeActionResult {
+export interface StorageInternalizeActionResult extends InternalizeActionResult {
   /** true if internalizing outputs on an existing storage transaction */
   isMerge: boolean
   /** txid of transaction being internalized */
@@ -41,8 +41,8 @@ export interface StorageInternalizeActionResult extends bsv.InternalizeActionRes
 export async function internalizeAction(
     storage: StorageProvider,
     auth: sdk.AuthId,
-    args: bsv.InternalizeActionArgs
-) : Promise<bsv.InternalizeActionResult>
+    args: InternalizeActionArgs
+) : Promise<InternalizeActionResult>
 {
 
   const ctx = new InternalizeActionContext(storage, auth, args)
@@ -57,20 +57,20 @@ export async function internalizeAction(
 
 }
 
-interface BasketInsertion extends bsv.BasketInsertion {
+interface BasketInsertionX extends BasketInsertion {
   /** incoming transaction output index */
   vout: number
   /** incoming transaction output */
-  txo: bsv.TransactionOutput
+  txo: TransactionOutput
   /** if valid, corresponding storage output  */
   eo?: table.Output
 }
 
-interface WalletPayment extends bsv.WalletPayment {
+interface WalletPaymentX extends WalletPayment {
   /** incoming transaction output index */
   vout: number
   /** incoming transaction output */
-  txo: bsv.TransactionOutput
+  txo: TransactionOutput
   /** if valid, corresponding storage output  */
   eo?: table.Output
   /** corresponds to an existing change output */
@@ -81,9 +81,9 @@ class InternalizeActionContext {
   /** result to be returned */
   r: StorageInternalizeActionResult
   /** the parsed input AtomicBEEF */
-  ab: bsv.Beef
+  ab: Beef
   /** the incoming transaction extracted from AtomicBEEF */
-  tx: bsv.Transaction
+  tx: BsvTransaction
   /** the user's change basket */
   changeBasket: table.OutputBasket
   /** cached baskets referenced by basket insertions */
@@ -93,16 +93,16 @@ class InternalizeActionContext {
   /** existing outputs */
   eos: table.Output[]
   /** all the basket insertions from incoming outputs array */
-  basketInsertions: BasketInsertion[]
+  basketInsertions: BasketInsertionX[]
   /** all the wallet payments from incoming outputs array */
-  walletPayments: WalletPayment[]
+  walletPayments: WalletPaymentX[]
   userId: number
   vargs: sdk.ValidInternalizeActionArgs
 
   constructor(
     public storage: StorageProvider,
     public auth: sdk.AuthId,
-    public args: bsv.InternalizeActionArgs,
+    public args: InternalizeActionArgs,
   ) {
     this.vargs = sdk.validateInternalizeActionArgs(args)
     this.userId = auth.userId!
@@ -112,8 +112,8 @@ class InternalizeActionContext {
       txid: "",
       satoshis: 0
     }
-    this.ab = new bsv.Beef()
-    this.tx = new bsv.Transaction()
+    this.ab = new Beef()
+    this.tx = new BsvTransaction()
     this.changeBasket = {} as table.OutputBasket
     this.baskets = {}
     this.basketInsertions = []
@@ -205,7 +205,7 @@ class InternalizeActionContext {
   }
 
   async validateAtomicBeef(atomicBeef: number[]) {
-    const ab = bsv.Beef.fromBinary(atomicBeef);
+    const ab = Beef.fromBinary(atomicBeef);
     const txValid = await ab.verify(await this.storage.getServices().getChainTracker(), false);
     if (!txValid || !ab.atomicTxid)
       throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF');
@@ -313,13 +313,13 @@ class InternalizeActionContext {
     }
   }
 
-  async addBasketTags(basket: BasketInsertion, outputId: number) {
+  async addBasketTags(basket: BasketInsertionX, outputId: number) {
     for (const tag of basket.tags || []) {
       await this.storage.tagOutput({ outputId, userId: this.userId }, tag);
     }
   }
 
-  async storeNewWalletPaymentForOutput(transactionId: number, payment: WalletPayment): Promise<void> {
+  async storeNewWalletPaymentForOutput(transactionId: number, payment: WalletPaymentX): Promise<void> {
     const now = new Date()
     const txOut: table.Output = {
       created_at: now,
@@ -350,7 +350,7 @@ class InternalizeActionContext {
     payment.eo = txOut
   }
 
-  async mergeWalletPaymentForOutput(transactionId: number, payment: WalletPayment) {
+  async mergeWalletPaymentForOutput(transactionId: number, payment: WalletPaymentX) {
     const outputId = payment.eo!.outputId!
     const update: Partial<table.Output> = {
       basketId: this.changeBasket.basketId,
@@ -367,7 +367,7 @@ class InternalizeActionContext {
     payment.eo = {...payment.eo!, ...update}
   }
 
-  async mergeBasketInsertionForOutput(transactionId: number, basket: BasketInsertion) {
+  async mergeBasketInsertionForOutput(transactionId: number, basket: BasketInsertionX) {
     const outputId = basket.eo!.outputId!
     const update: Partial<table.Output> = {
       basketId: (await this.getBasket(basket.basket)).basketId,
@@ -384,7 +384,7 @@ class InternalizeActionContext {
     basket.eo = {...basket.eo!, ...update}
   }
 
-  async storeNewBasketInsertionForOutput(transactionId: number, basket: BasketInsertion): Promise<void> {
+  async storeNewBasketInsertionForOutput(transactionId: number, basket: BasketInsertionX): Promise<void> {
     const now = new Date()
     const txOut: table.Output = {
       created_at: now,

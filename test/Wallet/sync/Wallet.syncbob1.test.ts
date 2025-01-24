@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { CreateActionArgs, CreateActionResult, InternalizeActionArgs } from '@bsv/sdk'
 import { sdk, StorageKnex, StorageSyncReader, wait, Wallet, WalletStorageManager } from '../../../src/index.all'
 import { _tu, TestSetup1Wallet, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
@@ -97,12 +97,12 @@ describe.skip('Wallet sync tests', () => {
       fred.storage.addWalletStorageProvider(backup)
       const promises: Promise<number>[] = []
       const result: { i: number; r: any }[] = []
-      const crs1: bsv.CreateActionResult[] = []
+      const crs1: CreateActionResult[] = []
       const maxI = 6
 
       // Create 1st set of outputs for writer internaliseAction
       for (let i = 0; i < maxI; i++) {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           outputs: [{ satoshis: 1, lockingScript: _tu.getLockP2PKH(fredsAddress).toHex(), outputDescription: 'pay fred' }],
           options: {
@@ -140,13 +140,13 @@ describe.skip('Wallet sync tests', () => {
       storage.addWalletStorageProvider(backup)
       const promises: Promise<number>[] = []
       const result: { i: number; r: any }[] = []
-      const crs1: bsv.CreateActionResult[] = []
-      const crs2: bsv.CreateActionResult[] = []
+      const crs1: CreateActionResult[] = []
+      const crs2: CreateActionResult[] = []
       const maxI = 7
 
       // Create 1st set of outputs for writer internaliseAction
       for (let i = 0; i < maxI; i++) {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           outputs: [{ satoshis: 1, lockingScript: _tu.getLockP2PKH(fredsAddress).toHex(), outputDescription: 'pay fred' }],
           options: {
@@ -166,9 +166,9 @@ describe.skip('Wallet sync tests', () => {
       expect(result).toBeTruthy()
     }
   })
-  async function makeWriter2(fred: TestWalletNoSetup, cr: bsv.CreateActionResult, i: number, result: { i: number; r: any }[]): Promise<number> {
+  async function makeWriter2(fred: TestWalletNoSetup, cr: CreateActionResult, i: number, result: { i: number; r: any }[]): Promise<number> {
     log(`called ${i}`)
-    const internalizeArgs: bsv.InternalizeActionArgs = {
+    const internalizeArgs: InternalizeActionArgs = {
       tx: cr.tx!,
       outputs: [
         {

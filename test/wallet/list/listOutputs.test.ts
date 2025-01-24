@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as bsv from '@bsv/sdk'
+import { BasketStringUnder300Bytes, Beef, ListOutputsArgs, ListOutputsResult, OriginatorDomainNameStringUnder250Bytes, OutputTagStringUnder300Bytes } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
 import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
@@ -24,7 +24,7 @@ describe('listOutputs test', () => {
       await ctx.storage.destroy()
     }
   })
-  const logResult = (r: bsv.ListOutputsResult): string => {
+  const logResult = (r: ListOutputsResult): string => {
     const truncate = (s: string) => (s.length > 80 ? s.slice(0, 77) + '...' : s)
 
     let log = `totalOutputs=${r.totalOutputs} outputs=${r.outputs.length}\n`
@@ -37,7 +37,7 @@ describe('listOutputs test', () => {
       if (o.lockingScript) log += `  lockingScript: ${o.lockingScript.length} ${truncate(o.lockingScript)}\n`
     }
     if (r.BEEF) {
-      const beef = bsv.Beef.fromBinary(r.BEEF)
+      const beef = Beef.fromBinary(r.BEEF)
       log += `BEEF:\n`
       log += beef.toLogString()
     }
@@ -46,11 +46,11 @@ describe('listOutputs test', () => {
 
   test('0 invalid params with originator', async () => {
     for (const { wallet } of ctxs) {
-      const invalidArgs: bsv.ListOutputsArgs[] = [
+      const invalidArgs: ListOutputsArgs[] = [
         { basket: 'default', tags: [] },
-        { basket: '' as bsv.BasketStringUnder300Bytes },
-        { basket: '   ' as bsv.BasketStringUnder300Bytes },
-        { basket: 'default', tags: [''] as bsv.OutputTagStringUnder300Bytes[] },
+        { basket: '' as BasketStringUnder300Bytes },
+        { basket: '   ' as BasketStringUnder300Bytes },
+        { basket: 'default', tags: [''] as OutputTagStringUnder300Bytes[] },
         { basket: 'default', limit: 0 },
         { basket: 'default', limit: -1 },
         { basket: 'default', limit: 10001 },
@@ -69,7 +69,7 @@ describe('listOutputs test', () => {
         for (const originator of invalidOriginators) {
           if (!noLog) console.log('Testing args:', args, 'with originator:', originator)
           try {
-            await wallet.listOutputs(args, originator as bsv.OriginatorDomainNameStringUnder250Bytes)
+            await wallet.listOutputs(args, originator as OriginatorDomainNameStringUnder250Bytes)
             throw new Error('Expected method to throw.')
           } catch (e) {
             const error = e as Error
@@ -88,9 +88,9 @@ describe('listOutputs test', () => {
 
   test('1 valid params with originator', async () => {
     for (const { wallet } of ctxs) {
-      const validArgs: bsv.ListOutputsArgs = {
-        basket: 'default' as bsv.BasketStringUnder300Bytes,
-        tags: ['tag1', 'tag2'] as bsv.OutputTagStringUnder300Bytes[],
+      const validArgs: ListOutputsArgs = {
+        basket: 'default' as BasketStringUnder300Bytes,
+        tags: ['tag1', 'tag2'] as OutputTagStringUnder300Bytes[],
         limit: 10,
         offset: 0,
         tagQueryMode: 'any',
@@ -105,7 +105,7 @@ describe('listOutputs test', () => {
 
       for (const originator of validOriginators) {
         if (!noLog) console.log('Testing args:', validArgs, 'with originator:', originator)
-        const result = await wallet.listOutputs(validArgs, originator as bsv.OriginatorDomainNameStringUnder250Bytes)
+        const result = await wallet.listOutputs(validArgs, originator as OriginatorDomainNameStringUnder250Bytes)
         if (!noLog) console.log('Result:', result)
         expect(result.totalOutputs).toBeGreaterThanOrEqual(0)
       }
@@ -116,7 +116,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'default'
         }
         const r = await wallet.listOutputs(args)
@@ -139,12 +139,12 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'default'
         }
         const validOriginators = ['example.com', 'localhost', 'subdomain.example.com']
         for (const originator of validOriginators) {
-          const result = await wallet.listOutputs(args, originator as bsv.OriginatorDomainNameStringUnder250Bytes)
+          const result = await wallet.listOutputs(args, originator as OriginatorDomainNameStringUnder250Bytes)
         }
         const r = await wallet.listOutputs(args)
         log += logResult(r)
@@ -166,7 +166,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'default',
           includeTags: true,
           includeLabels: true,
@@ -188,7 +188,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'default',
           include: 'locking scripts',
           limit: 100
@@ -207,7 +207,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'default'
         }
         const r = await wallet.listOutputs(args)
@@ -224,7 +224,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'non-existent-basket',
           tags: ['babbage_action_originator projectbabbage.com'],
           includeTags: true
@@ -238,7 +238,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'babbage-protocol-permission',
           tags: ['babbage_action_originator projectbabbage.com'],
           includeTags: true
@@ -258,14 +258,14 @@ describe('listOutputs test', () => {
     for (const { wallet, services } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'default',
           include: 'entire transactions'
         }
         const r = await wallet.listOutputs(args)
         log += logResult(r)
         expect(r.BEEF).toBeTruthy()
-        expect(await bsv.Beef.fromBinary(r.BEEF || []).verify(await services.getChainTracker())).toBe(true)
+        expect(await Beef.fromBinary(r.BEEF || []).verify(await services.getChainTracker())).toBe(true)
         if (!noLog) console.log(log)
       }
     }
@@ -275,7 +275,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'babbage-protocol-permission',
           includeLabels: true,
           limit: 5
@@ -298,7 +298,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'babbage-token-access',
           includeTags: true,
           limit: 15
@@ -323,7 +323,7 @@ describe('listOutputs test', () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'babbage-protocol-permission',
           includeTags: true,
           tags: ['babbage_protocolsecuritylevel 2']
@@ -350,7 +350,7 @@ describe('listOutputs test', () => {
   test('12_tags babbage-token-access all', async () => {
     for (const { wallet } of ctxs) {
       let log = `\n${testName()}\n`
-      const args: bsv.ListOutputsArgs = {
+      const args: ListOutputsArgs = {
         basket: 'babbage-token-access',
         includeTags: true,
         tags: ['babbage_basket todo tokens', 'babbage_action_originator projectbabbage.com', 'babbage_originator localhost:8088'], // Match all actual output tags
@@ -382,7 +382,7 @@ describe('listOutputs test', () => {
         const storage = ctxs[0].activeStorage as StorageKnex
         prepareDatabaseCustomInstrctions(storage)
         let log = `\n${testName()}\n`
-        const args: bsv.ListOutputsArgs = {
+        const args: ListOutputsArgs = {
           basket: 'todo tokens',
           includeTags: true,
           includeLabels: true,
