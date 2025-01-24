@@ -169,9 +169,9 @@ export class Monitor {
         return log
     }
 
-    async runOnce(runAsyncSetup: boolean = true): Promise<void> {
+    async runOnce(): Promise<void> {
 
-        if (runAsyncSetup) {
+        if (this._runAsyncSetup) {
             for (const t of this._tasks) {
                 try {
                     await t.asyncSetup()
@@ -183,6 +183,7 @@ export class Monitor {
                 }
                 if (!this._tasksRunning) break
             }
+            this._runAsyncSetup = false
         }
 
         if (this.storage.getActive().isStorageProvider()) {
@@ -201,7 +202,6 @@ export class Monitor {
             }
 
             for (const ttr of tasksToRun) {
-                if (!this._tasksRunning) break;
 
                 try {
                     if (this.storage.getActive().isStorageProvider()) {
@@ -224,18 +224,18 @@ export class Monitor {
         }
     }
 
+    _runAsyncSetup: boolean = true
+
     async startTasks() : Promise<void> {
         
         if (this._tasksRunning)
             throw new sdk.WERR_BAD_REQUEST('monitor tasks are already runnining.')
         
-        let runAsyncSetup = true
 
         this._tasksRunning = true
         for (; this._tasksRunning;) {
 
-            await this.runOnce(runAsyncSetup)
-            runAsyncSetup = false
+            await this.runOnce()
 
             // console.log(`${new Date().toISOString()} tasks run, waiting...`)
             await wait(this.options.taskRunWaitMsecs)
