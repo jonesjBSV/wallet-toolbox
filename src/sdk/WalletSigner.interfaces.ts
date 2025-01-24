@@ -1,30 +1,30 @@
-import * as bsv from '@bsv/sdk'
+import { AbortActionArgs, AbortActionResult, AcquireCertificateArgs, AcquireCertificateResult, CreateActionArgs, CreateActionResult, DiscoverByAttributesArgs, DiscoverByIdentityKeyArgs, DiscoverCertificatesResult, InternalizeActionArgs, InternalizeActionResult, KeyDeriverApi, ListActionsArgs, ListActionsResult, ListCertificatesArgs, ListCertificatesResult, ListOutputsArgs, ListOutputsResult, ProveCertificateArgs, ProveCertificateResult, RelinquishCertificateArgs, RelinquishCertificateResult, RelinquishOutputArgs, RelinquishOutputResult, SignActionArgs, SignActionResult } from '@bsv/sdk'
 import { sdk } from "../index.client";
 
 /**
  */
 export interface WalletSigner {
   chain: sdk.Chain
-  keyDeriver: bsv.KeyDeriverApi
+  keyDeriver: KeyDeriverApi
 
   setServices(v: sdk.WalletServices) : void
   getServices() : sdk.WalletServices
   getStorageIdentity(): StorageIdentity
 
-  listActions(args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult>
-  listOutputs(args: bsv.ListOutputsArgs, knwonTxids: string[]): Promise<bsv.ListOutputsResult>
-  createAction(args: bsv.CreateActionArgs): Promise<bsv.CreateActionResult>
-  signAction(args: bsv.SignActionArgs): Promise<bsv.SignActionResult>
-  abortAction(args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult>
-  internalizeAction(args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult>
-  relinquishOutput(args: bsv.RelinquishOutputArgs) : Promise<bsv.RelinquishOutputResult>
+  listActions(args: ListActionsArgs): Promise<ListActionsResult>
+  listOutputs(args: ListOutputsArgs, knwonTxids: string[]): Promise<ListOutputsResult>
+  createAction(args: CreateActionArgs): Promise<CreateActionResult>
+  signAction(args: SignActionArgs): Promise<SignActionResult>
+  abortAction(args: AbortActionArgs): Promise<AbortActionResult>
+  internalizeAction(args: InternalizeActionArgs): Promise<InternalizeActionResult>
+  relinquishOutput(args: RelinquishOutputArgs) : Promise<RelinquishOutputResult>
 
-  acquireDirectCertificate(args: bsv.AcquireCertificateArgs) : Promise<bsv.AcquireCertificateResult>
-  listCertificates(args: bsv.ListCertificatesArgs) : Promise<bsv.ListCertificatesResult>
-  proveCertificate(args: bsv.ProveCertificateArgs): Promise<bsv.ProveCertificateResult>
-  relinquishCertificate(args: bsv.RelinquishCertificateArgs): Promise<bsv.RelinquishCertificateResult>
-  discoverByIdentityKey(args: bsv.DiscoverByIdentityKeyArgs): Promise<bsv.DiscoverCertificatesResult>
-  discoverByAttributes(args: bsv.DiscoverByAttributesArgs): Promise<bsv.DiscoverCertificatesResult>
+  acquireDirectCertificate(args: AcquireCertificateArgs) : Promise<AcquireCertificateResult>
+  listCertificates(args: ListCertificatesArgs) : Promise<ListCertificatesResult>
+  proveCertificate(args: ProveCertificateArgs): Promise<ProveCertificateResult>
+  relinquishCertificate(args: RelinquishCertificateArgs): Promise<RelinquishCertificateResult>
+  discoverByIdentityKey(args: DiscoverByIdentityKeyArgs): Promise<DiscoverCertificatesResult>
+  discoverByAttributes(args: DiscoverByAttributesArgs): Promise<DiscoverCertificatesResult>
 
   getChain(): Promise<sdk.Chain>
   getClientChangeKeyPair(): KeyPair;

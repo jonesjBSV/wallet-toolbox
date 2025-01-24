@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef } from '@bsv/sdk'
 import { Services } from '../../index.all'
 
 const BEEF_V1 = 4022206465 // 0100BEEF in LE order
@@ -27,7 +27,7 @@ describe.skip('postBeef service tests', () => {
     // Step 1: Test with Original BEEF V2
     const beefBinaryV2 = hexToBinary(beefV2HexStr)
     console.log('Testing BEEF V2...')
-    const beefV2 = bsv.Beef.fromBinary(beefBinaryV2)
+    const beefV2 = Beef.fromBinary(beefBinaryV2)
     console.log('BEEF V2 Object:', beefV2)
     console.log('BEEF V2 log:', beefV2.toLogString())
     console.log('BEEF V2 isValid:', beefV2.isValid())
@@ -37,7 +37,7 @@ describe.skip('postBeef service tests', () => {
     // Step 2: Modify version to V1 using beef.verion and Test
     console.log('Testing BEEF V1...')
     const beefBinaryV1tmp = [...beefBinaryV2]
-    const beefV1 = bsv.Beef.fromBinary(beefBinaryV1tmp)
+    const beefV1 = Beef.fromBinary(beefBinaryV1tmp)
 
     beefV1.version = BEEF_V1
     console.log('BEEF V1 Object:', beefV1)

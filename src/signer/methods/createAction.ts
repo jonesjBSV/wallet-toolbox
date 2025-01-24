@@ -1,11 +1,11 @@
-import * as bsv from '@bsv/sdk'
+import { CreateActionResult, SendWithResult, SignActionResult, SignActionSpend } from '@bsv/sdk'
 import { Script, Transaction, TransactionInput } from "@bsv/sdk"
 import { asBsvSdkScript, makeAtomicBeef, PendingSignAction, PendingStorageInput, ScriptTemplateSABPPP, sdk, verifyId, verifyTruthy, WalletSigner } from "../../index.client"
 
 export async function createAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs)
-: Promise<bsv.CreateActionResult>
+: Promise<CreateActionResult>
 {
-  const r: bsv.CreateActionResult = {}
+  const r: CreateActionResult = {}
   
   let prior: PendingSignAction | undefined = undefined
 
@@ -45,14 +45,14 @@ async function createNewTx(signer: WalletSigner, args: sdk.ValidCreateActionArgs
 }
 
 function makeSignableTransactionResult(prior: PendingSignAction, signer: WalletSigner, args: sdk.ValidCreateActionArgs)
-: bsv.CreateActionResult
+: CreateActionResult
 {
   if (!prior.dcr.inputBeef)
     throw new sdk.WERR_INTERNAL('prior.dcr.inputBeef must be valid')
 
   const txid = prior.tx.id('hex')
 
-  const r: bsv.CreateActionResult = {
+  const r: CreateActionResult = {
     noSendChange: args.isNoSend ? prior.dcr.noSendChangeOutputVouts?.map(vout => `${txid}.${vout}`) : undefined,
     signableTransaction: {
       reference: prior.dcr.reference,
@@ -85,7 +85,7 @@ function makeChangeLock(
 
 export async function completeSignedTransaction(
   prior: PendingSignAction,
-  spends: Record<number, bsv.SignActionSpend>,
+  spends: Record<number, SignActionSpend>,
   signer: WalletSigner,
 )
 : Promise<Transaction>
@@ -108,7 +108,7 @@ export async function completeSignedTransaction(
   }
 
   const results = {
-    sdk: <bsv.SignActionResult>{}
+    sdk: <SignActionResult>{}
   }
 
   /////////////////////
@@ -155,7 +155,7 @@ function removeUnlockScripts(args: sdk.ValidCreateActionArgs) {
 }
 
 export async function processAction(prior: PendingSignAction | undefined, signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs)
-: Promise<bsv.SendWithResult[] | undefined>
+: Promise<SendWithResult[] | undefined>
 {
   const args: sdk.StorageProcessActionArgs = {
     isNewTx: vargs.isNewTx,

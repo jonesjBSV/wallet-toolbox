@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { AcquireCertificateArgs, CompletedProtoWallet, ProveCertificateArgs } from '@bsv/sdk'
 import { _tu, expectToThrowWERR } from "../../utils/TestUtilsWalletStorage"
 import { sdk, Wallet } from '../../../src/index.all'
 
@@ -16,7 +16,7 @@ describe('acquireCertificate tests', () => {
     test('1 invalid params', async () => {
         const { wallet, storage } = await _tu.createLegacyWalletSQLiteCopy('acquireCertificate1')
         
-        const invalidArgs: bsv.AcquireCertificateArgs[] = [
+        const invalidArgs: AcquireCertificateArgs[] = [
             {
                 type: "",
                 certifier: "",
@@ -41,7 +41,7 @@ describe('acquireCertificate tests', () => {
         const { cert, certifier } = _tu.makeSampleCert(subject)
 
         // Act as the certifier: create a wallet for them...
-        const certifierWallet = new bsv.CompletedProtoWallet(certifier)
+        const certifierWallet = new CompletedProtoWallet(certifier)
         // load the plaintext certificate into a CertOps object
         const co = new sdk.CertOps(certifierWallet, cert)
         // encrypt and sign the certificate
@@ -50,7 +50,7 @@ describe('acquireCertificate tests', () => {
         const { certificate: c, keyring: kr } = co.exportForSubject()
 
         // args object to create a new certificate via 'direct' protocol.
-        const args: bsv.AcquireCertificateArgs = {
+        const args: AcquireCertificateArgs = {
             serialNumber: c.serialNumber,
             signature: c.signature,
             privileged: false,
@@ -81,7 +81,7 @@ describe('acquireCertificate tests', () => {
         expect(lc.fields['name']).not.toBe('Alice')
 
         // Use proveCertificate to obtain a decryption keyring:
-        const pkrArgs: bsv.ProveCertificateArgs = {
+        const pkrArgs: ProveCertificateArgs = {
             certificate: { serialNumber: lc.serialNumber },
             fieldsToReveal: ['name'],
             verifier: subject

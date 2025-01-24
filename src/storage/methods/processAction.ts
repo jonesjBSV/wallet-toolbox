@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as bsv from '@bsv/sdk'
+import { Beef, Transaction as BsvTransaction, SendWithResult, SendWithResultStatus } from '@bsv/sdk'
 import { asArray, asString, entity, parseTxScriptOffsets, randomBytesBase64, sdk, sha256Hash, stampLog, stampLogFormat, StorageProvider, table, TxScriptOffsets, validateStorageFeeModel, verifyId, verifyNumber, verifyOne, verifyOneOrNone, verifyTruthy } from "../../index.client";
 
 export async function processAction(
@@ -55,7 +55,7 @@ export async function processAction(
  * @param isDelayed 
  */
 async function shareReqsWithWorld(storage: StorageProvider, userId: number, txids: string[], isDelayed: boolean)
-: Promise<bsv.SendWithResult[]>
+: Promise<SendWithResult[]>
 {
     if (txids.length < 1) return []
 
@@ -119,10 +119,10 @@ async function shareReqsWithWorld(storage: StorageProvider, userId: number, txid
 
     return rs
 
-    function createSendWithResults(): bsv.SendWithResult[] {
-        const rs: bsv.SendWithResult[] = []
+    function createSendWithResults(): SendWithResult[] {
+        const rs: SendWithResult[] = []
         for (const ar of ars) {
-            let status: bsv.SendWithResultStatus = 'failed';
+            let status: SendWithResultStatus = 'failed';
             if (ar.getReq.status === 'alreadySent')
                 status = 'unproven';
             else if (ar.getReq.status === 'readyToSend' && (isDelayed || ar.postBeef?.status === 'success'))
@@ -151,14 +151,14 @@ interface ValidCommitNewTxToStorageArgs {
 
     // validated dependent args
 
-    tx: bsv.Transaction
+    tx: BsvTransaction
     txScriptOffsets: TxScriptOffsets
     transactionId: number
     transaction: table.Transaction
     inputOutputs: table.Output[]
     outputOutputs: table.Output[]
     commission: table.Commission | undefined
-    beef: bsv.Beef
+    beef: Beef
 
     req: entity.ProvenTxReq
     outputUpdates: { id: number, update: Partial<table.Output> }[]
@@ -171,9 +171,9 @@ async function validateCommitNewTxToStorageArgs(storage: StorageProvider, userId
 {
     if (!params.reference || !params.txid || !params.rawTx)
         throw new sdk.WERR_INVALID_OPERATION('One or more expected params are undefined.')
-    let tx: bsv.Transaction
+    let tx: BsvTransaction
     try {
-        tx = bsv.Transaction.fromBinary(params.rawTx)
+        tx = BsvTransaction.fromBinary(params.rawTx)
     } catch (e: unknown) {
         throw new sdk.WERR_INVALID_OPERATION('Parsing serialized transaction failed.')
     }
@@ -188,7 +188,7 @@ async function validateCommitNewTxToStorageArgs(storage: StorageProvider, userId
     const transaction = verifyOne(await storage.findTransactions({ partial: { userId, reference: params.reference } }))
     if (!transaction.isOutgoing) throw new sdk.WERR_INVALID_OPERATION('isOutgoing is not true')
     if (!transaction.inputBEEF) throw new sdk.WERR_INVALID_OPERATION()
-    const beef = bsv.Beef.fromBinary(asArray(transaction.inputBEEF))
+    const beef = Beef.fromBinary(asArray(transaction.inputBEEF))
     // TODO: Could check beef validates transaction inputs...
     // Transaction must have unsigned or unprocessed status
     if (transaction.status !== 'unsigned' && transaction.status !== 'unprocessed')
@@ -347,7 +347,7 @@ export interface GetReqsAndBeefDetail {
 }
 
 export interface GetReqsAndBeefResult {
-    beef: bsv.Beef,
+    beef: Beef,
     details: GetReqsAndBeefDetail[]
 }
 

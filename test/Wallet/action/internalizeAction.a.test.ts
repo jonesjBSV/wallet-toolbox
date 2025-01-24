@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef, InternalizeOutput } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
 import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { getBeefForTransaction } from '../../../src/storage/methods/getBeefForTransaction'
@@ -82,14 +82,14 @@ describe.skip('internalizeAction tests', () => {
         //console.log('Atomic Transaction:', atomicTx)
 
         // {
-        //   const abeef = bsv.Beef.fromBinary(atomicTx)
+        //   const abeef = Beef.fromBinary(atomicTx)
         //   expect(abeef.atomicTxid).toBe('2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122')
         // }
 
         // This needs to be a real output (the locking script and derivation bits / key need to work with each other)
         // But it is still a valid test to see what the reaction is to this nonsense :-)
         // Prepare output for internalization
-        const output: bsv.InternalizeOutput = {
+        const output: InternalizeOutput = {
           outputIndex: 2,
           protocol: 'wallet payment',
           paymentRemittance: {
@@ -172,14 +172,14 @@ describe.skip('internalizeAction tests', () => {
         //console.log('Atomic Transaction:', atomicTx)
 
         {
-          const abeef = bsv.Beef.fromBinary(atomicTx)
+          const abeef = Beef.fromBinary(atomicTx)
           expect(abeef.atomicTxid).toBe('a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7')
         }
 
         // This needs to be a real output (the locking script and derivation bits / key need to work with each other)
         // But it is still a valid test to see what the reaction is to this nonsense :-)
         // Prepare output for internalization
-        const output: bsv.InternalizeOutput = {
+        const output: InternalizeOutput = {
           outputIndex: 0,
           protocol: 'basket insertion',
           // export interface BasketInsertion {
@@ -242,7 +242,7 @@ describe.skip('internalizeAction tests', () => {
         //console.log('Atomic Transaction:', atomicTx)
 
         // Prepare output for internalization
-        const output: bsv.InternalizeOutput = {
+        const output: InternalizeOutput = {
           outputIndex: 2,
           protocol: 'basket insertion',
           paymentRemittance: {
@@ -281,7 +281,7 @@ describe.skip('internalizeAction tests', () => {
   //     // const outputSatoshis = 42
   //     // let noSendChange: string[] | undefined
 
-  //     // const createArgs: bsv.CreateActionArgs = {
+  //     // const createArgs: CreateActionArgs = {
   //     //   description: `${kp.address} of ${root}`,
   //     //   outputs: [{ satoshis: outputSatoshis, lockingScript: _tu.getLockP2PKH(kp.address).toHex(), outputDescription: 'pay fred' }],
   //     //   options: {
@@ -303,14 +303,14 @@ describe.skip('internalizeAction tests', () => {
   //     // const st = cr.signableTransaction!
   //     // expect(st.reference).toBeTruthy()
   //     // // const tx = Transaction.fromAtomicBEEF(st.tx) // Transaction doesn't support V2 Beef yet.
-  //     // const atomicBeef = bsv.Beef.fromBinary(st.tx)
+  //     // const atomicBeef = Beef.fromBinary(st.tx)
 
-  //     const output: bsv.InternalizeOutput = {
+  //     const output: InternalizeOutput = {
   //       outputIndex: 0,
   //       protocol: 'wallet payment',
   //       paymentRemittance: {
-  //         derivationPrefix: bsv.Utils.toBase64([1, 2, 3]),
-  //         derivationSuffix: bsv.Utils.toBase64([4, 5, 6]),
+  //         derivationPrefix: Utils.toBase64([1, 2, 3]),
+  //         derivationSuffix: Utils.toBase64([4, 5, 6]),
   //         senderIdentityKey: '02ce39558560fe2219636460b1ce1d8bb5760097656bf2bf21f7d1db422223c4ee'
   //       }
   //     }
@@ -321,7 +321,7 @@ describe.skip('internalizeAction tests', () => {
   //     //     /** list of txids to be included as txidOnly if referenced. Validity is known to caller. */
   //     //     knownTxids?: string[]
   //     //     /** optional. If defined, raw transactions and merkle paths required by txid are merged to this instance and returned. Otherwise a new Beef is constructed and returned. */
-  //     //     mergeToBeef?: bsv.Beef | number[]
+  //     //     mergeToBeef?: Beef | number[]
   //     //     /** optional. Default is false. `dojo.storage` is used for raw transaction and merkle proof lookup */
   //     //     ignoreStorage?: boolean
   //     //     /** optional. Default is false. `dojo.getServices` is used for raw transaction and merkle proof lookup */
@@ -361,8 +361,8 @@ describe.skip('internalizeAction tests', () => {
   //         outputIndex: 0,
   //         protocol: 'wallet payment' as 'wallet payment',
   //         paymentRemittance: {
-  //           derivationPrefix: bsv.Utils.toBase64([1, 2, 3]),
-  //           derivationSuffix: bsv.Utils.toBase64([4, 5, 6]),
+  //           derivationPrefix: Utils.toBase64([1, 2, 3]),
+  //           derivationSuffix: Utils.toBase64([4, 5, 6]),
   //           senderIdentityKey: '02' + '1'.repeat(64)
   //         }
   //       }

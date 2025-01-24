@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef, Transaction as BsvTransaction, ChainTracker, MerklePath } from '@bsv/sdk'
 import { sdk } from '../index.client'
 import { ChaintracksServiceClient } from '../services/chaintracker'
 /**
@@ -14,7 +14,7 @@ export interface WalletServices {
     /**
      * @returns standard `ChainTracker` service which requires `options.chaintracks` be valid.
      */
-    getChainTracker() : Promise<bsv.ChainTracker>
+    getChainTracker() : Promise<ChainTracker>
 
     /**
      * @returns serialized block header for height on active chain
@@ -90,7 +90,7 @@ export interface WalletServices {
      * @param chain 
      * @returns
      */
-    postTxs(beef: bsv.Beef, txids: string[]): Promise<PostTxsResult[]>
+    postTxs(beef: Beef, txids: string[]): Promise<PostTxsResult[]>
 
     /**
      * 
@@ -99,7 +99,7 @@ export interface WalletServices {
      * @param chain 
      * @returns
      */
-    postBeef(beef: bsv.Beef, txids: string[]): Promise<PostBeefResult[]>
+    postBeef(beef: Beef, txids: string[]): Promise<PostBeefResult[]>
 
     /**
      * Attempts to determine the UTXO status of a transaction output.
@@ -127,7 +127,7 @@ export interface WalletServices {
      * @returns whether the locktime value allows the transaction to be mined at the current chain height
      * @param txOrLockTime either a bitcoin locktime value or hex, binary, un-encoded Transaction
      */
-    nLockTimeIsFinal(txOrLockTime: string | number[] | bsv.Transaction | number): Promise<boolean>
+    nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>
 }
 
 export type GetUtxoStatusOutputFormat = 'hashLE' | 'hashBE' | 'script'
@@ -192,7 +192,7 @@ export interface GetMerklePathResult {
      * Multiple proofs may be returned when a transaction also appears in
      * one or more orphaned blocks
      */
-    merklePath?: bsv.MerklePath
+    merklePath?: MerklePath
 
     header?: BlockHeader
 
@@ -219,7 +219,7 @@ export interface PostTxResultForTxid {
 
     blockHash?: string
     blockHeight?: number
-    merklePath?: bsv.MerklePath
+    merklePath?: MerklePath
 
     data?: object
 }
@@ -359,8 +359,8 @@ export type GetMerklePathService = (txid: string, chain: sdk.Chain, services: Wa
 
 export type GetRawTxService = (txid: string, chain: sdk.Chain) => Promise<GetRawTxResult>
 
-export type PostTxsService = (beef: bsv.Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
+export type PostTxsService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
 
-export type PostBeefService = (beef: bsv.Beef, txids: string[], services: WalletServices) => Promise<PostBeefResult>
+export type PostBeefService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostBeefResult>
 
 export type UpdateFiatExchangeRateService = (targetCurrencies: string[], options: WalletServicesOptions) => Promise<FiatExchangeRates>
