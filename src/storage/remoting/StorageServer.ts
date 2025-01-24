@@ -5,7 +5,7 @@
  * and exposes it via a JSON-RPC POST endpoint using Express.
  */
 
-import * as bsv from '@bsv/sdk'
+import { WalletInterface } from '@bsv/sdk'
 import express, { Request, Response } from 'express'
 import { AuthMiddlewareOptions, createAuthMiddleware } from '@bsv/auth-express-middleware'
 import { createPaymentMiddleware } from '@bsv/payment-express-middleware'
@@ -57,7 +57,7 @@ export class StorageServer {
     })
 
     const options: AuthMiddlewareOptions = {
-      wallet: this.wallet as bsv.WalletInterface
+      wallet: this.wallet as WalletInterface
     }
     this.app.use(createAuthMiddleware(options))
     if (this.monetize) {

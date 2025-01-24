@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import * as bsv from '@bsv/sdk'
+import { Transaction as BsvTransaction, Script } from '@bsv/sdk'
 import { randomValsUsed1 } from "./randomValsUsed1";
 import { sdk } from "../../../../index.client";
 import { generateChangeSdk, GenerateChangeSdkChangeInput, generateChangeSdkMakeStorage, GenerateChangeSdkParams, GenerateChangeSdkResult } from '../../generateChange';
@@ -354,31 +354,31 @@ async function expectToThrowWERR<R>(expectedClass: new (...args: any[]) => any, 
     throw new Error(`${expectedClass.name} was not thrown`)
 }
 
-function makeTransaction(params: GenerateChangeSdkParams, results: GenerateChangeSdkResult) : bsv.Transaction {
-    const tx = new bsv.Transaction()
+function makeTransaction(params: GenerateChangeSdkParams, results: GenerateChangeSdkResult) : BsvTransaction {
+    const tx = new BsvTransaction()
     for (const i of params.fixedInputs) {
         tx.inputs.push({
-            unlockingScript: bsv.Script.fromBinary(Array(i.unlockingScriptLength).fill(0)),
+            unlockingScript: Script.fromBinary(Array(i.unlockingScriptLength).fill(0)),
             sourceOutputIndex: 0,
             sourceTXID: '00'.repeat(32)
         })
     }
     for (const i of results.allocatedChangeInputs) {
         tx.inputs.push({
-            unlockingScript: bsv.Script.fromBinary(Array(params.changeUnlockingScriptLength).fill(0)),
+            unlockingScript: Script.fromBinary(Array(params.changeUnlockingScriptLength).fill(0)),
             sourceOutputIndex: 0,
             sourceTXID: '00'.repeat(32)
         })
     }
     for (const o of params.fixedOutputs) {
         tx.outputs.push({
-            lockingScript: bsv.Script.fromBinary(Array(o.lockingScriptLength).fill(0)),
+            lockingScript: Script.fromBinary(Array(o.lockingScriptLength).fill(0)),
             satoshis: o.satoshis
         })
     }
     for (const o of results.changeOutputs) {
         tx.outputs.push({
-            lockingScript: bsv.Script.fromBinary(Array(o.lockingScriptLength).fill(0)),
+            lockingScript: Script.fromBinary(Array(o.lockingScriptLength).fill(0)),
             satoshis: o.satoshis
         })
     }

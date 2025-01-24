@@ -1,4 +1,4 @@
-import * as bsv from "@bsv/sdk"
+import { Beef, ListOutputsResult, OriginatorDomainNameStringUnder250Bytes, WalletOutput } from "@bsv/sdk"
 import { table } from "../index.client"
 import { asString, sdk, verifyId, verifyOne } from "../../index.client"
 import { StorageKnex } from "../StorageKnex"
@@ -7,9 +7,9 @@ export async function listOutputs(
     dsk: StorageKnex,
     auth: sdk.AuthId,
     vargs: sdk.ValidListOutputsArgs,
-    originator?: bsv.OriginatorDomainNameStringUnder250Bytes,
+    originator?: OriginatorDomainNameStringUnder250Bytes,
 )
-: Promise<bsv.ListOutputsResult>
+: Promise<ListOutputsResult>
 {
     const trx: sdk.TrxToken | undefined = undefined
     const userId = verifyId(auth.userId)
@@ -18,7 +18,7 @@ export async function listOutputs(
 
     const k = dsk.toDb(trx)
 
-    const r: bsv.ListOutputsResult = {
+    const r: ListOutputsResult = {
         totalOutputs: 0,
         outputs: []
     }
@@ -166,10 +166,10 @@ export async function listOutputs(
 
     const labelsByTxid: Record<string, string[]> = {}
 
-    const beef = new bsv.Beef()
+    const beef = new Beef()
 
     for (const o of outputs) {
-        const wo: bsv.WalletOutput = {
+        const wo: WalletOutput = {
             satoshis: Number(o.satoshis),
             spendable: !!o.spendable,
             outpoint: `${o.txid}.${o.vout}`

@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { MerklePath } from '@bsv/sdk'
 
 export interface TscMerkleProofApi {
   height: number
@@ -6,7 +6,7 @@ export interface TscMerkleProofApi {
   nodes: string[]
 }
 
-export function convertProofToMerklePath(txid: string, proof: TscMerkleProofApi): bsv.MerklePath {
+export function convertProofToMerklePath(txid: string, proof: TscMerkleProofApi): MerklePath {
     const blockHeight = proof.height
     const treeHeight = proof.nodes.length
     type Leaf = {
@@ -42,6 +42,6 @@ export function convertProofToMerklePath(txid: string, proof: TscMerkleProofApi)
         }
         index = index >> 1
     }
-    return new bsv.MerklePath(blockHeight, path)
+    return new MerklePath(blockHeight, path)
 }
 

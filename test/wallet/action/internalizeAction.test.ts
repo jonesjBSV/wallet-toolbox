@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
 import { sdk } from '../../../src/index.all'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
@@ -37,7 +37,7 @@ describe('internalizeAction tests', () => {
       const outputSatoshis = 4
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           outputs: [{ satoshis: outputSatoshis, lockingScript: _tu.getLockP2PKH(fredsAddress).toHex(), outputDescription: 'pay fred' }],
           options: {
@@ -55,7 +55,7 @@ describe('internalizeAction tests', () => {
         const fred = await _tu.createSQLiteTestWallet({ chain: 'test', databaseName: 'internalizeAction1fred', rootKeyHex: '2'.repeat(64), dropAll: true })
 
         // Internalize args to add fred's new output to his own wallet
-        const internalizeArgs: bsv.InternalizeActionArgs = {
+        const internalizeArgs: InternalizeActionArgs = {
           tx: cr.tx!,
           outputs: [
             {
@@ -117,7 +117,7 @@ describe('internalizeAction tests', () => {
       const outputSatoshis2 = 5
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           outputs: [
             { satoshis: outputSatoshis1, lockingScript: _tu.getLockP2PKH(fredsAddress).toHex(), outputDescription: 'pay fred 1st payment' },
@@ -138,7 +138,7 @@ describe('internalizeAction tests', () => {
         const fred = await _tu.createSQLiteTestWallet({ chain: 'test', databaseName: 'internalizeAction2fred', rootKeyHex: '2'.repeat(64), dropAll: true })
 
         // Internalize args to add fred's new output to his own wallet
-        const internalizeArgs: bsv.InternalizeActionArgs = {
+        const internalizeArgs: InternalizeActionArgs = {
           tx: cr.tx!,
           outputs: [
             {
@@ -219,17 +219,17 @@ describe('internalizeAction tests', () => {
       const outputSatoshis = 5
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix = Buffer.from('utxo-0').toString('base64')
-      const brc29ProtocolID: bsv.WalletProtocol = [2, '3241645161d8']
+      const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
       const derivedPublicKey = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix}`, fred.identityKey)
       const derivedAddress = derivedPublicKey.toAddress()
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `description BRC-29`,
           outputs: [
             {
               satoshis: outputSatoshis,
-              lockingScript: new bsv.P2PKH().lock(derivedAddress).toHex(),
+              lockingScript: new P2PKH().lock(derivedAddress).toHex(),
               outputDescription: 'pay fred BRC-29'
             }
           ],
@@ -244,7 +244,7 @@ describe('internalizeAction tests', () => {
         const cr = await wallet.createAction(createArgs)
         expect(cr.tx).toBeTruthy()
 
-        const internalizeArgs: bsv.InternalizeActionArgs = {
+        const internalizeArgs: InternalizeActionArgs = {
           tx: cr.tx!,
           outputs: [
             {
@@ -296,7 +296,7 @@ describe('internalizeAction tests', () => {
     for (const { wallet, identityKey: senderIdentityKey } of ctxs) {
       const fred = await _tu.createSQLiteTestWallet({ chain: 'test', databaseName: 'internalizeAction4fred', rootKeyHex: '2'.repeat(64), dropAll: true })
 
-      const brc29ProtocolID: bsv.WalletProtocol = [2, '3241645161d8']
+      const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
       const outputSatoshis1 = 6
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix1 = Buffer.from('utxo-1').toString('base64')
@@ -309,17 +309,17 @@ describe('internalizeAction tests', () => {
       const derivedAddress2 = derivedPublicKey2.toAddress()
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `BRC-29 payments from other wallet`,
           outputs: [
             {
               satoshis: outputSatoshis1,
-              lockingScript: new bsv.P2PKH().lock(derivedAddress1).toHex(),
+              lockingScript: new P2PKH().lock(derivedAddress1).toHex(),
               outputDescription: 'pay fred 1st BRC-29 payment'
             },
             {
               satoshis: outputSatoshis2,
-              lockingScript: new bsv.P2PKH().lock(derivedAddress2).toHex(),
+              lockingScript: new P2PKH().lock(derivedAddress2).toHex(),
               outputDescription: 'pay fred 2nd BRC-29 payment'
             }
           ],
@@ -334,7 +334,7 @@ describe('internalizeAction tests', () => {
         const cr = await wallet.createAction(createArgs)
         expect(cr.tx).toBeTruthy()
 
-        const internalizeArgs: bsv.InternalizeActionArgs = {
+        const internalizeArgs: InternalizeActionArgs = {
           tx: cr.tx!,
           outputs: [
             {
@@ -395,7 +395,7 @@ describe('internalizeAction tests', () => {
     for (const { wallet, identityKey: senderIdentityKey } of ctxs) {
       const fred = await _tu.createSQLiteTestWallet({ chain: 'test', databaseName: 'internalizeAction5fred', rootKeyHex: '2'.repeat(64), dropAll: true })
 
-      const brc29ProtocolID: bsv.WalletProtocol = [2, '3241645161d8']
+      const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
       const outputSatoshis1 = 8
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix1 = Buffer.from('utxo-1').toString('base64')
@@ -415,17 +415,17 @@ describe('internalizeAction tests', () => {
       const outputSatoshis4 = 11
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `BRC-29 payments from other wallet`,
           outputs: [
             {
               satoshis: outputSatoshis1,
-              lockingScript: new bsv.P2PKH().lock(derivedAddress1).toHex(),
+              lockingScript: new P2PKH().lock(derivedAddress1).toHex(),
               outputDescription: 'pay fred 1st BRC-29 payment'
             },
             {
               satoshis: outputSatoshis2,
-              lockingScript: new bsv.P2PKH().lock(derivedAddress2).toHex(),
+              lockingScript: new P2PKH().lock(derivedAddress2).toHex(),
               outputDescription: 'pay fred 2nd BRC-29 payment'
             },
             {
@@ -450,7 +450,7 @@ describe('internalizeAction tests', () => {
         const cr = await wallet.createAction(createArgs)
         expect(cr.tx).toBeTruthy()
 
-        const internalizeArgs: bsv.InternalizeActionArgs = {
+        const internalizeArgs: InternalizeActionArgs = {
           tx: cr.tx!,
 
           outputs: [

@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef } from '@bsv/sdk'
 import { asBsvSdkTx, entity, sdk, StorageProvider, verifyTruthy } from '../../index.client'
 
 /**
@@ -19,13 +19,13 @@ import { asBsvSdkTx, entity, sdk, StorageProvider, verifyTruthy } from '../../in
  * @param txid the transaction hash for which an envelope is requested.
  * @param options
  */
-export async function getBeefForTransaction(storage: StorageProvider, txid: string, options: sdk.StorageGetBeefOptions) : Promise<bsv.Beef>
+export async function getBeefForTransaction(storage: StorageProvider, txid: string, options: sdk.StorageGetBeefOptions) : Promise<Beef>
 {
     const beef =
         // deserialize mergeToBeef if it is an array
-        Array.isArray(options.mergeToBeef) ? bsv.Beef.fromBinary(options.mergeToBeef)
+        Array.isArray(options.mergeToBeef) ? Beef.fromBinary(options.mergeToBeef)
         // otherwise if undefined create a new Beef
-        : (options.mergeToBeef || new bsv.Beef())
+        : (options.mergeToBeef || new Beef())
 
     await mergeBeefForTransactionRecurse(beef, storage, txid, options, 0)
 
@@ -45,12 +45,12 @@ async function getProvenOrRawTxFromServices(dojo: StorageProvider, txid: string,
 }
 
 async function mergeBeefForTransactionRecurse(
-    beef: bsv.Beef,
+    beef: Beef,
     dojo: StorageProvider,
     txid: string,
     options: sdk.StorageGetBeefOptions,
     recursionDepth: number
-): Promise<bsv.Beef> {
+): Promise<Beef> {
     const maxDepth = dojo.maxRecursionDepth;
     if (maxDepth && maxDepth <= recursionDepth) throw new sdk.WERR_INVALID_OPERATION(`Maximum BEEF depth exceeded. Limit is ${dojo.maxRecursionDepth}`);
 

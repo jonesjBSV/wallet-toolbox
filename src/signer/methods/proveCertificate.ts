@@ -1,4 +1,4 @@
-import * as bsv from "@bsv/sdk";
+import { CompletedProtoWallet, ProveCertificateResult } from "@bsv/sdk";
 import { sdk, WalletSigner } from '../../index.client'
 
 export async function proveCertificate(
@@ -6,7 +6,7 @@ export async function proveCertificate(
   auth: sdk.AuthId,
   vargs: sdk.ValidProveCertificateArgs
 )
-: Promise<bsv.ProveCertificateResult>
+: Promise<ProveCertificateResult>
 {
   const lcargs: sdk.ValidListCertificatesArgs = {
     partial: {
@@ -28,14 +28,14 @@ export async function proveCertificate(
   if (lcr.certificates.length != 1)
     throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
   const storageCert = lcr.certificates[0]
-  const wallet = new bsv.CompletedProtoWallet(signer.keyDeriver!)
+  const wallet = new CompletedProtoWallet(signer.keyDeriver!)
   const co = await sdk.CertOps.fromCounterparty(wallet, {
     certificate: { ...storageCert },
     keyring: storageCert.keyring!,
     counterparty: storageCert.verifier || storageCert.subject
   })
   const e = await co.exportForCounterparty(vargs.verifier, vargs.fieldsToReveal)
-  const pr: bsv.ProveCertificateResult = {
+  const pr: ProveCertificateResult = {
     certificate: e.certificate,
     verifier: e.counterparty,
     keyringForVerifier: e.keyring

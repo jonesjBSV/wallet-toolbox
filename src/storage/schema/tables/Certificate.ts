@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Base64String, HexString, OutpointString, PubKeyHex } from '@bsv/sdk'
 import { sdk, table } from "../../../index.client"
 
 export interface Certificate extends sdk.EntityTimeStamp {
@@ -6,13 +6,13 @@ export interface Certificate extends sdk.EntityTimeStamp {
    updated_at: Date
    certificateId: number
    userId: number
-   type: bsv.Base64String
-   serialNumber: bsv.Base64String
-   certifier: bsv.PubKeyHex
-   subject: bsv.PubKeyHex
-   verifier?: bsv.PubKeyHex
-   revocationOutpoint: bsv.OutpointString
-   signature: bsv.HexString
+   type: Base64String
+   serialNumber: Base64String
+   certifier: PubKeyHex
+   subject: PubKeyHex
+   verifier?: PubKeyHex
+   revocationOutpoint: OutpointString
+   signature: HexString
    isDeleted: boolean
 }
 

@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef } from '@bsv/sdk'
 import { StorageProvider } from "../StorageProvider"
 import { entity, sdk } from '../../index.client'
 
@@ -12,7 +12,7 @@ export async function attemptToPostReqsToNetwork(storage: StorageProvider, reqs:
 
     const r: PostReqsToNetworkResult = {
         status: 'success',
-        beef: new bsv.Beef(),
+        beef: new Beef(),
         details: [],
         log: ''
     }
@@ -157,7 +157,7 @@ export interface PostReqsToNetworkDetails {
 
 export interface PostReqsToNetworkResult {
     status: "success" | "error"
-    beef: bsv.Beef
+    beef: Beef
     details: PostReqsToNetworkDetails[]
     pbr?: sdk.PostBeefResult
     log: string
