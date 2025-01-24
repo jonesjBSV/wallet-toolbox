@@ -20,7 +20,7 @@ describe('walletLive test', () => {
     }
   })
 
-  test.skip('1 set change outputs spendable false if not valid utxos', async () => {
+  test('1 set change outputs spendable false if not valid utxos', async () => {
     // Check the list of outputs first using the debugger breakpoint, before updating spendable flags.
     for (const { wallet, activeStorage: storage, services } of ctxs) {
       const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(storage, services)
@@ -53,13 +53,22 @@ describe('walletLive test', () => {
         const or = {
           txStatus,
           outputs: await storage.findOutputs({ partial: { basketId, spendable: true }, txStatus }),
+          outputCount: 0,
           total: <number>0
         }
         or.total = or.outputs.reduce((t, o) => t + o.satoshis, 0)
+        or.outputCount = or.outputs.length
+        or.outputs = []
         r[name] = or
       }
 
       expect(r).toBeTruthy()
+      let log = ''
+      for (const [k, v] of Object.entries(r)) {
+        if (v.outputCount >  0)
+          log += `${k} count=${v.outputCount} total=${v.total}\n`
+      }
+      console.log(log)
     }
   })
 
@@ -113,7 +122,7 @@ describe('walletLive test', () => {
     console.log(log)
   })
 
-  test.skip('6 send a wallet payment from live to your own wallet', async () => {
+  test('6 send a wallet payment from live to your own wallet', async () => {
     const liveCtx = ctxs[0]
     const myIdentityKey = env.identityKey
     const myRootKeyHex = env.devKeys[myIdentityKey]
@@ -125,7 +134,7 @@ describe('walletLive test', () => {
      */
     const r = await createWalletPaymentAction({
       toIdentityKey: myIdentityKey,
-      outputSatoshis: 500000,
+      outputSatoshis: 3440000,
       keyDeriver: liveCtx.keyDeriver,
       wallet: liveCtx.wallet,
       logResult: true
