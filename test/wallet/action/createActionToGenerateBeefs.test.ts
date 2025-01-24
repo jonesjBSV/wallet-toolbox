@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as bsv from '@bsv/sdk'
+import { AtomicBEEF, Beef, CreateActionArgs, HexString, SatoshiValue, SignActionArgs, TXIDHexString } from '@bsv/sdk'
 import { sdk, StorageKnex, table, Wallet } from '../../../src/index.all'
 
 import { _tu, expectToThrowWERR, TestKeyPair, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
@@ -17,7 +17,7 @@ describe.skip('createActionToGenerateBeefs test', () => {
     ctxs.push(await _tu.createLiveWalletSQLiteWARNING())
     for (const { services } of ctxs) {
       // Mock the services postBeef to avoid actually broadcasting new transactions and collect beef data.
-      services.postBeef = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+      services.postBeef = jest.fn().mockImplementation((beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
         const r: sdk.PostBeefResult = {
           name: 'mock',
           status: 'success',
@@ -26,7 +26,7 @@ describe.skip('createActionToGenerateBeefs test', () => {
         return Promise.resolve([r])
       })
       // Not required
-      // services.postTxs = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+      // services.postTxs = jest.fn().mockImplementation((beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
       //   const r: sdk.PostBeefResult = {
       //     name: 'mock',
       //     status: 'success',
@@ -54,7 +54,7 @@ describe.skip('createActionToGenerateBeefs test', () => {
       } = await createAndConsume(wallet, root, kp)
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           options: {
             acceptDelayedBroadcast: false,
@@ -112,7 +112,7 @@ describe.skip('createActionToGenerateBeefs test', () => {
       expect(inputBEEF).toBeTruthy()
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp1.address} of ${root1} & ${kp2.address} of ${root2}`,
           options: {
             acceptDelayedBroadcast: false,
@@ -145,7 +145,7 @@ describe.skip('createActionToGenerateBeefs test', () => {
 
   test('4_test tranaction log', async () => {
     for (const { activeStorage: storage } of ctxs) {
-      const txid: bsv.HexString = 'ed11e4b7402e38bac0ec7431063ae7c14ee82370e5f1963d48ae27a70527f784'
+      const txid: HexString = 'ed11e4b7402e38bac0ec7431063ae7c14ee82370e5f1963d48ae27a70527f784'
       const rl = await logTransaction(storage, txid)
       if (!noLog) console.log(rl)
       break
@@ -187,8 +187,8 @@ describe.skip('createActionToGenerateBeefs test', () => {
 
 const truncate = (s: string) => (s.length > 80 ? s.slice(0, 77) + '...' : s)
 
-async function logTransaction(storage: StorageKnex, txid: bsv.HexString): Promise<string> {
-  let amount: bsv.SatoshiValue = 0
+async function logTransaction(storage: StorageKnex, txid: HexString): Promise<string> {
+  let amount: SatoshiValue = 0
   let log = `txid: ${txid}\n`
   const rt = await storage.findTransactions({ partial: { txid } })
   for (const t of rt) {
@@ -222,15 +222,15 @@ function logBasket(storage: StorageKnex, basket: table.OutputBasket): string {
   return log
 }
 
-async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): Promise<{ txidPair: bsv.TXIDHexString[]; Beef: bsv.Beef }> {
-  let txid1: bsv.TXIDHexString
-  let txid2: bsv.TXIDHexString
+async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): Promise<{ txidPair: TXIDHexString[]; Beef: Beef }> {
+  let txid1: TXIDHexString
+  let txid2: TXIDHexString
   const outputSatoshis = 42
   let noSendChange: string[] | undefined
-  let inputBEEF: bsv.AtomicBEEF | undefined
+  let inputBEEF: AtomicBEEF | undefined
 
   {
-    const createArgs: bsv.CreateActionArgs = {
+    const createArgs: CreateActionArgs = {
       description: `${kp.address} of ${root}`,
       outputs: [{ satoshis: outputSatoshis, lockingScript: _tu.getLockP2PKH(kp.address).toHex(), outputDescription: 'pay fred' }],
       options: {
@@ -253,7 +253,7 @@ async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): 
     const st = cr.signableTransaction!
     expect(st.reference).toBeTruthy()
     // const tx = Transaction.fromAtomicBEEF(st.tx) // Transaction doesn't support V2 Beef yet.
-    const atomicBeef = bsv.Beef.fromBinary(st.tx)
+    const atomicBeef = Beef.fromBinary(st.tx)
     const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
     for (const input of tx.inputs) {
       expect(atomicBeef.findTxid(input.sourceTXID!)).toBeTruthy()
@@ -263,7 +263,7 @@ async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): 
     //expect(st.amount > 242 && st.amount < 300).toBe(true)
 
     // sign and complete
-    const signArgs: bsv.SignActionArgs = {
+    const signArgs: SignActionArgs = {
       reference: st.reference,
       spends: {},
       options: {
@@ -283,7 +283,7 @@ async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): 
     const unlock = _tu.getUnlockP2PKH(kp.privateKey, outputSatoshis)
     const unlockingScriptLength = await unlock.estimateLength()
 
-    const createArgs: bsv.CreateActionArgs = {
+    const createArgs: CreateActionArgs = {
       description: `${kp.address} of ${root}`,
       inputs: [
         {
@@ -309,14 +309,14 @@ async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): 
     expect(cr.signableTransaction).toBeTruthy()
     const st = cr.signableTransaction!
     expect(st.reference).toBeTruthy()
-    const atomicBeef: bsv.Beef = bsv.Beef.fromBinary(st.tx)
+    const atomicBeef: Beef = Beef.fromBinary(st.tx)
     const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
 
     tx.inputs[0].unlockingScriptTemplate = unlock
     await tx.sign()
     const unlockingScript = tx.inputs[0].unlockingScript!.toHex()
 
-    const signArgs: bsv.SignActionArgs = {
+    const signArgs: SignActionArgs = {
       reference: st.reference,
       spends: { 0: { unlockingScript } },
       options: {

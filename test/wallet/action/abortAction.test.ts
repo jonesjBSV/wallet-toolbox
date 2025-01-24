@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { AbortActionArgs } from '@bsv/sdk'
 import { sdk } from "../../../src/index.client"
 import { _tu, expectToThrowWERR, TestWalletNoSetup } from "../../utils/TestUtilsWalletStorage"
 
@@ -19,7 +19,7 @@ describe('abortAction tests', () => {
             ctxs.push(await _tu.createLegacyWalletMySQLCopy('abortActionTests'));
         ctxs.push(await _tu.createLegacyWalletSQLiteCopy('abortActionTests'))
         for (const { wallet } of ctxs) {
-            const invalidArgs: bsv.AbortActionArgs[] = [
+            const invalidArgs: AbortActionArgs[] = [
         { reference: '' },
         { reference: '====' },
         { reference: 'a'.repeat(301) },

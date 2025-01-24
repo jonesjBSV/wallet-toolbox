@@ -1,15 +1,14 @@
-import * as bsv from '@bsv/sdk'
+import { HexString, KeyDeriver, KeyDeriverApi, WalletProtocol } from '@bsv/sdk'
 import { asBsvSdkPrivateKey, verifyTruthy } from "./index.client";
 import { LockingScript, P2PKH, PrivateKey, Script, ScriptTemplate, Transaction, UnlockingScript } from "@bsv/sdk";
-import { sdk } from "../index.client";
 
 export interface ScriptTemplateParamsSABPPP {
    derivationPrefix?: string
    derivationSuffix?: string
-   keyDeriver: bsv.KeyDeriverApi
+   keyDeriver: KeyDeriverApi
 }
 
-export const brc29ProtocolID: bsv.WalletProtocol = [2, '3241645161d8']
+export const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
 
 export class ScriptTemplateSABPPP implements ScriptTemplate {
     p2pkh: P2PKH
@@ -23,11 +22,11 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
 
     getKeyID() { return `${this.params.derivationPrefix} ${this.params.derivationSuffix}` }
 
-    getKeyDeriver(privKey: PrivateKey | bsv.HexString) : bsv.KeyDeriverApi {
+    getKeyDeriver(privKey: PrivateKey | HexString) : KeyDeriverApi {
         if (typeof privKey === 'string')
             privKey = PrivateKey.fromHex(privKey)
         if (!this.params.keyDeriver || this.params.keyDeriver.rootKey.toHex() !== privKey.toHex())
-            return new bsv.KeyDeriver(privKey)
+            return new KeyDeriver(privKey)
         return this.params.keyDeriver
     }
 

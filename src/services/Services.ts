@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Transaction as BsvTransaction, Beef, ChainTracker, Utils } from '@bsv/sdk'
 import { asArray, asString, doubleSha256BE, sdk, sha256Hash, wait } from '../index.client'
 import { ServiceCollection } from './ServiceCollection'
 
@@ -50,7 +50,7 @@ export class Services implements sdk.WalletServices {
             .add({ name: 'exchangeratesapi', service: updateExchangeratesapi })
     }
 
-    async getChainTracker(): Promise<bsv.ChainTracker> {
+    async getChainTracker(): Promise<ChainTracker> {
         if (!this.options.chaintracks)
             throw new sdk.WERR_INVALID_PARAMETER('options.chaintracks', `valid to enable 'getChainTracker' service.`)
         return new ChaintracksChainTracker(this.chain, this.options.chaintracks)
@@ -110,7 +110,7 @@ export class Services implements sdk.WalletServices {
      * @param txids
      * @returns
      */
-    async postTxs(beef: bsv.Beef, txids: string[]): Promise<sdk.PostTxsResult[]> {
+    async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> {
 
         const rs = await Promise.all(this.postTxsServices.allServices.map(async service => {
             const r = await service(beef, txids, this)
@@ -126,7 +126,7 @@ export class Services implements sdk.WalletServices {
      * @param chain 
      * @returns
      */
-    async postBeef(beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> {
+    async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> {
 
         let rs = await Promise.all(this.postBeefServices.allServices.map(async service => {
             const r = await service(beef, txids, this)
@@ -283,7 +283,7 @@ export class Services implements sdk.WalletServices {
         return r0
     }
 
-    async nLockTimeIsFinal(tx: string | number[] | bsv.Transaction | number): Promise<boolean> {
+    async nLockTimeIsFinal(tx: string | number[] | BsvTransaction | number): Promise<boolean> {
         const MAXINT = 0xffffffff
         const BLOCK_LIMIT = 500000000
 
@@ -293,12 +293,12 @@ export class Services implements sdk.WalletServices {
             nLockTime = tx
         else {
             if (typeof tx === 'string') {
-                tx = bsv.Transaction.fromHex(tx)
+                tx = BsvTransaction.fromHex(tx)
             } else if (Array.isArray(tx)) {
-                tx = bsv.Transaction.fromBinary(tx)
+                tx = BsvTransaction.fromBinary(tx)
             }
 
-            if (tx instanceof bsv.Transaction) {
+            if (tx instanceof BsvTransaction) {
                 if (tx.inputs.every(i => i.sequence === MAXINT)) {
                     return true
                 }
@@ -350,7 +350,7 @@ export function validateScriptHash(output: string, outputFormat?: sdk.GetUtxoSta
  * @publicbody
  */
 export function toBinaryBaseBlockHeader(header: sdk.BaseBlockHeader): number[] {
-    const writer = new bsv.Utils.Writer()
+    const writer = new Utils.Writer()
     writer.writeUInt32BE(header.version)
     writer.writeReverse(asArray(header.previousHash))
     writer.writeReverse(asArray(header.merkleRoot))

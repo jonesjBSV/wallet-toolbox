@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef, InternalizeActionArgs, InternalizeActionResult, InternalizeOutput, P2PKH, WalletProtocol } from '@bsv/sdk'
 import { sdk } from "../../index.client";
 import { WalletSigner } from "../WalletSigner";
 
@@ -37,13 +37,13 @@ import { WalletSigner } from "../WalletSigner";
 export async function internalizeAction(
   signer: WalletSigner,
   auth: sdk.AuthId,
-  args: bsv.InternalizeActionArgs
+  args: InternalizeActionArgs
 )
-: Promise<bsv.InternalizeActionResult> {
+: Promise<InternalizeActionResult> {
   const vargs = sdk.validateInternalizeActionArgs(args)
 
   const { ab, tx, txid } = await validateAtomicBeef();
-  const brc29ProtocolID: bsv.WalletProtocol = [2, '3241645161d8']
+  const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
 
   for (const o of vargs.outputs) {
     if (o.outputIndex < 0 || o.outputIndex >= tx.outputs.length)
@@ -55,11 +55,11 @@ export async function internalizeAction(
     }
   }
 
-  const r: bsv.InternalizeActionResult = await signer.storage.internalizeAction(args)
+  const r: InternalizeActionResult = await signer.storage.internalizeAction(args)
 
   return r
 
-  function setupWalletPaymentForOutput(o: bsv.InternalizeOutput, dargs: sdk.ValidInternalizeActionArgs) {
+  function setupWalletPaymentForOutput(o: InternalizeOutput, dargs: sdk.ValidInternalizeActionArgs) {
     const p = o.paymentRemittance
     const output = tx.outputs[o.outputIndex]
     if (!p) throw new sdk.WERR_INVALID_PARAMETER('paymentRemitance', `valid for protocol ${o.protocol}`);
@@ -67,19 +67,19 @@ export async function internalizeAction(
     const keyID = `${p.derivationPrefix} ${p.derivationSuffix}`
 
     const privKey = signer.keyDeriver!.derivePrivateKey(brc29ProtocolID, keyID, p.senderIdentityKey)
-    const expectedLockScript = new bsv.P2PKH().lock(privKey.toAddress())
+    const expectedLockScript = new P2PKH().lock(privKey.toAddress())
     if (output.lockingScript.toHex() !== expectedLockScript.toHex())
       throw new sdk.WERR_INVALID_PARAMETER('paymentRemitance', `locked by script conforming to BRC-29`);
   }
 
-  function setupBasketInsertionForOutput(o: bsv.InternalizeOutput, dargs: sdk.ValidInternalizeActionArgs) {
+  function setupBasketInsertionForOutput(o: InternalizeOutput, dargs: sdk.ValidInternalizeActionArgs) {
     /*
     No additional validations...
     */
   }
 
   async function validateAtomicBeef() {
-    const ab = bsv.Beef.fromBinary(vargs.tx);
+    const ab = Beef.fromBinary(vargs.tx);
     const txValid = await ab.verify(await signer.getServices().getChainTracker(), false);
     if (!txValid || !ab.atomicTxid)
       throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF');

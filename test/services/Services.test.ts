@@ -1,4 +1,4 @@
-import * as bsv from "@bsv/sdk"
+import { Beef } from "@bsv/sdk"
 import { sdk, wait } from "../../src/index.client"
 import { _tu, TestSetup1Wallet } from "../utils/TestUtilsWalletStorage"
 
@@ -106,7 +106,7 @@ describe('Wallet services tests', () => {
                     const txid = '9cce99686bc8621db439b7150dd5b3b269e4b0628fd75160222c417d6f2b95e4'
                     const rawTx = await wallet.services.getRawTx(txid)
                     const mp = await wallet.services.getMerklePath(txid)
-                    const beef = new bsv.Beef()
+                    const beef = new Beef()
                     beef.mergeBump(mp.merklePath!)
                     beef.mergeRawTx(rawTx.rawTx!)
                     // Using postTxs as postBeef is problematic still...

@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { AcquireCertificateArgs, DiscoverByAttributesArgs, DiscoverByIdentityKeyArgs, ListCertificatesArgs, ProveCertificateArgs, RelinquishCertificateArgs } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../src/index.all'
 import { Wallet } from '../../src/Wallet'
 import { jest } from '@jest/globals'
@@ -57,7 +57,7 @@ export const mockKeyDeriver = (): any => ({
  * Argument and Response Generators
  * Creates reusable test data for arguments and expected responses.
  */
-export const generateListCertificatesArgs = (overrides = {}): bsv.ListCertificatesArgs => ({
+export const generateListCertificatesArgs = (overrides = {}): ListCertificatesArgs => ({
   certifiers: [],
   types: [],
   limit: 10,
@@ -71,7 +71,7 @@ export const generateMockCertificatesResponse = (overrides = {}): any => ({
   ...overrides
 })
 
-export const generateAcquireCertificateArgs = (overrides = {}): bsv.AcquireCertificateArgs => ({
+export const generateAcquireCertificateArgs = (overrides = {}): AcquireCertificateArgs => ({
   type: 'mockType', // Base64String: A valid certificate type
   certifier: 'mockCertifier', // PubKeyHex: Certifier's public key
   acquisitionProtocol: 'direct', // AcquisitionProtocol: 'direct' or 'issuance'
@@ -91,7 +91,7 @@ export const generateMockAcquireCertificateResponse = (overrides = {}): any => (
   ...overrides
 })
 
-export const generateRelinquishCertificateArgs = (overrides = {}): bsv.RelinquishCertificateArgs => ({
+export const generateRelinquishCertificateArgs = (overrides = {}): RelinquishCertificateArgs => ({
   type: 'mockType', // Base64String: A valid certificate type
   serialNumber: 'mockSerialNumber', // Base64String: The certificate's serial number
   certifier: 'mockCertifier', // PubKeyHex: Certifier's public key
@@ -103,7 +103,7 @@ export const generateMockRelinquishCertificateResponse = (overrides = {}): any =
   ...overrides
 })
 
-export const generateProveCertificateArgs = (overrides = {}): bsv.ProveCertificateArgs => ({
+export const generateProveCertificateArgs = (overrides = {}): ProveCertificateArgs => ({
   certificate: {
     type: 'mockType',
     certifier: 'mockCertifier',
@@ -121,7 +121,7 @@ export const generateMockProveCertificateResponse = (overrides = {}): any => ({
   ...overrides
 })
 
-export const generateDiscoverByIdentityKeyArgs = (overrides = {}): bsv.DiscoverByIdentityKeyArgs => ({
+export const generateDiscoverByIdentityKeyArgs = (overrides = {}): DiscoverByIdentityKeyArgs => ({
   identityKey: 'mockIdentityKey',
   ...overrides
 })
@@ -131,7 +131,7 @@ export const generateMockDiscoverByIdentityKeyResponse = (overrides = {}): any =
   ...overrides
 })
 
-export const generateDiscoverByAttributesArgs = (overrides = {}): bsv.DiscoverByAttributesArgs => ({
+export const generateDiscoverByAttributesArgs = (overrides = {}): DiscoverByAttributesArgs => ({
   attributes: { mockAttribute: 'value' },
   ...overrides
 })

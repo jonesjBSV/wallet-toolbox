@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { ListActionsArgs, ListActionsResult, ListOutputsArgs, ListOutputsResult } from '@bsv/sdk'
 import { sdk, verifyOne, verifyOneOrNone, verifyTruthy } from '../index.all'
 import { KnexMigrations, table } from './index.all'
 
@@ -147,12 +147,12 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
     return this.validateEntities(rs, undefined, ['isDeleted'])
   }
 
-  override async listActions(auth: sdk.AuthId, args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult> {
+  override async listActions(auth: sdk.AuthId, args: ListActionsArgs): Promise<ListActionsResult> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     const vargs = sdk.validateListActionsArgs(args)
     return await listActions(this, auth, vargs)
   }
-  override async listOutputs(auth: sdk.AuthId, args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult> {
+  override async listOutputs(auth: sdk.AuthId, args: ListOutputsArgs): Promise<ListOutputsResult> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     const vargs = sdk.validateListOutputsArgs(args)
     return await listOutputs(this, auth, vargs)

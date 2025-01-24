@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Utils } from '@bsv/sdk'
 
 /**
  * Coerce a value to a hex encoded string if currently a hex encoded string or number[]
@@ -8,11 +8,11 @@ import * as bsv from '@bsv/sdk'
  */
 export function asString(val: string | number[]): string {
   if (typeof val === 'string') return val
-  return bsv.Utils.toHex(val)
+  return Utils.toHex(val)
 }
 
 export function asArray(val: string | number[]): number[] {
   if (Array.isArray(val)) return val
-  let a: number[] = bsv.Utils.toArray(val, 'hex')
+  let a: number[] = Utils.toArray(val, 'hex')
   return a
 }

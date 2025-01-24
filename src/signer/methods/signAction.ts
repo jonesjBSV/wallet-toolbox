@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import * as bsv from '@bsv/sdk'
+import { Beef, Transaction as BsvTransaction, SignActionResult, SignActionSpend } from '@bsv/sdk'
 import { asBsvSdkScript, ScriptTemplateSABPPP, sdk } from "../../index.client"
 import { PendingSignAction, WalletSigner } from "../WalletSigner"
 import { processAction } from './createAction'
 
 export async function signAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs)
-: Promise<bsv.SignActionResult>
+: Promise<SignActionResult>
 {
   const prior = signer.pendingSignActions[vargs.reference]
   if (!prior)
@@ -18,7 +18,7 @@ export async function signAction(signer: WalletSigner, auth: sdk.AuthId, vargs: 
 
   const sendWithResults = await processAction(prior, signer, auth, vargs)
 
-  const r: bsv.SignActionResult = {
+  const r: SignActionResult = {
     txid: prior.tx.id('hex'),
     tx: vargs.options.returnTXIDOnly ? undefined : makeAtomicBeef(prior.tx, prior.dcr.inputBeef),
     sendWithResults
@@ -27,19 +27,19 @@ export async function signAction(signer: WalletSigner, auth: sdk.AuthId, vargs: 
   return r
 }
 
-export function makeAtomicBeef(tx: bsv.Transaction, beef: number[] | bsv.Beef) : number[] {
+export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef) : number[] {
   if (Array.isArray(beef))
-    beef = bsv.Beef.fromBinary(beef)
+    beef = Beef.fromBinary(beef)
   beef.mergeTransaction(tx)
   return beef.toBinaryAtomic(tx.id('hex'))
 }
 
 export async function completeSignedTransaction(
   prior: PendingSignAction,
-  spends: Record<number, bsv.SignActionSpend>,
+  spends: Record<number, SignActionSpend>,
   ninja: WalletSigner,
 )
-: Promise<bsv.Transaction>
+: Promise<BsvTransaction>
 {
 
   /////////////////////
@@ -59,7 +59,7 @@ export async function completeSignedTransaction(
   }
 
   const results = {
-    sdk: <bsv.SignActionResult>{}
+    sdk: <SignActionResult>{}
   }
 
   /////////////////////
