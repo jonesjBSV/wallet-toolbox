@@ -125,7 +125,7 @@ describe('walletLive test', () => {
      */
     const r = await createWalletPaymentAction({
       toIdentityKey: myIdentityKey,
-      outputSatoshis: 500000,
+      outputSatoshis: 100000,
       keyDeriver: liveCtx.keyDeriver,
       wallet: liveCtx.wallet,
       logResult: true
