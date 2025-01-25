@@ -1,7 +1,36 @@
-import { CreateActionArgs, CreateActionOutput, CreateActionResult, KeyDeriver, P2PKH, PrivateKey, PublicKey, SignActionArgs, SignActionResult, Utils, WalletCertificate, WalletInterface } from '@bsv/sdk'
+import {
+  CreateActionArgs,
+  CreateActionOutput,
+  CreateActionResult,
+  KeyDeriver,
+  P2PKH,
+  PrivateKey,
+  PublicKey,
+  SignActionArgs,
+  SignActionResult,
+  Utils,
+  WalletCertificate,
+  WalletInterface
+} from '@bsv/sdk'
 import path from 'path'
 import { promises as fsp } from 'fs'
-import { asArray, randomBytesBase64, randomBytesHex, sdk, StorageProvider, StorageKnex, StorageSyncReader, table, verifyTruthy, Wallet, Monitor, MonitorOptions, Services, WalletSigner, WalletStorageManager, verifyOne, StorageClient } from '../../src/index.all'
+import {
+  asArray,
+  randomBytesBase64,
+  randomBytesHex,
+  sdk,
+  StorageProvider,
+  StorageKnex,
+  StorageSyncReader,
+  table,
+  verifyTruthy,
+  Wallet,
+  Monitor,
+  Services,
+  WalletStorageManager,
+  verifyOne,
+  StorageClient
+} from '../../src/index.all'
 
 import { Knex, knex as makeKnex } from 'knex'
 import { Beef } from '@bsv/sdk'
@@ -174,7 +203,6 @@ export abstract class TestUtilsWalletStorage {
     const chain = args.chain
     const storage = new WalletStorageManager(identityKey, args.active, args.backups)
     if (storage.stores.length > 0) await storage.makeAvailable()
-    const signer = new WalletSigner(chain, keyDeriver, storage)
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
@@ -184,14 +212,13 @@ export abstract class TestUtilsWalletStorage {
       const privKey = PrivateKey.fromString(args.privKeyHex)
       privilegedKeyManager = new PrivilegedKeyManager(async () => privKey)
     }
-    const wallet = new Wallet(signer, services, monitor, privilegedKeyManager)
+    const wallet = new Wallet({ chain, keyDeriver, storage, services, monitor, privilegedKeyManager })
     const r: TestWalletOnly = {
       rootKey,
       identityKey,
       keyDeriver,
       chain,
       storage,
-      signer,
       services,
       monitor,
       wallet
@@ -456,11 +483,10 @@ export abstract class TestUtilsWalletStorage {
       await storage.syncFromReader(identityKey, new StorageSyncReader({ identityKey }, reader))
       await reader.destroy()
     }
-    const signer = new WalletSigner(chain, keyDeriver, storage)
     const services = new Services(chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
-    const wallet = new Wallet(signer, services, monitor)
+    const wallet = new Wallet({ chain, keyDeriver, storage, services, monitor })
     const userId = verifyTruthy(await activeStorage.findUserByIdentityKey(identityKey)).userId
     const r: TestWallet<{}> = {
       rootKey,
@@ -470,7 +496,6 @@ export abstract class TestUtilsWalletStorage {
       activeStorage,
       storage,
       setup: {},
-      signer,
       services,
       monitor,
       wallet,
@@ -923,7 +948,6 @@ export interface TestWallet<T> extends TestWalletOnly {
   keyDeriver: KeyDeriver
   chain: sdk.Chain
   storage: WalletStorageManager
-  signer: WalletSigner
   services: Services
   monitor: Monitor
   wallet: Wallet
@@ -935,7 +959,6 @@ export interface TestWalletOnly {
   keyDeriver: KeyDeriver
   chain: sdk.Chain
   storage: WalletStorageManager
-  signer: WalletSigner
   services: Services
   monitor: Monitor
   wallet: Wallet

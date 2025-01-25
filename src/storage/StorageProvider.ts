@@ -50,8 +50,8 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     abstract getLabelsForTransactionId(transactionId?: number, trx?: sdk.TrxToken): Promise<table.TxLabel[]>
     abstract getTagsForOutputId(outputId: number, trx?: sdk.TrxToken): Promise<table.OutputTag[]>
 
-    abstract listActions(auth: sdk.AuthId, args: ListActionsArgs): Promise<ListActionsResult>
-    abstract listOutputs(auth: sdk.AuthId, args: ListOutputsArgs): Promise<ListOutputsResult>
+    abstract listActions(auth: sdk.AuthId, args: sdk.ValidListActionsArgs): Promise<ListActionsResult>
+    abstract listOutputs(auth: sdk.AuthId, args: sdk.ValidListOutputsArgs): Promise<ListOutputsResult>
 
     abstract countChangeInputs(userId: number, basketId: number, excludeSending: boolean): Promise<number>
 
@@ -65,7 +65,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     setServices(v: sdk.WalletServices) { this._services = v }
     getServices(): sdk.WalletServices {
         if (!this._services)
-            throw new sdk.WERR_INVALID_OPERATION('Must set WalletSigner services first.')
+            throw new sdk.WERR_INVALID_OPERATION('Must setServices first.')
         return this._services
     }
 

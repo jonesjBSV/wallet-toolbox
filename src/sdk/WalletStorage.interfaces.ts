@@ -99,9 +99,9 @@ export interface WalletStorageReader {
    findOutputsAuth(auth: sdk.AuthId, args: sdk.FindOutputsArgs ): Promise<table.Output[]>
    findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]>
 
-   listActions(auth: sdk.AuthId, args: ListActionsArgs): Promise<ListActionsResult>
-   listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>
-   listOutputs(auth: sdk.AuthId, args: ListOutputsArgs): Promise<ListOutputsResult>
+   listActions(auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult>
+   listCertificates(auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>
+   listOutputs(auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult>
 }
 
 export interface AuthId {
