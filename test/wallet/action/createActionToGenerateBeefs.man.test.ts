@@ -2,11 +2,8 @@
 import * as bsv from '@bsv/sdk'
 import { sdk, StorageKnex, table, Wallet } from '../../../src/index.all'
 
-import { _tu, expectToThrowWERR, TestKeyPair, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
-import { parseWalletOutpoint } from '../../../src/sdk'
-import { cleanUnsentTransactionsUsingAbort, cleanUnsignedTransactionsUsingAbort, cleanUnprocessedTransactionsUsingAbort } from '../../utils/TestUtilsMethodTests'
-
-const noLog = false
+import { _tu, expectToThrowWERR, logTransaction, TestKeyPair, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { cleanUnsentTransactionsUsingAbort, cleanUnsignedTransactionsUsingAbort, cleanUnprocessedTransactionsUsingAbort, log } from '../../utils/TestUtilsMethodTests'
 
 describe('createActionToGenerateBeefs test', () => {
   jest.setTimeout(99999999)
@@ -25,15 +22,6 @@ describe('createActionToGenerateBeefs test', () => {
         }
         return Promise.resolve([r])
       })
-      // Not required
-      // services.postTxs = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
-      //   const r: sdk.PostBeefResult = {
-      //     name: 'mock',
-      //     status: 'success',
-      //     txidResults: txids.map(txid => ({ txid, status: 'success' }))
-      //   }
-      //   return Promise.resolve([r])
-      // })
     }
   })
 
@@ -43,7 +31,7 @@ describe('createActionToGenerateBeefs test', () => {
     }
   })
 
-  test('2_send 2 txs in a beef', async () => {
+  test('1_send 2 txs in a beef', async () => {
     const root = '02135476'
     const kp = _tu.getKeyPair(root.repeat(8))
 
@@ -81,7 +69,7 @@ describe('createActionToGenerateBeefs test', () => {
     }
   })
 
-  test('3_send 4 txs in a single beef ', async () => {
+  test('2_send 4 txs in a single beef ', async () => {
     const root1 = '02135476'
     const kp1 = _tu.getKeyPair(root1.repeat(8))
     const root2 = '02135478'
@@ -94,7 +82,6 @@ describe('createActionToGenerateBeefs test', () => {
       } = await createAndConsume(wallet, root1, kp1)
       expect(txid1).toBeTruthy()
       expect(txid2).toBeTruthy()
-      // expect(beef1).toBeTruthy()
 
       const {
         txidPair: [txid3, txid4],
@@ -102,14 +89,6 @@ describe('createActionToGenerateBeefs test', () => {
       } = await createAndConsume(wallet, root2, kp2)
       expect(txid3).toBeTruthy()
       expect(txid4).toBeTruthy()
-      // expect(beef2).toBeTruthy()
-
-      // Need to merge the beefs
-      // const mergedBeef = beef1
-      // mergedBeef.mergeBeef(beef2)
-      // //expect(mergedBeef.isValid()).toBe(true)
-      // const inputBEEF = mergedBeef.toBinary()
-      // expect(inputBEEF).toBeTruthy()
 
       {
         const createArgs: bsv.CreateActionArgs = {
@@ -143,37 +122,36 @@ describe('createActionToGenerateBeefs test', () => {
     }
   })
 
-  test('4_test tranaction log', async () => {
+  test('3_test tranaction log', async () => {
     for (const { activeStorage: storage } of ctxs) {
       const txid: bsv.HexString = 'ed11e4b7402e38bac0ec7431063ae7c14ee82370e5f1963d48ae27a70527f784'
       const rl = await logTransaction(storage, txid)
-      if (!noLog) console.log(rl)
+      console.log(rl)
       break
     }
   })
-
-  test('5_abort set of nosend transactions', async () => {
+  test('4_abort set of nosend transactions', async () => {
     for (const { wallet, activeStorage: storage } of ctxs) {
       const r = await cleanUnsentTransactionsUsingAbort(wallet, storage)
       await expect(Promise.resolve(r)).resolves.toBe(true)
     }
   })
 
-  test('6_abort a set of unsigned transactions', async () => {
+  test('5_abort a set of unsigned transactions', async () => {
     for (const { wallet, activeStorage: storage } of ctxs) {
       const r = await cleanUnsignedTransactionsUsingAbort(wallet, storage)
       await expect(Promise.resolve(r)).resolves.toBe(true)
     }
   })
 
-  test('7_abort a set of unprocessed transactions', async () => {
+  test('6_abort a set of unprocessed transactions', async () => {
     for (const { wallet, activeStorage: storage } of ctxs) {
       const r = await cleanUnprocessedTransactionsUsingAbort(wallet, storage)
       await expect(Promise.resolve(r)).resolves.toBe(true)
     }
   })
 
-  test('8_abort all transactions', async () => {
+  test('7_abort all transactions', async () => {
     for (const { wallet, activeStorage: storage } of ctxs) {
       const r1 = await cleanUnsentTransactionsUsingAbort(wallet, storage)
       await expect(Promise.resolve(r1)).resolves.toBe(true)
@@ -184,43 +162,6 @@ describe('createActionToGenerateBeefs test', () => {
     }
   })
 })
-
-const truncate = (s: string) => (s.length > 80 ? s.slice(0, 77) + '...' : s)
-
-async function logTransaction(storage: StorageKnex, txid: bsv.HexString): Promise<string> {
-  let amount: bsv.SatoshiValue = 0
-  let log = `txid: ${txid}\n`
-  const rt = await storage.findTransactions({ partial: { txid } })
-  for (const t of rt) {
-    log += `status: ${t.status}\n`
-    log += `description: ${t.description}\n`
-    const ro = await storage.findOutputs({ partial: { transactionId: t.transactionId } })
-    for (const o of ro) {
-      log += `${await logOutput(storage, o)}`
-      amount += o.spendable ? o.satoshis : 0
-    }
-  }
-  log += `------------------\namount: ${amount}\n`
-  return log
-}
-
-async function logOutput(storage: StorageKnex, output: table.Output): Promise<string> {
-  let log = `satoshis: ${output.satoshis}\n`
-  log += `spendable: ${output.spendable}\n`
-  log += `change: ${output.change}\n`
-  log += `providedBy: ${output.providedBy}\n`
-  log += `spentBy: ${output.providedBy}\n`
-  if (output.basketId) {
-    const rb = await storage.findOutputBaskets({ partial: { basketId: output.basketId } })
-    log += `basket:${await logBasket(storage, rb[0])}\n`
-  }
-  return log
-}
-
-function logBasket(storage: StorageKnex, basket: table.OutputBasket): string {
-  let log = `${basket.name}\n`
-  return log
-}
 
 async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): Promise<{ txidPair: bsv.TXIDHexString[]; Beef: bsv.Beef }> {
   let txid1: bsv.TXIDHexString

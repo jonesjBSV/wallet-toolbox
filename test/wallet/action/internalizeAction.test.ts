@@ -1,5 +1,4 @@
 import * as bsv from '@bsv/sdk'
-import { sdk } from '../../../src/index.all'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('internalizeAction tests', () => {
@@ -21,10 +20,9 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('1 internalize custom output in receiving wallet with checks', async () => {
+  test('1_internalize custom output in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction1Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction1Tests'))
@@ -86,8 +84,9 @@ describe('internalizeAction tests', () => {
         const rt2 = await fred.activeStorage.findOutputTags({ partial: { outputTagId: rtm[1].outputTagId } })
         expect(rt2[0].tag).toBe('again')
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        // Check that calling again does not throw an error
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         // Cleanup Fred's storage
         await fred.activeStorage.destroy()
@@ -100,10 +99,9 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('2 internalize 2 custom outputs in receiving wallet with checks', async () => {
+  test('2_internalize 2 custom outputs in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction2Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction2Tests'))
@@ -130,6 +128,7 @@ describe('internalizeAction tests', () => {
             noSend: true
           }
         }
+
         // This createAction creates a new P2PKH output of 4 and 5 satoshis for Fred using his publish payment address... old school.
         const cr = await wallet.createAction(createArgs)
         expect(cr.tx).toBeTruthy()
@@ -192,10 +191,10 @@ describe('internalizeAction tests', () => {
           expect(rt2[0].tag).toBe('test 2')
         }
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        // Check that calling again does not throw an error
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
-        // Cleanup Fred's storage
         await fred.activeStorage.destroy()
       }
     }
@@ -206,10 +205,9 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('3 internalize wallet payment in receiving wallet with checks', async () => {
+  test('3_internalize wallet payment in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction3Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction3Tests'))
@@ -272,8 +270,8 @@ describe('internalizeAction tests', () => {
         expect(rfos[0].type).toBe('P2PKH')
         expect(rfos[0].purpose).toBe('change')
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         await fred.activeStorage.destroy()
       }
@@ -285,10 +283,9 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('4 internalize 2 wallet payments in receiving wallet with checks', async () => {
+  test('4_internalize 2 wallet payments in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction4Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction4Tests'))
@@ -375,8 +372,8 @@ describe('internalizeAction tests', () => {
         expect(rfos[1].type).toBe('P2PKH')
         expect(rfos[1].purpose).toBe('change')
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         await fred.activeStorage.destroy()
       }
@@ -388,7 +385,7 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test.skip('5 WIP internalize 2 wallet payments and 2 basket insertions in receiving wallet with checks', async () => {
+  test('5_internalize 2 wallet payments and 2 basket insertions in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
     if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction5Tests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction5Tests'))
@@ -515,7 +512,6 @@ describe('internalizeAction tests', () => {
           expect(ro[0].basketId).toBe(2)
           expect(ro[0].satoshis).toBe(outputSatoshis3)
 
-          // Validate custom instructions and tags
           expect(ro[0].customInstructions).toBe(`3rd payment ${JSON.stringify({ root, repeat: 8 })}`)
           const rtm = await fred.activeStorage.findOutputTagMaps({ partial: { outputId: 3 } })
           const rt1 = await fred.activeStorage.findOutputTags({ partial: { outputTagId: rtm[0].outputTagId } })
@@ -536,8 +532,8 @@ describe('internalizeAction tests', () => {
           expect(rt2[0].tag).toBe('2nd basket payment')
         }
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         await fred.activeStorage.destroy()
       }

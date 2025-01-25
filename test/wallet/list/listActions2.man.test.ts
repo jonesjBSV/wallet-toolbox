@@ -26,11 +26,51 @@ describe.skip('listActions tests', () => {
       const { activeStorage } = ctx
       await activeStorage.dropAllData()
       await activeStorage.migrate('insert tests', '3'.repeat(64))
-      setups.push({ storage: activeStorage, setup: await _tu.createTestSetup2(activeStorage) })
+      //setups.push({ storage: activeStorage, setup: await _tu.createTestSetup2(activeStorage) })
     }
     expect(setups).toBeTruthy() // Ensure setups were initialized correctly
 
-    for (const { storage, setup } of setups) {
+    for (const { activeStorage: storage, identityKey } of ctxs) {
+      const tx1: Partial<table.Transaction> = {
+        txid: 'tx',
+        satoshis: 1,
+        status: 'completed',
+        isOutgoing: true,
+        description: 'Transaction',
+        version: 1,
+        lockTime: 0
+      }
+      const o: Partial<table.Output> = {
+        spendable: false,
+        change: false,
+        outputDescription: 'description',
+        vout: 0,
+        satoshis: 1,
+        //   providedBy:
+        //   purpose:
+        //   type:
+        txid: 'tx',
+        //   senderIdentityKey:
+        //   derivationPrefix:
+        //   derivationSuffix:
+        //   customInstructions:
+        //   spentBy:
+        sequenceNumber: 0,
+        //   spendingDescription:
+        //   scriptLength:
+        //   scriptOffset:
+        lockingScript: [1, 2, 3, 4]
+        //providedBy: 'you',
+        //purpose: '',
+        //type: ''
+      }
+      const b1: Partial<table.OutputBasket> = { name: 'basket' }
+      const l1: Partial<table.TxLabel> = { label: 'label' }
+      const lm1: Partial<table.TxLabelMap> = { txLabelId: 1 }
+      const t1: Partial<table.OutputTag> = { tag: 'tag' }
+      const tm1: Partial<table.OutputTagMap> = { outputTagId: 1 }
+
+      _tu.createTestSetup2(storage, identityKey, tx1, b1, l1, lm1, t1, tm1)
     }
   })
 
@@ -50,7 +90,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('13_no labels any', async () => {
+  test('13_no labels any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: [],
@@ -61,7 +101,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('14_no labels all', async () => {
+  test('14_no labels all', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: [],
@@ -72,7 +112,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('15_empty label default any', async () => {
+  test('15_empty label default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['']
@@ -82,7 +122,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('16_label is space character default any', async () => {
+  test('16_label is space character default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: [' ']
@@ -104,7 +144,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('18_label min 1 character default any', async () => {
+  test('18_label min 1 character default any', async () => {
     for (const { wallet } of ctxs) {
       const minLengthLabel = 'a'
       const args: bsv.ListActionsArgs = {
@@ -117,7 +157,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('19_label max 300 spaces default any', async () => {
+  test('19_label max 300 spaces default any', async () => {
     for (const { wallet } of ctxs) {
       const maxLengthLabel = ' '.repeat(300)
       const args: bsv.ListActionsArgs = {
@@ -128,7 +168,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('20_label max 300 normal characters default any', async () => {
+  test('20_label max 300 normal characters default any', async () => {
     for (const { wallet } of ctxs) {
       const maxLengthLabel = 'a'.repeat(300)
       const args: bsv.ListActionsArgs = {
@@ -141,7 +181,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('21_label max 300 spaces trimmed default any', async () => {
+  test('21_label max 300 spaces trimmed default any', async () => {
     for (const { wallet } of ctxs) {
       const maxLengthLabel = ' '.repeat(300).trim()
       const args: bsv.ListActionsArgs = {
@@ -153,7 +193,7 @@ describe.skip('listActions tests', () => {
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
-  test.skip('22_label exceeding max length default any', async () => {
+  test('22_label exceeding max length default any', async () => {
     for (const { wallet } of ctxs) {
       const tooLongLabel = 'a'.repeat(301)
       const args: bsv.ListActionsArgs = {
@@ -164,7 +204,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('23_label exceeding max length with leading spaces default any', async () => {
+  test('23_label exceeding max length with leading spaces default any', async () => {
     for (const { wallet } of ctxs) {
       const validLabelWhenTrimmed = '  ' + 'a'.repeat(300)
       const args: bsv.ListActionsArgs = {
@@ -177,7 +217,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('24_normal label default any', async () => {
+  test('24_normal label default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label']
@@ -189,7 +229,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('25_normal label any', async () => {
+  test('25_normal label any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label'],
@@ -202,7 +242,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('26_normal label all', async () => {
+  test('26_normal label all', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label'],
@@ -215,7 +255,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('27_label mixed case default any', async () => {
+  test('27_label mixed case default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['LAbEL']
@@ -227,7 +267,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('28_label special characters default any', async () => {
+  test('28_label special characters default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['@special#label!']
@@ -239,7 +279,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('29_label leading and trailing whitespace default any', async () => {
+  test('29_label leading and trailing whitespace default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['  label  ']
@@ -251,7 +291,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('30_label numeric default any', async () => {
+  test('30_label numeric default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['12345']
@@ -263,7 +303,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('31_label alphanumeric default any', async () => {
+  test('31_label alphanumeric default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['abcde12345']
@@ -274,7 +314,7 @@ describe.skip('listActions tests', () => {
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
-  test.skip('32_label contains default any', async () => {
+  test('32_label contains default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['labelOne']
@@ -286,7 +326,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('33_label different case lower any', async () => {
+  test('33_label different case lower any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label'],
@@ -299,7 +339,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('34_label different case upper any', async () => {
+  test('34_label different case upper any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['LABEL'],
@@ -312,7 +352,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('35_label with whitespace default any', async () => {
+  test('35_label with whitespace default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['lab  el']
@@ -324,7 +364,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('36_label different case lower all', async () => {
+  test('36_label different case lower all', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label'],
@@ -337,7 +377,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('37_label different case upper all', async () => {
+  test('37_label different case upper all', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['LABEL'],
@@ -350,7 +390,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('38_label duplicated default any', async () => {
+  test('38_label duplicated default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label', 'label']
@@ -362,7 +402,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('39_label requested default any', async () => {
+  test('39_label requested default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label'],
@@ -375,7 +415,7 @@ describe.skip('listActions tests', () => {
     }
   })
 
-  test.skip('40_label not requested default any', async () => {
+  test('40_label not requested default any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['label'],
