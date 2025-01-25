@@ -4882,7 +4882,8 @@ export class Monitor {
     removeTask(name: string): void 
     async setupChaintracksListeners(): Promise<void> 
     async runTask(name: string): Promise<string> 
-    async runOnce(runAsyncSetup: boolean = true): Promise<void> 
+    async runOnce(): Promise<void> 
+    _runAsyncSetup: boolean = true;
     async startTasks(): Promise<void> 
     async logEvent(event: string, details?: string): Promise<void> 
     stopTasks(): void 
@@ -5178,6 +5179,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
     constructor(wallet: WalletInterface, endpointUrl: string) 
     isStorageProvider(): boolean 
     isAvailable(): boolean 
+    getSettings(): table.Settings 
     async makeAvailable(): Promise<table.Settings> 
     async destroy(): Promise<void> 
     async migrate(storageName: string, storageIdentityKey: string): Promise<string> 
@@ -5196,8 +5198,6 @@ export class StorageClient implements sdk.WalletStorageProvider {
         isNew: boolean;
     }> 
     async insertCertificateAuth(auth: sdk.AuthId, certificate: table.CertificateX): Promise<number> 
-    _settings?: table.Settings;
-    getSettings(): table.Settings 
     async listActions(auth: sdk.AuthId, args: ListActionsArgs): Promise<ListActionsResult> 
     async listOutputs(auth: sdk.AuthId, args: ListOutputsArgs): Promise<ListOutputsResult> 
     async listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult> 
