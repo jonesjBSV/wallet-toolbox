@@ -31,6 +31,7 @@ describe('Wallet sync tests', () => {
       await ctx.storage.destroy()
     }
   })
+
   // WIP To be used for purging to reduce size of DB
   test.skip('99 aggressively purge records from SQLite walletSyncTestSource', async () => {
     for (const { monitor, activeStorage: storage } of ctxs) {

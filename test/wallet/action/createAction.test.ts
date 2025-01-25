@@ -187,7 +187,7 @@ describe('createAction test', () => {
     const root = '02135476'
     const kp = _tu.getKeyPair(root.repeat(8))
     for (const { wallet } of ctxs) {
-      const args: bsv.CreateActionArgs = {
+      const args: CreateActionArgs = {
         description: 'Multiple outputs',
         outputs: [
           {

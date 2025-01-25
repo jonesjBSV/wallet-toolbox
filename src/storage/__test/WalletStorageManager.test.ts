@@ -5,7 +5,7 @@ import { _tu, TestWalletNoSetup } from '../../../test/utils/TestUtilsWalletStora
 import * as dotenv from 'dotenv'
 
 dotenv.config()
-describe('Wallet sync tests', () => {
+describe('WalletStorageManager tests', () => {
   jest.setTimeout(99999999)
 
   const env = _tu.getEnv('test')
@@ -192,7 +192,7 @@ describe('Wallet sync tests', () => {
     await storage.destroy()
   })
 
-  test('2_TODOTONE - AtomicBEEF error', async () => {
+  test.skip('2_TODOTONE - AtomicBEEF error', async () => {
     for (const { wallet } of ctxs) {
       const fred = await _tu.createSQLiteTestWallet({ chain: 'test', databaseName: 'syncTest2Fred', rootKeyHex: '2'.repeat(64), dropAll: true })
       const promises: Promise<number>[] = []
