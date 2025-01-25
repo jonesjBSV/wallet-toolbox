@@ -36,7 +36,7 @@ describe('update tests', () => {
     }
   })
 
-  test('1_update ProvenTx', async () => {
+  test('0_update ProvenTx', async () => {
     for (const { storage } of setups) {
       const records = await storage.findProvenTxs({ partial: {} })
       const time = new Date('2001-01-02T12:00:00.000Z')
@@ -50,7 +50,7 @@ describe('update tests', () => {
     }
   })
 
-  test('2_update ProvenTx', async () => {
+  test('1_update ProvenTx', async () => {
     const primaryKey = 'provenTxId'
     for (const { storage } of setups) {
       const referenceTime = new Date()
@@ -113,90 +113,7 @@ describe('update tests', () => {
     }
   })
 
-  test('3_update ProvenTx set created_at and updated_at time', async () => {
-    for (const { storage } of setups) {
-      const scenarios = [
-        {
-          description: 'Invalid created_at time',
-          updates: {
-            created_at: new Date('3000-01-01T00:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        },
-        {
-          description: 'Invalid updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('3000-01-01T00:00:00Z')
-          }
-        },
-        {
-          description: 'created_at time overwrites updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        }
-      ]
-      for (const { updates } of scenarios) {
-        const referenceTime = new Date()
-        const records = await storage.findProvenTxs({ partial: {} })
-        for (const record of records) {
-          await storage.updateProvenTx(record.provenTxId, { created_at: updates.created_at })
-          await storage.updateProvenTx(record.provenTxId, { updated_at: updates.updated_at })
-          const t = verifyOne(await storage.findProvenTxs({ partial: { provenTxId: record.provenTxId } }))
-          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime, 10, false)).toBe(true)
-          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime, 10, false)).toBe(true)
-        }
-      }
-    }
-  })
-
-  test('4_update ProvenTx setting individual values', async () => {
-    for (const { storage } of setups) {
-      const initialRecord: ProvenTx = {
-        provenTxId: 3,
-        txid: 'mockTxid',
-        created_at: new Date(),
-        updated_at: new Date(),
-        blockHash: '',
-        height: 1,
-        index: 1,
-        merklePath: [],
-        merkleRoot: '',
-        rawTx: []
-      }
-      try {
-        const r = await storage.insertProvenTx(initialRecord)
-        expect(r).toBeGreaterThan(0)
-        const insertedRecords = await storage.findProvenTxs({ partial: {} })
-        expect(insertedRecords.length).toBeGreaterThan(0)
-        const foundRecord = insertedRecords.find(record => record.provenTxId === 3)
-        expect(foundRecord).toBeDefined()
-        expect(foundRecord?.txid).toBe('mockTxid')
-      } catch (error: any) {
-        console.error('Error inserting initial record:', (error as Error).message)
-        return
-      }
-      await expect(storage.updateProvenTx(1, { provenTxId: 0 })).rejects.toThrow(/FOREIGN KEY constraint failed/)
-      const r1 = await storage.updateProvenTx(3, { provenTxId: 0 })
-      await expect(Promise.resolve(r1)).resolves.toBe(1)
-      const r2 = await storage.findProvenTxs({ partial: {} })
-      expect(r2[0].provenTxId).toBe(0)
-      expect(r2[1].provenTxId).toBe(1)
-      const r3 = await storage.updateProvenTx(0, { provenTxId: 3 })
-      await expect(Promise.resolve(r3)).resolves.toBe(1)
-      const r4 = await storage.findProvenTxs({ partial: {} })
-      expect(r4[0].provenTxId).toBe(1)
-      expect(r4[1].provenTxId).toBe(3)
-      const r8 = await storage.updateProvenTx(3, { txid: 'mockValidTxid' })
-      await expect(Promise.resolve(r8)).resolves.toBe(1)
-      const r9 = await storage.findProvenTxs({ partial: {} })
-      expect(r9.find(r => r.provenTxId === 3)?.txid).toBe('mockValidTxid')
-    }
-  })
-
-  test('5_update ProvenTxReq', async () => {
+  test('2_update ProvenTxReq', async () => {
     const primaryKey = 'provenTxReqId'
     for (const { storage } of setups) {
       const records = await storage.findProvenTxReqs({ partial: {} })
@@ -252,99 +169,7 @@ describe('update tests', () => {
     }
   })
 
-  test('6_update ProvenTxReq set created_at and updated_at time', async () => {
-    for (const { storage } of setups) {
-      const scenarios = [
-        {
-          description: 'Invalid created_at time',
-          updates: {
-            created_at: new Date('3000-01-01T00:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        },
-        {
-          description: 'Invalid updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('3000-01-01T00:00:00Z')
-          }
-        },
-        {
-          description: 'created_at time overwrites updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        }
-      ]
-      for (const { updates } of scenarios) {
-        const referenceTime = new Date()
-        const records = await storage.findProvenTxReqs({ partial: {} })
-        for (const record of records) {
-          await storage.updateProvenTxReq(record.provenTxReqId, { created_at: updates.created_at })
-          await storage.updateProvenTxReq(record.provenTxReqId, { updated_at: updates.updated_at })
-          const t = verifyOne(await storage.findProvenTxReqs({ partial: { provenTxReqId: record.provenTxReqId } }))
-          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime)).toBe(true)
-          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)).toBe(true)
-        }
-      }
-    }
-  })
-
-  test('7_update ProvenTxReq setting individual values', async () => {
-    for (const { storage } of setups) {
-      const referenceTime = new Date()
-      const initialRecord: ProvenTxReq = {
-        provenTxReqId: 3,
-        provenTxId: 1,
-        batch: 'batch',
-        status: 'nosend',
-        txid: 'mockTxid1',
-        created_at: referenceTime,
-        updated_at: referenceTime,
-        attempts: 0,
-        history: '{}',
-        inputBEEF: [],
-        notified: false,
-        notify: '{}',
-        rawTx: []
-      }
-      await storage.insertProvenTxReq(initialRecord)
-      const secondRecord: ProvenTxReq = {
-        ...initialRecord,
-        provenTxReqId: 4,
-        txid: 'mockTxid2'
-      }
-      await storage.insertProvenTxReq(secondRecord)
-      const recordToUpdate3 = await storage.findProvenTxReqs({ partial: { provenTxReqId: 3 } })
-      expect(recordToUpdate3.length).toBeGreaterThan(0)
-      const recordToUpdate4 = await storage.findProvenTxReqs({ partial: { provenTxReqId: 4 } })
-      expect(recordToUpdate4.length).toBeGreaterThan(0)
-      const r3 = await storage.updateProvenTxReq(3, { batch: 'updatedBatch' })
-      await expect(Promise.resolve(r3)).resolves.toBe(1)
-      const updatedRecords = await storage.findProvenTxReqs({ partial: {} })
-      const updatedBatch = updatedRecords.find(r => r.provenTxReqId === 3)?.batch
-      expect(updatedBatch).toBe('updatedBatch')
-      try {
-        const r4 = await storage.updateProvenTxReq(4, { batch: 'updatedBatch' })
-        if (r4 === 0) {
-          console.warn('No rows updated. Ensure UNIQUE constraint exists on the batch column if rejection is expected.')
-        } else {
-          await expect(Promise.resolve(r4)).resolves.toBe(1)
-        }
-      } catch (error: any) {
-        expect(error.message).toMatch(/UNIQUE constraint failed/)
-      }
-      const r5 = await storage.updateProvenTxReq(3, { txid: 'newValidTxid' })
-      await expect(Promise.resolve(r5)).resolves.toBe(1)
-      await expect(storage.updateProvenTxReq(4, { txid: 'newValidTxid' })).rejects.toThrow(/UNIQUE constraint failed/)
-      const finalRecords = await storage.findProvenTxReqs({ partial: {} })
-      expect(finalRecords.find(r => r.provenTxReqId === 4)?.txid).toBe('mockTxid2')
-      await storage.updateProvenTxReq(3, { batch: 'batch', txid: 'mockTxid1' })
-    }
-  })
-
-  test('8_update User', async () => {
+  test('3_update User', async () => {
     const primaryKey = 'userId'
     for (const { storage } of setups) {
       const records = await storage.findUsers({ partial: {} })
@@ -377,141 +202,7 @@ describe('update tests', () => {
     }
   })
 
-  test('9_update User set created_at and updated_at time', async () => {
-    for (const { storage } of setups) {
-      const scenarios = [
-        {
-          description: 'Invalid created_at time',
-          updates: {
-            created_at: new Date('3000-01-01T00:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        },
-        {
-          description: 'Invalid updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('3000-01-01T00:00:00Z')
-          }
-        },
-        {
-          description: 'created_at time overwrites updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        }
-      ]
-      for (const { description, updates } of scenarios) {
-        const referenceTime = new Date()
-        const records = await storage.findUsers({ partial: {} })
-        for (const record of records) {
-          await storage.updateUser(record.userId, { created_at: updates.created_at })
-          await storage.updateUser(record.userId, { updated_at: updates.updated_at })
-          const t = verifyOne(await storage.findUsers({ partial: { userId: record.userId } }))
-          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime)).toBe(true)
-          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)).toBe(true)
-        }
-      }
-    }
-  })
-
-  test('10_update User trigger DB unique constraint errors', async () => {
-    for (const { storage } of setups) {
-      try {
-        const r = await storage.updateUser(2, { identityKey: 'mockDupIdentityKey' })
-        await expect(Promise.resolve(r)).resolves.toBe(1)
-      } catch (error: any) {
-        console.error('Error updating second record:', error.message)
-        return
-      }
-      const r1 = await triggerUniqueConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', { userId: 2 })
-      await expect(Promise.resolve(r1)).resolves.toBe(true)
-      const r2 = await triggerUniqueConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', { identityKey: 'mockDupIdentityKey' })
-      await expect(Promise.resolve(r2)).resolves.toBe(true)
-      const r3 = await triggerUniqueConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', { identityKey: 'mockUniqueIdentityKey' })
-      await expect(Promise.resolve(r3)).resolves.toBe(false)
-    }
-  })
-
-  test('11_update User trigger DB foreign key constraint errors', async () => {
-    for (const { storage } of setups) {
-      const r1 = await triggerForeignKeyConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', { userId: 0 })
-      await expect(Promise.resolve(r1)).resolves.toBe(true)
-      const r2 = await triggerForeignKeyConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', { userId: 3 }, 0)
-      await expect(Promise.resolve(r2)).resolves.toBe(false)
-    }
-  })
-
-  test('12_update User table setting individual values', async () => {
-    for (const { storage } of setups) {
-      const initialRecord: table.User = {
-        userId: 3,
-        identityKey: '',
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-      try {
-        const r = await storage.insertUser(initialRecord)
-        expect(r).toBeGreaterThan(1)
-      } catch (error: any) {
-        console.error('Error inserting initial record:', error.message)
-        return
-      }
-      await expect(storage.updateUser(1, { userId: 0 })).rejects.toThrow(/FOREIGN KEY constraint failed/)
-      await expect(storage.updateUser(2, { userId: 0 })).rejects.toThrow(/FOREIGN KEY constraint failed/)
-      const r1 = await storage.updateUser(3, { userId: 0 })
-      await expect(Promise.resolve(r1)).resolves.toBe(1)
-      const r2 = await storage.findUsers({ partial: {} })
-      expect(r2[0].userId).toBe(0)
-      expect(r2[1].userId).toBe(1)
-      expect(r2[2].userId).toBe(2)
-      const r3 = await storage.updateUser(0, { userId: 3 })
-      await expect(Promise.resolve(r3)).resolves.toBe(1)
-      const r4 = await storage.findUsers({ partial: {} })
-      expect(r4[0].userId).toBe(1)
-      expect(r4[1].userId).toBe(2)
-      expect(r4[2].userId).toBe(3)
-      const r5 = await storage.updateUser(3, { userId: 9999 })
-      await expect(Promise.resolve(r5)).resolves.toBe(1)
-      const r6 = await storage.findUsers({ partial: {} })
-      expect(r6[0].userId).toBe(1)
-      expect(r6[1].userId).toBe(2)
-      expect(r6[2].userId).toBe(9999)
-      await expect(storage.updateUser(1, { userId: 9999 })).rejects.toThrow(/UNIQUE constraint failed/)
-      const r7 = await storage.findUsers({ partial: {} })
-      expect(r7[0].userId).toBe(1)
-      expect(r7[1].userId).toBe(2)
-      expect(r7[2].userId).toBe(9999)
-      const r8 = await storage.updateUser(9999, { identityKey: 'mockValidIdentityKey' })
-      await expect(Promise.resolve(r8)).resolves.toBe(1)
-      const r9 = await storage.findUsers({ partial: {} })
-      expect(r9[0].identityKey).not.toBe('mockValidIdentityKey')
-      expect(r9[1].identityKey).not.toBe('mockValidIdentityKey')
-      expect(r9[2].identityKey).toBe('mockValidIdentityKey')
-      await expect(storage.updateUser(2, { identityKey: 'mockValidIdentityKey' })).rejects.toThrow(/UNIQUE constraint failed/)
-      const r10 = await storage.findUsers({ partial: {} })
-      expect(r10[0].identityKey).not.toBe('mockValidIdentityKey')
-      expect(r10[1].identityKey).not.toBe('mockValidIdentityKey')
-      expect(r10[2].identityKey).toBe('mockValidIdentityKey')
-      const r11 = await storage.updateUser(9999, { userId: 3 })
-      await expect(Promise.resolve(r11)).resolves.toBe(1)
-      const r12 = await storage.findUsers({ partial: {} })
-      expect(r12[0].userId).toBe(1)
-      expect(r12[1].userId).toBe(2)
-      expect(r12[2].userId).toBe(3)
-      const createdAt = new Date('2024-12-30T23:00:00Z')
-      const updatedAt = new Date('2024-12-30T23:05:00Z')
-      const r13 = await storage.updateUser(3, { created_at: createdAt, updated_at: updatedAt })
-      await expect(Promise.resolve(r13)).resolves.toBe(1)
-      const r14 = await storage.findUsers({ partial: {} })
-      const updatedRecord = r14.find(record => record.userId === 3)
-      expect(updatedRecord?.created_at).toEqual(createdAt)
-      expect(updatedRecord?.updated_at).toEqual(updatedAt)
-    }
-  })
-
-  test('13_update Certificate', async () => {
+  test('4_update Certificate', async () => {
     for (const { storage } of setups) {
       const primaryKey = 'certificateId'
       const records = await storage.findCertificates({ partial: {} })
@@ -575,94 +266,7 @@ describe('update tests', () => {
     }
   })
 
-  test('14_update Certificate set created_at and updated_at time', async () => {
-    for (const { storage } of setups) {
-      const scenarios = [
-        {
-          description: 'Invalid created_at time',
-          updates: {
-            created_at: new Date('3000-01-01T00:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        },
-        {
-          description: 'Invalid updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('3000-01-01T00:00:00Z')
-          }
-        },
-        {
-          description: 'created_at time overwrites updated_at time',
-          updates: {
-            created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
-          }
-        }
-      ]
-      for (const { updates } of scenarios) {
-        const referenceTime = new Date()
-        const records = await storage.findCertificates({ partial: {} })
-        for (const record of records) {
-          await storage.updateUser(record.certificateId, { created_at: updates.created_at })
-          await storage.updateUser(record.certificateId, { updated_at: updates.updated_at })
-          const t = verifyOne(await storage.findCertificates({ partial: { certificateId: record.certificateId } }))
-          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime)).toBe(true)
-          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)).toBe(true)
-        }
-      }
-    }
-  })
-
-  test('15_update Certificate trigger DB unique constraint errors', async () => {
-    for (const { storage } of setups) {
-      const initMockDupValues = {
-        userId: 2,
-        type: `mockType2`,
-        certifier: `mockCertifier2`,
-        serialNumber: `mockSerialNumber2`
-      }
-      try {
-        const r = await storage.updateCertificate(2, initMockDupValues)
-        await expect(Promise.resolve(r)).resolves.toBe(1)
-      } catch (error: any) {
-        console.error('Error updating second record:', error.message)
-      }
-      const mockDupValues = {
-        userId: 2,
-        type: `mockType2`,
-        certifier: `mockCertifier2`,
-        serialNumber: `mockSerialNumber2`
-      }
-      const mockUniqueValues = {
-        userId: 2,
-        type: `mockTypeUnique`,
-        certifier: `mockCertifier2`,
-        serialNumber: `mockSerialNumber2`
-      }
-      const r1 = await triggerUniqueConstraintError(storage, 'findCertificates', 'updateCertificate', 'certificates', 'certificateId', { certificateId: 2 })
-      await expect(Promise.resolve(r1)).resolves.toBe(true)
-      const r2 = await triggerUniqueConstraintError(storage, 'findCertificates', 'updateCertificate', 'certificates', 'certificateId', mockDupValues)
-      await expect(Promise.resolve(r2)).resolves.toBe(true)
-      const r3 = await triggerUniqueConstraintError(storage, 'findCertificates', 'updateCertificate', 'certificates', 'certificateId', mockUniqueValues)
-      await expect(Promise.resolve(r3)).resolves.toBe(false)
-    }
-  })
-
-  test('16_update Certificate trigger DB foreign key constraint errors', async () => {
-    for (const { storage } of setups) {
-      const r1 = await triggerForeignKeyConstraintError(storage, 'findCertificates', 'updateCertificate', 'certificates', 'certificateId', { certificateId: 0 })
-      await expect(Promise.resolve(r1)).resolves.toBe(true)
-      const r2 = await triggerForeignKeyConstraintError(storage, 'findCertificates', 'updateCertificate', 'certificates', 'certificateId', { certificateId: 1 }, 0)
-      await expect(Promise.resolve(r2)).resolves.toBe(false)
-      const r3 = await triggerForeignKeyConstraintError(storage, 'findCertificates', 'updateCertificate', 'certificates', 'certificateId', { userId: 0 })
-      await expect(Promise.resolve(r3)).resolves.toBe(true)
-      const r4 = await triggerForeignKeyConstraintError(storage, 'findCertificates', 'updateCertificate', 'certificates', 'certificateId', { userId: 1 }, 2)
-      await expect(Promise.resolve(r4)).resolves.toBe(false)
-    }
-  })
-
-  test('17_update CertificateField', async () => {
+  test('5_update CertificateField', async () => {
     const primaryKey = 'certificateId'
     for (const { storage } of setups) {
       const records = await storage.findCertificateFields({ partial: { fieldName: 'bob' } })
@@ -701,7 +305,7 @@ describe('update tests', () => {
     }
   })
 
-  test('18_update OutputBasket', async () => {
+  test('6_update OutputBasket', async () => {
     const primaryKey = 'basketId'
     for (const { storage } of setups) {
       const records = await storage.findOutputBaskets({ partial: {} })
@@ -751,7 +355,7 @@ describe('update tests', () => {
     }
   })
 
-  test('19_update Transaction', async () => {
+  test('7_update Transaction', async () => {
     const primaryKey = 'transactionId'
     for (const { storage } of setups) {
       const records = await storage.findTransactions({ partial: {} })
@@ -796,7 +400,19 @@ describe('update tests', () => {
     }
   })
 
-  test('20_update Commission', async () => {
+  test('7a updateTransactionStatus', async () => {
+    const { activeStorage: storage } = await _tu.createLegacyWalletSQLiteCopy('updateTransactionStatus6a')
+
+    let tx = verifyOne(await storage.findTransactions({ partial: { status: 'unproven' }, paged: { limit: 1 } }))
+    expect(tx.status).toBe('unproven')
+    await storage.updateTransactionStatus('completed', tx.transactionId)
+    tx = verifyOne(await storage.findTransactions({ partial: { transactionId: tx.transactionId } }))
+    expect(tx.status).toBe('completed')
+
+    await storage.destroy()
+  })
+
+  test('8_update Commission', async () => {
     const primaryKey = 'commissionId'
     for (const { storage } of setups) {
       const records = await storage.findCommissions({ partial: {} })
@@ -841,7 +457,7 @@ describe('update tests', () => {
     }
   })
 
-  test('21_update Output', async () => {
+  test('9_update Output', async () => {
     const primaryKey = 'outputId'
     for (const { storage } of setups) {
       const records = await storage.findOutputs({ partial: {} })
@@ -915,7 +531,7 @@ describe('update tests', () => {
     }
   })
 
-  test('22_update OutputTag', async () => {
+  test('10_update OutputTag', async () => {
     const primaryKey = 'outputTagId'
     for (const { storage } of setups) {
       const records = await storage.findOutputTags({ partial: {} })
@@ -969,7 +585,7 @@ describe('update tests', () => {
     }
   })
 
-  test('23_update OutputTagMap', async () => {
+  test('11_update OutputTagMap', async () => {
     const primaryKey = ['outputTagId', 'outputId']
     for (const { storage } of setups) {
       const records = await storage.findOutputTagMaps({ partial: {} })
@@ -1016,7 +632,7 @@ describe('update tests', () => {
     }
   })
 
-  test('24_update TxLabel', async () => {
+  test('12_update TxLabel', async () => {
     const primaryKey = 'txLabelId'
     for (const { storage } of setups) {
       const records = await storage.findTxLabels({ partial: {} })
@@ -1067,7 +683,7 @@ describe('update tests', () => {
     }
   })
 
-  test('25_update TxLabelMap', async () => {
+  test('13_update TxLabelMap', async () => {
     const primaryKeyTransaction = 'transactionId'
     const primaryKeyLabel = 'txLabelId'
     for (const { storage, setup } of setups) {
@@ -1116,7 +732,7 @@ describe('update tests', () => {
     }
   })
 
-  test('26_update MonitorEvent', async () => {
+  test('14_update MonitorEvent', async () => {
     const primaryKey = 'id'
     for (const { storage, setup } of setups) {
       const records = await storage.findMonitorEvents({ partial: {} })
@@ -1151,7 +767,7 @@ describe('update tests', () => {
     }
   })
 
-  test('27_update SyncState', async () => {
+  test('15_update SyncState', async () => {
     const primaryKey = 'syncStateId'
     for (const { storage } of setups) {
       const records = await storage.findSyncStates({ partial: {} })
