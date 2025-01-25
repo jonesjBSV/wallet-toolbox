@@ -98,7 +98,7 @@ describe('acquireCertificate tests', () => {
         await storage.destroy()
     })
 
-    test.skip('3 privileged acquireCertificate listCertificate proveCertificate', async () => {
+    test('3 privileged acquireCertificate listCertificate proveCertificate', async () => {
         const { wallet, storage } = await _tu.createSQLiteTestWallet({
             databaseName: 'acquireCertificate3',
             privKeyHex: '42'.repeat(32),
@@ -108,7 +108,7 @@ describe('acquireCertificate tests', () => {
         // Make a test certificate from a random certifier for the wallet's identityKey
 
         // Certificate issued to the privileged key must use the privilegedKeyManager's identityKey
-        const subject = (await wallet.privilegedKeyManager!.getPublicKey({ identityKey: true })).toString()
+        const subject = (await wallet.privilegedKeyManager!.getPublicKey({ identityKey: true })).publicKey
         const { cert, certifier } = _tu.makeSampleCert(subject)
 
         // Act as the certifier: create a wallet for them...
@@ -158,7 +158,7 @@ describe('acquireCertificate tests', () => {
             verifier: subject
         }
         const pkr = await wallet.proveCertificate(pkrArgs)
-        const co2 = await sdk.CertOps.fromCounterparty(wallet, { certificate: lc, keyring: pkr.keyringForVerifier, counterparty: pkrArgs.verifier })
+        const co2 = await sdk.CertOps.fromCounterparty(wallet.privilegedKeyManager!, { certificate: lc, keyring: pkr.keyringForVerifier, counterparty: pkrArgs.verifier })
         expect(co2._decryptedFields!['name']).toBe('Alice')
 
         const certs = await wallet.listCertificates({ types: [], certifiers: [] })

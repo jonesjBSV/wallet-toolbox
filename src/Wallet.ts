@@ -302,7 +302,7 @@ export class Wallet implements WalletInterface {
             vargs.subject = (await this.getPublicKey({ identityKey: true, privileged: args.privileged, privilegedReason: args.privilegedReason })).publicKey
             try {
                 // Confirm that the information received adds up to a usable certificate...
-                await sdk.CertOps.fromCounterparty(this, {
+                await sdk.CertOps.fromCounterparty(vargs.privileged ? this.privilegedKeyManager! : this, {
                     certificate: { ...vargs },
                     keyring: vargs.keyringForSubject,
                     counterparty: vargs.keyringRevealer === 'certifier' ? vargs.certifier : vargs.keyringRevealer
