@@ -7,6 +7,7 @@ import { Knex, knex as makeKnex } from 'knex'
 import { Beef } from '@bsv/sdk'
 
 import * as dotenv from 'dotenv'
+import { PrivilegedKeyManager } from '../../src/sdk'
 dotenv.config()
 
 const localMySqlConnection = process.env.LOCAL_MYSQL_CONNECTION || ''
@@ -158,7 +159,13 @@ export abstract class TestUtilsWalletStorage {
     return unlock
   }
 
-  static async createWalletOnly(args: { chain?: sdk.Chain; rootKeyHex?: string; active?: sdk.WalletStorageProvider; backups?: sdk.WalletStorageProvider[] }): Promise<TestWalletOnly> {
+  static async createWalletOnly(args: {
+    chain?: sdk.Chain
+    rootKeyHex?: string
+    active?: sdk.WalletStorageProvider
+    backups?: sdk.WalletStorageProvider[]
+    privKeyHex?: string
+  }): Promise<TestWalletOnly> {
     args.chain ||= 'test'
     args.rootKeyHex ||= '1'.repeat(64)
     const rootKey = PrivateKey.fromHex(args.rootKeyHex)
@@ -172,7 +179,12 @@ export abstract class TestUtilsWalletStorage {
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
     monitor.addDefaultTasks()
-    const wallet = new Wallet(signer, services, monitor)
+    let privilegedKeyManager: PrivilegedKeyManager | undefined = undefined
+    if (args.privKeyHex) {
+      const privKey = PrivateKey.fromString(args.privKeyHex)
+      privilegedKeyManager = new PrivilegedKeyManager(async () => privKey)
+    }
+    const wallet = new Wallet(signer, services, monitor, privilegedKeyManager)
     const r: TestWalletOnly = {
       rootKey,
       identityKey,
@@ -209,9 +221,10 @@ export abstract class TestUtilsWalletStorage {
     chain?: sdk.Chain
     rootKeyHex?: string
     dropAll?: boolean
+    privKeyHex?: string
     insertSetup: (storage: StorageKnex, identityKey: string) => Promise<T>
   }): Promise<TestWallet<T>> {
-    const wo = await _tu.createWalletOnly({ chain: args.chain, rootKeyHex: args.rootKeyHex })
+    const wo = await _tu.createWalletOnly({ chain: args.chain, rootKeyHex: args.rootKeyHex, privKeyHex: args.privKeyHex })
     const activeStorage = new StorageKnex({ chain: wo.chain, knex: args.knex, commissionSatoshis: 0, commissionPubKeyHex: undefined, feeModel: { model: 'sat/kb', value: 1 } })
     if (args.dropAll) await activeStorage.dropAllData()
     await activeStorage.migrate(args.databaseName, wo.identityKey)
@@ -329,7 +342,14 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
-  static async createSQLiteTestWallet(args: { filePath?: string; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean }): Promise<TestWalletNoSetup> {
+  static async createSQLiteTestWallet(args: {
+    filePath?: string
+    databaseName: string
+    chain?: sdk.Chain
+    rootKeyHex?: string
+    dropAll?: boolean
+    privKeyHex?: string
+  }): Promise<TestWalletNoSetup> {
     const localSQLiteFile = args.filePath || (await _tu.newTmpFile(`${args.databaseName}.sqlite`, false, false, true))
     return await this.createKnexTestWallet({
       ...args,
@@ -346,7 +366,14 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
-  static async createKnexTestWallet(args: { knex: Knex<any, any[]>; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean }): Promise<TestWalletNoSetup> {
+  static async createKnexTestWallet(args: {
+    knex: Knex<any, any[]>
+    databaseName: string
+    chain?: sdk.Chain
+    rootKeyHex?: string
+    dropAll?: boolean
+    privKeyHex?: string
+  }): Promise<TestWalletNoSetup> {
     return await _tu.createKnexTestWalletWithSetup({
       ...args,
       insertSetup: insertEmptySetup
