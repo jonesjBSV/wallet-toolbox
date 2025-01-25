@@ -147,14 +147,12 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
     return this.validateEntities(rs, undefined, ['isDeleted'])
   }
 
-  override async listActions(auth: sdk.AuthId, args: ListActionsArgs): Promise<ListActionsResult> {
+  override async listActions(auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
-    const vargs = sdk.validateListActionsArgs(args)
     return await listActions(this, auth, vargs)
   }
-  override async listOutputs(auth: sdk.AuthId, args: ListOutputsArgs): Promise<ListOutputsResult> {
+  override async listOutputs(auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
-    const vargs = sdk.validateListOutputsArgs(args)
     return await listOutputs(this, auth, vargs)
   }
 
