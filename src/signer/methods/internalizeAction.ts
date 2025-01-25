@@ -80,6 +80,9 @@ export async function internalizeAction(
 
   async function validateAtomicBeef() {
     const ab = Beef.fromBinary(vargs.tx);
+
+    // TODO: Add support for known txids...
+    
     const txValid = await ab.verify(await signer.getServices().getChainTracker(), false);
     if (!txValid || !ab.atomicTxid)
       throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF');

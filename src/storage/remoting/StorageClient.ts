@@ -79,6 +79,13 @@ export class StorageClient implements sdk.WalletStorageProvider {
         return !!this.settings
     }
 
+    getSettings(): table.Settings {
+        if (!this.settings) {
+            throw new sdk.WERR_INVALID_OPERATION('call makeAvailable at least once before getSettings')
+        }
+        return this.settings
+    }
+
     async makeAvailable(): Promise<table.Settings> {
         if (!this.settings) {
             this.settings = await this.rpcCall<table.Settings>("makeAvailable", [])
@@ -162,15 +169,6 @@ export class StorageClient implements sdk.WalletStorageProvider {
         certificate: table.CertificateX
     ): Promise<number> {
         return this.rpcCall<number>("insertCertificateAuth", [auth, certificate])
-    }
-
-    _settings?: table.Settings
-
-    getSettings(): table.Settings {
-        if (!this._settings) {
-            throw new sdk.WERR_INVALID_OPERATION('call makeAvailable at least once before getSettings')
-        }
-        return this._settings!
     }
 
     async listActions(

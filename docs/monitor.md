@@ -164,7 +164,8 @@ export class Monitor {
     removeTask(name: string): void 
     async setupChaintracksListeners(): Promise<void> 
     async runTask(name: string): Promise<string> 
-    async runOnce(runAsyncSetup: boolean = true): Promise<void> 
+    async runOnce(): Promise<void> 
+    _runAsyncSetup: boolean = true;
     async startTasks(): Promise<void> 
     async logEvent(event: string, details?: string): Promise<void> 
     stopTasks(): void 
