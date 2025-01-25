@@ -6,7 +6,7 @@
  * and exposes it via a JSON-RPC POST endpoint using Express.
  */
 
-import * as bsv from '@bsv/sdk'
+import { WalletInterface } from '@bsv/sdk'
 import express, { Request, Response } from 'express'
 import { AuthMiddlewareOptions, createAuthMiddleware } from '@bsv/auth-express-middleware'
 import { createPaymentMiddleware } from '@bsv/payment-express-middleware'
@@ -18,6 +18,7 @@ export interface WalletStorageServerOptions {
   port: number
   wallet: Wallet
   monetize: boolean
+  calculateRequestPrice?: (req: Request) => number | Promise<number>
 }
 
 export class StorageServer {
@@ -26,12 +27,14 @@ export class StorageServer {
   private storage: StorageProvider
   private wallet: Wallet
   private monetize: boolean
+  private calculateRequestPrice?: (req: Request) => number | Promise<number>
 
   constructor(storage: StorageProvider, options: WalletStorageServerOptions) {
     this.storage = storage
     this.port = options.port
     this.wallet = options.wallet
     this.monetize = options.monetize
+    this.calculateRequestPrice = options.calculateRequestPrice
 
     this.setupRoutes()
   }
@@ -55,14 +58,14 @@ export class StorageServer {
     })
 
     const options: AuthMiddlewareOptions = {
-      wallet: this.wallet as bsv.Wallet
+      wallet: this.wallet as WalletInterface
     }
     this.app.use(createAuthMiddleware(options))
     if (this.monetize) {
       this.app.use(
         createPaymentMiddleware({
-          wallet: this.wallet as bsv.Wallet,
-          calculateRequestPrice: () => 100
+          wallet: this.wallet,
+          calculateRequestPrice: this.calculateRequestPrice || (() => 100)
         })
       )
     }

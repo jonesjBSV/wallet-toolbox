@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { AcquireCertificateArgs, CompletedProtoWallet, ProveCertificateArgs } from '@bsv/sdk'
 import { _tu, expectToThrowWERR } from "../../utils/TestUtilsWalletStorage"
 import { sdk, Wallet } from '../../../src/index.all'
 
@@ -8,17 +8,15 @@ describe('acquireCertificate tests', () => {
     const env = _tu.getEnv('test')
 
     beforeAll(async () => {
-        //ccnr = await _tu.createCloudNinja(env.chain, env.devKeys[env.identityKey])
     })
 
     afterAll(async () => {
-        //await ccnr.dojo.destroy()
     })
 
     test('1 invalid params', async () => {
         const { wallet, storage } = await _tu.createLegacyWalletSQLiteCopy('acquireCertificate1')
         
-        const invalidArgs: bsv.AcquireCertificateArgs[] = [
+        const invalidArgs: AcquireCertificateArgs[] = [
             {
                 type: "",
                 certifier: "",
@@ -35,15 +33,15 @@ describe('acquireCertificate tests', () => {
         await storage.destroy()
     })
 
-    test.skip('2 certifier', async () => {
+    test('2 certifier', async () => {
         const { wallet, storage } = await _tu.createSQLiteTestWallet({ databaseName: 'acquireCertificate2', dropAll: true })
 
         // Make a test certificate from a random certifier for the wallet's identityKey
-        const subject = wallet.keyDeriver.identityKey
+        const subject = wallet.signer.keyDeriver.identityKey
         const { cert, certifier } = _tu.makeSampleCert(subject)
 
         // Act as the certifier: create a wallet for them...
-        const certifierWallet = new bsv.ProtoWallet(certifier)
+        const certifierWallet = new CompletedProtoWallet(certifier)
         // load the plaintext certificate into a CertOps object
         const co = new sdk.CertOps(certifierWallet, cert)
         // encrypt and sign the certificate
@@ -52,7 +50,7 @@ describe('acquireCertificate tests', () => {
         const { certificate: c, keyring: kr } = co.exportForSubject()
 
         // args object to create a new certificate via 'direct' protocol.
-        const args: bsv.AcquireCertificateArgs = {
+        const args: AcquireCertificateArgs = {
             serialNumber: c.serialNumber,
             signature: c.signature,
             privileged: false,
@@ -70,7 +68,7 @@ describe('acquireCertificate tests', () => {
         const r = await wallet.acquireCertificate(args)
         expect(r.serialNumber).toBe(c.serialNumber)
 
-        // Attempt to retreive it... since
+        // Attempt to retrieve it... since
         // the certifier is random this should
         // always be unique :-)
         const lcs = await wallet.listCertificates({
@@ -83,7 +81,7 @@ describe('acquireCertificate tests', () => {
         expect(lc.fields['name']).not.toBe('Alice')
 
         // Use proveCertificate to obtain a decryption keyring:
-        const pkrArgs: bsv.ProveCertificateArgs = {
+        const pkrArgs: ProveCertificateArgs = {
             certificate: { serialNumber: lc.serialNumber },
             fieldsToReveal: ['name'],
             verifier: subject

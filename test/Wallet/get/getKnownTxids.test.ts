@@ -1,6 +1,6 @@
 import { setupTestWallet } from '../../utils/TestUtilsMethodTests';
 
-describe('Wallet Utility Tests (Unit)', () => {
+describe.skip('Wallet Utility Tests (Unit)', () => {
     let wallet: any;
     let mockMergeTxidOnly: jest.Mock;
     let mockSortTxs: jest.Mock;

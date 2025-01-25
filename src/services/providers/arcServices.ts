@@ -1,5 +1,5 @@
-import * as bsv from '@bsv/sdk'
-import { asArray, randomBytesHex, sdk, Services } from "../../index.client";
+import { Transaction as BsvTransaction, ARC, ArcConfig, Beef, defaultHttpClient, HttpClient, HttpClientRequestOptions, MerklePath } from '@bsv/sdk'
+import { asArray, randomBytesHex, sdk } from "../../index.client";
 
 import axios from 'axios'
 import { Readable } from 'stream'
@@ -16,7 +16,7 @@ const BEEF_V2 = 4022206466 // 0200BEEF in LE order
 export interface ArcServiceConfig {
     name: string,
     url: string,
-    arcConfig: bsv.ArcConfig
+    arcConfig: ArcConfig
 }
 
 export function getTaalArcServiceConfig(chain: sdk.Chain, apiKey: string): ArcServiceConfig {
@@ -31,13 +31,13 @@ export function getTaalArcServiceConfig(chain: sdk.Chain, apiKey: string): ArcSe
 }
 
 export function makePostTxsToTaalARC(config: ArcServiceConfig): sdk.PostTxsService {
-    return (beef: bsv.Beef, txids: string[], services: sdk.WalletServices) => {
+    return (beef: Beef, txids: string[], services: sdk.WalletServices) => {
         return postTxsToTaalArcMiner(beef, txids, config, services)
     }
 }
 
 export function makePostBeefToTaalARC(config: ArcServiceConfig) : sdk.PostBeefService {
-    return (beef: bsv.Beef, txids: string[], services: sdk.WalletServices) => {
+    return (beef: Beef, txids: string[], services: sdk.WalletServices) => {
         return postBeefToTaalArcMiner(beef, txids, config, services)
     }
 }
@@ -55,7 +55,7 @@ class ArcServices {
     readonly callbackUrl: string | undefined
     readonly callbackToken: string | undefined
     readonly headers: Record<string, string> | undefined
-    private readonly httpClient: bsv.HttpClient
+    private readonly httpClient: HttpClient
 
     /**
      * Constructs an instance of the ARC broadcaster.
@@ -63,11 +63,11 @@ class ArcServices {
      * @param {string} URL - The URL endpoint for the ARC API.
      * @param {ArcConfig} config - Configuration options for the ARC broadcaster.
      */
-    constructor(URL: string, config: bsv.ArcConfig) {
+    constructor(URL: string, config: ArcConfig) {
         this.URL = URL
         const { apiKey, deploymentId, httpClient, callbackToken, callbackUrl, headers } = config
         this.apiKey = apiKey
-        this.httpClient = httpClient ?? bsv.defaultHttpClient()
+        this.httpClient = httpClient ?? defaultHttpClient()
         this.deploymentId = deploymentId || `WalletServices-${randomBytesHex(16)}`
         this.callbackToken = callbackToken
         this.callbackUrl = callbackUrl
@@ -81,7 +81,7 @@ class ArcServices {
      */
     async getTxStatus(txid: string): Promise<ArcMinerGetTxData> {
 
-        const requestOptions: bsv.HttpClientRequestOptions = {
+        const requestOptions: HttpClientRequestOptions = {
             method: 'GET',
             headers: this.requestHeaders(),
         }
@@ -112,7 +112,7 @@ export async function getMerklePathFromTaalARC(txid: string, config: ArcServiceC
         const rr = await arc.getTxStatus(txid)
 
         if (rr.status === 200 && rr.merklePath) {
-            const mp = bsv.MerklePath.fromHex(rr.merklePath)
+            const mp = MerklePath.fromHex(rr.merklePath)
             r.merklePath = mp
             r.header = await services.hashToHeader(rr.blockHash)
         }
@@ -128,18 +128,18 @@ export async function getMerklePathFromTaalARC(txid: string, config: ArcServiceC
  * @param txs All transactions must have source transactions. Will just source locking scripts and satoshis do?? toHexEF() is used.
  * @param config 
  */
-export async function postTxsToTaalArcMiner(beef: bsv.Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> {
+export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> {
     const r: sdk.PostTxsResult = { name: config.name, status: 'error', txidResults: [] }
 
     try {
-        const arc = new bsv.ARC(config.url, config.arcConfig)
+        const arc = new ARC(config.url, config.arcConfig)
 
         /**
          * This service requires an array of EF serialized transactions:
          * Pull the transactions matching txids array out of the Beef and fill in input sourceTransations,
          * either from Beef or by external service lookup.
          */
-        const txs: bsv.Transaction[] = []
+        const txs: BsvTransaction[] = []
         for (const txid of txids) {
             const btx = beef.findTxid(txid)
             if (btx) {
@@ -176,7 +176,7 @@ export async function postTxsToTaalArcMiner(beef: bsv.Beef, txids: string[], con
                 else {
                     txr.blockHash = rr.blockHash
                     txr.blockHeight = rr.blockHeight
-                    txr.merklePath = !rr.merklePath ? undefined : bsv.MerklePath.fromHex(rr.merklePath)
+                    txr.merklePath = !rr.merklePath ? undefined : MerklePath.fromHex(rr.merklePath)
                 }
             }
             r.txidResults.push(txr)
@@ -234,7 +234,7 @@ export interface ArcMinerPostBeefDataApi {
 }
 
 export async function postBeefToTaalArcMiner(
-    beef: bsv.Beef,
+    beef: Beef,
     txids: string[],
     config: ArcServiceConfig,
     services: sdk.WalletServices
@@ -245,23 +245,11 @@ export async function postBeefToTaalArcMiner(
     return r1
 
     if (r1.status === 'success') return r1
+
     const datas: object = { r1: r1.data }
 
-    // 2024-12-15 Testing still fails to consistently accept multiple new transactions in one Beef.
-    // Earlier testing seemed to confirm it worked. Did they break it??
-    // This has to work eventually, but for now, break multiple new transactions into
-    // individual atomic beefs and send them.
-    // Clearly they updated their code since the atomic beef spec wasn't written until after
-    // the original tests were done...
-    {
-        if (beef.atomicTxid === undefined) {
-            const abeef = beef.toBinaryAtomic(txids[txids.length -1])
-            const r2 = await postBeefToArcMiner(beef, txids, config)
-            datas['r2'] = r2.data
-            r2.data = datas
-            if (r2.status === 'success') return r2
-        }
-    }
+    const r2 = await services.postTxs(beef, txids)
+    
 
     const r3: sdk.PostBeefResult = {
         name: config.name,
@@ -269,10 +257,10 @@ export async function postBeefToTaalArcMiner(
         data: {},
         txidResults: []
     }
+
     for (const txid of txids) {
-        const ab = beef.toBinaryAtomic(txid)
-        const b = bsv.Beef.fromBinary(ab)
-        const rt = await postBeefToArcMiner(b, [txid], config)
+        const rawTx = beef.findTxid(txid)!.rawTx!
+        const rt = await postBeefToArcMiner(rawTx, [txid], config)
         if (rt.status === 'error') r3.status = 'error'
         r3.data![txid] = rt.data
         r3.txidResults.push(rt.txidResults[0])
@@ -283,7 +271,7 @@ export async function postBeefToTaalArcMiner(
 }
 
 export async function postBeefToArcMiner(
-    beef: bsv.Beef,
+    beef: Beef | number[],
     txids: string[],
     config: ArcServiceConfig
 )
@@ -298,10 +286,15 @@ export async function postBeefToArcMiner(
     // HACK to resolve ARC error when row has zero leaves.
     // beef.addComputedLeaves()
 
-    // HACK to resolve ARC not handling V2 Beef after change Beef class to always serialize as V2 if default constructed:
-    beef.version = BEEF_V1
+    let beefBinary: number[]
 
-    const beefBinary = beef.toBinary()
+    if (Array.isArray(beef))
+        beefBinary = beef
+    else {
+        // HACK to resolve ARC not handling V2 Beef after change Beef class to always serialize as V2 if default constructed:
+        beef.version = BEEF_V1
+        beefBinary = beef.toBinary()
+    }
 
     try {
         const length = beefBinary.length
@@ -429,7 +422,7 @@ function makeSuccessResult(
             rt.txid = dd.txid
             rt.blockHash = dd.blockHash
             rt.blockHeight = dd.blockHeight
-            rt.merklePath = bsv.MerklePath.fromBinary(asArray(dd.merklePath!))
+            rt.merklePath = MerklePath.fromBinary(asArray(dd.merklePath!))
         }
         r.txidResults.push(rt)
     }
@@ -461,7 +454,7 @@ export function makeErrorResult(
             rt.txid = dd.txid
             rt.blockHash = dd.blockHash
             rt.blockHeight = dd.blockHeight
-            rt.merklePath = bsv.MerklePath.fromBinary(asArray(dd.merklePath!))
+            rt.merklePath = MerklePath.fromBinary(asArray(dd.merklePath!))
         }
         r.txidResults.push(rt)
     }

@@ -1,8 +1,8 @@
-import * as bsv from '@bsv/sdk'
+import { Beef, BigNumber, Curve, OriginatorDomainNameStringUnder250Bytes, P2PKH, PrivateKey, PubKeyHex, PublicKey, Script } from '@bsv/sdk'
 import { asArray, asString, entity, randomBytesBase64, sdk, sha256Hash, stampLog, stampLogFormat, StorageProvider, table, validateStorageFeeModel, verifyId, verifyNumber, verifyOne, verifyOneOrNone, verifyTruthy } from "../../index.client";
 import { generateChangeSdk, GenerateChangeSdkChangeInput, GenerateChangeSdkParams } from './generateChange';
 
-export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes)
+export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes)
 : Promise<sdk.StorageCreateActionResult> {
   //stampLog(vargs, `start dojo createTransactionSdk`) 
 
@@ -82,7 +82,7 @@ interface CreateTransactionSdkContext {
 
 interface XValidCreateActionInput extends sdk.ValidCreateActionInput {
   vin: number
-  lockingScript: bsv.Script
+  lockingScript: Script
   satoshis: number
   output?: table.Output
 }
@@ -206,16 +206,16 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
   const storage = dojo
 
   // Lookup output baskets
-  const baskets: Record<string, table.OutputBasket> = {}
+  const txBaskets: Record<string, table.OutputBasket> = {}
   for (const xo of ctx.xoutputs) {
-    if (xo.basket !== undefined && !baskets[xo.basket])
-      baskets[xo.basket] = await dojo.findOrInsertOutputBasket(userId, xo.basket!);
+    if (xo.basket !== undefined && !txBaskets[xo.basket])
+      txBaskets[xo.basket] = await dojo.findOrInsertOutputBasket(userId, xo.basket!);
   }
   // Lookup output tags
-  const tags: Record<string, table.OutputTag> = {}
+  const txTags: Record<string, table.OutputTag> = {}
   for (const xo of ctx.xoutputs) {
     for (const tag of xo.tags) {
-      tags[tag] = await storage.findOrInsertOutputTag(userId, tag)
+      txTags[tag] = await storage.findOrInsertOutputTag(userId, tag)
     }
   }
 
@@ -247,7 +247,7 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
       newOutputs.push({ o, tags: [] })
     } else {
       // The user wants tracking if they put their output in a basket
-      const basketId = !xo.basket ? undefined : baskets[xo.basket].basketId!
+      const basketId = !xo.basket ? undefined : txBaskets[xo.basket].basketId!
 
       const o = makeDefaultOutput(userId, ctx.transactionId, xo.satoshis, xo.vout)
       o.lockingScript = lockingScript
@@ -316,7 +316,7 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
 
     // Add tags to the output
     for (const tagName of tags) {
-      const tag = tags[tagName]!
+      const tag = txTags[tagName]!
       await storage.findOrInsertOutputTagMap(verifyId(o.outputId), verifyId(tag.outputTagId))
     }
 
@@ -326,7 +326,7 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
       lockingScript: !o.lockingScript ? '' : asString(o.lockingScript),
       providedBy: verifyTruthy(o.providedBy) as sdk.StorageProvidedBy,
       purpose: o.purpose || undefined,
-      basket: Object.values(baskets).find(b => b.basketId === o.basketId)?.name,
+      basket: Object.values(txBaskets).find(b => b.basketId === o.basketId)?.name,
       tags: tags,
       outputDescription: o.outputDescription,
       derivationSuffix: o.derivationSuffix,
@@ -338,7 +338,7 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
   return {outputs, changeVouts}
 }
 
-async function createNewTxRecord(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs, storageBeef: bsv.Beef)
+async function createNewTxRecord(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs, storageBeef: Beef)
 : Promise<table.Transaction>
 {
   const now = new Date()
@@ -371,12 +371,12 @@ async function createNewTxRecord(dojo: StorageProvider, userId: number, vargs: s
 /**
  * Convert vargs.outputs:
  *
- * lockingScript: bsv.HexString
- * satoshis: bsv.SatoshiValue
- * outputDescription: bsv.DescriptionString5to50Bytes
- * basket?: bsv.BasketStringUnder300Bytes
+ * lockingScript: HexString
+ * satoshis: SatoshiValue
+ * outputDescription: DescriptionString5to50Bytes
+ * basket?: BasketStringUnder300Bytes
  * customInstructions?: string
- * tags: bsv.BasketStringUnderBytes[]
+ * tags: BasketStringUnderBytes[]
  *
  * to XValidCreateActionOutput (which aims for sdk.StorageCreateTransactionSdkOutput)
  * 
@@ -449,17 +449,17 @@ function validateRequiredOutputs(dojo: StorageProvider, userId: number, vargs: s
  * @returns {xinputs} extended validated required inputs.
  */
 async function validateRequiredInputs(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs)
-: Promise<{storageBeef: bsv.Beef, beef: bsv.Beef, xinputs: XValidCreateActionInput[]}>
+: Promise<{storageBeef: Beef, beef: Beef, xinputs: XValidCreateActionInput[]}>
 {
   //stampLog(vargs, `start dojo verifyInputBeef`)
 
-  const beef = new bsv.Beef()
+  const beef = new Beef()
 
   if (vargs.inputs.length === 0) return { storageBeef: beef, beef, xinputs: [] }
 
   if (vargs.inputBEEF) beef.mergeBeef(vargs.inputBEEF)
 
-  const xinputs: XValidCreateActionInput[] = vargs.inputs.map((input, vin) => ({...input, vin, satoshis: -1, lockingScript: new bsv.Script() }))
+  const xinputs: XValidCreateActionInput[] = vargs.inputs.map((input, vin) => ({...input, vin, satoshis: -1, lockingScript: new Script() }))
 
   const trustSelf = vargs.options.trustSelf === 'known'
 
@@ -514,7 +514,7 @@ async function validateRequiredInputs(dojo: StorageProvider, userId: number, var
         throw new sdk.WERR_INVALID_PARAMETER(`${txid}.${vout}`, 'spendable output unless noSend is true');
       // input is spending an existing user output which has an lockingScript
       input.satoshis = verifyNumber(output.satoshis)
-      input.lockingScript = bsv.Script.fromBinary(asArray(output.lockingScript!))
+      input.lockingScript = Script.fromBinary(asArray(output.lockingScript!))
     } else {
       let btx = beef.findTxid(txid)!
       if (btx.isTxidOnly) {
@@ -674,7 +674,7 @@ async function fundNewTransactionSdk(dojo: StorageProvider, userId: number, varg
  * in the `beef` to txidOnly.
  * @returns undefined if `vargs.options.returnTXIDOnly` or trimmed `Beef`
  */
-function trimInputBeef(beef: bsv.Beef, vargs: sdk.ValidCreateActionArgs): number[] | undefined {
+function trimInputBeef(beef: Beef, vargs: sdk.ValidCreateActionArgs): number[] | undefined {
   if (vargs.options.returnTXIDOnly) return undefined
   const knownTxids: Record<string, boolean> = {}
   for (const txid of vargs.options.knownTxids) knownTxids[txid] = true
@@ -684,7 +684,7 @@ function trimInputBeef(beef: bsv.Beef, vargs: sdk.ValidCreateActionArgs): number
 
 async function mergeAllocatedChangeBeefs(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs,
   allocatedChange: table.Output[],
-  beef: bsv.Beef
+  beef: Beef
 )
 : Promise<number[] | undefined>
 {
@@ -706,35 +706,35 @@ async function mergeAllocatedChangeBeefs(dojo: StorageProvider, userId: number, 
   return trimInputBeef(beef, vargs)
 }
 
-function keyOffsetToHashedSecret (pub: bsv.PublicKey, keyOffset?: string): { hashedSecret: bsv.BigNumber, keyOffset: string } {
-  let offset: bsv.PrivateKey
+function keyOffsetToHashedSecret (pub: PublicKey, keyOffset?: string): { hashedSecret: BigNumber, keyOffset: string } {
+  let offset: PrivateKey
   if (keyOffset !== undefined && typeof keyOffset === 'string') {
     if (keyOffset.length === 64)
-      offset = bsv.PrivateKey.fromString(keyOffset, 'hex')
+      offset = PrivateKey.fromString(keyOffset, 'hex')
     else
-      offset = bsv.PrivateKey.fromWif(keyOffset)
+      offset = PrivateKey.fromWif(keyOffset)
   } else {
-    offset = bsv.PrivateKey.fromRandom()
+    offset = PrivateKey.fromRandom()
     keyOffset = offset.toWif()
   }
 
   const sharedSecret = pub.mul(offset).encode(true, undefined) as number[]
   const hashedSecret = sha256Hash(sharedSecret)
 
-  return { hashedSecret: new bsv.BigNumber(hashedSecret), keyOffset }
+  return { hashedSecret: new BigNumber(hashedSecret), keyOffset }
 }
 
 
 export function offsetPubKey (pubKey: string, keyOffset?: string): { offsetPubKey: string, keyOffset: string } {
-  const pub = bsv.PublicKey.fromString(pubKey)
+  const pub = PublicKey.fromString(pubKey)
 
   const r = keyOffsetToHashedSecret(pub, keyOffset)
 
   // The hashed secret is multiplied by the generator point.
-  const point = new bsv.Curve().g.mul(r.hashedSecret)
+  const point = new Curve().g.mul(r.hashedSecret)
 
   // The resulting point is added to the recipient public key.
-  const offsetPubKey = new bsv.PublicKey(pub.add(point))
+  const offsetPubKey = new PublicKey(pub.add(point))
 
   return { offsetPubKey: offsetPubKey.toString(), keyOffset: r.keyOffset }
 }
@@ -742,16 +742,16 @@ export function offsetPubKey (pubKey: string, keyOffset?: string): { offsetPubKe
 export function lockScriptWithKeyOffsetFromPubKey (pubKey: string, keyOffset?: string): { script: string, keyOffset: string } {
   const r = offsetPubKey(pubKey, keyOffset)
 
-  const offsetPub = bsv.PublicKey.fromString(r.offsetPubKey)
+  const offsetPub = PublicKey.fromString(r.offsetPubKey)
 
   const hash = offsetPub.toHash() as number[]
 
-  const script = new bsv.P2PKH().lock(hash).toHex()
+  const script = new P2PKH().lock(hash).toHex()
 
   return { script, keyOffset: r.keyOffset }
 }
 
-export function createStorageServiceChargeScript(pubKeyHex: bsv.PubKeyHex)
+export function createStorageServiceChargeScript(pubKeyHex: PubKeyHex)
 : { script: string, keyOffset: string }
 {
   return lockScriptWithKeyOffsetFromPubKey(pubKeyHex)

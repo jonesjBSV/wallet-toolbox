@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { AcquireCertificateResult } from '@bsv/sdk'
 import { sdk, table, WalletSigner } from '../../index.client'
 
 export async function acquireDirectCertificate(
@@ -6,7 +6,7 @@ export async function acquireDirectCertificate(
   auth: sdk.AuthId,
   vargs: sdk.ValidAcquireDirectCertificateArgs
 )
-: Promise<bsv.AcquireCertificateResult>
+: Promise<AcquireCertificateResult>
 {
   const now = new Date()
   const newCert: table.CertificateX = {
@@ -16,7 +16,7 @@ export async function acquireDirectCertificate(
     userId: auth.userId!,
     type: vargs.type,
     subject: vargs.subject,
-    verifier: vargs.keyringRevealer === 'certifier' ? undefined : vargs.keyringRevealer,
+    verifier: vargs.keyringRevealer === 'certifier' ? vargs.certifier : vargs.keyringRevealer,
     serialNumber: vargs.serialNumber,
     certifier: vargs.certifier,
     revocationOutpoint: vargs.revocationOutpoint,
@@ -38,7 +38,7 @@ export async function acquireDirectCertificate(
 
   const count = await signer.storage.insertCertificate(newCert)
 
-  const r: bsv.AcquireCertificateResult = {
+  const r: AcquireCertificateResult = {
     type: vargs.type,
     subject: vargs.subject,
     serialNumber: vargs.serialNumber,

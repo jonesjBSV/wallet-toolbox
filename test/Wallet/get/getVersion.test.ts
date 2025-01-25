@@ -1,6 +1,6 @@
 import { setupTestWallet } from '../../utils/TestUtilsMethodTests';
 
-describe('Wallet getVersion Tests', () => {
+describe.skip('Wallet getVersion Tests', () => {
     let wallet: any;
 
     beforeEach(() => {

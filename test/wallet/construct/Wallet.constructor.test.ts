@@ -1,4 +1,3 @@
-import * as bsv from "@bsv/sdk"
 import { sdk } from "../../../src/index.client"
 import { _tu, TestSetup1Wallet } from "../../utils/TestUtilsWalletStorage"
 

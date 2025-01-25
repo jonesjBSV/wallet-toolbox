@@ -1,5 +1,4 @@
-import * as bsv from '@bsv/sdk'
-import { Utils } from "@bsv/sdk";
+import { AbortActionArgs, AcquireCertificateArgs, AcquisitionProtocol, AtomicBEEF, Base64String, BasketInsertion, BasketStringUnder300Bytes, BEEF, BooleanDefaultFalse, BooleanDefaultTrue, CertificateFieldNameUnder50Bytes, CreateActionArgs, CreateActionInput, CreateActionOptions, CreateActionOutput, DescriptionString5to50Bytes, DiscoverByAttributesArgs, DiscoverByIdentityKeyArgs, HexString, InternalizeActionArgs, InternalizeOutput, KeyringRevealer, LabelStringUnder300Bytes, ListActionsArgs, ListCertificatesArgs, ListOutputsArgs, OutpointString, OutputTagStringUnder300Bytes, PositiveInteger, PositiveIntegerDefault10Max10000, PositiveIntegerOrZero, ProveCertificateArgs, PubKeyHex, RelinquishCertificateArgs, RelinquishOutputArgs, SatoshiValue, SignActionArgs, SignActionOptions, SignActionSpend, TrustSelf, TXIDHexString, Utils, WalletPayment } from "@bsv/sdk";
 import { sdk } from "../index.client";
 import { OutPoint } from "./types";
 
@@ -153,13 +152,13 @@ export interface ValidWalletSignerArgs {
 
 export interface ValidCreateActionInput {
   outpoint: OutPoint
-  inputDescription: bsv.DescriptionString5to50Bytes
-  sequenceNumber: bsv.PositiveIntegerOrZero
-  unlockingScript?: bsv.HexString
-  unlockingScriptLength: bsv.PositiveInteger
+  inputDescription: DescriptionString5to50Bytes
+  sequenceNumber: PositiveIntegerOrZero
+  unlockingScript?: HexString
+  unlockingScriptLength: PositiveInteger
 }
 
-export function validateCreateActionInput(i: bsv.CreateActionInput): ValidCreateActionInput {
+export function validateCreateActionInput(i: CreateActionInput): ValidCreateActionInput {
     if (i.unlockingScript === undefined && i.unlockingScriptLength === undefined)
         throw new sdk.WERR_INVALID_PARAMETER('unlockingScript, unlockingScriptLength', `at least one valid value.`)
     const unlockingScript = validateOptionalHexString(i.unlockingScript, 'unlockingScript')
@@ -177,15 +176,15 @@ export function validateCreateActionInput(i: bsv.CreateActionInput): ValidCreate
 }
 
 export interface ValidCreateActionOutput {
-  lockingScript: bsv.HexString
-  satoshis: bsv.SatoshiValue
-  outputDescription: bsv.DescriptionString5to50Bytes
-  basket?: bsv.BasketStringUnder300Bytes
+  lockingScript: HexString
+  satoshis: SatoshiValue
+  outputDescription: DescriptionString5to50Bytes
+  basket?: BasketStringUnder300Bytes
   customInstructions?: string
-  tags: bsv.BasketStringUnder300Bytes[]
+  tags: BasketStringUnder300Bytes[]
 }
 
-export function validateCreateActionOutput(o: bsv.CreateActionOutput): ValidCreateActionOutput {
+export function validateCreateActionOutput(o: CreateActionOutput): ValidCreateActionOutput {
     const vo: ValidCreateActionOutput = {
         lockingScript: validateHexString(o.lockingScript, 'lockingScript'),
         satoshis: validateSatoshis(o.satoshis, 'satoshis'),
@@ -203,7 +202,7 @@ export function validateCreateActionOutput(o: bsv.CreateActionOutput): ValidCrea
  * Set all possibly undefined arrays to empty arrays.
  * Convert string outpoints to `{ txid: string, vout: number }`
  */
-export function validateCreateActionOptions(options?: bsv.CreateActionOptions) : ValidCreateActionOptions {
+export function validateCreateActionOptions(options?: CreateActionOptions) : ValidCreateActionOptions {
   const o = options || {}
   const vo: ValidCreateActionOptions = {
     signAndProcess: defaultTrue(o.signAndProcess),
@@ -219,16 +218,16 @@ export function validateCreateActionOptions(options?: bsv.CreateActionOptions) :
 }
 
 export interface ValidProcessActionOptions {
-  acceptDelayedBroadcast: bsv.BooleanDefaultTrue
-  returnTXIDOnly: bsv.BooleanDefaultFalse
-  noSend: bsv.BooleanDefaultFalse
-  sendWith: bsv.TXIDHexString[]
+  acceptDelayedBroadcast: BooleanDefaultTrue
+  returnTXIDOnly: BooleanDefaultFalse
+  noSend: BooleanDefaultFalse
+  sendWith: TXIDHexString[]
 }
 
 export interface ValidCreateActionOptions extends ValidProcessActionOptions {
   signAndProcess: boolean
-  trustSelf?: bsv.TrustSelf
-  knownTxids: bsv.TXIDHexString[]
+  trustSelf?: TrustSelf
+  knownTxids: TXIDHexString[]
   noSendChange: OutPoint[]
   randomizeOutputs: boolean
 }
@@ -237,7 +236,7 @@ export interface ValidSignActionOptions extends ValidProcessActionOptions {
   acceptDelayedBroadcast: boolean
   returnTXIDOnly: boolean
   noSend: boolean
-  sendWith: bsv.TXIDHexString[]
+  sendWith: TXIDHexString[]
 }
 
 export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
@@ -253,8 +252,8 @@ export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
 }
 
 export interface ValidCreateActionArgs extends ValidProcessActionArgs {
-  description: bsv.DescriptionString5to50Bytes
-  inputBEEF?: bsv.BEEF
+  description: DescriptionString5to50Bytes
+  inputBEEF?: BEEF
   inputs: sdk.ValidCreateActionInput[]
   outputs: sdk.ValidCreateActionOutput[]
   lockTime: number
@@ -267,13 +266,13 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
 }
 
 export interface ValidSignActionArgs extends ValidProcessActionArgs {
-  spends: Record<bsv.PositiveIntegerOrZero, bsv.SignActionSpend>
-  reference: bsv.Base64String
+  spends: Record<PositiveIntegerOrZero, SignActionSpend>
+  reference: Base64String
 
   options: sdk.ValidSignActionOptions
 }
 
-export function validateCreateActionArgs(args: bsv.CreateActionArgs) : ValidCreateActionArgs {
+export function validateCreateActionArgs(args: CreateActionArgs) : ValidCreateActionArgs {
     const vargs: ValidCreateActionArgs = {
       description: validateStringLength(args.description, 'description', 5, 50),
       inputBEEF: args.inputBEEF,
@@ -307,7 +306,7 @@ export function validateCreateActionArgs(args: bsv.CreateActionArgs) : ValidCrea
  * Set all possibly undefined arrays to empty arrays.
  * Convert string outpoints to `{ txid: string, vout: number }`
  */
-export function validateSignActionOptions(options?: bsv.SignActionOptions) : ValidSignActionOptions {
+export function validateSignActionOptions(options?: SignActionOptions) : ValidSignActionOptions {
   const o = options || {}
   const vo: ValidSignActionOptions = {
     acceptDelayedBroadcast: defaultTrue(o.acceptDelayedBroadcast),
@@ -318,7 +317,7 @@ export function validateSignActionOptions(options?: bsv.SignActionOptions) : Val
   return vo
 }
 
-export function validateSignActionArgs(args: bsv.SignActionArgs) : ValidSignActionArgs {
+export function validateSignActionArgs(args: SignActionArgs) : ValidSignActionArgs {
     const vargs: ValidSignActionArgs = {
       spends: args.spends,
       reference: args.reference,
@@ -336,10 +335,10 @@ export function validateSignActionArgs(args: bsv.SignActionArgs) : ValidSignActi
 }
 
 export interface ValidAbortActionArgs extends ValidWalletSignerArgs {
-  reference: bsv.Base64String
+  reference: Base64String
 }
 
-export function validateAbortActionArgs(args: bsv.AbortActionArgs) : ValidAbortActionArgs {
+export function validateAbortActionArgs(args: AbortActionArgs) : ValidAbortActionArgs {
     const vargs: ValidAbortActionArgs = {
       reference: validateBase64String(args.reference, 'reference'),
     }
@@ -348,12 +347,12 @@ export function validateAbortActionArgs(args: bsv.AbortActionArgs) : ValidAbortA
 }
 
 export interface ValidWalletPayment {
-  derivationPrefix: bsv.Base64String
-  derivationSuffix: bsv.Base64String
-  senderIdentityKey: bsv.PubKeyHex
+  derivationPrefix: Base64String
+  derivationSuffix: Base64String
+  senderIdentityKey: PubKeyHex
 }
 
-export function validateWalletPayment(args?: bsv.WalletPayment) : ValidWalletPayment | undefined {
+export function validateWalletPayment(args?: WalletPayment) : ValidWalletPayment | undefined {
   if (args === undefined) return undefined
   const v: ValidWalletPayment = {
     derivationPrefix: validateBase64String(args.derivationPrefix, 'derivationPrefix'),
@@ -364,12 +363,12 @@ export function validateWalletPayment(args?: bsv.WalletPayment) : ValidWalletPay
 }
 
 export interface ValidBasketInsertion {
-  basket: bsv.BasketStringUnder300Bytes
+  basket: BasketStringUnder300Bytes
   customInstructions?: string
-  tags: bsv.BasketStringUnder300Bytes[]
+  tags: BasketStringUnder300Bytes[]
 }
 
-export function validateBasketInsertion(args?: bsv.BasketInsertion) : ValidBasketInsertion | undefined {
+export function validateBasketInsertion(args?: BasketInsertion) : ValidBasketInsertion | undefined {
   if (args === undefined) return undefined
   const v: ValidBasketInsertion = {
     basket: validateBasket(args.basket),
@@ -380,13 +379,13 @@ export function validateBasketInsertion(args?: bsv.BasketInsertion) : ValidBaske
 }
 
 export interface ValidInternalizeOutput {
-  outputIndex: bsv.PositiveIntegerOrZero
+  outputIndex: PositiveIntegerOrZero
   protocol: 'wallet payment' | 'basket insertion'
   paymentRemittance?: ValidWalletPayment
   insertionRemittance?: ValidBasketInsertion
 }
 
-export function validateInternalizeOutput(args: bsv.InternalizeOutput) : ValidInternalizeOutput {
+export function validateInternalizeOutput(args: InternalizeOutput) : ValidInternalizeOutput {
   if (args.protocol !== 'basket insertion' && args.protocol !== 'wallet payment')
     throw new sdk.WERR_INVALID_PARAMETER('protocol', `'basket insertion' or 'wallet payment'`)
   const v: ValidInternalizeOutput = {
@@ -399,11 +398,11 @@ export function validateInternalizeOutput(args: bsv.InternalizeOutput) : ValidIn
 }
 
 export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
-  tx: bsv.AtomicBEEF,
-  outputs: bsv.InternalizeOutput[]
-  description: bsv.DescriptionString5to50Bytes
-  labels: bsv.LabelStringUnder300Bytes[]
-  seekPermission: bsv.BooleanDefaultTrue
+  tx: AtomicBEEF,
+  outputs: InternalizeOutput[]
+  description: DescriptionString5to50Bytes
+  labels: LabelStringUnder300Bytes[]
+  seekPermission: BooleanDefaultTrue
 }
 
 export function validateOriginator(s?: string) : string | undefined {
@@ -416,7 +415,7 @@ export function validateOriginator(s?: string) : string | undefined {
   }
 }
 
-export function validateInternalizeActionArgs(args: bsv.InternalizeActionArgs) : ValidInternalizeActionArgs {
+export function validateInternalizeActionArgs(args: InternalizeActionArgs) : ValidInternalizeActionArgs {
     const vargs: ValidInternalizeActionArgs = {
       tx: args.tx,
       outputs: args.outputs.map(o => validateInternalizeOutput(o)),
@@ -443,11 +442,11 @@ export function validateOutpointString(outpoint: string, name: string): string {
 }
 
 export interface ValidRelinquishOutputArgs extends ValidWalletSignerArgs {
-  basket: bsv.BasketStringUnder300Bytes
-  output: bsv.OutpointString
+  basket: BasketStringUnder300Bytes
+  output: OutpointString
 }
 
-export function validateRelinquishOutputArgs(args: bsv.RelinquishOutputArgs) : ValidRelinquishOutputArgs {
+export function validateRelinquishOutputArgs(args: RelinquishOutputArgs) : ValidRelinquishOutputArgs {
     const vargs: ValidRelinquishOutputArgs = {
       basket: validateBasket(args.basket),
       output: validateOutpointString(args.output, 'output'),
@@ -457,12 +456,12 @@ export function validateRelinquishOutputArgs(args: bsv.RelinquishOutputArgs) : V
 }
 
 export interface ValidRelinquishCertificateArgs extends ValidWalletSignerArgs {
-  type: bsv.Base64String
-  serialNumber: bsv.Base64String
-  certifier: bsv.PubKeyHex
+  type: Base64String
+  serialNumber: Base64String
+  certifier: PubKeyHex
 }
 
-export function validateRelinquishCertificateArgs(args: bsv.RelinquishCertificateArgs) : ValidRelinquishCertificateArgs {
+export function validateRelinquishCertificateArgs(args: RelinquishCertificateArgs) : ValidRelinquishCertificateArgs {
     const vargs: ValidRelinquishCertificateArgs = {
       type: validateBase64String(args.type, 'type'),
       serialNumber: validateBase64String(args.serialNumber, 'serialNumber'),
@@ -474,22 +473,22 @@ export function validateRelinquishCertificateArgs(args: bsv.RelinquishCertificat
 
 export interface ValidListCertificatesArgs extends ValidWalletSignerArgs {
   partial?: {
-    type?: bsv.Base64String
-    serialNumber?: bsv.Base64String
-    certifier?: bsv.PubKeyHex
-    subject?: bsv.PubKeyHex
-    revocationOutpoint?: bsv.OutpointString
-    signature?: bsv.HexString
+    type?: Base64String
+    serialNumber?: Base64String
+    certifier?: PubKeyHex
+    subject?: PubKeyHex
+    revocationOutpoint?: OutpointString
+    signature?: HexString
   }
-  certifiers: bsv.PubKeyHex[]
-  types: bsv.Base64String[]
-  limit: bsv.PositiveIntegerDefault10Max10000
-  offset: bsv.PositiveIntegerOrZero
-  privileged: bsv.BooleanDefaultFalse
-  privilegedReason?: bsv.DescriptionString5to50Bytes
+  certifiers: PubKeyHex[]
+  types: Base64String[]
+  limit: PositiveIntegerDefault10Max10000
+  offset: PositiveIntegerOrZero
+  privileged: BooleanDefaultFalse
+  privilegedReason?: DescriptionString5to50Bytes
 }
 
-export function validateListCertificatesArgs(args: bsv.ListCertificatesArgs) : ValidListCertificatesArgs {
+export function validateListCertificatesArgs(args: ListCertificatesArgs) : ValidListCertificatesArgs {
     const vargs: ValidListCertificatesArgs = {
       certifiers: defaultEmpty(args.certifiers.map(c => validateHexString(c.trim(), 'certifiers'))),
       types: defaultEmpty(args.types.map(t => validateBase64String(t.trim(), 'types'))),
@@ -503,26 +502,26 @@ export function validateListCertificatesArgs(args: bsv.ListCertificatesArgs) : V
 }
 
 export interface ValidAcquireCertificateArgs extends ValidWalletSignerArgs {
-  acquisitionProtocol: bsv.AcquisitionProtocol
+  acquisitionProtocol: AcquisitionProtocol
 
-  type: bsv.Base64String
-  serialNumber?: bsv.Base64String
-  certifier: bsv.PubKeyHex
-  revocationOutpoint?: bsv.OutpointString
-  fields: Record<bsv.CertificateFieldNameUnder50Bytes, string>
-  signature?: bsv.HexString
+  type: Base64String
+  serialNumber?: Base64String
+  certifier: PubKeyHex
+  revocationOutpoint?: OutpointString
+  fields: Record<CertificateFieldNameUnder50Bytes, string>
+  signature?: HexString
 
   certifierUrl?: string
 
-  keyringRevealer?: bsv.KeyringRevealer
-  keyringForSubject?: Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>
+  keyringRevealer?: KeyringRevealer
+  keyringForSubject?: Record<CertificateFieldNameUnder50Bytes, Base64String>
 
   privileged: boolean
-  privilegedReason?: bsv.DescriptionString5to50Bytes
+  privilegedReason?: DescriptionString5to50Bytes
 }
 
-function validateCertificateFields(fields: Record<bsv.CertificateFieldNameUnder50Bytes, string>):
-Record<bsv.CertificateFieldNameUnder50Bytes, string>
+function validateCertificateFields(fields: Record<CertificateFieldNameUnder50Bytes, string>):
+Record<CertificateFieldNameUnder50Bytes, string>
 {
   for (const fieldName of Object.keys(fields)) {
     validateStringLength(fieldName, 'field name', 1, 50)
@@ -530,19 +529,19 @@ Record<bsv.CertificateFieldNameUnder50Bytes, string>
   return fields
 }
 
-function validateKeyringRevealer(kr: bsv.KeyringRevealer, name: string) : bsv.KeyringRevealer
+function validateKeyringRevealer(kr: KeyringRevealer, name: string) : KeyringRevealer
 {
   if (kr === 'certifier') return kr
   return validateHexString(kr, name)
 }
 
-function validateOptionalKeyringRevealer(kr: bsv.KeyringRevealer | undefined, name: string) : bsv.KeyringRevealer | undefined
+function validateOptionalKeyringRevealer(kr: KeyringRevealer | undefined, name: string) : KeyringRevealer | undefined
 {
   if (kr === undefined) return undefined
   return validateKeyringRevealer(kr, name)
 }
 
-function validateKeyringForSubject(kr: Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>, name: string) : Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>
+function validateKeyringForSubject(kr: Record<CertificateFieldNameUnder50Bytes, Base64String>, name: string) : Record<CertificateFieldNameUnder50Bytes, Base64String>
 {
   for (const fn of Object.keys(kr)) {
     validateStringLength(fn, `${name} field name`, 1, 50);
@@ -551,7 +550,7 @@ function validateKeyringForSubject(kr: Record<bsv.CertificateFieldNameUnder50Byt
   return kr
 }
 
-function validateOptionalKeyringForSubject(kr: Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String> | undefined, name: string) : Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String> | undefined {
+function validateOptionalKeyringForSubject(kr: Record<CertificateFieldNameUnder50Bytes, Base64String> | undefined, name: string) : Record<CertificateFieldNameUnder50Bytes, Base64String> | undefined {
   if (kr === undefined) return undefined
   return validateKeyringForSubject(kr, name)
 }
@@ -562,7 +561,7 @@ function validateOptionalKeyringForSubject(kr: Record<bsv.CertificateFieldNameUn
  * @param subject Must be valid for "direct" `acquisitionProtocol`. public key of the certificate subject.
  * @returns 
  */
-export async function validateAcquireCertificateArgs(args: bsv.AcquireCertificateArgs) : Promise<ValidAcquireCertificateArgs> {
+export async function validateAcquireCertificateArgs(args: AcquireCertificateArgs) : Promise<ValidAcquireCertificateArgs> {
   const vargs: ValidAcquireCertificateArgs = {
     acquisitionProtocol: args.acquisitionProtocol,
     type: validateBase64String(args.type, 'type'),
@@ -588,27 +587,27 @@ export async function validateAcquireCertificateArgs(args: bsv.AcquireCertificat
 }
 
 export interface ValidAcquireDirectCertificateArgs extends ValidWalletSignerArgs {
-  type: bsv.Base64String
-  serialNumber: bsv.Base64String
-  certifier: bsv.PubKeyHex
-  revocationOutpoint: bsv.OutpointString
-  fields: Record<bsv.CertificateFieldNameUnder50Bytes, string>
-  signature: bsv.HexString
+  type: Base64String
+  serialNumber: Base64String
+  certifier: PubKeyHex
+  revocationOutpoint: OutpointString
+  fields: Record<CertificateFieldNameUnder50Bytes, string>
+  signature: HexString
 
   /**
    * validated to an empty string, must be provided by wallet and must
    * match expectations of keyringForSubject
    */
-  subject: bsv.PubKeyHex
+  subject: PubKeyHex
 
-  keyringRevealer: bsv.KeyringRevealer
-  keyringForSubject: Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>
+  keyringRevealer: KeyringRevealer
+  keyringForSubject: Record<CertificateFieldNameUnder50Bytes, Base64String>
 
   privileged: boolean
-  privilegedReason?: bsv.DescriptionString5to50Bytes
+  privilegedReason?: DescriptionString5to50Bytes
 }
 
-export function validateAcquireDirectCertificateArgs(args: bsv.AcquireCertificateArgs) : ValidAcquireDirectCertificateArgs {
+export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArgs) : ValidAcquireDirectCertificateArgs {
   if (args.acquisitionProtocol !== 'direct') throw new sdk.WERR_INTERNAL('Only acquire direct certificate requests allowed here.')
   if (!args.serialNumber) throw new sdk.WERR_INVALID_PARAMETER('serialNumber', 'valid when acquisitionProtocol is "direct"')
   if (!args.signature) throw new sdk.WERR_INVALID_PARAMETER('signature', 'valid when acquisitionProtocol is "direct"')
@@ -634,20 +633,20 @@ export function validateAcquireDirectCertificateArgs(args: bsv.AcquireCertificat
 }
 
 export interface ValidProveCertificateArgs extends ValidWalletSignerArgs {
-  type?: bsv.Base64String
-  serialNumber?: bsv.Base64String
-  certifier?: bsv.PubKeyHex
-  subject?: bsv.PubKeyHex
-  revocationOutpoint?: bsv.OutpointString
-  signature?: bsv.HexString
+  type?: Base64String
+  serialNumber?: Base64String
+  certifier?: PubKeyHex
+  subject?: PubKeyHex
+  revocationOutpoint?: OutpointString
+  signature?: HexString
   
-  fieldsToReveal: bsv.CertificateFieldNameUnder50Bytes[]
-  verifier: bsv.PubKeyHex
+  fieldsToReveal: CertificateFieldNameUnder50Bytes[]
+  verifier: PubKeyHex
   privileged: boolean
-  privilegedReason?: bsv.DescriptionString5to50Bytes
+  privilegedReason?: DescriptionString5to50Bytes
 }
 
-export function validateProveCertificateArgs(args: bsv.ProveCertificateArgs)
+export function validateProveCertificateArgs(args: ProveCertificateArgs)
 : ValidProveCertificateArgs
 {
   if (args.privileged && !args.privilegedReason) throw new sdk.WERR_INVALID_PARAMETER('privilegedReason', `valid when 'privileged' is true `)
@@ -659,7 +658,7 @@ export function validateProveCertificateArgs(args: bsv.ProveCertificateArgs)
     subject: validateOptionalHexString(args.certificate.subject, 'certificate.subject'),
     revocationOutpoint: validateOptionalOutpointString(args.certificate.revocationOutpoint, 'certificate.revocationOutpoint'),
     signature: validateOptionalHexString(args.certificate.signature, 'certificate.signature'),
-    fieldsToReveal: defaultEmpty(args.fieldsToReveal).map(fieldName => validateStringLength(`fieldsToReveal ${fieldName}`, 'valid field name', 1, 50)),
+    fieldsToReveal: defaultEmpty(args.fieldsToReveal).map(fieldName => validateStringLength(fieldName, `fieldsToReveal ${fieldName}`, 1, 50)),
     verifier: validateHexString(args.verifier, 'verifier'),
     privileged: defaultFalse(args.privileged),
     privilegedReason: validateOptionalStringLength(args.privilegedReason, 'privilegedReason', 5, 50),
@@ -668,13 +667,13 @@ export function validateProveCertificateArgs(args: bsv.ProveCertificateArgs)
 }
 
 export interface ValidDiscoverByIdentityKeyArgs extends ValidWalletSignerArgs {
-  identityKey: bsv.PubKeyHex
-  limit: bsv.PositiveIntegerDefault10Max10000
-  offset: bsv.PositiveIntegerOrZero
+  identityKey: PubKeyHex
+  limit: PositiveIntegerDefault10Max10000
+  offset: PositiveIntegerOrZero
   seekPermission: boolean
 }
 
-export function validateDiscoverByIdentityKeyArgs(args: bsv.DiscoverByIdentityKeyArgs)
+export function validateDiscoverByIdentityKeyArgs(args: DiscoverByIdentityKeyArgs)
 : ValidDiscoverByIdentityKeyArgs
 {
   const vargs: ValidDiscoverByIdentityKeyArgs = {
@@ -687,14 +686,14 @@ export function validateDiscoverByIdentityKeyArgs(args: bsv.DiscoverByIdentityKe
 }
 
 export interface ValidDiscoverByAttributesArgs extends ValidWalletSignerArgs {
-  attributes: Record<bsv.CertificateFieldNameUnder50Bytes, string>
-  limit: bsv.PositiveIntegerDefault10Max10000
-  offset: bsv.PositiveIntegerOrZero
+  attributes: Record<CertificateFieldNameUnder50Bytes, string>
+  limit: PositiveIntegerDefault10Max10000
+  offset: PositiveIntegerOrZero
   seekPermission: boolean
 }
 
-function validateAttributes(attributes: Record<bsv.CertificateFieldNameUnder50Bytes, string>):
-Record<bsv.CertificateFieldNameUnder50Bytes, string>
+function validateAttributes(attributes: Record<CertificateFieldNameUnder50Bytes, string>):
+Record<CertificateFieldNameUnder50Bytes, string>
 {
   for (const fieldName of Object.keys(attributes)) {
     validateStringLength(fieldName, `field name ${fieldName}`, 1, 50)
@@ -702,7 +701,7 @@ Record<bsv.CertificateFieldNameUnder50Bytes, string>
   return attributes
 }
 
-export function validateDiscoverByAttributesArgs(args: bsv.DiscoverByAttributesArgs)
+export function validateDiscoverByAttributesArgs(args: DiscoverByAttributesArgs)
 : ValidDiscoverByAttributesArgs
 {
   const vargs: ValidDiscoverByAttributesArgs = {
@@ -715,17 +714,17 @@ export function validateDiscoverByAttributesArgs(args: bsv.DiscoverByAttributesA
 }
 
 export interface ValidListOutputsArgs extends ValidWalletSignerArgs {
-  basket: bsv.BasketStringUnder300Bytes
-  tags: bsv.OutputTagStringUnder300Bytes[]
+  basket: BasketStringUnder300Bytes
+  tags: OutputTagStringUnder300Bytes[]
   tagQueryMode: 'all' | 'any'
   includeLockingScripts: boolean,
   includeTransactions: boolean,
-  includeCustomInstructions: bsv.BooleanDefaultFalse
-  includeTags: bsv.BooleanDefaultFalse
-  includeLabels: bsv.BooleanDefaultFalse
-  limit: bsv.PositiveIntegerDefault10Max10000
-  offset: bsv.PositiveIntegerOrZero
-  seekPermission: bsv.BooleanDefaultTrue
+  includeCustomInstructions: BooleanDefaultFalse
+  includeTags: BooleanDefaultFalse
+  includeLabels: BooleanDefaultFalse
+  limit: PositiveIntegerDefault10Max10000
+  offset: PositiveIntegerOrZero
+  seekPermission: BooleanDefaultTrue
   knownTxids: string[]
 }
 
@@ -742,7 +741,7 @@ export interface ValidListOutputsArgs extends ValidWalletSignerArgs {
    * @param {PositiveIntegerOrZero} [args.offset] - Optional. Number of outputs to skip before starting to return results.
    * @param {BooleanDefaultTrue} [args.seekPermission] — Optional. Whether to seek permission from the user for this operation if required. Default true, will return an error rather than proceed if set to false.
  */
-export function validateListOutputsArgs(args: bsv.ListOutputsArgs) : ValidListOutputsArgs {
+export function validateListOutputsArgs(args: ListOutputsArgs) : ValidListOutputsArgs {
     let tagQueryMode: 'any' | 'all'
     if (args.tagQueryMode === undefined || args.tagQueryMode === 'any')
       tagQueryMode = 'any'
@@ -770,33 +769,33 @@ export function validateListOutputsArgs(args: bsv.ListOutputsArgs) : ValidListOu
 }
 
 export interface ValidListActionsArgs extends ValidWalletSignerArgs {
-  labels: bsv.LabelStringUnder300Bytes[]
+  labels: LabelStringUnder300Bytes[]
   labelQueryMode: 'any' | 'all'
-  includeLabels: bsv.BooleanDefaultFalse
-  includeInputs: bsv.BooleanDefaultFalse
-  includeInputSourceLockingScripts: bsv.BooleanDefaultFalse
-  includeInputUnlockingScripts: bsv.BooleanDefaultFalse
-  includeOutputs: bsv.BooleanDefaultFalse
-  includeOutputLockingScripts: bsv.BooleanDefaultFalse
-  limit: bsv.PositiveIntegerDefault10Max10000
-  offset: bsv.PositiveIntegerOrZero
-  seekPermission: bsv.BooleanDefaultTrue
+  includeLabels: BooleanDefaultFalse
+  includeInputs: BooleanDefaultFalse
+  includeInputSourceLockingScripts: BooleanDefaultFalse
+  includeInputUnlockingScripts: BooleanDefaultFalse
+  includeOutputs: BooleanDefaultFalse
+  includeOutputLockingScripts: BooleanDefaultFalse
+  limit: PositiveIntegerDefault10Max10000
+  offset: PositiveIntegerOrZero
+  seekPermission: BooleanDefaultTrue
 }
 
 /**
-   * @param {bsv.LabelStringUnder300Bytes[]} args.labels - An array of labels used to filter actions.
+   * @param {LabelStringUnder300Bytes[]} args.labels - An array of labels used to filter actions.
    * @param {'any' | 'all'} [args.labelQueryMode] - Optional. Specifies how to match labels (default is any which matches any of the labels).
-   * @param {bsv.BooleanDefaultFalse} [args.includeLabels] - Optional. Whether to include transaction labels in the result set.
-   * @param {bsv.BooleanDefaultFalse} [args.includeInputs] - Optional. Whether to include input details in the result set.
-   * @param {bsv.BooleanDefaultFalse} [args.includeInputSourceLockingScripts] - Optional. Whether to include input source locking scripts in the result set.
-   * @param {bsv.BooleanDefaultFalse} [args.includeInputUnlockingScripts] - Optional. Whether to include input unlocking scripts in the result set.
-   * @param {bsv.BooleanDefaultFalse} [args.includeOutputs] - Optional. Whether to include output details in the result set.
-   * @param {bsv.BooleanDefaultFalse} [args.includeOutputLockingScripts] - Optional. Whether to include output locking scripts in the result set.
-   * @param {bsv.PositiveIntegerDefault10Max10000} [args.limit] - Optional. The maximum number of transactions to retrieve.
-   * @param {bsv.PositiveIntegerOrZero} [args.offset] - Optional. Number of transactions to skip before starting to return the results.
-   * @param {bsv.BooleanDefaultTrue} [args.seekPermission] — Optional. Whether to seek permission from the user for this operation if required. Default true, will return an error rather than proceed if set to false.
+   * @param {BooleanDefaultFalse} [args.includeLabels] - Optional. Whether to include transaction labels in the result set.
+   * @param {BooleanDefaultFalse} [args.includeInputs] - Optional. Whether to include input details in the result set.
+   * @param {BooleanDefaultFalse} [args.includeInputSourceLockingScripts] - Optional. Whether to include input source locking scripts in the result set.
+   * @param {BooleanDefaultFalse} [args.includeInputUnlockingScripts] - Optional. Whether to include input unlocking scripts in the result set.
+   * @param {BooleanDefaultFalse} [args.includeOutputs] - Optional. Whether to include output details in the result set.
+   * @param {BooleanDefaultFalse} [args.includeOutputLockingScripts] - Optional. Whether to include output locking scripts in the result set.
+   * @param {PositiveIntegerDefault10Max10000} [args.limit] - Optional. The maximum number of transactions to retrieve.
+   * @param {PositiveIntegerOrZero} [args.offset] - Optional. Number of transactions to skip before starting to return the results.
+   * @param {BooleanDefaultTrue} [args.seekPermission] — Optional. Whether to seek permission from the user for this operation if required. Default true, will return an error rather than proceed if set to false.
  */
-export function validateListActionsArgs(args: bsv.ListActionsArgs) : ValidListActionsArgs {
+export function validateListActionsArgs(args: ListActionsArgs) : ValidListActionsArgs {
     let labelQueryMode: 'any' | 'all'
     if (args.labelQueryMode === undefined || args.labelQueryMode === 'any')
       labelQueryMode = 'any'
@@ -818,9 +817,6 @@ export function validateListActionsArgs(args: bsv.ListActionsArgs) : ValidListAc
       offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
       seekPermission: defaultTrue(args.seekPermission),
     }
-
-    if (vargs.labels.length < 1)
-      throw new sdk.WERR_INVALID_PARAMETER('labels', 'at least one label')
 
     return vargs
 }

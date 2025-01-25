@@ -1,4 +1,3 @@
-import * as bsv from '@bsv/sdk'
 import { Services } from "../../index.client"
 
 describe('getRawTx service tests', () => {

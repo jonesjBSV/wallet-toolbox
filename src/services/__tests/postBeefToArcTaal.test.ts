@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { Beef } from '@bsv/sdk'
 import { Services } from '../../index.all'
 
 const BEEF_V1 = 4022206465 // 0100BEEF in LE order

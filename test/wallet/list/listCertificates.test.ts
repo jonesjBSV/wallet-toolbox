@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { ListCertificatesArgs } from '@bsv/sdk'
 import { sdk } from "../../../src/index.client"
 import { _tu, expectToThrowWERR, TestWalletNoSetup } from "../../utils/TestUtilsWalletStorage"
 
@@ -23,7 +23,7 @@ describe('listCertificates tests', () => {
     test('0 invalid params', async () => {
         for (const { wallet } of ctxs) {
 
-            const invalidArgs: bsv.ListCertificatesArgs[] = [
+            const invalidArgs: ListCertificatesArgs[] = [
                 {
                     certifiers: ['thisisnotbase64'],
                     types: []
@@ -40,7 +40,7 @@ describe('listCertificates tests', () => {
     test('1 certifier', async () => {
         for (const { wallet } of ctxs) {
 
-            const tcs: { args: bsv.ListCertificatesArgs, count: number }[] = [
+            const tcs: { args: ListCertificatesArgs, count: number }[] = [
                 { args: { certifiers: ['02cf6cdf466951d8dfc9e7c9367511d0007ed6fba35ed42d425cc412fd6cfd4a17'], types: [], limit: 1 }, count: 4 },
                 { args: { certifiers: ['02CF6CDF466951D8DFC9E7C9367511D0007ED6FBA35ED42D425CC412FD6CFD4A17'], types: [], limit: 10 }, count: 4 },
                 { args: { certifiers: [
@@ -59,7 +59,7 @@ describe('listCertificates tests', () => {
 
     test('2 types', async () => {
         for (const { wallet } of ctxs) {
-            const tcs: { args: bsv.ListCertificatesArgs, count: number }[] = [
+            const tcs: { args: ListCertificatesArgs, count: number }[] = [
                 { args: { certifiers: [], types: ['exOl3KM0dIJ04EW5pZgbZmPag6MdJXd3/a1enmUU/BA='], limit: 1 }, count: 2 },
                 { args: { certifiers: [], types: ['exOl3KM0dIJ04EW5pZgbZmPag6MdJXd3/a1enmUU/BA='], limit: 10 }, count: 2 },
                 {

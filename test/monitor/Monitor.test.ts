@@ -1,4 +1,4 @@
-import * as bsv from '@bsv/sdk'
+import { MerklePath } from '@bsv/sdk'
 import { asArray, entity, sdk, verifyOne, verifyTruthy, wait } from "../../src/index.client"
 import { TaskCheckForProofs } from "../../src/monitor/tasks/TaskCheckForProofs"
 import { TaskClock } from "../../src/monitor/tasks/TaskClock"
@@ -231,27 +231,27 @@ describe('Monitor tests', () => {
     const mockGetMerklePathResults: sdk.GetMerklePathResult[] = [
         {
             name: "WoCTsc",
-            merklePath: new bsv.MerklePath( 1652142, [ [{ offset: 2, hash: "74c55a15a08ea491e02c41a6934c4177666c0dbda2781d0cf9743d3ad68a4623" }, { offset: 3, hash: "c099c52277426abb863dc902d0389b008ddf2301d6b40ac718746ac16ca59136", txid: true }], [{ offset: 0, hash: "2574544a253c91e69c7d5b4478af95d39420ad2c8e44c78b280f1bd5e7a11849" }], [{ offset: 1, hash: "8903289601da1910820c3471d41ae9187a7d46d6e39e636840b176519bdc5d00" }]]),
+            merklePath: new MerklePath( 1652142, [ [{ offset: 2, hash: "74c55a15a08ea491e02c41a6934c4177666c0dbda2781d0cf9743d3ad68a4623" }, { offset: 3, hash: "c099c52277426abb863dc902d0389b008ddf2301d6b40ac718746ac16ca59136", txid: true }], [{ offset: 0, hash: "2574544a253c91e69c7d5b4478af95d39420ad2c8e44c78b280f1bd5e7a11849" }], [{ offset: 1, hash: "8903289601da1910820c3471d41ae9187a7d46d6e39e636840b176519bdc5d00" }]]),
             header: { version: 536870912, previousHash: "0000000039f1c7dc943d50883e531022825bf5c15a40db2cedde7d203ca3d644", merkleRoot: "68bde58600fbd2c716871356cc2ad34b43ac67ac8d7a879dd966429d5a6935b2", time: 1734530373, bits: 474103450, nonce: 3894752803, height: 1652142, hash: "000000000d9419a409f83f16e2c162b4e44266986d6b9ee02d1b97d9556d9a3a" },
         },
         {
             name: "WoCTsc",
-            merklePath: new bsv.MerklePath(1652142, [[{ offset: 4, hash: "6935ce33b9e3b9ee60360ce0606aa0a0970b4840203f457b5559212676dc33ab", txid: true }, { offset: 5, duplicate: true }], [{ offset: 3, hash: "65b5a77f61ca87af5766546e4a22129da89f3378322ef29aac6cdc94c1f637f3" }], [{ offset: 0, hash: "0aeaa5c76cba5495f922ae0b52805c0d12c2ffa54d2829d250c958d67c7c5073" }]]),
+            merklePath: new MerklePath(1652142, [[{ offset: 4, hash: "6935ce33b9e3b9ee60360ce0606aa0a0970b4840203f457b5559212676dc33ab", txid: true }, { offset: 5, duplicate: true }], [{ offset: 3, hash: "65b5a77f61ca87af5766546e4a22129da89f3378322ef29aac6cdc94c1f637f3" }], [{ offset: 0, hash: "0aeaa5c76cba5495f922ae0b52805c0d12c2ffa54d2829d250c958d67c7c5073" }]]),
             header: { version: 536870912, previousHash: "0000000039f1c7dc943d50883e531022825bf5c15a40db2cedde7d203ca3d644", merkleRoot: "68bde58600fbd2c716871356cc2ad34b43ac67ac8d7a879dd966429d5a6935b2", time: 1734530373, bits: 474103450, nonce: 3894752803, height: 1652142, hash: "000000000d9419a409f83f16e2c162b4e44266986d6b9ee02d1b97d9556d9a3a" },
         },
         {
             name: "WoCTsc",
-            merklePath: new bsv.MerklePath(1652145, [[{ offset: 0, hash: "c160acfce1c29c648614b722f1c490473fd7aea0c60d21be95ae981eb0c9c4f0" }, { offset: 1, hash: "67ca2475886b3fc2edd76a2eb8c32bd0bc308176c7dff463e0507942aeebcbec", txid: true }], [{ offset: 1, hash: "c0eb049e4d3872d63bd3402dd4d6bc8022a170155493a994e1da692f08b2f2d0" }]]),
+            merklePath: new MerklePath(1652145, [[{ offset: 0, hash: "c160acfce1c29c648614b722f1c490473fd7aea0c60d21be95ae981eb0c9c4f0" }, { offset: 1, hash: "67ca2475886b3fc2edd76a2eb8c32bd0bc308176c7dff463e0507942aeebcbec", txid: true }], [{ offset: 1, hash: "c0eb049e4d3872d63bd3402dd4d6bc8022a170155493a994e1da692f08b2f2d0" }]]),
             header: { version: 536870912, previousHash: "000000001888ff57f4848f181f9f69cab27f2388d7c2edd99b8c004ae482cca7", merkleRoot: "f990936bc3267ba4911acc490107ed1841eedbd2c5017e1074891285df30f255", time: 1734532172, bits: 474081547, nonce: 740519774, height: 1652145, hash: "0000000003ea4ecae9254b992f292137fde1de66cc809d1a81cfd60cab4ba160" }
         },
         {
             name: "WoCTsc",
-            merklePath: new bsv.MerklePath(1652145, [[{ offset: 2, hash: "3fa94b62a3b10d8c18bada527a9b68c4e70db67140719df16c44fb0328782532", txid: true }, { offset: 3, duplicate: true }], [{ offset: 0, hash: "5eec838112f0eabc45e68c8ec14f76e74b0ea636180d91ccf034f5f3c5114edf" }]]),
+            merklePath: new MerklePath(1652145, [[{ offset: 2, hash: "3fa94b62a3b10d8c18bada527a9b68c4e70db67140719df16c44fb0328782532", txid: true }, { offset: 3, duplicate: true }], [{ offset: 0, hash: "5eec838112f0eabc45e68c8ec14f76e74b0ea636180d91ccf034f5f3c5114edf" }]]),
             header: { version: 536870912, previousHash: "000000001888ff57f4848f181f9f69cab27f2388d7c2edd99b8c004ae482cca7", merkleRoot: "f990936bc3267ba4911acc490107ed1841eedbd2c5017e1074891285df30f255", time: 1734532172, bits: 474081547, nonce: 740519774, height: 1652145, hash: "0000000003ea4ecae9254b992f292137fde1de66cc809d1a81cfd60cab4ba160" }
         },
         {
             name: "WoCTsc",
-            merklePath: new bsv.MerklePath(1652160, [[{ offset: 0, hash: "ee8d57d6c3f5be3238709f539dc224c44c2c848414cb5969bfa8c81c2768ad6b" }, { offset: 1, hash: "519675259eff036c6597e4a497d37c132e718171dde4ea2257e84c947ecf656b", txid: true }]]),
+            merklePath: new MerklePath(1652160, [[{ offset: 0, hash: "ee8d57d6c3f5be3238709f539dc224c44c2c848414cb5969bfa8c81c2768ad6b" }, { offset: 1, hash: "519675259eff036c6597e4a497d37c132e718171dde4ea2257e84c947ecf656b", txid: true }]]),
             header: { version: 536870912, previousHash: "0000000012dbd406fef49503c545bafd940ba2f2c9b05ef351177b71fe96e7d8", merkleRoot: "c2714feeccc7db8ea4235799e6490271867008dd39e3cf8a6e9aa20fd47f3222", time: 1734538772, bits: 474045917, nonce: 2431702809, height: 1652160, hash: "000000001c5d2b3beb2e1f1f21f69f77cb979ed92f99d2cdd1a2618349b575ca" }
         }
     ]

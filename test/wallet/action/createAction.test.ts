@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as bsv from '@bsv/sdk'
+import { AtomicBEEF, Beef, CreateActionArgs, SignActionArgs } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
 import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
@@ -29,7 +29,7 @@ describe('createAction test', () => {
     for (const { wallet } of ctxs) {
       {
         const log = `\n${testName()}\n`
-        const args: bsv.CreateActionArgs = {
+        const args: CreateActionArgs = {
           description: ''
         }
         // description is too short...
@@ -58,10 +58,10 @@ describe('createAction test', () => {
       let txid2: string
       const outputSatoshis = 42
       let noSendChange: string[] | undefined
-      let inputBEEF: bsv.AtomicBEEF | undefined
+      let inputBEEF: AtomicBEEF | undefined
 
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           outputs: [{ satoshis: outputSatoshis, lockingScript: _tu.getLockP2PKH(kp.address).toHex(), outputDescription: 'pay fred' }],
           options: {
@@ -84,7 +84,7 @@ describe('createAction test', () => {
         const st = cr.signableTransaction!
         expect(st.reference).toBeTruthy()
         // const tx = Transaction.fromAtomicBEEF(st.tx) // Transaction doesn't support V2 Beef yet.
-        const atomicBeef = bsv.Beef.fromBinary(st.tx)
+        const atomicBeef = Beef.fromBinary(st.tx)
         const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
         for (const input of tx.inputs) {
           expect(atomicBeef.findTxid(input.sourceTXID!)).toBeTruthy()
@@ -94,7 +94,7 @@ describe('createAction test', () => {
         //expect(st.amount > 242 && st.amount < 300).toBe(true)
 
         // sign and complete
-        const signArgs: bsv.SignActionArgs = {
+        const signArgs: SignActionArgs = {
           reference: st.reference,
           spends: {},
           options: {
@@ -115,7 +115,7 @@ describe('createAction test', () => {
         const unlock = _tu.getUnlockP2PKH(kp.privateKey, outputSatoshis)
         const unlockingScriptLength = await unlock.estimateLength()
 
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           inputs: [
             {
@@ -141,14 +141,14 @@ describe('createAction test', () => {
         expect(cr.signableTransaction).toBeTruthy()
         const st = cr.signableTransaction!
         expect(st.reference).toBeTruthy()
-        const atomicBeef = bsv.Beef.fromBinary(st.tx)
+        const atomicBeef = Beef.fromBinary(st.tx)
         const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
 
         tx.inputs[0].unlockingScriptTemplate = unlock
         await tx.sign()
         const unlockingScript = tx.inputs[0].unlockingScript!.toHex()
 
-        const signArgs: bsv.SignActionArgs = {
+        const signArgs: SignActionArgs = {
           reference: st.reference,
           spends: { 0: { unlockingScript } },
           options: {
@@ -162,7 +162,7 @@ describe('createAction test', () => {
         txid2 = sr.txid!
       }
       {
-        const createArgs: bsv.CreateActionArgs = {
+        const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
           options: {
             acceptDelayedBroadcast: false,
@@ -225,7 +225,7 @@ describe('createAction test', () => {
         outputDescription: `Output ${i}`
       }))
 
-      const args: bsv.CreateActionArgs = {
+      const args: CreateActionArgs = {
         description: 'Randomized Outputs',
         lockTime: 500000,
         outputs,
