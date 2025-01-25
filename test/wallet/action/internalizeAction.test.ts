@@ -1,6 +1,6 @@
-import { CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
+import { Beef, CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
 import { sdk } from '../../../src/index.all'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('internalizeAction tests', () => {
   jest.setTimeout(99999999)
@@ -18,6 +18,27 @@ describe('internalizeAction tests', () => {
   afterAll(async () => {
     for (const ctx of gctxs) {
       await ctx.storage.destroy()
+    }
+  })
+
+  test('0 invalid params', async () => {
+    for (const { wallet } of gctxs) {
+
+      const beef0 = new Beef();
+      const beef1 = new Beef(); beef1.mergeTxidOnly('1'.repeat(64))
+
+      const invalidArgs: InternalizeActionArgs[] = [
+        { tx: [], outputs: [], description: '' },
+        { tx: [], outputs: [], description: '12345' },
+        { tx: beef0.toBinary(), outputs: [], description: '12345' },
+        { tx: beef1.toBinary(), outputs: [], description: '12345' }
+        // Oh so many things to test...
+      ]
+
+      for (const args of invalidArgs) {
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.internalizeAction(args))
+      }
+
     }
   })
 

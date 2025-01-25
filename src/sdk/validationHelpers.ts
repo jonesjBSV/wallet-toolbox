@@ -1,4 +1,4 @@
-import { AbortActionArgs, AcquireCertificateArgs, AcquisitionProtocol, AtomicBEEF, Base64String, BasketInsertion, BasketStringUnder300Bytes, BEEF, BooleanDefaultFalse, BooleanDefaultTrue, CertificateFieldNameUnder50Bytes, CreateActionArgs, CreateActionInput, CreateActionOptions, CreateActionOutput, DescriptionString5to50Bytes, DiscoverByAttributesArgs, DiscoverByIdentityKeyArgs, HexString, InternalizeActionArgs, InternalizeOutput, KeyringRevealer, LabelStringUnder300Bytes, ListActionsArgs, ListCertificatesArgs, ListOutputsArgs, OutpointString, OutputTagStringUnder300Bytes, PositiveInteger, PositiveIntegerDefault10Max10000, PositiveIntegerOrZero, ProveCertificateArgs, PubKeyHex, RelinquishCertificateArgs, RelinquishOutputArgs, SatoshiValue, SignActionArgs, SignActionOptions, SignActionSpend, TrustSelf, TXIDHexString, Utils, WalletPayment } from "@bsv/sdk";
+import { AbortActionArgs, AcquireCertificateArgs, AcquisitionProtocol, AtomicBEEF, Base64String, BasketInsertion, BasketStringUnder300Bytes, Beef, BEEF, BooleanDefaultFalse, BooleanDefaultTrue, CertificateFieldNameUnder50Bytes, CreateActionArgs, CreateActionInput, CreateActionOptions, CreateActionOutput, DescriptionString5to50Bytes, DiscoverByAttributesArgs, DiscoverByIdentityKeyArgs, HexString, InternalizeActionArgs, InternalizeOutput, KeyringRevealer, LabelStringUnder300Bytes, ListActionsArgs, ListCertificatesArgs, ListOutputsArgs, OutpointString, OutputTagStringUnder300Bytes, PositiveInteger, PositiveIntegerDefault10Max10000, PositiveIntegerOrZero, ProveCertificateArgs, PubKeyHex, RelinquishCertificateArgs, RelinquishOutputArgs, SatoshiValue, SignActionArgs, SignActionOptions, SignActionSpend, TrustSelf, TXIDHexString, Utils, WalletPayment } from "@bsv/sdk";
 import { sdk } from "../index.client";
 import { OutPoint } from "./types";
 
@@ -423,6 +423,16 @@ export function validateInternalizeActionArgs(args: InternalizeActionArgs) : Val
       labels: (args.labels || []).map(t => validateLabel(t)),
       seekPermission: defaultTrue(args.seekPermission),
     }
+
+    try {
+      const beef = Beef.fromBinary(vargs.tx)
+      if (beef.txs.length < 1)
+        throw new sdk.WERR_INVALID_PARAMETER('tx', `at least one transaction to internalize an output from`)
+    } catch {
+      throw new sdk.WERR_INVALID_PARAMETER('tx', `valid with at least one transaction to internalize an output from`)
+    }
+    if (vargs.outputs.length < 1)
+      throw new sdk.WERR_INVALID_PARAMETER('outputs', `at least one output to internalize from the transaction`)
 
     return vargs
 }
