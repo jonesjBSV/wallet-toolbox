@@ -1,4 +1,4 @@
-import { CreateActionArgs, CreateActionOutput, CreateActionResult, KeyDeriver, P2PKH, PrivateKey, PublicKey, SignActionArgs, SignActionResult, Utils, WalletCertificate, WalletInterface } from '@bsv/sdk'
+import { CreateActionArgs, CreateActionOutput, CreateActionResult, HexString, KeyDeriver, P2PKH, PrivateKey, PublicKey, SatoshiValue, SignActionArgs, SignActionResult, Utils, WalletCertificate, WalletInterface } from '@bsv/sdk'
 import path from 'path'
 import { promises as fsp } from 'fs'
 import {
@@ -1395,8 +1395,8 @@ export const normalizeDate = (value: any): string | null => {
   return null
 }
 
-export async function logTransaction(storage: StorageKnex, txid: bsv.HexString): Promise<string> {
-  let amount: bsv.SatoshiValue = 0
+export async function logTransaction(storage: StorageKnex, txid: HexString): Promise<string> {
+  let amount: SatoshiValue = 0
   let log = `txid: ${txid}\n`
   const rt = await storage.findTransactions({ partial: { txid } })
   for (const t of rt) {
