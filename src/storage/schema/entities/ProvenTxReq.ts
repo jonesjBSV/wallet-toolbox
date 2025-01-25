@@ -113,11 +113,12 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
         const h = since ? this.historySince(since) : { ...this.history }
         if (!h.notes) return ''
         const keyLimit = since ? since.toISOString() : undefined
+        let log = ''
         for (const key of Object.keys(h.notes)) {
             if (keyLimit && key < keyLimit) continue
             h.notes[key] = this.parseHistoryNote(h.notes[key]);
+            log += `${key}: ${h.notes[key]}\n`
         }
-        let log = ''
         if (log.slice(-1) !== '\n') log += '\n'
         return log
     }

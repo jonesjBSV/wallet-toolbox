@@ -199,6 +199,7 @@ export abstract class TestUtilsWalletStorage {
     args.endpointUrl ||= 'https://staging-dojo.babbage.systems'
     const client = new StorageClient(wo.wallet, args.endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
+    await wo.storage.makeAvailable()
     return wo
   }
 

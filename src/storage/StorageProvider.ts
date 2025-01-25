@@ -434,8 +434,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
                 if (ids.length > 0) {
                     for (const id of ids) {
                         try {
-                            await this.updateTransaction(id, { provenTxId: proven.provenTxId })
-                            await this.updateTransactionStatus('completed', id)
+                            await this.updateTransaction(id, { provenTxId: proven.provenTxId, status: 'completed' })
                             req.addHistoryNote(`transaction ${id} notified of ProvenTx`)
                         } catch (eu: unknown) {
                             const e = sdk.WalletError.fromUnknown(eu)
