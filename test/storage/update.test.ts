@@ -365,7 +365,7 @@ describe('update tests', () => {
             transactionId: record.transactionId,
             userId: record.userId ?? 1,
             provenTxId: 1,
-            reference: `updated_reference_string_${record.transactionId}==` as bsv.Base64String,
+            reference: `updated_reference_string_${record.transactionId}==`,
             status: 'confirmed' as sdk.TransactionStatus,
             txid: `updated_txid_example_${record.transactionId}`,
             created_at: new Date('2024-12-30T23:00:00Z'),
