@@ -6,14 +6,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [ArcMinerGetTxData](#interface-arcminergettxdata) | [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
-| [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi) | [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [TxScriptOffsets](#interface-txscriptoffsets) |
-| [ArcMinerPostTxsData](#interface-arcminerposttxsdata) | [GetUtxoStatusResult](#interface-getutxostatusresult) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
-| [ArcServiceConfig](#interface-arcserviceconfig) | [KeyPair](#interface-keypair) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
-| [AuthId](#interface-authid) | [MonitorOptions](#interface-monitoroptions) | [ValidAbortActionArgs](#interface-validabortactionargs) |
-| [BaseBlockHeader](#interface-baseblockheader) | [OutPoint](#interface-outpoint) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
-| [BlockHeader](#interface-blockheader) | [Paged](#interface-paged) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
-| [BsvExchangeRate](#interface-bsvexchangerate) | [PendingSignAction](#interface-pendingsignaction) | [ValidBasketInsertion](#interface-validbasketinsertion) |
+| [ArcMinerGetTxData](#interface-arcminergettxdata) | [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TrxToken](#interface-trxtoken) |
+| [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi) | [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
+| [ArcMinerPostTxsData](#interface-arcminerposttxsdata) | [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [TxScriptOffsets](#interface-txscriptoffsets) |
+| [ArcServiceConfig](#interface-arcserviceconfig) | [GetUtxoStatusResult](#interface-getutxostatusresult) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
+| [AuthId](#interface-authid) | [KeyPair](#interface-keypair) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
+| [BaseBlockHeader](#interface-baseblockheader) | [MonitorOptions](#interface-monitoroptions) | [ValidAbortActionArgs](#interface-validabortactionargs) |
+| [BlockHeader](#interface-blockheader) | [OutPoint](#interface-outpoint) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
+| [BsvExchangeRate](#interface-bsvexchangerate) | [Paged](#interface-paged) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
+| [CertOpsWallet](#interface-certopswallet) | [PendingSignAction](#interface-pendingsignaction) | [ValidBasketInsertion](#interface-validbasketinsertion) |
 | [DojoCommitNewTxResults](#interface-dojocommitnewtxresults) | [PendingStorageInput](#interface-pendingstorageinput) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
 | [EntityTimeStamp](#interface-entitytimestamp) | [PostBeefResult](#interface-postbeefresult) | [ValidCreateActionInput](#interface-validcreateactioninput) |
 | [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
@@ -45,7 +46,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [GenerateChangeSdkStorageChange](#interface-generatechangesdkstoragechange) | [StorageSyncReaderWriter](#interface-storagesyncreaderwriter) | [WalletStorageWriter](#interface-walletstoragewriter) |
 | [GetMerklePathResult](#interface-getmerklepathresult) | [SyncChunk](#interface-syncchunk) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
 | [GetRawTxResult](#interface-getrawtxresult) | [TaskPurgeParams](#interface-taskpurgeparams) |  |
-| [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TrxToken](#interface-trxtoken) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -259,6 +259,19 @@ export interface BsvExchangeRate {
     timestamp: Date;
     base: "USD";
     rate: number;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Interface: CertOpsWallet
+
+```ts
+export interface CertOpsWallet {
+    getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult>;
+    encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult>;
+    decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult>;
 }
 ```
 
@@ -3056,18 +3069,18 @@ export class CertOps extends BsvCertificate {
     _keyring?: Record<CertificateFieldNameUnder50Bytes, string>;
     _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
     _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>;
-    constructor(public wallet: WalletInterface, wc: WalletCertificate) 
-    static async fromCounterparty(wallet: WalletInterface, e: {
+    constructor(public wallet: CertOpsWallet, wc: WalletCertificate) 
+    static async fromCounterparty(wallet: CertOpsWallet, e: {
         certificate: WalletCertificate;
         keyring: Record<CertificateFieldNameUnder50Bytes, string>;
         counterparty: PubKeyHex;
     }): Promise<CertOps> 
-    static async fromCertifier(wallet: WalletInterface, e: {
+    static async fromCertifier(wallet: CertOpsWallet, e: {
         certificate: WalletCertificate;
         keyring: Record<CertificateFieldNameUnder50Bytes, string>;
     }): Promise<CertOps> 
-    static async fromEncrypted(wallet: WalletInterface, wc: WalletCertificate, keyring: Record<CertificateFieldNameUnder50Bytes, string>): Promise<CertOps> 
-    static async fromDecrypted(wallet: WalletInterface, wc: WalletCertificate): Promise<CertOps> 
+    static async fromEncrypted(wallet: CertOpsWallet, wc: WalletCertificate, keyring: Record<CertificateFieldNameUnder50Bytes, string>): Promise<CertOps> 
+    static async fromDecrypted(wallet: CertOpsWallet, wc: WalletCertificate): Promise<CertOps> 
     static copyFields<T>(fields: Record<CertificateFieldNameUnder50Bytes, T>): Record<CertificateFieldNameUnder50Bytes, T> 
     static getProtocolForCertificateFieldEncryption(serialNumber: string, fieldName: string): {
         protocolID: WalletProtocol;
@@ -3092,6 +3105,8 @@ export class CertOps extends BsvCertificate {
     async encryptAndSignNewCertificate(): Promise<void> 
 }
 ```
+
+See also: [CertOpsWallet](#interface-certopswallet)
 
 <details>
 
@@ -5104,8 +5119,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: getIdentityKey
 
 ```ts
-export async function getIdentityKey(wallet: WalletInterface): Promise<PubKeyHex> 
+export async function getIdentityKey(wallet: CertOpsWallet): Promise<PubKeyHex> 
 ```
+
+See also: [CertOpsWallet](#interface-certopswallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
