@@ -25,8 +25,7 @@ describe('walletLive test', () => {
 
   beforeAll(async () => {
     myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
-    //if (myRootKeyHex2)
-    //  myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain });
+    myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain });
 
     const connection = JSON.parse(process.env.TEST_CLOUD_MYSQL_CONNECTION || '')
     const knex = _tu.createMySQLFromConnection(connection)
@@ -126,10 +125,6 @@ describe('walletLive test', () => {
   })
 
   test('6 send a wallet payment from myCtx to second wallet', async () => {
-    if (!myIdentityKey2) return
-
-    if (myCtx) await myCtx.storage.destroy()
-    myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
 
     const r = await createWalletPaymentAction({
       toIdentityKey: myIdentityKey2,
@@ -139,9 +134,7 @@ describe('walletLive test', () => {
       logResult: true
     })
 
-    if (myCtx) await myCtx.storage.destroy()
-    myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
-    const toCtx = myCtx
+    const toCtx = myCtx2
 
     const args: InternalizeActionArgs = {
       tx: Utils.toArray(r.atomicBEEF, 'hex'),
@@ -241,7 +234,7 @@ ${Utils.toHex(beef.toBinaryAtomic(txid))}
     myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
 
     {
-      const u2 = await myCtx.storage.findOrInsertUser(myIdentityKey2)
+      const u2 = await myCtx2.storage.findOrInsertUser(myIdentityKey2)
     }
 
     if (myCtx) await myCtx.storage.destroy();
@@ -251,7 +244,7 @@ ${Utils.toHex(beef.toBinaryAtomic(txid))}
 
     {
       const u1 = await myCtx.storage.findOrInsertUser(myIdentityKey)
-      const u2 = await myCtx.storage.findOrInsertUser(myIdentityKey2)
+      const u2 = await myCtx2.storage.findOrInsertUser(myIdentityKey2)
 
       expect(u1.user.userId).not.toBe(u2.user.userId)
     }

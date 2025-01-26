@@ -7,6 +7,7 @@ import { listCertificates } from './methods/listCertificates';
 import { createAction } from './methods/createAction';
 import { internalizeAction } from './methods/internalizeAction';
 import { StorageReaderWriter, StorageReaderWriterOptions } from './StorageReaderWriter';
+import { ProvenTxReq } from './schema/entities';
 
 export abstract class StorageProvider extends StorageReaderWriter implements sdk.WalletStorageProvider {
 
@@ -207,8 +208,18 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
         for (let retry = 0; ; retry++) {
             try {
                 r.req = verifyOneOrNone(await this.findProvenTxReqs({ partial: { txid }, trx }))
-                if (r.req || !newReq) break;
-                newReq.provenTxReqId = await this.insertProvenTxReq(newReq, trx)
+                if (!r.req && !newReq) break;
+                if (!r.req && newReq) {
+                    await this.insertProvenTxReq(newReq, trx)
+                }
+                if (r.req && newReq) {
+                    // Merge history and notify into existing 
+                    const req1 = new ProvenTxReq(r.req)
+                    const req2 = new ProvenTxReq(newReq)
+                    req1.mergeHistory(newReq, undefined, true)
+                    req1.mergeNotifyTransactionIds(newReq)
+                    await req1.updateStorageDynamicProperties(this, trx)
+                }
                 break;
             } catch (eu: unknown) {
                 if (retry > 0) throw eu;
