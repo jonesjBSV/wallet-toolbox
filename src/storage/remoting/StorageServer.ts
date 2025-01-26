@@ -118,7 +118,7 @@ export class StorageServer {
           }
           console.log(`StorageServer: method=${method} params=${JSON.stringify(params).slice(0, 512)}`)
           const result = await (this.storage as any)[method](...(params || []))
-          console.log(`StorageServer: method=${method} result=${JSON.stringify(result).slice(0, 512)}`)
+          console.log(`StorageServer: method=${method} result=${JSON.stringify(result || 'void').slice(0, 512)}`)
           return res.json({ jsonrpc: '2.0', result, id })
         } else {
           // Unknown method

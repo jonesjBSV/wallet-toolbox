@@ -14,7 +14,9 @@ describe('walletLive test', () => {
   const myRootKeyHex = env.devKeys[myIdentityKey]
   if (!myIdentityKey || !myRootKeyHex) throw new sdk.WERR_INVALID_OPERATION(`Requires a .env file with MY_${env.chain.toUpperCase()}_IDENTITY and corresponding DEV_KEYS entries.`)
   const myIdentityKey2 = env.identityKey2
-  const myRootKeyHex2 = env.devKeys[myIdentityKey]
+  if (!myIdentityKey2) throw new sdk.WERR_INVALID_OPERATION(`Requires a .env file with MY_${env.chain.toUpperCase()}_IDENTITY2 and corresponding DEV_KEYS entries.`)
+  const myRootKeyHex2 = env.devKeys[myIdentityKey2!]
+  if (!myRootKeyHex2) throw new sdk.WERR_INVALID_OPERATION(`Requires a .env file with MY_${env.chain.toUpperCase()}_IDENTITY2 and corresponding DEV_KEYS entries.`)
 
   let myCtx: TestWalletOnly
   let myCtx2: TestWalletOnly
@@ -23,8 +25,8 @@ describe('walletLive test', () => {
 
   beforeAll(async () => {
     myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
-    if (myRootKeyHex2)
-      myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain });
+    //if (myRootKeyHex2)
+    //  myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain });
 
     const connection = JSON.parse(process.env.TEST_CLOUD_MYSQL_CONNECTION || '')
     const knex = _tu.createMySQLFromConnection(connection)
@@ -123,23 +125,12 @@ describe('walletLive test', () => {
 `)
   })
 
-  test('6a help setup my own wallet', async () => {
-    const privKey = PrivateKey.fromRandom()
-    const identityKey = privKey.toPublicKey().toString()
-
-    const log = `
-    // Add the following to .env file:
-    MY_TEST_IDENTITY = '${identityKey}'
-    DEV_KEYS = '{
-        "${identityKey}": "${privKey.toString()}"
-    }'
-    `
-    console.log(log)
-  })
-
   test('6 send a wallet payment from myCtx to second wallet', async () => {
     if (!myIdentityKey2) return
-    
+
+    if (myCtx) await myCtx.storage.destroy()
+    myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
+
     const r = await createWalletPaymentAction({
       toIdentityKey: myIdentityKey2,
       outputSatoshis: randomBytes(1)[0]+10,
@@ -148,7 +139,9 @@ describe('walletLive test', () => {
       logResult: true
     })
 
-    const toCtx = myCtx2
+    if (myCtx) await myCtx.storage.destroy()
+    myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
+    const toCtx = myCtx
 
     const args: InternalizeActionArgs = {
       tx: Utils.toArray(r.atomicBEEF, 'hex'),
@@ -174,6 +167,20 @@ describe('walletLive test', () => {
     const txid = btx.txid
     const req = await entity.ProvenTxReq.fromStorageTxid(stagingStorage, txid)
     expect(req?.notify.transactionIds?.length).toBe(2)
+  })
+
+  test('6a help setup my own wallet', async () => {
+    const privKey = PrivateKey.fromRandom()
+    const identityKey = privKey.toPublicKey().toString()
+
+    const log = `
+    // Add the following to .env file:
+    MY_TEST_IDENTITY = '${identityKey}'
+    DEV_KEYS = '{
+        "${identityKey}": "${privKey.toString()}"
+    }'
+    `
+    console.log(log)
   })
 
   test('6b run liveWallet Monitor once', async () => {
@@ -218,6 +225,37 @@ AtomicBEEF for known txid ${txid}
 ${Utils.toHex(beef.toBinaryAtomic(txid))}
 
 `)
+  })
+
+  test('7 test two client wallets', async () => {
+    if (!myIdentityKey2) return
+    if (myCtx) await myCtx.storage.destroy();
+    myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
+
+    {
+      const u1 = await myCtx.storage.findOrInsertUser(myIdentityKey)
+    }
+
+    if (myCtx) await myCtx.storage.destroy();
+    if (myCtx2) await myCtx2.storage.destroy();
+    myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
+
+    {
+      const u2 = await myCtx.storage.findOrInsertUser(myIdentityKey2)
+    }
+
+    if (myCtx) await myCtx.storage.destroy();
+    if (myCtx2) await myCtx2.storage.destroy();
+    myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
+    myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
+
+    {
+      const u1 = await myCtx.storage.findOrInsertUser(myIdentityKey)
+      const u2 = await myCtx.storage.findOrInsertUser(myIdentityKey2)
+
+      expect(u1.user.userId).not.toBe(u2.user.userId)
+    }
+
   })
 
   // End of describe

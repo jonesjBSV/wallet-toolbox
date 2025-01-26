@@ -98,7 +98,7 @@ export abstract class StorageReaderWriter extends StorageReader {
         for (let retry = 0; ; retry++) {
             try {
                 user = verifyOneOrNone(await this.findUsers({ partial: { identityKey } , trx }))
-                console.log(`findOrInsertUser oneOrNone: ${JSON.stringify(user).slice(0,512)}`)
+                //console.log(`findOrInsertUser oneOrNone: ${JSON.stringify(user || 'none').slice(0,512)}`)
                 if (user) break;
                 const now = new Date()
                 user = {
