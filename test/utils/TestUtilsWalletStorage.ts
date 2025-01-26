@@ -60,6 +60,7 @@ export abstract class TestUtilsWalletStorage {
     // Identity keys of the lead maintainer of this repo...
     const identityKey = chain === 'main' ? process.env.MY_MAIN_IDENTITY : process.env.MY_TEST_IDENTITY
     if (!identityKey) throw new sdk.WERR_INTERNAL('.env file configuration is missing or incomplete.')
+    const identityKey2 = chain === 'main' ? process.env.MY_MAIN_IDENTITY2 : process.env.MY_TEST_IDENTITY2
     const userId = Number(chain === 'main' ? process.env.MY_MAIN_USERID : process.env.MY_TEST_USERID)
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const logTests = !!process.env.LOGTESTS
@@ -69,6 +70,7 @@ export abstract class TestUtilsWalletStorage {
       chain,
       userId,
       identityKey,
+      identityKey2,
       mainTaalApiKey: verifyTruthy(process.env.MAIN_TAAL_API_KEY || '', `.env value for 'mainTaalApiKey' is required.`),
       testTaalApiKey: verifyTruthy(process.env.TEST_TAAL_API_KEY || '', `.env value for 'testTaalApiKey' is required.`),
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,

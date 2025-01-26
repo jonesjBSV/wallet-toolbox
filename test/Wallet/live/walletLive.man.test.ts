@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Beef, CreateActionArgs, InternalizeActionArgs, KeyDeriver, KeyDeriverApi, PrivateKey, Utils, WalletInterface } from '@bsv/sdk'
-import { Services, asString, StorageKnex, sdk, table, verifyOne, verifyId, ScriptTemplateSABPPP, randomBytesBase64, randomBytes } from '../../../src/index.all'
+import { Services, asString, StorageKnex, sdk, table, verifyOne, verifyId, ScriptTemplateSABPPP, randomBytesBase64, randomBytes, entity } from '../../../src/index.all'
 import { _tu, TestWalletNoSetup, TestWalletOnly } from '../../utils/TestUtilsWalletStorage'
 
 import dotenv from 'dotenv'
-import { StorageGetBeefOptions } from '../../../src/sdk';
 dotenv.config();
 
 describe('walletLive test', () => {
@@ -14,16 +13,28 @@ describe('walletLive test', () => {
   const myIdentityKey = env.identityKey
   const myRootKeyHex = env.devKeys[myIdentityKey]
   if (!myIdentityKey || !myRootKeyHex) throw new sdk.WERR_INVALID_OPERATION(`Requires a .env file with MY_${env.chain.toUpperCase()}_IDENTITY and corresponding DEV_KEYS entries.`)
+  const myIdentityKey2 = env.identityKey2
+  const myRootKeyHex2 = env.devKeys[myIdentityKey]
 
   let myCtx: TestWalletOnly
+  let myCtx2: TestWalletOnly
   const ctxs: TestWalletNoSetup[] = []
+  let stagingStorage: StorageKnex
 
   beforeAll(async () => {
     myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
+    if (myRootKeyHex2)
+      myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain });
+
+    const connection = JSON.parse(process.env.TEST_CLOUD_MYSQL_CONNECTION || '')
+    const knex = _tu.createMySQLFromConnection(connection)
+    stagingStorage = (await _tu.createKnexTestWallet({ knex, chain: 'test', databaseName: 'staging_wallet_storage', rootKeyHex: myRootKeyHex })).activeStorage
   })
 
   afterAll(async () => {
+    await stagingStorage.destroy()
     await myCtx.storage.destroy()
+    for (const ctx of ctxs) await ctx.storage.destroy()
   })
 
   test('1 set change outputs spendable false if not valid utxos', async () => {
@@ -127,15 +138,17 @@ describe('walletLive test', () => {
   })
 
   test('6 send a wallet payment from myCtx to second wallet', async () => {
+    if (!myIdentityKey2) return
+    
     const r = await createWalletPaymentAction({
-      toIdentityKey: myIdentityKey,
+      toIdentityKey: myIdentityKey2,
       outputSatoshis: randomBytes(1)[0]+10,
       keyDeriver: myCtx.keyDeriver,
       wallet: myCtx.wallet,
       logResult: true
     })
 
-    const toCtx = myCtx
+    const toCtx = myCtx2
 
     const args: InternalizeActionArgs = {
       tx: Utils.toArray(r.atomicBEEF, 'hex'),
@@ -156,6 +169,11 @@ describe('walletLive test', () => {
     const rw = await toCtx.wallet.internalizeAction(args)
 
     expect(rw.accepted).toBe(true)
+    const beef = Beef.fromString(r.atomicBEEF)
+    const btx = beef.txs.slice(-1)[0]
+    const txid = btx.txid
+    const req = await entity.ProvenTxReq.fromStorageTxid(stagingStorage, txid)
+    expect(req?.notify.transactionIds?.length).toBe(2)
   })
 
   test('6b run liveWallet Monitor once', async () => {
@@ -190,11 +208,8 @@ ${Utils.toHex(beef.toBinaryAtomic(txid))}
     const myIdentityKey = env.identityKey
     const myRootKeyHex = env.devKeys[myIdentityKey]
     const txid = '6b9e8ed767ed6e6366527ddf8707637f3aaee1093085985c1dd04f347a3c25be'
-    const connection = JSON.parse(process.env.TEST_CLOUD_MYSQL_CONNECTION || '')
-    const knex = _tu.createMySQLFromConnection(connection)
-    const ctx = await _tu.createKnexTestWallet({ knex, chain: 'test', databaseName: 'staging_wallet_storage', rootKeyHex: myRootKeyHex })
 
-    const beef = await ctx.activeStorage.getBeefForTransaction(txid, {})
+    const beef = await stagingStorage.getBeefForTransaction(txid, {})
     console.log(`
 ${beef.toLogString()}
 
@@ -203,7 +218,6 @@ AtomicBEEF for known txid ${txid}
 ${Utils.toHex(beef.toBinaryAtomic(txid))}
 
 `)
-      await ctx.activeStorage.destroy()
   })
 
   // End of describe
