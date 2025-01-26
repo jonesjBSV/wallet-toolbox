@@ -367,7 +367,7 @@ export async function createWalletPaymentAction(args: {
       }
     ],
     options: {
-      acceptDelayedBroadcast: false,
+      //acceptDelayedBroadcast: false,
       randomizeOutputs: false,
       signAndProcess: true
     }
