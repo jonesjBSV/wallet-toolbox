@@ -215,7 +215,6 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
                 if (r.req && newReq) {
                     // Merge history and notify into existing 
                     const req1 = new ProvenTxReq(r.req)
-                    const req2 = new ProvenTxReq(newReq)
                     req1.mergeHistory(newReq, undefined, true)
                     req1.mergeNotifyTransactionIds(newReq)
                     await req1.updateStorageDynamicProperties(this, trx)
