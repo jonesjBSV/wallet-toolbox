@@ -205,7 +205,7 @@ describe('listActions tests', () => {
     }
   })
 
-  test('22_TODOTONE label max 300 emojis default any', async () => {
+  test('22_label max length 150 emojis default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
       const label = generateRandomEmojiString(300)
       await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label })
@@ -217,6 +217,19 @@ describe('listActions tests', () => {
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
 
       expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test('23_label exceeding max length 151 emojis default any', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = generateRandomEmojiString(304)
+      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label })
+
+      const args: bsv.ListActionsArgs = {
+        labels: [label]
+      }
+
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
   /* TBD
@@ -468,7 +481,7 @@ describe('listActions tests', () => {
   })
     */
 })
-const generateRandomEmojiString = (length: number): string => {
+const generateRandomEmojiString = (bytes: number): string => {
   const emojiRange = [
     '\u{1F600}', // Grinning face
     '\u{1F603}', // Smiling face
@@ -482,9 +495,13 @@ const generateRandomEmojiString = (length: number): string => {
     '\u{1F44D}' // Thumbs up
   ]
 
+  const bytesPerEmoji = 4 // Each emoji is 4 bytes in UTF-8
+  const numEmojis = Math.floor(bytes / bytesPerEmoji)
+
   let result = ''
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < numEmojis; i++) {
     result += emojiRange[Math.floor(Math.random() * emojiRange.length)]
   }
+
   return result
 }
