@@ -21,7 +21,7 @@ describe('getKnownTxids Tests', () => {
   })
 
   /*********************************************************************************************************
-   * Skipped tests are failing because the function is not handling duplicate TXIDs correctly
+   * TODOTONE: Duplicates not being handled correctly.
    **********************************************************************************************************/
   test('0 should return an empty array when no txids are provided', async () => {
     for (const { wallet } of ctxs) {
@@ -30,6 +30,7 @@ describe('getKnownTxids Tests', () => {
     }
   })
 
+  // Duplicate txids are not being handled correctly
   test('1 should add new known txids', async () => {
     for (const { wallet } of ctxs) {
       const txids = ['txid1']
@@ -42,6 +43,7 @@ describe('getKnownTxids Tests', () => {
     }
   })
 
+  // Duplicate txids are not being handled correctly
   test('2 should avoid duplicating txids', async () => {
     for (const { wallet } of ctxs) {
       const txids = ['txid1', 'txid2']
@@ -56,6 +58,7 @@ describe('getKnownTxids Tests', () => {
     }
   })
 
+  // Duplicate txids are not being handled correctly
   test('3 should return sorted txids', async () => {
     for (const { wallet } of ctxs) {
       const unsortedTxids = ['txid3', 'txid1', 'txid2']
