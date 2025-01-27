@@ -1,6 +1,7 @@
 import { sdk, wait, Services, WalletStorageManager } from "../index.client"
 import { BlockHeader, ChaintracksServiceClient } from "../services/chaintracker"
 import { TaskPurge, TaskPurgeParams } from './tasks/TaskPurge'
+import { TaskReviewStatus } from './tasks/TaskReviewStatus'
 import { TaskSyncWhenIdle } from './tasks/TaskSyncWhenIdle'
 import { TaskFailAbandoned } from './tasks/TaskFailAbandoned'
 import { TaskCheckForProofs } from './tasks/TaskCheckForProofs'
@@ -106,6 +107,7 @@ export class Monitor {
         this._otherTasks.push(new TaskClock(this))
         this._otherTasks.push(new TaskNewHeader(this))
         this._otherTasks.push(new TaskPurge(this, this.defaultPurgeParams))
+        this._otherTasks.push(new TaskReviewStatus(this))
         this._otherTasks.push(new TaskSendWaiting(this))
         this._otherTasks.push(new TaskCheckForProofs(this))
         
@@ -124,6 +126,7 @@ export class Monitor {
         this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
         this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
         this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
+        this._tasks.push(new TaskReviewStatus(this))
     }
     
     /**
@@ -137,6 +140,7 @@ export class Monitor {
         this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
         this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
         this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
+        this._tasks.push(new TaskReviewStatus(this))
     }
 
     addTask(task: WalletMonitorTask) : void {

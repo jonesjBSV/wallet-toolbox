@@ -8,6 +8,7 @@ import { purgeData } from './methods/purgeData'
 import { listActions } from './methods/listActions'
 import { listOutputs } from './methods/listOutputs'
 import { DBType } from './StorageReader'
+import { reviewStatus } from './methods/reviewStatus'
 
 export interface StorageKnexOptions extends StorageProviderOptions {
   /**
@@ -804,6 +805,10 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
 
   override async purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults> {
     return await purgeData(this, params, trx)
+  }
+
+  override async reviewStatus(args: { agedLimit: Date, trx?: sdk.TrxToken }): Promise<{ log: string }> {
+    return await reviewStatus(this, args)
   }
 
   /**

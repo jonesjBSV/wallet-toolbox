@@ -41,6 +41,8 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
         this.commissionSatoshis = options.commissionSatoshis
     }
 
+    abstract reviewStatus(args: { agedLimit: Date, trx?: sdk.TrxToken }) : Promise<{ log: string }>
+
     abstract purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults>
 
     abstract allocateChangeInput(userId: number, basketId: number, targetSatoshis: number, exactSatoshis: number | undefined, excludeSending: boolean, transactionId: number): Promise<table.Output | undefined>
