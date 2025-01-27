@@ -107,6 +107,7 @@ export interface WalletStorageReader {
 export interface AuthId {
    identityKey: string
    userId?: number
+   isActive?: boolean
 }
 
 export interface FindSincePagedArgs {
