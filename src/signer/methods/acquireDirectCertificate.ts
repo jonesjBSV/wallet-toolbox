@@ -1,8 +1,8 @@
 import { AcquireCertificateResult } from '@bsv/sdk'
-import { sdk, table, WalletSigner } from '../../index.client'
+import { sdk, table, Wallet } from '../../index.client'
 
 export async function acquireDirectCertificate(
-  signer: WalletSigner,
+  wallet: Wallet,
   auth: sdk.AuthId,
   vargs: sdk.ValidAcquireDirectCertificateArgs
 )
@@ -36,7 +36,7 @@ export async function acquireDirectCertificate(
     })
   }
 
-  const count = await signer.storage.insertCertificate(newCert)
+  const count = await wallet.storage.insertCertificate(newCert)
 
   const r: AcquireCertificateResult = {
     type: vargs.type,

@@ -186,7 +186,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
     }
     getServices(): sdk.WalletServices {
         if (!this._services)
-            throw new sdk.WERR_INVALID_OPERATION('Must set WalletSigner services first.')
+            throw new sdk.WERR_INVALID_OPERATION('Must setServices first.')
         return this._services
     }
 
@@ -291,12 +291,11 @@ export class WalletStorageManager implements sdk.WalletStorage {
         })
     }
 
-    async listActions(args: ListActionsArgs): Promise<ListActionsResult> {
-        const vargs = sdk.validateListActionsArgs(args)
+    async listActions(vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> {
         const auth = await this.getAuth()
         return await this.runAsReader(async (reader) => {
 
-            return await reader.listActions(auth, args)
+            return await reader.listActions(auth, vargs)
 
         })
     }
@@ -308,12 +307,11 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
         })
     }
-    async listOutputs(args: ListOutputsArgs): Promise<ListOutputsResult> {
-        const vargs = sdk.validateListOutputsArgs(args)
+    async listOutputs(vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult> {
         const auth = await this.getAuth()
         return await this.runAsReader(async (reader) => {
 
-            return await reader.listOutputs(auth, args)
+            return await reader.listOutputs(auth, vargs)
 
         })
     }

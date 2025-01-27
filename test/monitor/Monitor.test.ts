@@ -7,6 +7,7 @@ import { TaskPurge } from "../../src/monitor/tasks/TaskPurge"
 import { TaskSendWaiting } from "../../src/monitor/tasks/TaskSendWaiting"
 import { _tu, TestSetup1Wallet, TestWallet } from "../utils/TestUtilsWalletStorage"
 import exp from 'constants'
+import { TaskReviewStatus } from '../../src/monitor/tasks/TaskReviewStatus'
 
 describe('Monitor tests', () => {
     jest.setTimeout(99999999)
@@ -314,5 +315,28 @@ describe('Monitor tests', () => {
             await ctx.storage.destroy()
         }
     }
+
+    test('7 TaskReviewStatus', async () => {
+        const ctxs: TestWallet<{}>[] = []
+        ctxs.push(await _tu.createLegacyWalletSQLiteCopy('monitorTest7'))
+        //ctxs.push(await _tu.createLegacyWalletMySQLCopy('monitorTest7'))
+
+        for (const { activeStorage: storage, monitor } of ctxs) {
+
+            const reqs = await storage.findProvenTxReqs({ partial: { status: 'unmined' }})
+            const crus = await storage.updateProvenTxReq(reqs[0].provenTxReqId, { status: 'invalid' })
+            const ctus = await storage.updateTransaction(23, { provenTxId: undefined })
+
+            const task = new TaskReviewStatus(monitor, 1, 1000 * 5)
+            monitor._tasks.push(task)
+            const log = await monitor.runTask('ReviewStatus')
+            console.log(log)
+
+        }
+
+        for (const ctx of ctxs) {
+            await ctx.storage.destroy()
+        }
+    })
 
 })

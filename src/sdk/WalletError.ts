@@ -1,6 +1,4 @@
-import { ErrorCodeString10To40Bytes, ErrorDescriptionString20To200Bytes } from '@bsv/sdk'
-import { sdk } from "../index.client"
-import { WalletErrorObject } from "./Wallet.interfaces"
+import { ErrorCodeString10To40Bytes, ErrorDescriptionString20To200Bytes, WalletErrorObject } from '@bsv/sdk'
 
 /**
  * Derived class constructors should use the derived class name as the value for `name`,

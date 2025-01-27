@@ -1,6 +1,6 @@
-import { CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
+import { Beef, CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
 import { sdk } from '../../../src/index.all'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('internalizeAction tests', () => {
   jest.setTimeout(99999999)
@@ -18,6 +18,27 @@ describe('internalizeAction tests', () => {
   afterAll(async () => {
     for (const ctx of gctxs) {
       await ctx.storage.destroy()
+    }
+  })
+
+  test('0 invalid params', async () => {
+    for (const { wallet } of gctxs) {
+
+      const beef0 = new Beef();
+      const beef1 = new Beef(); beef1.mergeTxidOnly('1'.repeat(64))
+
+      const invalidArgs: InternalizeActionArgs[] = [
+        { tx: [], outputs: [], description: '' },
+        { tx: [], outputs: [], description: '12345' },
+        { tx: beef0.toBinary(), outputs: [], description: '12345' },
+        { tx: beef1.toBinary(), outputs: [], description: '12345' }
+        // Oh so many things to test...
+      ]
+
+      for (const args of invalidArgs) {
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.internalizeAction(args))
+      }
+
     }
   })
 
@@ -219,7 +240,7 @@ describe('internalizeAction tests', () => {
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix = Buffer.from('utxo-0').toString('base64')
       const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
-      const derivedPublicKey = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix}`, fred.identityKey)
+      const derivedPublicKey = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix}`, fred.identityKey)
       const derivedAddress = derivedPublicKey.toAddress()
 
       {
@@ -298,12 +319,12 @@ describe('internalizeAction tests', () => {
       const outputSatoshis1 = 6
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix1 = Buffer.from('utxo-1').toString('base64')
-      const derivedPublicKey1 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
+      const derivedPublicKey1 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
       const derivedAddress1 = derivedPublicKey1.toAddress()
 
       const outputSatoshis2 = 7
       const derivationSuffix2 = Buffer.from('utxo-2').toString('base64')
-      const derivedPublicKey2 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
+      const derivedPublicKey2 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
       const derivedAddress2 = derivedPublicKey2.toAddress()
 
       {
@@ -397,12 +418,12 @@ describe('internalizeAction tests', () => {
       const outputSatoshis1 = 8
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix1 = Buffer.from('utxo-1').toString('base64')
-      const derivedPublicKey1 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
+      const derivedPublicKey1 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
       const derivedAddress1 = derivedPublicKey1.toAddress()
 
       const outputSatoshis2 = 9
       const derivationSuffix2 = Buffer.from('utxo-2').toString('base64')
-      const derivedPublicKey2 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
+      const derivedPublicKey2 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
       const derivedAddress2 = derivedPublicKey2.toAddress()
 
       const root = '02135476'

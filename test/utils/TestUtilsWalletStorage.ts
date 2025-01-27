@@ -19,31 +19,13 @@ import {
 } from '@bsv/sdk'
 import path from 'path'
 import { promises as fsp } from 'fs'
-import {
-  asArray,
-  randomBytesBase64,
-  randomBytesHex,
-  sdk,
-  StorageProvider,
-  StorageKnex,
-  StorageSyncReader,
-  table,
-  verifyTruthy,
-  Wallet,
-  Monitor,
-  MonitorOptions,
-  Services,
-  WalletSigner,
-  WalletStorageManager,
-  verifyOne,
-  StorageClient
-} from '../../src/index.all'
+import { asArray, randomBytesBase64, randomBytesHex, sdk, StorageProvider, StorageKnex, StorageSyncReader, table, verifyTruthy, Wallet, Monitor, Services, WalletStorageManager, verifyOne, StorageClient } from '../../src/index.all'
 
 import { Knex, knex as makeKnex } from 'knex'
 import { Beef } from '@bsv/sdk'
 
 import * as dotenv from 'dotenv'
-import { TransactionStatus } from '../../src/sdk'
+import { PrivilegedKeyManager } from '../../src/sdk'
 dotenv.config()
 
 const localMySqlConnection = process.env.LOCAL_MYSQL_CONNECTION || ''
@@ -65,6 +47,7 @@ export abstract class TestUtilsWalletStorage {
     // Identity keys of the lead maintainer of this repo...
     const identityKey = chain === 'main' ? process.env.MY_MAIN_IDENTITY : process.env.MY_TEST_IDENTITY
     if (!identityKey) throw new sdk.WERR_INTERNAL('.env file configuration is missing or incomplete.')
+    const identityKey2 = chain === 'main' ? process.env.MY_MAIN_IDENTITY2 : process.env.MY_TEST_IDENTITY2
     const userId = Number(chain === 'main' ? process.env.MY_MAIN_USERID : process.env.MY_TEST_USERID)
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const logTests = !!process.env.LOGTESTS
@@ -74,6 +57,7 @@ export abstract class TestUtilsWalletStorage {
       chain,
       userId,
       identityKey,
+      identityKey2,
       mainTaalApiKey: verifyTruthy(process.env.MAIN_TAAL_API_KEY || '', `.env value for 'mainTaalApiKey' is required.`),
       testTaalApiKey: verifyTruthy(process.env.TEST_TAAL_API_KEY || '', `.env value for 'testTaalApiKey' is required.`),
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
@@ -195,7 +179,7 @@ export abstract class TestUtilsWalletStorage {
     return unlock
   }
 
-  static async createWalletOnly(args: { chain?: sdk.Chain; rootKeyHex?: string; active?: sdk.WalletStorageProvider; backups?: sdk.WalletStorageProvider[] }): Promise<TestWalletOnly> {
+  static async createWalletOnly(args: { chain?: sdk.Chain; rootKeyHex?: string; active?: sdk.WalletStorageProvider; backups?: sdk.WalletStorageProvider[]; privKeyHex?: string }): Promise<TestWalletOnly> {
     args.chain ||= 'test'
     args.rootKeyHex ||= '1'.repeat(64)
     const rootKey = PrivateKey.fromHex(args.rootKeyHex)
@@ -204,19 +188,22 @@ export abstract class TestUtilsWalletStorage {
     const chain = args.chain
     const storage = new WalletStorageManager(identityKey, args.active, args.backups)
     if (storage.stores.length > 0) await storage.makeAvailable()
-    const signer = new WalletSigner(chain, keyDeriver, storage)
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
     monitor.addDefaultTasks()
-    const wallet = new Wallet(signer, services, monitor)
+    let privilegedKeyManager: PrivilegedKeyManager | undefined = undefined
+    if (args.privKeyHex) {
+      const privKey = PrivateKey.fromString(args.privKeyHex)
+      privilegedKeyManager = new PrivilegedKeyManager(async () => privKey)
+    }
+    const wallet = new Wallet({ chain, keyDeriver, storage, services, monitor, privilegedKeyManager })
     const r: TestWalletOnly = {
       rootKey,
       identityKey,
       keyDeriver,
       chain,
       storage,
-      signer,
       services,
       monitor,
       wallet
@@ -243,7 +230,7 @@ export abstract class TestUtilsWalletStorage {
     dropAll?: boolean
     insertSetup: (storage: StorageKnex, identityKey: string, mockData?: MockData) => Promise<T>
   }): Promise<TestWallet<T>> {
-    const wo = await _tu.createWalletOnly({ chain: args.chain, rootKeyHex: args.rootKeyHex })
+    const wo = await _tu.createWalletOnly({ chain: args.chain, rootKeyHex: args.rootKeyHex, privKeyHex: args.privKeyHex })
     const activeStorage = new StorageKnex({ chain: wo.chain, knex: args.knex, commissionSatoshis: 0, commissionPubKeyHex: undefined, feeModel: { model: 'sat/kb', value: 1 } })
     if (args.dropAll) await activeStorage.dropAllData()
     await activeStorage.migrate(args.databaseName, wo.identityKey)
@@ -361,7 +348,7 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
-  static async createSQLiteTestWallet(args: { filePath?: string; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean }): Promise<TestWalletNoSetup> {
+  static async createSQLiteTestWallet(args: { filePath?: string; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean; privKeyHex?: string }): Promise<TestWalletNoSetup> {
     const localSQLiteFile = args.filePath || (await _tu.newTmpFile(`${args.databaseName}.sqlite`, false, false, true))
     return await this.createKnexTestWallet({
       ...args,
@@ -387,7 +374,7 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
-  static async createKnexTestWallet(args: { knex: Knex<any, any[]>; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean }): Promise<TestWalletNoSetup> {
+  static async createKnexTestWallet(args: { knex: Knex<any, any[]>; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean; privKeyHex?: string }): Promise<TestWalletNoSetup> {
     return await _tu.createKnexTestWalletWithSetup({
       ...args,
       insertSetup: insertEmptySetup
@@ -477,11 +464,10 @@ export abstract class TestUtilsWalletStorage {
       await storage.syncFromReader(identityKey, new StorageSyncReader({ identityKey }, reader))
       await reader.destroy()
     }
-    const signer = new WalletSigner(chain, keyDeriver, storage)
     const services = new Services(chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
-    const wallet = new Wallet(signer, services, monitor)
+    const wallet = new Wallet({ chain, keyDeriver, storage, services, monitor })
     const userId = verifyTruthy(await activeStorage.findUserByIdentityKey(identityKey)).userId
     const r: TestWallet<{}> = {
       rootKey,
@@ -491,7 +477,6 @@ export abstract class TestUtilsWalletStorage {
       activeStorage,
       storage,
       setup: {},
-      signer,
       services,
       monitor,
       wallet,
@@ -1063,7 +1048,6 @@ export interface TestWallet<T> extends TestWalletOnly {
   keyDeriver: KeyDeriver
   chain: sdk.Chain
   storage: WalletStorageManager
-  signer: WalletSigner
   services: Services
   monitor: Monitor
   wallet: Wallet
@@ -1075,7 +1059,6 @@ export interface TestWalletOnly {
   keyDeriver: KeyDeriver
   chain: sdk.Chain
   storage: WalletStorageManager
-  signer: WalletSigner
   services: Services
   monitor: Monitor
   wallet: Wallet

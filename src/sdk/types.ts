@@ -68,3 +68,24 @@ export interface Paged {
     limit: number
     offset?: number
 }
+
+export interface KeyPair {
+  privateKey: string
+  publicKey: string
+}
+
+export interface StorageIdentity {
+   /**
+    * The identity key (public key) assigned to this storage
+    */
+   storageIdentityKey: string
+   /**
+    * The human readable name assigned to this storage.
+    */
+   storageName: string
+}
+
+export interface EntityTimeStamp {
+    created_at: Date
+    updated_at: Date
+}

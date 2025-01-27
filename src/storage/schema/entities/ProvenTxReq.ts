@@ -192,7 +192,7 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
         this.notified = false
     }
     
-    addHistoryNote<T extends { what: string }>(note: string | T, when?: Date) {
+    addHistoryNote<T extends { what: string }>(note: string | T, when?: Date, noDupes?: boolean) {
         if (!this.history.notes) this.history.notes = {}
         if (typeof note === 'string')
             note = JSON.stringify({ what: "string", note })
@@ -201,13 +201,16 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
         when ||= new Date()
         let msecs = when.getTime()
         let key = when.toISOString()
-        while (this.history.notes[key]) {
-            // Make sure new key (timestamp) will not overwrite existing.
-            // Fudge the time by 1 msec forward until unique
-            msecs += 1
-            key = new Date(msecs).toISOString()
+        if (!noDupes) {
+            while (this.history.notes[key]) {
+                // Make sure new key (timestamp) will not overwrite existing.
+                // Fudge the time by 1 msec forward until unique
+                msecs += 1
+                key = new Date(msecs).toISOString()
+            }
         }
-        this.history.notes[key] = note
+        if (!this.history.notes[key])
+            this.history.notes[key] = note
     }
 
     /**
@@ -227,7 +230,16 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     }
 
     /**
-     * Update storage with changes to only status and history.
+     * Update storage with changes to non-static properties:
+     *   updated_at
+     *   provenTxId
+     *   status
+     *   history
+     *   notify
+     *   notified
+     *   attempts
+     *   batch
+     * 
      * @param storage 
      * @param trx 
      */
@@ -273,7 +285,7 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     }
 
     /**
-     * See `DojoProvenTxReqStatusApi`
+     * See `ProvenTxReqStatusApi`
      */
     get status() { return this.api.status }
     set status(v: sdk.ProvenTxReqStatus) {
@@ -391,11 +403,11 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mergeHistory(ei: table.ProvenTxReq, syncMap?: entity.SyncMap) : void {
+    mergeHistory(ei: table.ProvenTxReq, syncMap?: entity.SyncMap, noDupes?: boolean) : void {
         const eie = new ProvenTxReq(ei)
         if (eie.history.notes) {
             for (const [k, v] of Object.entries(eie.history.notes)) {
-                this.addHistoryNote(v, new Date(k))
+                this.addHistoryNote(v, new Date(k), noDupes)
             }
         }
     }
@@ -414,11 +426,11 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     /**
      * When merging `ProvenTxReq`, care is taken to avoid short-cirtuiting notification: `status` must not transition to `completed` without
      * passing through `notifying`. Thus a full convergent merge passes through these sequence steps:
-     * 1. Remote dojo completes before local dojo.
-     * 2. The remotely completed req and ProvenTx sync to local dojo.
-     * 3. The local dojo transitions to `notifying`, after merging the remote attempts and history.
-     * 4. The local dojo notifies, transitioning to `completed`.
-     * 5. Having been updated, the local req, but not ProvenTx sync to remote dojo, but do not merge because the earlier `completed` wins.
+     * 1. Remote storage completes before local storage.
+     * 2. The remotely completed req and ProvenTx sync to local storage.
+     * 3. The local storage transitions to `notifying`, after merging the remote attempts and history.
+     * 4. The local storage notifies, transitioning to `completed`.
+     * 5. Having been updated, the local req, but not ProvenTx sync to remote storage, but do not merge because the earlier `completed` wins.
      * 6. Convergent equality is achieved (completing work - history and attempts are equal)
      * 
      * On terminal failure: `doubleSpend` trumps `invalid` as it contains more data.

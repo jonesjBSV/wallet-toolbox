@@ -1,8 +1,9 @@
 import { CompletedProtoWallet, ProveCertificateResult } from "@bsv/sdk";
-import { sdk, WalletSigner } from '../../index.client'
+import { sdk, Wallet } from '../../index.client'
+import { CertOpsWallet } from "../../sdk";
 
 export async function proveCertificate(
-  signer: WalletSigner,
+  wallet: Wallet,
   auth: sdk.AuthId,
   vargs: sdk.ValidProveCertificateArgs
 )
@@ -24,12 +25,18 @@ export async function proveCertificate(
     privileged: false
   }
 
-  const lcr = await signer.storage.listCertificates(lcargs)
+  const lcr = await wallet.storage.listCertificates(lcargs)
   if (lcr.certificates.length != 1)
     throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
   const storageCert = lcr.certificates[0]
-  const wallet = new CompletedProtoWallet(signer.keyDeriver!)
-  const co = await sdk.CertOps.fromCounterparty(wallet, {
+  let proveWallet: CertOpsWallet = wallet
+  if (storageCert.subject != wallet.identityKey) {
+    // Certificate must have been issued to privileged identity
+    if (!wallet.privilegedKeyManager)
+      throw new sdk.WERR_INVALID_OPERATION('Wallet is not privileged. proveCertificate fails.')
+    proveWallet = wallet.privilegedKeyManager
+  }
+  const co = await sdk.CertOps.fromCounterparty(proveWallet, {
     certificate: { ...storageCert },
     keyring: storageCert.keyring!,
     counterparty: storageCert.verifier || storageCert.subject

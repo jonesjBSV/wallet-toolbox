@@ -8,6 +8,7 @@ import { purgeData } from './methods/purgeData'
 import { listActions } from './methods/listActions'
 import { listOutputs } from './methods/listOutputs'
 import { DBType } from './StorageReader'
+import { reviewStatus } from './methods/reviewStatus'
 
 export interface StorageKnexOptions extends StorageProviderOptions {
   /**
@@ -147,14 +148,12 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
     return this.validateEntities(rs, undefined, ['isDeleted'])
   }
 
-  override async listActions(auth: sdk.AuthId, args: ListActionsArgs): Promise<ListActionsResult> {
+  override async listActions(auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
-    const vargs = sdk.validateListActionsArgs(args)
     return await listActions(this, auth, vargs)
   }
-  override async listOutputs(auth: sdk.AuthId, args: ListOutputsArgs): Promise<ListOutputsResult> {
+  override async listOutputs(auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
-    const vargs = sdk.validateListOutputsArgs(args)
     return await listOutputs(this, auth, vargs)
   }
 
@@ -806,6 +805,10 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
 
   override async purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults> {
     return await purgeData(this, params, trx)
+  }
+
+  override async reviewStatus(args: { agedLimit: Date, trx?: sdk.TrxToken }): Promise<{ log: string }> {
+    return await reviewStatus(this, args)
   }
 
   /**

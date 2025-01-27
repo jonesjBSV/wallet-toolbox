@@ -24,12 +24,6 @@
       "firstHeadingLevel": 1
     },
     {
-      "inputFilename": "src/index.client.ts",
-      "outputFilename": "docs/signer.md",
-      "firstHeadingLevel": 1,
-      "filenameSubString": "signer"
-    },
-    {
       "inputFilename": "src/Wallet.ts",
       "outputFilename": "docs/wallet.md",
       "firstHeadingLevel": 1

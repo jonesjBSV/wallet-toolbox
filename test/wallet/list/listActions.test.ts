@@ -1,6 +1,6 @@
 import { ListActionsArgs } from '@bsv/sdk'
-import { sdk } from '../../../src/index.client'
-import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { sdk, StorageProvider } from '../../../src/index.client'
+import { _tu, expectToThrowWERR, TestSetup1, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('listActions tests', () => {
   jest.setTimeout(99999999)

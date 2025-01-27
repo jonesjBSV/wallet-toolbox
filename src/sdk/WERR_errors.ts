@@ -1,4 +1,4 @@
-import { WalletNetwork } from "./Wallet.interfaces"
+import { WalletNetwork } from "@bsv/sdk"
 import { WalletError } from "./WalletError"
 
 /**

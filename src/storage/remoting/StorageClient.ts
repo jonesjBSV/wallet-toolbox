@@ -5,12 +5,20 @@
  * by sending JSON-RPC calls to a configured remote WalletStorageServer.
  */
 
-import { AbortActionArgs, AbortActionResult, InternalizeActionArgs, InternalizeActionResult, ListActionsArgs, ListActionsResult, ListCertificatesResult, ListOutputsArgs, ListOutputsResult, RelinquishCertificateArgs, RelinquishOutputArgs, WalletInterface } from '@bsv/sdk'
+import {
+    AbortActionArgs,
+    AbortActionResult,
+    InternalizeActionArgs,
+    InternalizeActionResult,
+    ListActionsResult,
+    ListCertificatesResult,
+    ListOutputsResult,
+    RelinquishCertificateArgs,
+    RelinquishOutputArgs,
+    WalletInterface
+} from '@bsv/sdk'
 import { sdk, table } from "../../index.client";
 import { AuthFetch } from '@bsv/sdk';
-
-// We import the base interface:
-import { WalletStorageManager } from "../WalletStorageManager" // Adjust this import path to where your local interface is declared
 
 export class StorageClient implements sdk.WalletStorageProvider {
     private endpointUrl: string
@@ -117,9 +125,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
 
     setServices(v: sdk.WalletServices): void {
         // Typically no-op for remote client
-        // Because "services" are usually local definitions of Dojo or P2P connections.
-        // If you want an advanced scenario, adapt it here.
-        //
+        // Because "services" are usually local definitions to the Storage.
     }
 
     async internalizeAction(
@@ -173,23 +179,23 @@ export class StorageClient implements sdk.WalletStorageProvider {
 
     async listActions(
         auth: sdk.AuthId,
-        args: ListActionsArgs,
+        vargs: sdk.ValidListActionsArgs,
     ): Promise<ListActionsResult> {
-        return this.rpcCall<ListActionsResult>("listActions", [auth, args])
+        return this.rpcCall<ListActionsResult>("listActions", [auth, vargs])
     }
 
     async listOutputs(
         auth: sdk.AuthId,
-        args: ListOutputsArgs,
+        vargs: sdk.ValidListOutputsArgs,
     ): Promise<ListOutputsResult> {
-        return this.rpcCall<ListOutputsResult>("listOutputs", [auth, args])
+        return this.rpcCall<ListOutputsResult>("listOutputs", [auth, vargs])
     }
 
     async listCertificates(
         auth: sdk.AuthId,
-        args: sdk.ValidListCertificatesArgs,
+        vargs: sdk.ValidListCertificatesArgs,
     ): Promise<ListCertificatesResult> {
-        return this.rpcCall<ListCertificatesResult>("listCertificates", [auth, args])
+        return this.rpcCall<ListCertificatesResult>("listCertificates", [auth, vargs])
     }
 
     async findCertificatesAuth(

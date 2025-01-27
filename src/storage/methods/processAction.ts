@@ -10,7 +10,7 @@ export async function processAction(
 : Promise<sdk.StorageProcessActionResults>
 {
 
-    stampLog(args.log, `start dojo processActionSdk`)
+    stampLog(args.log, `start storage processActionSdk`)
 
     const userId = verifyId(auth.userId)
     const r: sdk.StorageProcessActionResults = {
@@ -26,10 +26,10 @@ export async function processAction(
         if (!req) throw new sdk.WERR_INTERNAL()
         // Add the new txid to sendWith unless there are no others to send and the noSend option is set.
         if (args.isNoSend && !args.isSendWith)
-            stampLog(args.log, `... dojo processActionSdk newTx committed noSend`)
+            stampLog(args.log, `... storage processActionSdk newTx committed noSend`)
         else {
             txidsOfReqsToShareWithWorld.push(req.txid)
-            stampLog(args.log, `... dojo processActionSdk newTx committed sendWith ${req.txid}`)
+            stampLog(args.log, `... storage processActionSdk newTx committed sendWith ${req.txid}`)
         }
     }
 
@@ -39,7 +39,7 @@ export async function processAction(
         r.sendWithResults = swr
     }
 
-    stampLog(args.log, `end dojo processActionSdk`)
+    stampLog(args.log, `end storage processActionSdk`)
 
     return r
 }
@@ -204,7 +204,7 @@ async function validateCommitNewTxToStorageArgs(storage: StorageProvider, userId
         const commissionValid = tx.outputs
             .some(x => x.satoshis === commission.satoshis && x.lockingScript.toHex() === asString(commission.lockingScript!))
         if (!commissionValid)
-            throw new sdk.WERR_INVALID_OPERATION('Transaction did not include an output to cover dojo service fee.')
+            throw new sdk.WERR_INVALID_OPERATION('Transaction did not include an output to cover service fee.')
     }
 
     const req = entity.ProvenTxReq.fromTxid(params.txid, params.rawTx, transaction.inputBEEF)
@@ -264,7 +264,7 @@ async function validateCommitNewTxToStorageArgs(storage: StorageProvider, userId
     }
 
     // update outputs with txid, script offsets and lengths, drop long output scripts from outputs table
-    // outputs spendable will be updated for dojo/change to true and all others to !!o.tracked when tx has been broadcast
+    // outputs spendable will be updated for change to true and all others to !!o.tracked when tx has been broadcast
     // MAX_OUTPUTSCRIPT_LENGTH is limit for scripts left in outputs table
     for (const o of vargs.outputOutputs) {
         const vout = verifyTruthy(o.vout)
@@ -289,7 +289,7 @@ async function validateCommitNewTxToStorageArgs(storage: StorageProvider, userId
     return vargs
 }
 
-export interface DojoCommitNewTxResults {
+export interface CommitNewTxResults {
    req: entity.ProvenTxReq
    log?: string
 }
@@ -299,41 +299,41 @@ async function commitNewTxToStorage(
     userId: number,
     vargs: ValidCommitNewTxToStorageArgs,
 )
-: Promise<DojoCommitNewTxResults>
+: Promise<CommitNewTxResults>
 {
     let log = vargs.log
 
-    log = stampLog(log, `start dojo commitNewTxToStorage`)
+    log = stampLog(log, `start storage commitNewTxToStorage`)
 
     let req: entity.ProvenTxReq | undefined
 
     await storage.transaction(async trx => {
-        log = stampLog(log, `... dojo commitNewTxToStorage storage transaction start`)
+        log = stampLog(log, `... storage commitNewTxToStorage storage transaction start`)
 
         // Create initial 'nosend' proven_tx_req record to store signed, valid rawTx and input beef
         req = await vargs.req.insertOrMerge(storage, trx)
 
-        log = stampLog(log, `... dojo commitNewTxToStorage req inserted`)
+        log = stampLog(log, `... storage commitNewTxToStorage req inserted`)
 
         for (const ou of vargs.outputUpdates) {
             await storage.updateOutput(ou.id, ou.update, trx)
         }
 
-        log = stampLog(log, `... dojo commitNewTxToStorage outputs updated`)
+        log = stampLog(log, `... storage commitNewTxToStorage outputs updated`)
 
         await storage.updateTransaction(vargs.transactionId, vargs.transactionUpdate, trx)
 
-        log = stampLog(log, `... dojo commitNewTxToStorage storage transaction end`)
+        log = stampLog(log, `... storage commitNewTxToStorage storage transaction end`)
     })
 
-    log = stampLog(log, `... dojo commitNewTxToStorage storage transaction await done`)
+    log = stampLog(log, `... storage commitNewTxToStorage storage transaction await done`)
 
-    const r: DojoCommitNewTxResults = {
+    const r: CommitNewTxResults = {
         req: verifyTruthy(req),
         log
     }
 
-    log = stampLog(log, `end dojo commitNewTxToStorage`)
+    log = stampLog(log, `end storage commitNewTxToStorage`)
 
     return r
 }
