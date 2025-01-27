@@ -58,12 +58,15 @@ export class WalletStorageManager implements sdk.WalletStorage {
                 throw new sdk.WERR_INVALID_PARAMETER('identityKey', 'exist on storage.');
             userId = user.userId
             this._authId.userId = userId
+            this._authId.isActive = user.activeStorage === undefined || user.activeStorage === this.getSettings().storageIdentityKey
         }
         return userId
     }
 
-    async getAuth(): Promise<sdk.AuthId> {
+    async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> {
         if (!this._authId.userId) this._authId.userId = await this.getUserId();
+        if (mustBeActive && !this._authId.isActive)
+            throw new sdk.WERR_NOT_ACTIVE()
         return this._authId
     }
 
@@ -230,64 +233,51 @@ export class WalletStorageManager implements sdk.WalletStorage {
     }
 
     async abortAction(args: AbortActionArgs): Promise<AbortActionResult> {
-        const vargs = sdk.validateAbortActionArgs(args)
-        const auth = await this.getAuth()
+        sdk.validateAbortActionArgs(args)
         return await this.runAsWriter(async (writer) => {
-
+            const auth = await this.getAuth(true)
             return await writer.abortAction(auth, args)
-
         })
     }
-    async createAction(args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> {
-        const auth = await this.getAuth()
+    async createAction(vargs: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> {
         return await this.runAsWriter(async (writer) => {
-            
-            return await writer.createAction(auth, args)
-
+            const auth = await this.getAuth(true)
+            return await writer.createAction(auth, vargs)
         })
     }
     async internalizeAction(args: InternalizeActionArgs): Promise<InternalizeActionResult> {
-        const auth = await this.getAuth()
+        sdk.validateInternalizeActionArgs(args)
         return await this.runAsWriter(async (writer) => {
-
+            const auth = await this.getAuth(true)
             return await writer.internalizeAction(auth, args)
-
         })
     }
 
     async relinquishCertificate(args: RelinquishCertificateArgs): Promise<number> {
-        const vargs = sdk.validateRelinquishCertificateArgs(args)
-        const auth = await this.getAuth()
+        sdk.validateRelinquishCertificateArgs(args)
         return await this.runAsWriter(async (writer) => {
-
+            const auth = await this.getAuth(true)
             return await writer.relinquishCertificate(auth, args)
-
         })
     }
     async relinquishOutput(args: RelinquishOutputArgs): Promise<number> {
-        const vargs = sdk.validateRelinquishOutputArgs(args)
-        const auth = await this.getAuth()
+        sdk.validateRelinquishOutputArgs(args)
         return await this.runAsWriter(async (writer) => {
-
+            const auth = await this.getAuth(true)
             return await writer.relinquishOutput(auth, args)
-
         })
     }
 
     async processAction(args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> {
-        const auth = await this.getAuth()
         return await this.runAsWriter(async (writer) => {
-
+            const auth = await this.getAuth(true)
             return await writer.processAction(auth, args)
-
         })
     }
     async insertCertificate(certificate: table.Certificate): Promise<number> {
-        const auth = await this.getAuth()
         return await this.runAsWriter(async (writer) => {
-
+            const auth = await this.getAuth(true)
             return await writer.insertCertificateAuth(auth, certificate)
-
         })
     }
 
