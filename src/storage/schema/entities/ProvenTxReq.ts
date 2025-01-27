@@ -285,7 +285,7 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     }
 
     /**
-     * See `DojoProvenTxReqStatusApi`
+     * See `ProvenTxReqStatusApi`
      */
     get status() { return this.api.status }
     set status(v: sdk.ProvenTxReqStatus) {
@@ -426,11 +426,11 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     /**
      * When merging `ProvenTxReq`, care is taken to avoid short-cirtuiting notification: `status` must not transition to `completed` without
      * passing through `notifying`. Thus a full convergent merge passes through these sequence steps:
-     * 1. Remote dojo completes before local dojo.
-     * 2. The remotely completed req and ProvenTx sync to local dojo.
-     * 3. The local dojo transitions to `notifying`, after merging the remote attempts and history.
-     * 4. The local dojo notifies, transitioning to `completed`.
-     * 5. Having been updated, the local req, but not ProvenTx sync to remote dojo, but do not merge because the earlier `completed` wins.
+     * 1. Remote storage completes before local storage.
+     * 2. The remotely completed req and ProvenTx sync to local storage.
+     * 3. The local storage transitions to `notifying`, after merging the remote attempts and history.
+     * 4. The local storage notifies, transitioning to `completed`.
+     * 5. Having been updated, the local req, but not ProvenTx sync to remote storage, but do not merge because the earlier `completed` wins.
      * 6. Convergent equality is achieved (completing work - history and attempts are equal)
      * 
      * On terminal failure: `doubleSpend` trumps `invalid` as it contains more data.

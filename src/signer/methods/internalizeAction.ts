@@ -27,11 +27,6 @@ import { sdk, Wallet } from "../../index.client";
  * 1. Targetting an existing change "default" basket output results in a no-op. No error. No alterations made.
  * 2. Targetting a previously "custom" non-change output converts it into a change output. This alters the transaction's `amount`, and the wallet balance.
  * 
- * 
- * @param ninja 
- * @param vargs 
- * @param originator 
- * @returns 
  */
 export async function internalizeAction(
   wallet: Wallet,

@@ -12,7 +12,7 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
      * Only succeeds (proven is not undefined) if a proof is confirmed for rawTx,
      * and hash of rawTx is confirmed to match txid
      * 
-     * The returned ProvenTx and ProvenTxReq objects have not been added to the dojo database,
+     * The returned ProvenTx and ProvenTxReq objects have not been added to the storage database,
      * this is optional and can be done by the caller if appropriate.
      * 
      * @param txid 

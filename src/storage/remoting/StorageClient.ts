@@ -125,9 +125,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
 
     setServices(v: sdk.WalletServices): void {
         // Typically no-op for remote client
-        // Because "services" are usually local definitions of Dojo or P2P connections.
-        // If you want an advanced scenario, adapt it here.
-        //
+        // Because "services" are usually local definitions to the Storage.
     }
 
     async internalizeAction(

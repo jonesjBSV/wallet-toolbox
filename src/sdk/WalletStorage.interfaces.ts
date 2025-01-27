@@ -247,11 +247,11 @@ export interface StorageGetBeefOptions {
    knownTxids?: string[]
    /** optional. If defined, raw transactions and merkle paths required by txid are merged to this instance and returned. Otherwise a new Beef is constructed and returned. */
    mergeToBeef?: Beef | number[]
-   /** optional. Default is false. `dojo.storage` is used for raw transaction and merkle proof lookup */
+   /** optional. Default is false. `storage` is used for raw transaction and merkle proof lookup */
    ignoreStorage?: boolean
-   /** optional. Default is false. `dojo.getServices` is used for raw transaction and merkle proof lookup */
+   /** optional. Default is false. `getServices` is used for raw transaction and merkle proof lookup */
    ignoreServices?: boolean
-   /** optional. Default is false. If true, raw transactions with proofs missing from `dojo.storage` and obtained from `dojo.getServices` are not inserted to `dojo.storage`. */
+   /** optional. Default is false. If true, raw transactions with proofs missing from `storage` and obtained from `getServices` are not inserted to `storage`. */
    ignoreNewProven?: boolean
    /** optional. Default is zero. Ignores available merkle paths until recursion detpth equals or exceeds value  */
    minProofLevel?: number

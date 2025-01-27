@@ -62,7 +62,7 @@ export async function completeSignedTransaction(
   }
 
   /////////////////////
-  // Insert SABPPP unlock templates for dojo signed inputs
+  // Insert SABPPP unlock templates for wallet signed inputs
   /////////////////////
   for (const pdi of prior.pdi) {
     const sabppp = new ScriptTemplateSABPPP({
@@ -81,7 +81,7 @@ export async function completeSignedTransaction(
   }
 
   /////////////////////
-  // Sign dojo signed inputs making transaction fully valid.
+  // Sign wallet signed inputs making transaction fully valid.
   /////////////////////
   await prior.tx.sign()
   

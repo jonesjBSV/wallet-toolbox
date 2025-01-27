@@ -40,11 +40,11 @@ export interface StorageSyncReader {
 }
 
 /**
- * success: Last sync of this user from this dojo was successful.
+ * success: Last sync of this user from this storage was successful.
  *
- * error: Last sync protocol operation for this user to this dojo threw and error.
+ * error: Last sync protocol operation for this user to this storage threw and error.
  *
- * identified: Configured sync dojo has been identified but not sync'ed.
+ * identified: Configured sync storage has been identified but not sync'ed.
  *
  * unknown: Sync protocol state is unknown.
  */
