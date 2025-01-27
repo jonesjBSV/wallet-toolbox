@@ -4,7 +4,7 @@ import { Services, asString, StorageKnex, sdk, table, verifyOne, verifyId, Scrip
 import { _tu, TestWalletNoSetup, TestWalletOnly } from '../../utils/TestUtilsWalletStorage'
 
 import dotenv from 'dotenv'
-dotenv.config();
+dotenv.config()
 
 describe('walletLive test', () => {
   jest.setTimeout(99999999)
@@ -25,7 +25,7 @@ describe('walletLive test', () => {
 
   beforeAll(async () => {
     myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
-    myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain });
+    myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
 
     const connection = JSON.parse(process.env.TEST_CLOUD_MYSQL_CONNECTION || '')
     const knex = _tu.createMySQLFromConnection(connection)
@@ -83,8 +83,7 @@ describe('walletLive test', () => {
       expect(r).toBeTruthy()
       let log = ''
       for (const [k, v] of Object.entries(r)) {
-        if (v.outputCount >  0)
-          log += `${k} count=${v.outputCount} total=${v.total}\n`
+        if (v.outputCount > 0) log += `${k} count=${v.outputCount} total=${v.total}\n`
       }
       console.log(log)
     }
@@ -125,10 +124,9 @@ describe('walletLive test', () => {
   })
 
   test('6 send a wallet payment from myCtx to second wallet', async () => {
-
     const r = await createWalletPaymentAction({
       toIdentityKey: myIdentityKey2,
-      outputSatoshis: randomBytes(1)[0]+10,
+      outputSatoshis: randomBytes(1)[0] + 10,
       keyDeriver: myCtx.keyDeriver,
       wallet: myCtx.wallet,
       logResult: true
@@ -145,7 +143,7 @@ describe('walletLive test', () => {
           paymentRemittance: {
             derivationPrefix: r.derivationPrefix,
             derivationSuffix: r.derivationSuffix,
-            senderIdentityKey: r.senderIdentityKey,
+            senderIdentityKey: r.senderIdentityKey
           }
         }
       ],
@@ -185,7 +183,7 @@ describe('walletLive test', () => {
   test('6c send a wallet payment from live to your own wallet', async () => {
     const myIdentityKey = env.identityKey
     const myRootKeyHex = env.devKeys[myIdentityKey]
-    if (!myIdentityKey || !myRootKeyHex) throw new sdk.WERR_INVALID_OPERATION(`Requires a .env file with MY_${env.chain.toUpperCase()}_IDENTITY and corresponding DEV_KEYS entries.`);
+    if (!myIdentityKey || !myRootKeyHex) throw new sdk.WERR_INVALID_OPERATION(`Requires a .env file with MY_${env.chain.toUpperCase()}_IDENTITY and corresponding DEV_KEYS entries.`)
 
     const toIdentityKey: string = '02947542cf31c8d91c303bba8f981ee9595c414e63c185d495a97c558aa7b2e522'
     const r = createWalletPaymentOutput({ toIdentityKey, fromRootKeyHex: myRootKeyHex, logResult: true })
@@ -222,23 +220,23 @@ ${Utils.toHex(beef.toBinaryAtomic(txid))}
 
   test('7 test two client wallets', async () => {
     if (!myIdentityKey2) return
-    if (myCtx) await myCtx.storage.destroy();
+    if (myCtx) await myCtx.storage.destroy()
     myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
 
     {
       const u1 = await myCtx.storage.findOrInsertUser(myIdentityKey)
     }
 
-    if (myCtx) await myCtx.storage.destroy();
-    if (myCtx2) await myCtx2.storage.destroy();
+    if (myCtx) await myCtx.storage.destroy()
+    if (myCtx2) await myCtx2.storage.destroy()
     myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
 
     {
       const u2 = await myCtx2.storage.findOrInsertUser(myIdentityKey2)
     }
 
-    if (myCtx) await myCtx.storage.destroy();
-    if (myCtx2) await myCtx2.storage.destroy();
+    if (myCtx) await myCtx.storage.destroy()
+    if (myCtx2) await myCtx2.storage.destroy()
     myCtx = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex, chain: env.chain })
     myCtx2 = await _tu.createTestWalletWithStorageClient({ rootKeyHex: myRootKeyHex2, chain: env.chain })
 
@@ -248,7 +246,6 @@ ${Utils.toHex(beef.toBinaryAtomic(txid))}
 
       expect(u1.user.userId).not.toBe(u2.user.userId)
     }
-
   })
 
   // End of describe
@@ -297,16 +294,12 @@ async function confirmSpendableOutputs(storage: StorageKnex, services: Services)
   return { invalidSpendableOutputs }
 }
 
-export function createWalletPaymentOutput(args: {
-  toIdentityKey: string
-  fromRootKeyHex: string
-  logResult?: boolean
-}) : {
-    senderIdentityKey: string,
-    derivationPrefix: string,
-    derivationSuffix: string,
-    lockingScript: string
-  } {
+export function createWalletPaymentOutput(args: { toIdentityKey: string; fromRootKeyHex: string; logResult?: boolean }): {
+  senderIdentityKey: string
+  derivationPrefix: string
+  derivationSuffix: string
+  lockingScript: string
+} {
   const t = new ScriptTemplateSABPPP({
     derivationPrefix: randomBytesBase64(8),
     derivationSuffix: randomBytesBase64(8),
@@ -335,14 +328,7 @@ const r = {
   return r
 }
 
-export async function createWalletPaymentAction(args: {
-  toIdentityKey: string
-  outputSatoshis: number
-  keyDeriver: KeyDeriverApi
-  wallet: WalletInterface
-  logResult?: boolean
-})
-: Promise<{
+export async function createWalletPaymentAction(args: { toIdentityKey: string; outputSatoshis: number; keyDeriver: KeyDeriverApi; wallet: WalletInterface; logResult?: boolean }): Promise<{
   senderIdentityKey: string
   vout: number
   txid: string
