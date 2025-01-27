@@ -25,7 +25,7 @@ import { Knex, knex as makeKnex } from 'knex'
 import { Beef } from '@bsv/sdk'
 
 import * as dotenv from 'dotenv'
-import { PrivilegedKeyManager } from '../../src/sdk'
+import { PrivilegedKeyManager, TransactionStatus } from '../../src/sdk'
 dotenv.config()
 
 const localMySqlConnection = process.env.LOCAL_MYSQL_CONNECTION || ''
@@ -230,7 +230,7 @@ export abstract class TestUtilsWalletStorage {
     dropAll?: boolean
     insertSetup: (storage: StorageKnex, identityKey: string, mockData?: MockData) => Promise<T>
   }): Promise<TestWallet<T>> {
-    const wo = await _tu.createWalletOnly({ chain: args.chain, rootKeyHex: args.rootKeyHex, privKeyHex: args.privKeyHex })
+    const wo = await _tu.createWalletOnly({ chain: args.chain, rootKeyHex: args.rootKeyHex, privKeyHex: args.rootKeyHex })
     const activeStorage = new StorageKnex({ chain: wo.chain, knex: args.knex, commissionSatoshis: 0, commissionPubKeyHex: undefined, feeModel: { model: 'sat/kb', value: 1 } })
     if (args.dropAll) await activeStorage.dropAllData()
     await activeStorage.migrate(args.databaseName, wo.identityKey)
