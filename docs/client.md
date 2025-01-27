@@ -3046,17 +3046,18 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [CertOps](#class-certops) | [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |
-| [Monitor](#class-monitor) | [TaskClock](#class-taskclock) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
-| [PrivilegedKeyManager](#class-privilegedkeymanager) | [TaskFailAbandoned](#class-taskfailabandoned) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
-| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskNewHeader](#class-tasknewheader) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
-| [ServiceCollection](#class-servicecollection) | [TaskPurge](#class-taskpurge) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
-| [Services](#class-services) | [TaskSendWaiting](#class-tasksendwaiting) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
-| [StorageClient](#class-storageclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [Wallet](#class-wallet) |
-| [StorageProvider](#class-storageprovider) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletError](#class-walleterror) |
-| [StorageReader](#class-storagereader) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [WalletMonitorTask](#class-walletmonitortask) |
-| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INTERNAL](#class-werr_internal) | [WalletSigner](#class-walletsigner) |
-| [StorageSyncReader](#class-storagesyncreader) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) | [WalletStorageManager](#class-walletstoragemanager) |
+| [CertOps](#class-certops) | [TaskClock](#class-taskclock) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
+| [Monitor](#class-monitor) | [TaskFailAbandoned](#class-taskfailabandoned) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
+| [PrivilegedKeyManager](#class-privilegedkeymanager) | [TaskNewHeader](#class-tasknewheader) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
+| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskPurge](#class-taskpurge) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
+| [ServiceCollection](#class-servicecollection) | [TaskReviewStatus](#class-taskreviewstatus) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
+| [Services](#class-services) | [TaskSendWaiting](#class-tasksendwaiting) | [Wallet](#class-wallet) |
+| [StorageClient](#class-storageclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [WalletError](#class-walleterror) |
+| [StorageProvider](#class-storageprovider) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletMonitorTask](#class-walletmonitortask) |
+| [StorageReader](#class-storagereader) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [WalletSigner](#class-walletsigner) |
+| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INTERNAL](#class-werr_internal) | [WalletStorageManager](#class-walletstoragemanager) |
+| [StorageSyncReader](#class-storagesyncreader) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |  |
+| [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3517,6 +3518,12 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     static defaultOptions() 
     static createStorageBaseOptions(chain: sdk.Chain): StorageProviderOptions 
     constructor(options: StorageProviderOptions) 
+    abstract reviewStatus(args: {
+        agedLimit: Date;
+        trx?: sdk.TrxToken;
+    }): Promise<{
+        log: string;
+    }>;
     abstract purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults>;
     abstract allocateChangeInput(userId: number, basketId: number, targetSatoshis: number, exactSatoshis: number | undefined, excludeSending: boolean, transactionId: number): Promise<table.Output | undefined>;
     abstract getProvenOrRawTx(txid: string, trx?: sdk.TrxToken): Promise<sdk.ProvenOrRawTx>;
@@ -4040,6 +4047,47 @@ See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparam
 <details>
 
 <summary>Class TaskPurge Details</summary>
+
+#### Property checkNow
+
+Set to true to trigger running this task
+
+```ts
+static checkNow = false
+```
+
+</details>
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Class: TaskReviewStatus
+
+Notify Transaction records of changes in ProvenTxReq records they may have missed.
+
+The `notified` property flags reqs that do not need to be checked.
+
+Looks for aged Transactions with provenTxId with status != 'completed', sets status to 'completed'.
+
+Looks for reqs with 'invalid' status that
+
+```ts
+export class TaskReviewStatus extends WalletMonitorTask {
+    static taskName = "ReviewStatus";
+    static checkNow = false;
+    constructor(monitor: Monitor, public triggerMsecs = 1000 * 60 * 15, public agedMsecs = 1000 * 60 * 5) 
+    trigger(nowMsecsSinceEpoch: number): {
+        run: boolean;
+    } 
+    async runTask(): Promise<string> 
+}
+```
+
+See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+
+<details>
+
+<summary>Class TaskReviewStatus Details</summary>
 
 #### Property checkNow
 

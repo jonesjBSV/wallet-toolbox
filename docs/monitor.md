@@ -119,6 +119,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [TaskFailAbandoned](#class-taskfailabandoned) |
 | [TaskNewHeader](#class-tasknewheader) |
 | [TaskPurge](#class-taskpurge) |
+| [TaskReviewStatus](#class-taskreviewstatus) |
 | [TaskSendWaiting](#class-tasksendwaiting) |
 | [TaskSyncWhenIdle](#class-tasksyncwhenidle) |
 | [WalletMonitorTask](#class-walletmonitortask) |
@@ -442,6 +443,47 @@ See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparam
 <details>
 
 <summary>Class TaskPurge Details</summary>
+
+#### Property checkNow
+
+Set to true to trigger running this task
+
+```ts
+static checkNow = false
+```
+
+</details>
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Class: TaskReviewStatus
+
+Notify Transaction records of changes in ProvenTxReq records they may have missed.
+
+The `notified` property flags reqs that do not need to be checked.
+
+Looks for aged Transactions with provenTxId with status != 'completed', sets status to 'completed'.
+
+Looks for reqs with 'invalid' status that
+
+```ts
+export class TaskReviewStatus extends WalletMonitorTask {
+    static taskName = "ReviewStatus";
+    static checkNow = false;
+    constructor(monitor: Monitor, public triggerMsecs = 1000 * 60 * 15, public agedMsecs = 1000 * 60 * 5) 
+    trigger(nowMsecsSinceEpoch: number): {
+        run: boolean;
+    } 
+    async runTask(): Promise<string> 
+}
+```
+
+See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+
+<details>
+
+<summary>Class TaskReviewStatus Details</summary>
 
 #### Property checkNow
 
