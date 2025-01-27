@@ -50,6 +50,11 @@ export class WERR_NETWORK_CHAIN extends WalletError { constructor (message?: str
 export class WERR_UNAUTHORIZED extends WalletError { constructor (message?: string) { super('WERR_UNAUTHORIZED', message ?? 'Access is denied due to an authorization error.') } }
 
 /**
+ * WalletStorageManager is not accessing user's active storage.
+ */
+export class WERR_NOT_ACTIVE extends WalletError { constructor (message?: string) { super('WERR_NOT_ACTIVE', message ?? `WalletStorageManager is not accessing user's active storage.`) } }
+
+/**
  * Insufficient funds in the available inputs to cover the cost of the required outputs
  * and the transaction fee (${moreSatoshisNeeded} more satoshis are needed,
  * for a total of ${totalSatoshisNeeded}), plus whatever would be required in order

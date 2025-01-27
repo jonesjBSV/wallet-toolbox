@@ -111,6 +111,7 @@ describe('acquireCertificate tests', () => {
         const subject = (await wallet.privilegedKeyManager!.getPublicKey({ identityKey: true })).publicKey
         const { cert, certifier } = _tu.makeSampleCert(subject)
 
+
         // Act as the certifier: create a wallet for them...
         const certifierWallet = new CompletedProtoWallet(certifier)
         // load the plaintext certificate into a CertOps object
@@ -166,6 +167,8 @@ describe('acquireCertificate tests', () => {
             const rr = await wallet.relinquishCertificate({ type: cert.type, serialNumber: cert.serialNumber, certifier: cert.certifier })
             expect(rr.relinquished).toBe(true)
         }
-        await storage.destroy()
+
+        // Also cleans up the privilegedKeyManager
+        await wallet.destroy()
     })
 })

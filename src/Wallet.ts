@@ -131,6 +131,11 @@ export class Wallet implements WalletInterface {
         }
     }
 
+    async destroy(): Promise<void> {
+        await this.storage.destroy()
+        if (this.privilegedKeyManager) await this.privilegedKeyManager.destroyKey()
+    }
+
     getClientChangeKeyPair(): sdk.KeyPair {
         const kp: sdk.KeyPair = {
             privateKey: this.keyDeriver.rootKey.toString(),

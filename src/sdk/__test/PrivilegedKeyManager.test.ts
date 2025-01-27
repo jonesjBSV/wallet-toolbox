@@ -20,6 +20,7 @@ describe('PrivilegedKeyManager', () => {
             counterparty: '0294c479f762f6baa97fbcd4393564c1d7bd8336ebd15928135bbcf575cd1a71a1'
         })
         expect(valid).toBe(true)
+        await wallet.destroyKey()
     })
     it('Validates the BRC-2 HMAC compliance vector', async () => {
         const wallet = new PrivilegedKeyManager(async () => new PrivateKey('6a2991c9de20e38b31d7ea147bf55f5039e4bbc073160f5e0d541d1f17e321b8', 'hex'))
@@ -31,6 +32,7 @@ describe('PrivilegedKeyManager', () => {
             counterparty: '0294c479f762f6baa97fbcd4393564c1d7bd8336ebd15928135bbcf575cd1a71a1'
         })
         expect(valid).toBe(true)
+        await wallet.destroyKey()
     })
     it('Validates the BRC-2 Encryption compliance vector', async () => {
         const wallet = new PrivilegedKeyManager(async () => new PrivateKey('6a2991c9de20e38b31d7ea147bf55f5039e4bbc073160f5e0d541d1f17e321b8', 'hex'))
@@ -41,6 +43,7 @@ describe('PrivilegedKeyManager', () => {
             counterparty: '0294c479f762f6baa97fbcd4393564c1d7bd8336ebd15928135bbcf575cd1a71a1'
         })
         expect(Utils.toUTF8(plaintext)).toEqual('BRC-2 Encryption Compliance Validated!')
+        await wallet.destroyKey()
     })
     it('Encrypts messages decryptable by the counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -61,6 +64,8 @@ describe('PrivilegedKeyManager', () => {
         })
         expect(plaintext).toEqual(sampleData)
         expect(ciphertext).not.toEqual(plaintext)
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Fails to decryupt messages for the wrong protocol, key, and counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -91,6 +96,8 @@ describe('PrivilegedKeyManager', () => {
             keyID: '4',
             counterparty: counterpartyKey.toPublicKey().toString()
         })).rejects.toThrow()
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Correctly derives keys for a counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -113,6 +120,8 @@ describe('PrivilegedKeyManager', () => {
             forSelf: true
         })
         expect(derivedForCounterparty).toEqual(derivedByCounterparty)
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Signs messages verifiable by the counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -134,6 +143,8 @@ describe('PrivilegedKeyManager', () => {
         })
         expect(valid).toEqual(true)
         expect(signature.length).not.toEqual(0)
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Directly signs hash of message verifiable by the counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -163,6 +174,8 @@ describe('PrivilegedKeyManager', () => {
         })
         expect(hashValid).toEqual(true)
         expect(signature.length).not.toEqual(0)
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Fails to verify signature for the wrong data, protocol, key, and counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -203,6 +216,8 @@ describe('PrivilegedKeyManager', () => {
             keyID: '4',
             counterparty: counterpartyKey.toPublicKey().toString()
         })).rejects.toThrow()
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Computes HMAC over messages verifiable by the counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -224,6 +239,8 @@ describe('PrivilegedKeyManager', () => {
         })
         expect(valid).toEqual(true)
         expect(hmac.length).toEqual(32)
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Fails to verify HMAC for the wrong data, protocol, key, and counterparty', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -264,6 +281,8 @@ describe('PrivilegedKeyManager', () => {
             keyID: '4',
             counterparty: counterpartyKey.toPublicKey().toString()
         })).rejects.toThrow()
+        await user.destroyKey()
+        await counterparty.destroyKey()
     })
     it('Uses anyone for creating signatures and self for other operations if no counterparty is provided', async () => {
         const userKey = PrivateKey.fromRandom()
@@ -354,6 +373,8 @@ describe('PrivilegedKeyManager', () => {
         })
         expect(plaintext).toEqual(explicitSelfPlaintext)
         expect(plaintext).toEqual(sampleData)
+        await user.destroyKey()
+        await anyone.destroyKey()
     })
     describe('PrivilegedKeyManager Key Linkage Revelation', () => {
         it('Validates the revealCounterpartyKeyLinkage function', async () => {
@@ -385,6 +406,8 @@ describe('PrivilegedKeyManager', () => {
 
             // Compare linkage and expectedLinkage
             expect(linkage).toEqual(expectedLinkage)
+            await proverWallet.destroyKey()
+            await verifierWallet.destroyKey()
         })
 
         it('Validates the revealSpecificKeyLinkage function', async () => {
@@ -457,6 +480,9 @@ describe('PrivilegedKeyManager', () => {
 
             // Compare linkage and expectedLinkage
             expect(linkage).toEqual(expectedLinkage)
+
+            await proverWallet.destroyKey()
+            await verifierWallet.destroyKey()
         })
     })
     describe('PrivilegedKeyManager - Internal Logic Tests', () => {
@@ -486,6 +512,7 @@ describe('PrivilegedKeyManager', () => {
 
             // 3) Check that both keys match the same underlying private key
             expect(key1.toHex()).toBe(key2.toHex());
+            await km.destroyKey()
         });
 
         it('Destroys key after retention period elapses', async () => {
@@ -509,6 +536,7 @@ describe('PrivilegedKeyManager', () => {
             expect((km as any).chunkPropNames.length).toBe(0);
             expect((km as any).chunkPadPropNames.length).toBe(0);
             expect((km as any).decoyPropNamesDestroy.length).toBe(0);
+            await km.destroyKey()
         });
 
         it('Explicitly calls destroyKey() and removes all chunk properties', async () => {
@@ -530,6 +558,7 @@ describe('PrivilegedKeyManager', () => {
             // Now chunkPropNames and chunkPadPropNames should be cleared
             expect((km as any).chunkPropNames.length).toBe(0);
             expect((km as any).chunkPadPropNames.length).toBe(0);
+            await km.destroyKey()
         });
 
         it('Reuses in-memory obfuscated key if data is valid, otherwise fetches a new key', async () => {
@@ -553,9 +582,10 @@ describe('PrivilegedKeyManager', () => {
             // The newly fetched key must still match mockHex,
             // because the mock always returns the same key.
             expect(key2.toHex()).toBe(mockHex);
+            await km.destroyKey()
         });
 
-        it('Ensures chunk-splitting logic is correct for a 32-byte key', () => {
+        it('Ensures chunk-splitting logic is correct for a 32-byte key', async () => {
             const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
 
             const testBytes = new Uint8Array(32);
@@ -598,9 +628,10 @@ describe('PrivilegedKeyManager', () => {
             const reassembled = (km as any).reassembleKeyFromChunks();
             expect(reassembled.length).toBe(32);
             expect(Array.from(reassembled)).toEqual(Array.from(testBytes));
+            await km.destroyKey()
         });
 
-        it('XOR function works as expected', () => {
+        it('XOR function works as expected', async () => {
             const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
             const a = Uint8Array.from([0, 1, 255]);
             const b = Uint8Array.from([255, 1, 0]);
@@ -613,9 +644,10 @@ describe('PrivilegedKeyManager', () => {
             const zero = new Uint8Array(3);
             const result2 = (km as any).xorBytes(a, zero);
             expect(Array.from(result2)).toEqual([0, 1, 255]);
+            await km.destroyKey()
         });
 
-        it('Generates random property names', () => {
+        it('Generates random property names', async () => {
             const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
             const prop1 = (km as any).generateRandomPropName();
             const prop2 = (km as any).generateRandomPropName();
@@ -623,9 +655,10 @@ describe('PrivilegedKeyManager', () => {
             // Just check format (roughly)
             expect(prop1).toMatch(/^_[0-9a-f]{8}_[0-9]{1,6}$/);
             expect(prop2).toMatch(/^_[0-9a-f]{8}_[0-9]{1,6}$/);
+            await km.destroyKey()
         });
 
-        it('Sets up initial decoy properties in the constructor', () => {
+        it('Sets up initial decoy properties in the constructor', async () => {
             const km = new PrivilegedKeyManager(async () => new PrivateKey(1), 5000);
             // decoyPropNamesRemain has length 2
             expect((km as any).decoyPropNamesRemain.length).toBe(2);
@@ -634,6 +667,7 @@ describe('PrivilegedKeyManager', () => {
                 expect((km as any)[propName]).toBeInstanceOf(Uint8Array);
                 expect((km as any)[propName].length).toBe(16);
             }
+            await km.destroyKey()
         });
 
         it('New decoy properties are created on each key fetch and destroyed on destroy', async () => {
@@ -647,6 +681,7 @@ describe('PrivilegedKeyManager', () => {
             // Destroy them
             (km as any).destroyKey();
             expect((km as any).decoyPropNamesDestroy.length).toBe(0);
+            await km.destroyKey()
         });
     });
 })
