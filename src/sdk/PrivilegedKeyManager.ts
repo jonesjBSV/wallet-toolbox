@@ -108,7 +108,7 @@ export class PrivilegedKeyManager {
      * and deleting related fields. Also destroys some (but not all) decoy
      * properties to further confuse an attacker.
      */
-    private destroyKey(): void {
+    destroyKey(): void {
         try {
             // Zero out real chunk data
             for (const name of this.chunkPropNames) {
