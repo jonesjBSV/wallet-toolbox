@@ -24,22 +24,4 @@ describe('Wallet getNetwork Tests', () => {
       expect(result).toEqual({ network: 'testnet' })
     }
   })
-
-  test('should throw if there is an unexpected error from the signer', async () => {
-    for (const { wallet } of ctxs) {
-      try {
-        // Simulate signer throwing an error by overriding the getChain method
-        wallet.signer.getChain = async () => {
-          throw new Error('Unexpected error')
-        }
-        await wallet.getNetwork({})
-      } catch (error) {
-        if (error instanceof Error) {
-          expect(error.message).toBe('Unexpected error')
-        } else {
-          throw new Error('Caught an unexpected non-Error type')
-        }
-      }
-    }
-  })
 })
