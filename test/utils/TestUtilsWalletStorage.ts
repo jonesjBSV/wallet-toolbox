@@ -1444,6 +1444,66 @@ export const normalizeDate = (value: any): string | null => {
   return null
 }
 
+/**
+ * Aborts all transactions with a specific status in the storage and asserts they are aborted.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @param {sdk.TransactionStatus} status - The transaction status used to filter transactions.
+ * @returns {Promise<boolean>} - Resolves to `true` if all matching transactions were successfully aborted.
+ */
+async function cleanTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex, status: sdk.TransactionStatus): Promise<boolean> {
+  const transactions = await storage.findTransactions({ partial: { status } })
+
+  await Promise.all(
+    transactions.map(async transaction => {
+      const result = await wallet.abortAction({ reference: transaction.reference })
+      expect(result.aborted).toBe(true)
+    })
+  )
+
+  return true
+}
+
+/**
+ * Aborts all transactions with the status `'nosend'` in the storage and verifies success.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @returns {Promise<boolean>} - Resolves to `true` if all `'nosend'` transactions were successfully aborted.
+ */
+export async function cleanUnsentTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
+  const result = await cleanTransactionsUsingAbort(wallet, storage, 'nosend')
+  expect(result).toBe(true)
+  return result
+}
+
+/**
+ * Aborts all transactions with the status `'unsigned'` in the storage and verifies success.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @returns {Promise<boolean>} - Resolves to `true` if all `'unsigned'` transactions were successfully aborted.
+ */
+export async function cleanUnsignedTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
+  const result = await cleanTransactionsUsingAbort(wallet, storage, 'unsigned')
+  expect(result).toBe(true)
+  return result
+}
+
+/**
+ * Aborts all transactions with the status `'unprocessed'` in the storage and verifies success.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @returns {Promise<boolean>} - Resolves to `true` if all `'unprocessed'` transactions were successfully aborted.
+ */
+export async function cleanUnprocessedTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
+  const result = await cleanTransactionsUsingAbort(wallet, storage, 'unprocessed')
+  expect(result).toBe(true)
+  return result
+}
+
 export async function logTransaction(storage: StorageKnex, txid: HexString): Promise<string> {
   let amount: SatoshiValue = 0
   let log = `txid: ${txid}\n`

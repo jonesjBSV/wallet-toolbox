@@ -74,8 +74,7 @@ describe('listActions tests', () => {
   })
 
   test('12_no labels default any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label: 'label' })
+    for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: []
       }
@@ -87,8 +86,7 @@ describe('listActions tests', () => {
   })
 
   test('13_no labels any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label: 'label' })
+    for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: [],
         labelQueryMode: 'any'
@@ -101,8 +99,7 @@ describe('listActions tests', () => {
   })
 
   test('14_no labels all', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label: 'label' })
+    for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: [],
         labelQueryMode: 'all'
@@ -114,8 +111,7 @@ describe('listActions tests', () => {
   })
 
   test('15_empty label default any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label: 'label' })
+    for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['']
       }
@@ -125,8 +121,7 @@ describe('listActions tests', () => {
   })
 
   test('16_label is space character default any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label: 'label' })
+    for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: [' ']
       }
@@ -136,9 +131,7 @@ describe('listActions tests', () => {
   })
 
   test('17_label does not exist default any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label: 'label' })
-
+    for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {
         labels: ['nonexistantlabel'] // Testing with a non-existent label
       }
@@ -151,9 +144,8 @@ describe('listActions tests', () => {
 
   test('18_label min 1 character default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
-      const label = 'a' // mockData.actions[0].labels = ['label']
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label })
-      const minLengthLabel = label
+      const minLengthLabel = 'a'
+      await storage.updateTxLabel(1, { label: minLengthLabel })
       const args: bsv.ListActionsArgs = {
         labels: [minLengthLabel]
       }
@@ -166,9 +158,9 @@ describe('listActions tests', () => {
 
   test('19_label max 300 spaces default any', async () => {
     for (const { wallet } of ctxs) {
-      const maxLengthLabel = ' '.repeat(300)
+      const maxLengthSpacesLabel = ' '.repeat(300)
       const args: bsv.ListActionsArgs = {
-        labels: [maxLengthLabel]
+        labels: [maxLengthSpacesLabel]
       }
 
       await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
@@ -177,11 +169,10 @@ describe('listActions tests', () => {
 
   test('20_label max 300 normal characters default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
-      const label = 'a'.repeat(300) // mockData.actions[0].labels = ['label']
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label })
-      const maxLengthLabel = label
+      const maxLengthNormalLabel = 'a'.repeat(300)
+      await storage.updateTxLabel(1, { label: maxLengthNormalLabel })
       const args: bsv.ListActionsArgs = {
-        labels: [maxLengthLabel]
+        labels: [maxLengthNormalLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -192,11 +183,10 @@ describe('listActions tests', () => {
 
   test('21_label min 1 emoji default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
-      const label = generateRandomEmojiString(1)
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label })
-
+      const minimumEmojiLabel = generateRandomEmojiString(4)
+      await storage.updateTxLabel(1, { label: minimumEmojiLabel })
       const args: bsv.ListActionsArgs = {
-        labels: [label]
+        labels: [minimumEmojiLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -205,13 +195,12 @@ describe('listActions tests', () => {
     }
   })
 
-  test('22_label max length 150 emojis default any', async () => {
+  test('22_label max length 75 emojis default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
-      const label = generateRandomEmojiString(300)
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label })
-
+      const maximumEmojisLabel = generateRandomEmojiString(300)
+      await storage.updateTxLabel(1, { label: maximumEmojisLabel })
       const args: bsv.ListActionsArgs = {
-        labels: [label]
+        labels: [maximumEmojisLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -220,47 +209,23 @@ describe('listActions tests', () => {
     }
   })
 
-  test('23_label exceeding max length 151 emojis default any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      const label = generateRandomEmojiString(304)
-      await _tu.updateTestTxLabelMap(storage, { userId: 1 }, { transactionId: 1 }, { label })
-
+  test('23_label exceeding max length 76 emojis default any', async () => {
+    for (const { wallet } of ctxs) {
+      const exceedingMaximumEmojisLabel = generateRandomEmojiString(304)
       const args: bsv.ListActionsArgs = {
-        labels: [label]
+        labels: [exceedingMaximumEmojisLabel]
       }
 
       await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
-    }
-  })
-  /* TBD
-  test('22_label exceeding max length default any', async () => {
-    for (const { wallet } of ctxs) {
-      const tooLongLabel = 'a'.repeat(301)
-      const args: bsv.ListActionsArgs = {
-        labels: [tooLongLabel]
-      }
-
-      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
-    }
-  })
-
-  test('23_label exceeding max length with leading spaces default any', async () => {
-    for (const { wallet } of ctxs) {
-      const validLabelWhenTrimmed = '  ' + 'a'.repeat(300)
-      const args: bsv.ListActionsArgs = {
-        labels: [validLabelWhenTrimmed]
-      }
-
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
-
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
 
   test('24_normal label default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = 'label'
+      await storage.updateTxLabel(1, { label })
       const args: bsv.ListActionsArgs = {
-        labels: ['label']
+        labels: [label]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -270,9 +235,11 @@ describe('listActions tests', () => {
   })
 
   test('25_normal label any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = 'label'
+      await storage.updateTxLabel(1, { label })
       const args: bsv.ListActionsArgs = {
-        labels: ['label'],
+        labels: [label],
         labelQueryMode: 'any'
       }
 
@@ -283,9 +250,11 @@ describe('listActions tests', () => {
   })
 
   test('26_normal label all', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = 'label'
+      await storage.updateTxLabel(1, { label })
       const args: bsv.ListActionsArgs = {
-        labels: ['label'],
+        labels: [label],
         labelQueryMode: 'all'
       }
 
@@ -296,9 +265,11 @@ describe('listActions tests', () => {
   })
 
   test('27_label mixed case default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const mixedCaseLabel = 'LAbEL'
+      await storage.updateTxLabel(1, { label: mixedCaseLabel })
       const args: bsv.ListActionsArgs = {
-        labels: ['LAbEL']
+        labels: [mixedCaseLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -308,9 +279,11 @@ describe('listActions tests', () => {
   })
 
   test('28_label special characters default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const specialCharsLabel = '@special#label!'
+      await storage.updateTxLabel(1, { label: specialCharsLabel })
       const args: bsv.ListActionsArgs = {
-        labels: ['@special#label!']
+        labels: [specialCharsLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -320,9 +293,11 @@ describe('listActions tests', () => {
   })
 
   test('29_label leading and trailing whitespace default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const leadTrailSpacesLabel = '  label  '
+      await storage.updateTxLabel(1, { label: leadTrailSpacesLabel })
       const args: bsv.ListActionsArgs = {
-        labels: ['  label  ']
+        labels: [leadTrailSpacesLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -332,9 +307,11 @@ describe('listActions tests', () => {
   })
 
   test('30_label numeric default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const numericLabel = '12345'
+      await storage.updateTxLabel(1, { label: numericLabel })
       const args: bsv.ListActionsArgs = {
-        labels: ['12345']
+        labels: [numericLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -344,9 +321,11 @@ describe('listActions tests', () => {
   })
 
   test('31_label alphanumeric default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const alphaumericLabel = 'abcde12345'
+      await storage.updateTxLabel(1, { label: alphaumericLabel })
       const args: bsv.ListActionsArgs = {
-        labels: ['abcde12345']
+        labels: [alphaumericLabel]
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -354,8 +333,11 @@ describe('listActions tests', () => {
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
+
   test('32_label contains default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const containsLabel = 'label'
+      await storage.updateTxLabel(1, { label: containsLabel })
       const args: bsv.ListActionsArgs = {
         labels: ['labelOne']
       }
@@ -378,7 +360,7 @@ describe('listActions tests', () => {
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
-
+  /* TBD
   test('34_label different case upper any', async () => {
     for (const { wallet } of ctxs) {
       const args: bsv.ListActionsArgs = {

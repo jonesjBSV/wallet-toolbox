@@ -1,23 +1,27 @@
-import { setupTestWallet } from '../../utils/TestUtilsMethodTests';
+import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
-describe.skip('Wallet getNetwork Tests', () => {
-    let wallet: any;
+describe('Wallet getNetwork Tests', () => {
+  jest.setTimeout(99999999)
 
-    beforeEach(() => {
-        const { wallet: testWallet } = setupTestWallet();
-        wallet = testWallet;
-    });
+  const env = _tu.getEnv('test')
+  const ctxs: TestWalletNoSetup[] = []
 
-    test('should return the correct network', async () => {
-        wallet.signer.getChain.mockResolvedValueOnce('testnet');
-        const result = await wallet.getNetwork({});
-        expect(result).toEqual({ network: 'testnet' });
-        expect(wallet.signer.getChain).toHaveBeenCalled();
-    });
+  beforeAll(async () => {
+    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('getNetworkTests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('getNetworkTests'))
+  })
 
-    test('should handle unexpected errors from the signer', async () => {
-        wallet.signer.getChain.mockRejectedValueOnce(new Error('Unexpected error'));
-        await expect(wallet.getNetwork({})).rejects.toThrow('Unexpected error');
-        expect(wallet.signer.getChain).toHaveBeenCalled();
-    });
-});
+  afterAll(async () => {
+    for (const ctx of ctxs) {
+      await ctx.storage.destroy()
+    }
+  })
+
+  test('should return the correct network', async () => {
+    for (const { wallet } of ctxs) {
+      const result = await wallet.getNetwork({})
+      // Replace 'testnet' with the expected network for your test environment
+      expect(result).toEqual({ network: 'testnet' })
+    }
+  })
+})
