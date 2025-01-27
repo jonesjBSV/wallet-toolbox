@@ -934,9 +934,10 @@ export abstract class TestUtilsWalletStorage {
         lockTime: action.lockTime,
         version: action.version
       })
+      let i: number = 1
       if (action.labels) {
         for (const label of action.labels) {
-          await _tu.insertTestTxLabelMap(storage, transaction, {
+          const l = await _tu.insertTestTxLabel(storage, user, {
             label,
             isDeleted: false,
             created_at: now,
@@ -944,6 +945,7 @@ export abstract class TestUtilsWalletStorage {
             txLabelId: 0,
             userId: user.userId
           })
+          await _tu.insertTestTxLabelMap(storage, transaction, l)
         }
       }
       if (action.outputs) {

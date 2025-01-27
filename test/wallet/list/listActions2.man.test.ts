@@ -40,6 +40,7 @@ describe('listActions tests', () => {
               sequenceNumber: 0
             }
           ],
+          labels: ['label'],
           outputs: [
             {
               satoshis: 1,
@@ -297,7 +298,7 @@ describe('listActions tests', () => {
       const leadTrailSpacesLabel = '  label  '
       await storage.updateTxLabel(1, { label: leadTrailSpacesLabel })
       const args: bsv.ListActionsArgs = {
-        labels: [leadTrailSpacesLabel]
+        labels: [leadTrailSpacesLabel.trim()] // Trim label to check that white space is removed for DB preparation
       }
 
       const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
@@ -334,7 +335,7 @@ describe('listActions tests', () => {
     }
   })
 
-  test('32_label contains default any', async () => {
+  test('32_TODOTONE label contains DB label default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
       const containsLabel = 'label'
       await storage.updateTxLabel(1, { label: containsLabel })
@@ -349,9 +350,11 @@ describe('listActions tests', () => {
   })
 
   test('33_label different case lower any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = 'label'
+      await storage.updateTxLabel(1, { label })
       const args: bsv.ListActionsArgs = {
-        labels: ['label'],
+        labels: [label],
         labelQueryMode: 'any'
       }
 
