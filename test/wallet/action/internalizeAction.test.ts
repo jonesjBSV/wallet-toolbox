@@ -1,6 +1,6 @@
-import { CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
+import { Beef, CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
 import { sdk } from '../../../src/index.all'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('internalizeAction tests', () => {
   jest.setTimeout(99999999)
@@ -21,10 +21,30 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('1 internalize custom output in receiving wallet with checks', async () => {
+  test('0 invalid params', async () => {
+    for (const { wallet } of gctxs) {
+
+      const beef0 = new Beef();
+      const beef1 = new Beef(); beef1.mergeTxidOnly('1'.repeat(64))
+
+      const invalidArgs: InternalizeActionArgs[] = [
+        { tx: [], outputs: [], description: '' },
+        { tx: [], outputs: [], description: '12345' },
+        { tx: beef0.toBinary(), outputs: [], description: '12345' },
+        { tx: beef1.toBinary(), outputs: [], description: '12345' }
+        // Oh so many things to test...
+      ]
+
+      for (const args of invalidArgs) {
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.internalizeAction(args))
+      }
+
+    }
+  })
+
+  test('1_internalize custom output in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction1Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction1Tests'))
@@ -86,8 +106,9 @@ describe('internalizeAction tests', () => {
         const rt2 = await fred.activeStorage.findOutputTags({ partial: { outputTagId: rtm[1].outputTagId } })
         expect(rt2[0].tag).toBe('again')
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        // Check that calling again does not throw an error
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         // Cleanup Fred's storage
         await fred.activeStorage.destroy()
@@ -100,10 +121,9 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('2 internalize 2 custom outputs in receiving wallet with checks', async () => {
+  test('2_internalize 2 custom outputs in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction2Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction2Tests'))
@@ -130,6 +150,7 @@ describe('internalizeAction tests', () => {
             noSend: true
           }
         }
+
         // This createAction creates a new P2PKH output of 4 and 5 satoshis for Fred using his publish payment address... old school.
         const cr = await wallet.createAction(createArgs)
         expect(cr.tx).toBeTruthy()
@@ -192,10 +213,10 @@ describe('internalizeAction tests', () => {
           expect(rt2[0].tag).toBe('test 2')
         }
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        // Check that calling again does not throw an error
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
-        // Cleanup Fred's storage
         await fred.activeStorage.destroy()
       }
     }
@@ -206,10 +227,9 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('3 internalize wallet payment in receiving wallet with checks', async () => {
+  test('3_internalize wallet payment in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction3Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction3Tests'))
@@ -220,7 +240,7 @@ describe('internalizeAction tests', () => {
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix = Buffer.from('utxo-0').toString('base64')
       const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
-      const derivedPublicKey = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix}`, fred.identityKey)
+      const derivedPublicKey = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix}`, fred.identityKey)
       const derivedAddress = derivedPublicKey.toAddress()
 
       {
@@ -272,8 +292,8 @@ describe('internalizeAction tests', () => {
         expect(rfos[0].type).toBe('P2PKH')
         expect(rfos[0].purpose).toBe('change')
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         await fred.activeStorage.destroy()
       }
@@ -285,10 +305,9 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test('4 internalize 2 wallet payments in receiving wallet with checks', async () => {
+  test('4_internalize 2 wallet payments in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (useSharedCtxs)
-      ctxs.push(...gctxs)
+    if (useSharedCtxs) ctxs.push(...gctxs)
     else {
       if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction4Tests'))
       ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction4Tests'))
@@ -300,12 +319,12 @@ describe('internalizeAction tests', () => {
       const outputSatoshis1 = 6
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix1 = Buffer.from('utxo-1').toString('base64')
-      const derivedPublicKey1 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
+      const derivedPublicKey1 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
       const derivedAddress1 = derivedPublicKey1.toAddress()
 
       const outputSatoshis2 = 7
       const derivationSuffix2 = Buffer.from('utxo-2').toString('base64')
-      const derivedPublicKey2 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
+      const derivedPublicKey2 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
       const derivedAddress2 = derivedPublicKey2.toAddress()
 
       {
@@ -375,8 +394,8 @@ describe('internalizeAction tests', () => {
         expect(rfos[1].type).toBe('P2PKH')
         expect(rfos[1].purpose).toBe('change')
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         await fred.activeStorage.destroy()
       }
@@ -388,7 +407,7 @@ describe('internalizeAction tests', () => {
     }
   })
 
-  test.skip('5 WIP internalize 2 wallet payments and 2 basket insertions in receiving wallet with checks', async () => {
+  test('5_internalize 2 wallet payments and 2 basket insertions in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
     if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction5Tests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction5Tests'))
@@ -399,12 +418,12 @@ describe('internalizeAction tests', () => {
       const outputSatoshis1 = 8
       const derivationPrefix = Buffer.from('invoice-12345').toString('base64')
       const derivationSuffix1 = Buffer.from('utxo-1').toString('base64')
-      const derivedPublicKey1 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
+      const derivedPublicKey1 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix1}`, fred.identityKey)
       const derivedAddress1 = derivedPublicKey1.toAddress()
 
       const outputSatoshis2 = 9
       const derivationSuffix2 = Buffer.from('utxo-2').toString('base64')
-      const derivedPublicKey2 = wallet.signer.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
+      const derivedPublicKey2 = wallet.keyDeriver.derivePublicKey(brc29ProtocolID, `${derivationPrefix} ${derivationSuffix2}`, fred.identityKey)
       const derivedAddress2 = derivedPublicKey2.toAddress()
 
       const root = '02135476'
@@ -515,7 +534,6 @@ describe('internalizeAction tests', () => {
           expect(ro[0].basketId).toBe(2)
           expect(ro[0].satoshis).toBe(outputSatoshis3)
 
-          // Validate custom instructions and tags
           expect(ro[0].customInstructions).toBe(`3rd payment ${JSON.stringify({ root, repeat: 8 })}`)
           const rtm = await fred.activeStorage.findOutputTagMaps({ partial: { outputId: 3 } })
           const rt1 = await fred.activeStorage.findOutputTags({ partial: { outputTagId: rtm[0].outputTagId } })
@@ -536,8 +554,8 @@ describe('internalizeAction tests', () => {
           expect(rt2[0].tag).toBe('2nd basket payment')
         }
 
-        /*** Tone TBD Needs checking ***/
-        await fred.wallet.internalizeAction(internalizeArgs)
+        const r = await fred.wallet.internalizeAction(internalizeArgs)
+        await expect(Promise.resolve(r)).resolves.toBeTruthy()
 
         await fred.activeStorage.destroy()
       }

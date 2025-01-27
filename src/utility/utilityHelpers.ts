@@ -2,8 +2,9 @@ import { HexString, PubKeyHex, WalletInterface, WalletNetwork } from '@bsv/sdk'
 import { Beef, Hash, PrivateKey, PublicKey, Random, Script, Transaction, Utils } from "@bsv/sdk";
 import { sdk } from "../index.client";
 import { Chain } from "../sdk/types";
+import { CertOpsWallet } from '../sdk';
 
-export async function getIdentityKey(wallet: WalletInterface): Promise<PubKeyHex> {
+export async function getIdentityKey(wallet: CertOpsWallet): Promise<PubKeyHex> {
   return (await wallet.getPublicKey({ identityKey: true })).publicKey
 }
 

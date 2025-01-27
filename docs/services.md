@@ -85,7 +85,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface ArcServiceConfig {
     name: string;
     url: string;
-    arcConfig: bsv.ArcConfig;
+    arcConfig: ArcConfig;
 }
 ```
 
@@ -164,7 +164,7 @@ export class Services implements sdk.WalletServices {
     updateFiatExchangeRateServices: ServiceCollection<sdk.UpdateFiatExchangeRateService>;
     chain: sdk.Chain;
     constructor(optionsOrChain: sdk.Chain | sdk.WalletServicesOptions) 
-    async getChainTracker(): Promise<bsv.ChainTracker> 
+    async getChainTracker(): Promise<ChainTracker> 
     async getBsvExchangeRate(): Promise<number> 
     async getFiatExchangeRate(currency: "USD" | "GBP" | "EUR", base?: "USD" | "GBP" | "EUR"): Promise<number> 
     get getProofsCount() 
@@ -173,8 +173,8 @@ export class Services implements sdk.WalletServices {
     get postBeefServicesCount() 
     get getUtxoStatsCount() 
     async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, useNext?: boolean): Promise<sdk.GetUtxoStatusResult> 
-    async postTxs(beef: bsv.Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
-    async postBeef(beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
+    async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
+    async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
     async getRawTx(txid: string, useNext?: boolean): Promise<sdk.GetRawTxResult> 
     async invokeChaintracksWithRetry<R>(method: () => Promise<R>): Promise<R> 
     async getHeaderForHeight(height: number): Promise<number[]> 
@@ -183,7 +183,7 @@ export class Services implements sdk.WalletServices {
     async getMerklePath(txid: string, useNext?: boolean): Promise<sdk.GetMerklePathResult> 
     targetCurrencies = ["USD", "GBP", "EUR"];
     async updateFiatExchangeRates(rates?: sdk.FiatExchangeRates, updateMsecs?: number): Promise<sdk.FiatExchangeRates> 
-    async nLockTimeIsFinal(tx: string | number[] | bsv.Transaction | number): Promise<boolean> 
+    async nLockTimeIsFinal(tx: string | number[] | BsvTransaction | number): Promise<boolean> 
 }
 ```
 
@@ -200,7 +200,7 @@ Some services may require input transactions as well.
 These will be fetched if missing, greatly extending the service response time.
 
 ```ts
-async postTxs(beef: bsv.Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
+async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
 ```
 See also: [PostTxsResult](#interface-posttxsresult)
 
@@ -369,7 +369,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: postBeefToArcMiner
 
 ```ts
-export async function postBeefToArcMiner(beef: bsv.Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
+export async function postBeefToArcMiner(beef: Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
 ```
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult)
@@ -380,7 +380,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: postBeefToTaalArcMiner
 
 ```ts
-export async function postBeefToTaalArcMiner(beef: bsv.Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
+export async function postBeefToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
 ```
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult), [WalletServices](#interface-walletservices)
@@ -391,7 +391,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: postTxsToTaalArcMiner
 
 ```ts
-export async function postTxsToTaalArcMiner(beef: bsv.Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
+export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
 ```
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface-walletservices)
@@ -419,7 +419,7 @@ the block hash for the header.
 
 ```ts
 export function toBinaryBaseBlockHeader(header: sdk.BaseBlockHeader): number[] {
-    const writer = new bsv.Utils.Writer();
+    const writer = new Utils.Writer();
     writer.writeUInt32BE(header.version);
     writer.writeReverse(asArray(header.previousHash));
     writer.writeReverse(asArray(header.merkleRoot));

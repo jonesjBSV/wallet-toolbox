@@ -1,7 +1,7 @@
 import { InternalizeActionArgs, PrivateKey, Utils } from '@bsv/sdk'
-import { test } from '../..'
+import { test } from '../../src'
 
-describe('examples README tests', () => {
+describe.skip('examples README tests', () => {
     jest.setTimeout(99999999)
 
     it('0', async () => {

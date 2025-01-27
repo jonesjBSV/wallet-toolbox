@@ -176,7 +176,7 @@ export const validateDiscoverByAttributesResponse = (result: any, expected: any)
 export const setupTestWallet = (): { wallet: Wallet; mockSigner: any; mockKeyDeriver: any } => {
   const mockSigner = mockWalletSigner()
   const mockKeyDeriverInstance = mockKeyDeriver()
-  const wallet = new Wallet(mockSigner, mockKeyDeriverInstance)
+  const wallet = new Wallet(mockSigner)
   return { wallet, mockSigner, mockKeyDeriver: mockKeyDeriverInstance }
 }
 

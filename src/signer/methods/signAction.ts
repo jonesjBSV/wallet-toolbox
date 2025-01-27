@@ -1,22 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Beef, Transaction as BsvTransaction, SignActionResult, SignActionSpend } from '@bsv/sdk'
-import { asBsvSdkScript, ScriptTemplateSABPPP, sdk } from "../../index.client"
-import { PendingSignAction, WalletSigner } from "../WalletSigner"
+import { asBsvSdkScript, PendingSignAction, ScriptTemplateSABPPP, sdk, Wallet } from "../../index.client"
 import { processAction } from './createAction'
 
-export async function signAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs)
+export async function signAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs)
 : Promise<SignActionResult>
 {
-  const prior = signer.pendingSignActions[vargs.reference]
+  const prior = wallet.pendingSignActions[vargs.reference]
   if (!prior)
     throw new sdk.WERR_NOT_IMPLEMENTED('recovery of out-of-session signAction reference data is not yet implemented.')
   if (!prior.dcr.inputBeef)
     throw new sdk.WERR_INTERNAL('prior.dcr.inputBeef must be valid')
 
-  prior.tx = await completeSignedTransaction(prior, vargs.spends, signer)
+  prior.tx = await completeSignedTransaction(prior, vargs.spends, wallet)
 
-  const sendWithResults = await processAction(prior, signer, auth, vargs)
+  const sendWithResults = await processAction(prior, wallet, auth, vargs)
 
   const r: SignActionResult = {
     txid: prior.tx.id('hex'),
@@ -37,7 +36,7 @@ export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef) : numb
 export async function completeSignedTransaction(
   prior: PendingSignAction,
   spends: Record<number, SignActionSpend>,
-  ninja: WalletSigner,
+  wallet: Wallet,
 )
 : Promise<BsvTransaction>
 {
@@ -63,15 +62,15 @@ export async function completeSignedTransaction(
   }
 
   /////////////////////
-  // Insert SABPPP unlock templates for dojo signed inputs
+  // Insert SABPPP unlock templates for wallet signed inputs
   /////////////////////
   for (const pdi of prior.pdi) {
     const sabppp = new ScriptTemplateSABPPP({
       derivationPrefix: pdi.derivationPrefix,
       derivationSuffix: pdi.derivationSuffix,
-      keyDeriver: ninja.keyDeriver
+      keyDeriver: wallet.keyDeriver
     })
-    const keys = ninja.getClientChangeKeyPair()
+    const keys = wallet.getClientChangeKeyPair()
     const lockerPrivKey = keys.privateKey
     const unlockerPubKey = pdi.unlockerPubKey || keys.publicKey
     const sourceSatoshis = pdi.sourceSatoshis
@@ -82,7 +81,7 @@ export async function completeSignedTransaction(
   }
 
   /////////////////////
-  // Sign dojo signed inputs making transaction fully valid.
+  // Sign wallet signed inputs making transaction fully valid.
   /////////////////////
   await prior.tx.sign()
   

@@ -30,7 +30,7 @@ describe('getKnownTxids Tests', () => {
     }
   })
 
-  test.skip('1 should add new known txids', async () => {
+  test('1 should add new known txids', async () => {
     for (const { wallet } of ctxs) {
       const txids = ['txid1']
       const resultBefore = wallet.getKnownTxids()
@@ -42,7 +42,7 @@ describe('getKnownTxids Tests', () => {
     }
   })
 
-  test.skip('2 should avoid duplicating txids', async () => {
+  test('2 should avoid duplicating txids', async () => {
     for (const { wallet } of ctxs) {
       const txids = ['txid1', 'txid2']
       wallet.getKnownTxids(txids)
@@ -56,7 +56,7 @@ describe('getKnownTxids Tests', () => {
     }
   })
 
-  test.skip('3 should return sorted txids', async () => {
+  test('3 should return sorted txids', async () => {
     for (const { wallet } of ctxs) {
       const unsortedTxids = ['txid3', 'txid1', 'txid2']
       wallet.getKnownTxids(unsortedTxids)

@@ -4,7 +4,6 @@ The documentation is split into various pages, each covering a set of related fu
 
 - [Wallet](./wallet.md) — 
 - [Client](./client.md) — 
-- [Signer](./signer.md) — 
 - [Storage](./storage.md) — 
 - [Services](./services.md) — 
 - [Monitor](./monitor.md) — 

@@ -4,13 +4,13 @@ import { asBsvSdkTx, entity, sdk, StorageProvider, verifyTruthy } from '../../in
 /**
  * Creates a `Beef` to support the validity of a transaction identified by its `txid`.
  * 
- * `dojo.storage` is used to retrieve proven transactions and their merkle paths,
+ * `storage` is used to retrieve proven transactions and their merkle paths,
  * or proven_tx_req record with beef of external inputs (internal inputs meged by recursion).
  * Otherwise external services are used.
  * 
- * `dojo.options.maxRecursionDepth` can be set to prevent overly deep chained dependencies. Will throw ERR_EXTSVS_ENVELOPE_DEPTH if exceeded.
+ * `options.maxRecursionDepth` can be set to prevent overly deep chained dependencies. Will throw ERR_EXTSVS_ENVELOPE_DEPTH if exceeded.
  * 
- * If `trustSelf` is true, a partial `Beef` will be returned where transactions known by `dojo.storage` to
+ * If `trustSelf` is true, a partial `Beef` will be returned where transactions known by `storage` to
  * be valid by verified proof are represented solely by 'txid'.
  * 
  * If `knownTxids` is defined, any 'txid' required by the `Beef` that appears in the array is represented solely as a 'known' txid. 
@@ -35,24 +35,24 @@ export async function getBeefForTransaction(storage: StorageProvider, txid: stri
 /**
  * @returns rawTx if txid known to network, if merkle proof available then also proven result is valid.
  */
-async function getProvenOrRawTxFromServices(dojo: StorageProvider, txid: string, options: sdk.StorageGetBeefOptions): Promise<sdk.ProvenOrRawTx> {
-    const services = dojo.getServices();
-    const por = await entity.ProvenTx.fromTxid(txid, await dojo.getServices());
+async function getProvenOrRawTxFromServices(storage: StorageProvider, txid: string, options: sdk.StorageGetBeefOptions): Promise<sdk.ProvenOrRawTx> {
+    const services = storage.getServices();
+    const por = await entity.ProvenTx.fromTxid(txid, await storage.getServices());
     if (por.proven && !options.ignoreStorage && !options.ignoreNewProven) {
-        por.proven.provenTxId = await dojo.insertProvenTx(por.proven.toApi());
+        por.proven.provenTxId = await storage.insertProvenTx(por.proven.toApi());
     }
     return { proven: por.proven?.toApi(), rawTx: por.rawTx };
 }
 
 async function mergeBeefForTransactionRecurse(
     beef: Beef,
-    dojo: StorageProvider,
+    storage: StorageProvider,
     txid: string,
     options: sdk.StorageGetBeefOptions,
     recursionDepth: number
 ): Promise<Beef> {
-    const maxDepth = dojo.maxRecursionDepth;
-    if (maxDepth && maxDepth <= recursionDepth) throw new sdk.WERR_INVALID_OPERATION(`Maximum BEEF depth exceeded. Limit is ${dojo.maxRecursionDepth}`);
+    const maxDepth = storage.maxRecursionDepth;
+    if (maxDepth && maxDepth <= recursionDepth) throw new sdk.WERR_INVALID_OPERATION(`Maximum BEEF depth exceeded. Limit is ${storage.maxRecursionDepth}`);
 
     if (options.knownTxids && options.knownTxids.indexOf(txid) > -1) {
         // This txid is one of the txids the caller claims to already know are valid...
@@ -62,17 +62,17 @@ async function mergeBeefForTransactionRecurse(
 
     if (!options.ignoreStorage) {
         // if we can use storage, ask storage if it has the txid
-        const knownBeef = await dojo.getValidBeefForTxid(txid, beef, options.trustSelf, options.knownTxids)
+        const knownBeef = await storage.getValidBeefForTxid(txid, beef, options.trustSelf, options.knownTxids)
         if (knownBeef)
             return knownBeef
     }
 
     if (options.ignoreServices)
-        throw new sdk.WERR_INVALID_PARAMETER(`txid ${txid}`, `valid transaction on chain ${dojo.chain}`);
+        throw new sdk.WERR_INVALID_PARAMETER(`txid ${txid}`, `valid transaction on chain ${storage.chain}`);
 
     // if storage doesn't know about txid, use services
     // to find it and if it has a proof, remember it.
-    const r = await getProvenOrRawTxFromServices(dojo, txid, options);
+    const r = await getProvenOrRawTxFromServices(storage, txid, options);
 
     if (r.proven && options.minProofLevel && options.minProofLevel > recursionDepth) {
         // ignore proof at this recursion depth
@@ -80,7 +80,7 @@ async function mergeBeefForTransactionRecurse(
     }
 
     if (r.proven) {
-        // dojo has proven this txid,
+        // storage has proven this txid,
         // merge both the raw transaction and its merkle path
         beef.mergeRawTx(r.proven.rawTx);
         beef.mergeBump(new entity.ProvenTx(r.proven).getMerklePath());
@@ -88,7 +88,7 @@ async function mergeBeefForTransactionRecurse(
     }
     
     if (!r.rawTx)
-        throw new sdk.WERR_INVALID_PARAMETER(`txid ${txid}`, `valid transaction on chain ${dojo.chain}`);
+        throw new sdk.WERR_INVALID_PARAMETER(`txid ${txid}`, `valid transaction on chain ${storage.chain}`);
 
     // merge the raw transaction and recurse over its inputs.
     beef.mergeRawTx(r.rawTx!);
@@ -98,7 +98,7 @@ async function mergeBeefForTransactionRecurse(
         const inputTxid = verifyTruthy(input.sourceTXID);
         if (!beef.findTxid(inputTxid)) {
             // Only if the txid is not already in the list of beef transactions.
-            await mergeBeefForTransactionRecurse(beef, dojo, inputTxid, options, recursionDepth + 1);
+            await mergeBeefForTransactionRecurse(beef, storage, inputTxid, options, recursionDepth + 1);
         }
     }
 

@@ -429,6 +429,9 @@ describe('listOutputs prepare DB with missing custom instructions', () => {
 
   afterAll(async () => {
     await cleanDatabase(storage)
+    for (const ctx of ctxs) {
+      await ctx.storage.destroy()
+    }
   })
 
   test('Verify custom instructions for basketId = 4', async () => {

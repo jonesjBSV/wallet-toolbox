@@ -1,6 +1,7 @@
 import { sdk, wait, Services, WalletStorageManager } from "../index.client"
 import { BlockHeader, ChaintracksServiceClient } from "../services/chaintracker"
 import { TaskPurge, TaskPurgeParams } from './tasks/TaskPurge'
+import { TaskReviewStatus } from './tasks/TaskReviewStatus'
 import { TaskSyncWhenIdle } from './tasks/TaskSyncWhenIdle'
 import { TaskFailAbandoned } from './tasks/TaskFailAbandoned'
 import { TaskCheckForProofs } from './tasks/TaskCheckForProofs'
@@ -57,7 +58,7 @@ export class Monitor {
             msecsWaitPerMerkleProofServiceReq: 500,
             taskRunWaitMsecs: 5000,
             abandonedMsecs: 1000 * 60 * 5,
-            unprovenAttemptsLimitTest: 2016,
+            unprovenAttemptsLimitTest: 10,
             unprovenAttemptsLimitMain: 144,
             chaintracks: services.options.chaintracks
         }
@@ -106,6 +107,7 @@ export class Monitor {
         this._otherTasks.push(new TaskClock(this))
         this._otherTasks.push(new TaskNewHeader(this))
         this._otherTasks.push(new TaskPurge(this, this.defaultPurgeParams))
+        this._otherTasks.push(new TaskReviewStatus(this))
         this._otherTasks.push(new TaskSendWaiting(this))
         this._otherTasks.push(new TaskCheckForProofs(this))
         
@@ -124,6 +126,7 @@ export class Monitor {
         this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
         this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
         this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
+        this._tasks.push(new TaskReviewStatus(this))
     }
     
     /**
@@ -137,6 +140,7 @@ export class Monitor {
         this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
         this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
         this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
+        this._tasks.push(new TaskReviewStatus(this))
     }
 
     addTask(task: WalletMonitorTask) : void {
@@ -169,9 +173,9 @@ export class Monitor {
         return log
     }
 
-    async runOnce(runAsyncSetup: boolean = true): Promise<void> {
+    async runOnce(): Promise<void> {
 
-        if (runAsyncSetup) {
+        if (this._runAsyncSetup) {
             for (const t of this._tasks) {
                 try {
                     await t.asyncSetup()
@@ -183,6 +187,7 @@ export class Monitor {
                 }
                 if (!this._tasksRunning) break
             }
+            this._runAsyncSetup = false
         }
 
         if (this.storage.getActive().isStorageProvider()) {
@@ -201,7 +206,6 @@ export class Monitor {
             }
 
             for (const ttr of tasksToRun) {
-                if (!this._tasksRunning) break;
 
                 try {
                     if (this.storage.getActive().isStorageProvider()) {
@@ -224,18 +228,18 @@ export class Monitor {
         }
     }
 
+    _runAsyncSetup: boolean = true
+
     async startTasks() : Promise<void> {
         
         if (this._tasksRunning)
             throw new sdk.WERR_BAD_REQUEST('monitor tasks are already runnining.')
         
-        let runAsyncSetup = true
 
         this._tasksRunning = true
         for (; this._tasksRunning;) {
 
-            await this.runOnce(runAsyncSetup)
-            runAsyncSetup = false
+            await this.runOnce()
 
             // console.log(`${new Date().toISOString()} tasks run, waiting...`)
             await wait(this.options.taskRunWaitMsecs)

@@ -63,7 +63,7 @@ export class StorageMySQLDojoReader extends StorageReader {
             created_at: verifyTruthy(d.created_at),
             updated_at: verifyTruthy(d.updated_at),
             storageIdentityKey: verifyHexString(d.dojoIdentityKey),
-            storageName: d.dojoName || `${this.chain} Dojo Import`,
+            storageName: d.dojoName || `${this.chain} Legacy Import`,
             chain: this.chain,
             dbtype: "MySQL",
             maxOutputScript: 256
@@ -319,7 +319,7 @@ export class StorageMySQLDojoReader extends StorageReader {
                 syncStateId: verifyInteger(d.syncStateId),
                 userId: verifyInteger(d.userId),
                 storageIdentityKey: verifyHexString(d.storageIdentityKey),
-                storageName: verifyTruthy(d.storageName || 'dojo importer').trim().toLowerCase(),
+                storageName: verifyTruthy(d.storageName || 'legacy importer').trim().toLowerCase(),
                 status: convertSyncStatus(d.status),
                 init: !!d.init,
                 refNum: verifyTruthy(d.refNum),

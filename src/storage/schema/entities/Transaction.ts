@@ -26,7 +26,7 @@ export class Transaction extends EntityBase<table.Transaction> {
   /**
    * Returns an array of "known" inputs to this transaction which belong to the same userId.
    * Uses both spentBy and rawTx inputs (if available) to locate inputs from among user's outputs.
-   * Not all transaction inputs correspond to prior dojo outputs.
+   * Not all transaction inputs correspond to prior storage outputs.
    */
   async getInputs(storage: entity.EntityStorage, trx?: sdk.TrxToken): Promise<table.Output[]> {
     const inputs = await storage.findOutputs({ partial: { userId: this.userId, spentBy: this.id }, trx })

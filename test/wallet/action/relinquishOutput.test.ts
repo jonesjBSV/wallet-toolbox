@@ -20,7 +20,7 @@ describe('RelinquishOutputArgs tests', () => {
     }
   })
 
-  test('001_default', async () => {
+  test('1_default', async () => {
     const outputTxid = '2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122'
     const expectedResult = { relinquished: true }
 

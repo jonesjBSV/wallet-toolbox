@@ -1,8 +1,17 @@
 import { CreateActionResult, SendWithResult, SignActionResult, SignActionSpend } from '@bsv/sdk'
 import { Script, Transaction, TransactionInput } from "@bsv/sdk"
-import { asBsvSdkScript, makeAtomicBeef, PendingSignAction, PendingStorageInput, ScriptTemplateSABPPP, sdk, verifyId, verifyTruthy, WalletSigner } from "../../index.client"
+import {
+  asBsvSdkScript,
+  makeAtomicBeef,
+  PendingSignAction,
+  PendingStorageInput,
+  ScriptTemplateSABPPP,
+  sdk,
+  verifyTruthy,
+  Wallet
+} from "../../index.client"
 
-export async function createAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs)
+export async function createAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs)
 : Promise<CreateActionResult>
 {
   const r: CreateActionResult = {}
@@ -10,13 +19,13 @@ export async function createAction(signer: WalletSigner, auth: sdk.AuthId, vargs
   let prior: PendingSignAction | undefined = undefined
 
   if (vargs.isNewTx) {
-    prior = await createNewTx(signer, vargs)
+    prior = await createNewTx(wallet, vargs)
 
     if (vargs.isSignAction) {
-      return makeSignableTransactionResult(prior, signer, vargs)
+      return makeSignableTransactionResult(prior, wallet, vargs)
     }
 
-    prior.tx = await completeSignedTransaction(prior, {}, signer)
+    prior.tx = await completeSignedTransaction(prior, {}, wallet)
 
     r.txid = prior.tx.id('hex')
     r.noSendChange = prior.dcr.noSendChangeOutputVouts?.map(vout => `${r.txid}.${vout}`)
@@ -24,27 +33,27 @@ export async function createAction(signer: WalletSigner, auth: sdk.AuthId, vargs
       r.tx = makeAtomicBeef(prior.tx, prior.dcr.inputBeef!)
   }
 
-  r.sendWithResults = await processAction(prior, signer, auth, vargs)
+  r.sendWithResults = await processAction(prior, wallet, auth, vargs)
 
   return r
 }
 
-async function createNewTx(signer: WalletSigner, args: sdk.ValidCreateActionArgs)
+async function createNewTx(wallet: Wallet, args: sdk.ValidCreateActionArgs)
 : Promise<PendingSignAction>
 {
   const storageArgs = removeUnlockScripts(args);
-  const dcr = await signer.storage.createAction(storageArgs)
+  const dcr = await wallet.storage.createAction(storageArgs)
 
   const reference = dcr.reference
 
-  const { tx, amount, pdi } = buildSignableTransaction(dcr, args, signer)
+  const { tx, amount, pdi } = buildSignableTransaction(dcr, args, wallet)
 
   const prior: PendingSignAction = { reference, dcr, args, amount, tx, pdi }
 
   return prior
 }
 
-function makeSignableTransactionResult(prior: PendingSignAction, signer: WalletSigner, args: sdk.ValidCreateActionArgs)
+function makeSignableTransactionResult(prior: PendingSignAction, wallet: Wallet, args: sdk.ValidCreateActionArgs)
 : CreateActionResult
 {
   if (!prior.dcr.inputBeef)
@@ -60,7 +69,7 @@ function makeSignableTransactionResult(prior: PendingSignAction, signer: WalletS
     }
   }
 
-  signer.pendingSignActions[r.signableTransaction!.reference] = prior
+  wallet.pendingSignActions[r.signableTransaction!.reference] = prior
 
   return r
 }
@@ -73,12 +82,12 @@ function makeChangeLock(
   dctr: sdk.StorageCreateActionResult,
   args: sdk.ValidCreateActionArgs,
   changeKeys: sdk.KeyPair,
-  signer: WalletSigner)
+  wallet: Wallet)
 : Script
 {
   const derivationPrefix = dctr.derivationPrefix
   const derivationSuffix = verifyTruthy(out.derivationSuffix);
-  const sabppp = new ScriptTemplateSABPPP({ derivationPrefix, derivationSuffix, keyDeriver: signer.keyDeriver });
+  const sabppp = new ScriptTemplateSABPPP({ derivationPrefix, derivationSuffix, keyDeriver: wallet.keyDeriver });
   const lockingScript = sabppp.lock(changeKeys.privateKey, changeKeys.publicKey)
   return lockingScript
 }
@@ -86,7 +95,7 @@ function makeChangeLock(
 export async function completeSignedTransaction(
   prior: PendingSignAction,
   spends: Record<number, SignActionSpend>,
-  signer: WalletSigner,
+  wallet: Wallet,
 )
 : Promise<Transaction>
 {
@@ -118,9 +127,9 @@ export async function completeSignedTransaction(
     const sabppp = new ScriptTemplateSABPPP({
       derivationPrefix: pdi.derivationPrefix,
       derivationSuffix: pdi.derivationSuffix,
-      keyDeriver: signer.keyDeriver
+      keyDeriver: wallet.keyDeriver
     })
-    const keys = signer.getClientChangeKeyPair()
+    const keys = wallet.getClientChangeKeyPair()
     const lockerPrivKey = keys.privateKey
     const unlockerPubKey = pdi.unlockerPubKey || keys.publicKey
     const sourceSatoshis = pdi.sourceSatoshis
@@ -154,7 +163,7 @@ function removeUnlockScripts(args: sdk.ValidCreateActionArgs) {
   return storageArgs;
 }
 
-export async function processAction(prior: PendingSignAction | undefined, signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs)
+export async function processAction(prior: PendingSignAction | undefined, wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs)
 : Promise<SendWithResult[] | undefined>
 {
   const args: sdk.StorageProcessActionArgs = {
@@ -167,7 +176,7 @@ export async function processAction(prior: PendingSignAction | undefined, signer
     rawTx: prior ? prior.tx.toBinary() : undefined,
     sendWith: vargs.isSendWith ? vargs.options.sendWith : [],
   }
-  const r: sdk.StorageProcessActionResults = await signer.storage.processAction(args)
+  const r: sdk.StorageProcessActionResults = await wallet.storage.processAction(args)
 
   return r.sendWithResults
 }
@@ -175,11 +184,11 @@ export async function processAction(prior: PendingSignAction | undefined, signer
 function buildSignableTransaction(
   dctr: sdk.StorageCreateActionResult,
   args: sdk.ValidCreateActionArgs,
-  signer: WalletSigner
+  wallet: Wallet
 )
 : { tx: Transaction, amount: number, pdi: PendingStorageInput[], log: string }
 {
-    const changeKeys = signer.getClientChangeKeyPair()
+    const changeKeys = wallet.getClientChangeKeyPair()
 
     const {
         inputs: storageInputs,
@@ -212,7 +221,7 @@ function buildSignableTransaction(
 
         const change = out.providedBy === 'storage' && out.purpose === 'change'
 
-        const lockingScript = change ? makeChangeLock(out, dctr, args, changeKeys, signer) : asBsvSdkScript(out.lockingScript)
+        const lockingScript = change ? makeChangeLock(out, dctr, args, changeKeys, wallet) : asBsvSdkScript(out.lockingScript)
 
         const output = {
             satoshis: out.satoshis,

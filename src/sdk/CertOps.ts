@@ -1,7 +1,28 @@
-import { Base64String, Certificate as BsvCertificate, CertificateFieldNameUnder50Bytes, PubKeyHex, WalletCertificate, WalletInterface, WalletProtocol } from '@bsv/sdk'
+import {
+    Base64String,
+    Certificate as BsvCertificate,
+    CertificateFieldNameUnder50Bytes,
+    GetPublicKeyArgs,
+    GetPublicKeyResult,
+    OriginatorDomainNameStringUnder250Bytes,
+    PubKeyHex,
+    WalletCertificate,
+    WalletDecryptArgs,
+    WalletDecryptResult,
+    WalletEncryptArgs,
+    WalletEncryptResult,
+    WalletInterface,
+    WalletProtocol
+} from '@bsv/sdk'
 import { getIdentityKey, sdk } from '../index.client'
 import { SymmetricKey, Utils } from "@bsv/sdk";
 import { WERR_INVALID_OPERATION } from './WERR_errors';
+
+export interface CertOpsWallet {
+    getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult>
+    encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult>
+    decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult>
+}
 
 export class CertOps extends BsvCertificate {
     _keyring?: Record<CertificateFieldNameUnder50Bytes, string>
@@ -9,14 +30,14 @@ export class CertOps extends BsvCertificate {
     _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>
 
     constructor(
-        public wallet: WalletInterface,
+        public wallet: CertOpsWallet,
         wc: WalletCertificate,
     ) {
         super(wc.type, wc.serialNumber, wc.subject, wc.certifier, wc.revocationOutpoint, wc.fields, wc.signature)
     }
 
     static async fromCounterparty(
-        wallet: WalletInterface,
+        wallet: CertOpsWallet,
         e: {
             certificate: WalletCertificate,
             keyring: Record<CertificateFieldNameUnder50Bytes, string>,
@@ -35,7 +56,7 @@ export class CertOps extends BsvCertificate {
     }
 
     static async fromCertifier(
-        wallet: WalletInterface,
+        wallet: CertOpsWallet,
         e: { certificate: WalletCertificate, keyring: Record<CertificateFieldNameUnder50Bytes, string> }
     )
     : Promise<CertOps>
@@ -44,7 +65,7 @@ export class CertOps extends BsvCertificate {
     }
 
     static async fromEncrypted(
-        wallet: WalletInterface,
+        wallet: CertOpsWallet,
         wc: WalletCertificate,
         keyring: Record<CertificateFieldNameUnder50Bytes, string>
     )
@@ -59,7 +80,7 @@ export class CertOps extends BsvCertificate {
     }
 
     static async fromDecrypted(
-        wallet: WalletInterface,
+        wallet: CertOpsWallet,
         wc: WalletCertificate
     ) : Promise<CertOps>
     {
@@ -238,7 +259,7 @@ export class CertOps extends BsvCertificate {
             throw new sdk.WERR_INVALID_PARAMETER('wallet', 'the certifier for new certificate issuance.')
 
         await this.encryptFields(this.subject)
-        await this.sign(this.wallet)
+        await this.sign(this.wallet as unknown as WalletInterface)
         // Confirm the signed certificate verifies:
         await this.verify()
     }

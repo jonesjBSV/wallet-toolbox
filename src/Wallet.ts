@@ -1,46 +1,54 @@
 import {
-  Beef,
-  BeefParty,
-  Utils,
-  WalletInterface,
-  ProtoWallet,
-  TrustSelf,
-  OriginatorDomainNameStringUnder250Bytes,
-  ListActionsArgs,
-  ListActionsResult,
-  CreateActionArgs,
-  CreateActionResult,
-  ListOutputsArgs,
-  ListOutputsResult,
-  ListCertificatesArgs,
-  ListCertificatesResult,
+  AbortActionArgs,
+  AbortActionResult,
   AcquireCertificateArgs,
   AcquireCertificateResult,
-  RelinquishCertificateArgs,
-  RelinquishCertificateResult,
-  ProveCertificateArgs,
-  ProveCertificateResult,
-  DiscoverByIdentityKeyArgs,
-  DiscoverCertificatesResult,
-  DiscoverByAttributesArgs,
-  RelinquishOutputArgs,
-  RelinquishOutputResult,
   AuthenticatedResult,
-  GetHeightResult,
-  GetHeaderResult,
-  GetHeaderArgs,
-  GetNetworkResult,
-  GetVersionResult,
+  Beef,
+  BeefParty,
+  CreateActionArgs,
+  CreateActionResult,
   CreateHmacArgs,
   CreateHmacResult,
   CreateSignatureArgs,
   CreateSignatureResult,
+  DiscoverByAttributesArgs,
+  DiscoverByIdentityKeyArgs,
+  DiscoverCertificatesResult,
+  GetHeaderArgs,
+  GetHeaderResult,
+  GetHeightResult,
+  GetNetworkResult,
   GetPublicKeyArgs,
   GetPublicKeyResult,
+  GetVersionResult,
+  InternalizeActionArgs,
+  InternalizeActionResult,
+  KeyDeriver,
+  ListActionsArgs,
+  ListActionsResult,
+  ListCertificatesArgs,
+  ListCertificatesResult,
+  ListOutputsArgs,
+  ListOutputsResult,
+  OriginatorDomainNameStringUnder250Bytes,
+  ProtoWallet,
+  ProveCertificateArgs,
+  ProveCertificateResult,
+  PubKeyHex,
+  RelinquishCertificateArgs,
+  RelinquishCertificateResult,
+  RelinquishOutputArgs,
+  RelinquishOutputResult,
   RevealCounterpartyKeyLinkageArgs,
   RevealCounterpartyKeyLinkageResult,
   RevealSpecificKeyLinkageArgs,
   RevealSpecificKeyLinkageResult,
+  SignActionArgs,
+  SignActionResult,
+  Transaction as BsvTransaction,
+  TrustSelf,
+  Utils,
   VerifyHmacArgs,
   VerifyHmacResult,
   VerifySignatureArgs,
@@ -49,39 +57,92 @@ import {
   WalletDecryptResult,
   WalletEncryptArgs,
   WalletEncryptResult,
-  AbortActionArgs,
-  AbortActionResult,
-  SignActionResult,
-  SignActionArgs,
-  InternalizeActionArgs,
-  InternalizeActionResult,
-  PubKeyHex
+  WalletInterface
 } from '@bsv/sdk'
-import { sdk, toWalletNetwork, Monitor } from './index.client'
+import { sdk, toWalletNetwork, Monitor, WalletStorageManager, WalletSigner } from './index.client'
+import { acquireDirectCertificate } from './signer/methods/acquireDirectCertificate'
+import { proveCertificate } from './signer/methods/proveCertificate'
+import { createAction } from './signer/methods/createAction'
+import { signAction } from './signer/methods/signAction'
+import { internalizeAction } from './signer/methods/internalizeAction'
 
-export class Wallet implements WalletInterface {
-  signer: sdk.WalletSigner
+export interface WalletArgs {
+  chain: sdk.Chain
+  keyDeriver: KeyDeriver
+  storage: WalletStorageManager
   services?: sdk.WalletServices
   monitor?: Monitor
+  privilegedKeyManager?: sdk.PrivilegedKeyManager
+}
+
+function isWalletSigner(args: WalletArgs | WalletSigner): args is WalletSigner {
+  return args['isWalletSigner']
+}
+
+export class Wallet implements WalletInterface {
+  chain: sdk.Chain
+  keyDeriver: KeyDeriver
+  storage: WalletStorageManager
+
+  services?: sdk.WalletServices
+  monitor?: Monitor
+
+  identityKey: string
 
   beef: BeefParty
   trustSelf?: TrustSelf
   userParty: string
   proto: ProtoWallet
+  privilegedKeyManager?: sdk.PrivilegedKeyManager
 
-  constructor(signer: sdk.WalletSigner, services?: sdk.WalletServices, monitor?: Monitor) {
-    this.proto = new ProtoWallet(signer.keyDeriver)
-    this.signer = signer
-    this.services = services
-    this.monitor = monitor
+  pendingSignActions: Record<string, PendingSignAction>
 
-    this.userParty = `user ${signer.getClientChangeKeyPair().publicKey}`
+  constructor(argsOrSigner: WalletArgs | WalletSigner, services?: sdk.WalletServices, monitor?: Monitor, privilegedKeyManager?: sdk.PrivilegedKeyManager) {
+    const args: WalletArgs = !isWalletSigner(argsOrSigner)
+      ? argsOrSigner
+      : {
+          chain: argsOrSigner.chain,
+          keyDeriver: argsOrSigner.keyDeriver,
+          storage: argsOrSigner.storage,
+          services,
+          monitor,
+          privilegedKeyManager
+        }
+
+    if (args.storage._authId.identityKey != args.keyDeriver.identityKey) throw new sdk.WERR_INVALID_PARAMETER('storage', `authenticated as the same identityKey (${args.storage._authId.identityKey}) as the keyDeriver (${args.keyDeriver.identityKey}).`)
+
+    this.chain = args.chain
+    this.keyDeriver = args.keyDeriver
+    this.storage = args.storage
+    this.proto = new ProtoWallet(args.keyDeriver)
+    this.services = args.services
+    this.monitor = args.monitor
+    this.privilegedKeyManager = args.privilegedKeyManager
+
+    this.identityKey = this.keyDeriver.identityKey
+
+    this.pendingSignActions = {}
+
+    this.userParty = `user ${this.getClientChangeKeyPair().publicKey}`
     this.beef = new BeefParty([this.userParty])
     this.trustSelf = 'known'
 
-    if (services) {
-      signer.setServices(services)
+    if (this.services) {
+      this.storage.setServices(this.services)
     }
+  }
+
+  async destroy(): Promise<void> {
+    await this.storage.destroy()
+    if (this.privilegedKeyManager) await this.privilegedKeyManager.destroyKey()
+  }
+
+  getClientChangeKeyPair(): sdk.KeyPair {
+    const kp: sdk.KeyPair = {
+      privateKey: this.keyDeriver.rootKey.toString(),
+      publicKey: this.keyDeriver.rootKey.toPublicKey().toString()
+    }
+    return kp
   }
 
   async getIdentityKey(): Promise<PubKeyHex> {
@@ -90,55 +151,82 @@ export class Wallet implements WalletInterface {
 
   getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.getPublicKey(args)
     }
     return this.proto.getPublicKey(args)
   }
   revealCounterpartyKeyLinkage(args: RevealCounterpartyKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealCounterpartyKeyLinkageResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.revealCounterpartyKeyLinkage(args)
     }
     return this.proto.revealCounterpartyKeyLinkage(args)
   }
   revealSpecificKeyLinkage(args: RevealSpecificKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealSpecificKeyLinkageResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.revealSpecificKeyLinkage(args)
     }
     return this.proto.revealSpecificKeyLinkage(args)
   }
   encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.encrypt(args)
     }
     return this.proto.encrypt(args)
   }
   decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.decrypt(args)
     }
     return this.proto.decrypt(args)
   }
   createHmac(args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateHmacResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.createHmac(args)
     }
     return this.proto.createHmac(args)
   }
   verifyHmac(args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifyHmacResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.verifyHmac(args)
     }
     return this.proto.verifyHmac(args)
   }
   createSignature(args: CreateSignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateSignatureResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.createSignature(args)
     }
     return this.proto.createSignature(args)
   }
   verifySignature(args: VerifySignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifySignatureResult> {
     if (args.privileged) {
-      // TODO
+      if (!this.privilegedKeyManager) {
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
+      }
+      return this.privilegedKeyManager.verifySignature(args)
     }
     return this.proto.verifySignature(args)
   }
@@ -162,26 +250,37 @@ export class Wallet implements WalletInterface {
     return knownTxids
   }
 
+  getStorageIdentity(): sdk.StorageIdentity {
+    const s = this.storage.getSettings()
+    return { storageIdentityKey: s.storageIdentityKey, storageName: s.storageName }
+  }
+
+  private validateAuthAndArgs<A, T extends sdk.ValidWalletSignerArgs>(args: A, validate: (args: A) => T): { vargs: T; auth: sdk.AuthId } {
+    const vargs = validate(args)
+    const auth: sdk.AuthId = { identityKey: this.identityKey }
+    return { vargs, auth }
+  }
+
   //////////////////
   // List Methods
   //////////////////
 
   async listActions(args: ListActionsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListActionsResult> {
     sdk.validateOriginator(originator)
-    sdk.validateListActionsArgs(args)
-    const r = await this.signer.listActions(args)
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListActionsArgs)
+    const r = await this.storage.listActions(vargs)
     return r
   }
 
   get storageParty(): string {
-    return `storage ${this.signer.getStorageIdentity().storageIdentityKey}`
+    return `storage ${this.getStorageIdentity().storageIdentityKey}`
   }
 
   async listOutputs(args: ListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListOutputsResult> {
     sdk.validateOriginator(originator)
-    sdk.validateListOutputsArgs(args)
-    const knownTxids = this.getKnownTxids()
-    const r = await this.signer.listOutputs(args, knownTxids)
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListOutputsArgs)
+    vargs.knownTxids = this.getKnownTxids()
+    const r = await this.storage.listOutputs(vargs)
     if (r.BEEF) {
       this.beef.mergeBeefFromParty(this.storageParty, r.BEEF)
     }
@@ -190,8 +289,8 @@ export class Wallet implements WalletInterface {
 
   async listCertificates(args: ListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> {
     sdk.validateOriginator(originator)
-    sdk.validateListCertificatesArgs(args)
-    const r = await this.signer.listCertificates(args)
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListCertificatesArgs)
+    const r = await this.storage.listCertificates(vargs)
     return r
   }
 
@@ -202,11 +301,11 @@ export class Wallet implements WalletInterface {
   async acquireCertificate(args: AcquireCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AcquireCertificateResult> {
     sdk.validateOriginator(originator)
     if (args.acquisitionProtocol === 'direct') {
-      const vargs = sdk.validateAcquireDirectCertificateArgs(args)
+      const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateAcquireDirectCertificateArgs)
       vargs.subject = (await this.getPublicKey({ identityKey: true, privileged: args.privileged, privilegedReason: args.privilegedReason })).publicKey
       try {
         // Confirm that the information received adds up to a usable certificate...
-        await sdk.CertOps.fromCounterparty(this, {
+        await sdk.CertOps.fromCounterparty(vargs.privileged ? this.privilegedKeyManager! : this, {
           certificate: { ...vargs },
           keyring: vargs.keyringForSubject,
           counterparty: vargs.keyringRevealer === 'certifier' ? vargs.certifier : vargs.keyringRevealer
@@ -216,12 +315,11 @@ export class Wallet implements WalletInterface {
         throw new sdk.WERR_INVALID_PARAMETER('args', `valid encrypted and signed certificate and keyring from revealer. ${e.name}: ${e.message}`)
       }
 
-      const r = await this.signer.acquireDirectCertificate(args)
+      const r = await acquireDirectCertificate(this, auth, vargs)
       return r
     }
 
     if (args.acquisitionProtocol === 'issuance') {
-      const vargs = await sdk.validateAcquireCertificateArgs(args)
       throw new sdk.WERR_NOT_IMPLEMENTED()
     }
 
@@ -230,36 +328,28 @@ export class Wallet implements WalletInterface {
 
   async relinquishCertificate(args: RelinquishCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishCertificateResult> {
     sdk.validateOriginator(originator)
-    sdk.validateRelinquishCertificateArgs(args)
-    const r = await this.signer.relinquishCertificate(args)
-    return r
+    this.validateAuthAndArgs(args, sdk.validateRelinquishCertificateArgs)
+    const r = await this.storage.relinquishCertificate(args)
+    return { relinquished: true }
   }
 
   async proveCertificate(args: ProveCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ProveCertificateResult> {
     originator = sdk.validateOriginator(originator)
-    sdk.validateProveCertificateArgs(args)
-    const r = await this.signer.proveCertificate(args)
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateProveCertificateArgs)
+    const r = await proveCertificate(this, auth, vargs)
     return r
   }
 
   async discoverByIdentityKey(args: DiscoverByIdentityKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> {
     sdk.validateOriginator(originator)
-    sdk.validateDiscoverByIdentityKeyArgs(args)
-
-    // TODO: Probably does not get dispatched to signer?
-    const r = await this.signer.discoverByIdentityKey(args)
-
-    return r
+    this.validateAuthAndArgs(args, sdk.validateDiscoverByIdentityKeyArgs)
+    throw new Error('Method not implemented.')
   }
 
   async discoverByAttributes(args: DiscoverByAttributesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> {
     sdk.validateOriginator(originator)
-    sdk.validateDiscoverByAttributesArgs(args)
-
-    // TODO: Probably does not get dispatched to signer?
-    const r = await this.signer.discoverByAttributes(args)
-
-    return r
+    this.validateAuthAndArgs(args, sdk.validateDiscoverByAttributesArgs)
+    throw new Error('Method not implemented.')
   }
 
   //////////////////
@@ -268,13 +358,13 @@ export class Wallet implements WalletInterface {
 
   async createAction(args: CreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateActionResult> {
     sdk.validateOriginator(originator)
-    sdk.validateCreateActionArgs(args)
 
     if (!args.options) args.options = {}
     args.options.trustSelf ||= this.trustSelf
     args.options.knownTxids = this.getKnownTxids(args.options.knownTxids)
 
-    const r = await this.signer.createAction(args)
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateCreateActionArgs)
+    const r = await createAction(this, auth, vargs)
 
     if (r.signableTransaction) {
       const st = r.signableTransaction
@@ -293,38 +383,32 @@ export class Wallet implements WalletInterface {
 
   async signAction(args: SignActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<SignActionResult> {
     sdk.validateOriginator(originator)
-    sdk.validateSignActionArgs(args)
 
-    const r = await this.signer.signAction(args)
-
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateSignActionArgs)
+    const r = await signAction(this, auth, vargs)
     return r
   }
 
   async abortAction(args: AbortActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AbortActionResult> {
     sdk.validateOriginator(originator)
-    const vargs = sdk.validateAbortActionArgs(args)
 
-    const r = await this.signer.abortAction(vargs)
-
+    const { auth } = this.validateAuthAndArgs(args, sdk.validateAbortActionArgs)
+    const r = await this.storage.abortAction(args)
     return r
   }
 
   async internalizeAction(args: InternalizeActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<InternalizeActionResult> {
     sdk.validateOriginator(originator)
-    sdk.validateInternalizeActionArgs(args)
-
-    const r = await this.signer.internalizeAction(args)
-
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateInternalizeActionArgs)
+    const r = await internalizeAction(this, auth, args)
     return r
   }
 
   async relinquishOutput(args: RelinquishOutputArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishOutputResult> {
     sdk.validateOriginator(originator)
-    sdk.validateRelinquishOutputArgs(args)
-
-    const r = await this.signer.relinquishOutput(args)
-
-    return r
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateRelinquishOutputArgs)
+    const r = await this.storage.relinquishOutput(args)
+    return { relinquished: true }
   }
 
   async isAuthenticated(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> {
@@ -354,12 +438,29 @@ export class Wallet implements WalletInterface {
 
   async getNetwork(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> {
     sdk.validateOriginator(originator)
-    const chain = await this.signer.getChain()
-    return { network: toWalletNetwork(chain) }
+    return { network: toWalletNetwork(this.chain) }
   }
 
   async getVersion(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> {
     sdk.validateOriginator(originator)
     return { version: 'wallet-brc100-1.0.0' }
   }
+}
+
+export interface PendingStorageInput {
+  vin: number
+  derivationPrefix: string
+  derivationSuffix: string
+  unlockerPubKey?: string
+  sourceSatoshis: number
+  lockingScript: string
+}
+
+export interface PendingSignAction {
+  reference: string
+  dcr: sdk.StorageCreateActionResult
+  args: sdk.ValidCreateActionArgs
+  tx: BsvTransaction
+  amount: number
+  pdi: PendingStorageInput[]
 }

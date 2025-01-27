@@ -6,137 +6,54 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [AbortActionArgs](#interface-abortactionargs) | [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [StorageSyncReaderWriter](#interface-storagesyncreaderwriter) |
-| [AbortActionResult](#interface-abortactionresult) | [GetUtxoStatusResult](#interface-getutxostatusresult) | [SyncChunk](#interface-syncchunk) |
-| [AcquireCertificateArgs](#interface-acquirecertificateargs) | [GetVersionResult](#interface-getversionresult) | [TaskPurgeParams](#interface-taskpurgeparams) |
-| [AcquireCertificateResult](#interface-acquirecertificateresult) | [IdentityCertificate](#interface-identitycertificate) | [TestSetup1](#interface-testsetup1) |
-| [ArcMinerGetTxData](#interface-arcminergettxdata) | [IdentityCertifier](#interface-identitycertifier) | [TestWallet](#interface-testwallet) |
-| [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi) | [InternalizeActionArgs](#interface-internalizeactionargs) | [TestWalletOnly](#interface-testwalletonly) |
-| [ArcMinerPostTxsData](#interface-arcminerposttxsdata) | [InternalizeActionResult](#interface-internalizeactionresult) | [TrxToken](#interface-trxtoken) |
-| [ArcServiceConfig](#interface-arcserviceconfig) | [InternalizeOutput](#interface-internalizeoutput) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
-| [AuthId](#interface-authid) | [KeyLinkageResult](#interface-keylinkageresult) | [TuEnv](#interface-tuenv) |
-| [AuthenticatedResult](#interface-authenticatedresult) | [KeyPair](#interface-keypair) | [TxScriptOffsets](#interface-txscriptoffsets) |
-| [BaseBlockHeader](#interface-baseblockheader) | [ListActionsArgs](#interface-listactionsargs) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
-| [BasketInsertion](#interface-basketinsertion) | [ListActionsResult](#interface-listactionsresult) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
-| [BlockHeader](#interface-blockheader) | [ListCertificatesArgs](#interface-listcertificatesargs) | [ValidAbortActionArgs](#interface-validabortactionargs) |
-| [BsvExchangeRate](#interface-bsvexchangerate) | [ListCertificatesResult](#interface-listcertificatesresult) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
-| [CertificateResult](#interface-certificateresult) | [ListOutputsArgs](#interface-listoutputsargs) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
-| [CreateActionArgs](#interface-createactionargs) | [ListOutputsResult](#interface-listoutputsresult) | [ValidBasketInsertion](#interface-validbasketinsertion) |
-| [CreateActionInput](#interface-createactioninput) | [MonitorDaemonSetup](#interface-monitordaemonsetup) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
-| [CreateActionOptions](#interface-createactionoptions) | [MonitorOptions](#interface-monitoroptions) | [ValidCreateActionInput](#interface-validcreateactioninput) |
-| [CreateActionOutput](#interface-createactionoutput) | [OutPoint](#interface-outpoint) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
-| [CreateActionResult](#interface-createactionresult) | [Paged](#interface-paged) | [ValidCreateActionOutput](#interface-validcreateactionoutput) |
-| [CreateHmacArgs](#interface-createhmacargs) | [PendingSignAction](#interface-pendingsignaction) | [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs) |
-| [CreateHmacResult](#interface-createhmacresult) | [PendingStorageInput](#interface-pendingstorageinput) | [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs) |
-| [CreateSignatureArgs](#interface-createsignatureargs) | [PostBeefResult](#interface-postbeefresult) | [ValidInternalizeActionArgs](#interface-validinternalizeactionargs) |
-| [CreateSignatureResult](#interface-createsignatureresult) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [ValidInternalizeOutput](#interface-validinternalizeoutput) |
-| [DiscoverByAttributesArgs](#interface-discoverbyattributesargs) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [ValidListActionsArgs](#interface-validlistactionsargs) |
-| [DiscoverByIdentityKeyArgs](#interface-discoverbyidentitykeyargs) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [ValidListCertificatesArgs](#interface-validlistcertificatesargs) |
-| [DiscoverCertificatesResult](#interface-discovercertificatesresult) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [ValidListOutputsArgs](#interface-validlistoutputsargs) |
-| [DojoCommitNewTxResults](#interface-dojocommitnewtxresults) | [PostTxsResult](#interface-posttxsresult) | [ValidProcessActionArgs](#interface-validprocessactionargs) |
-| [EntityTimeStamp](#interface-entitytimestamp) | [ProcessSyncChunkResult](#interface-processsyncchunkresult) | [ValidProcessActionOptions](#interface-validprocessactionoptions) |
-| [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [ProveCertificateArgs](#interface-provecertificateargs) | [ValidProveCertificateArgs](#interface-validprovecertificateargs) |
-| [FiatExchangeRates](#interface-fiatexchangerates) | [ProveCertificateResult](#interface-provecertificateresult) | [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs) |
-| [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs) | [ProvenOrRawTx](#interface-provenorrawtx) | [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs) |
-| [FindCertificatesArgs](#interface-findcertificatesargs) | [PurgeParams](#interface-purgeparams) | [ValidSignActionArgs](#interface-validsignactionargs) |
-| [FindCommissionsArgs](#interface-findcommissionsargs) | [PurgeResults](#interface-purgeresults) | [ValidSignActionOptions](#interface-validsignactionoptions) |
-| [FindForUserSincePagedArgs](#interface-findforusersincepagedargs) | [RelinquishCertificateArgs](#interface-relinquishcertificateargs) | [ValidWalletPayment](#interface-validwalletpayment) |
-| [FindMonitorEventsArgs](#interface-findmonitoreventsargs) | [RelinquishCertificateResult](#interface-relinquishcertificateresult) | [ValidWalletSignerArgs](#interface-validwalletsignerargs) |
-| [FindOutputBasketsArgs](#interface-findoutputbasketsargs) | [RelinquishOutputArgs](#interface-relinquishoutputargs) | [VerifyHmacArgs](#interface-verifyhmacargs) |
-| [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs) | [RelinquishOutputResult](#interface-relinquishoutputresult) | [VerifyHmacResult](#interface-verifyhmacresult) |
-| [FindOutputTagsArgs](#interface-findoutputtagsargs) | [RequestSyncChunkArgs](#interface-requestsyncchunkargs) | [VerifySignatureArgs](#interface-verifysignatureargs) |
-| [FindOutputsArgs](#interface-findoutputsargs) | [RevealCounterpartyKeyLinkageArgs](#interface-revealcounterpartykeylinkageargs) | [VerifySignatureResult](#interface-verifysignatureresult) |
-| [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs) | [RevealCounterpartyKeyLinkageResult](#interface-revealcounterpartykeylinkageresult) | [Wallet](#interface-wallet) |
-| [FindProvenTxReqsArgs](#interface-findproventxreqsargs) | [RevealSpecificKeyLinkageArgs](#interface-revealspecifickeylinkageargs) | [WalletAction](#interface-walletaction) |
-| [FindProvenTxsArgs](#interface-findproventxsargs) | [RevealSpecificKeyLinkageResult](#interface-revealspecifickeylinkageresult) | [WalletActionInput](#interface-walletactioninput) |
-| [FindSincePagedArgs](#interface-findsincepagedargs) | [ScriptTemplateParamsSABPPP](#interface-scripttemplateparamssabppp) | [WalletActionOutput](#interface-walletactionoutput) |
-| [FindSyncStatesArgs](#interface-findsyncstatesargs) | [SendWithResult](#interface-sendwithresult) | [WalletCertificate](#interface-walletcertificate) |
-| [FindTransactionsArgs](#interface-findtransactionsargs) | [SignActionArgs](#interface-signactionargs) | [WalletCryptoObject](#interface-walletcryptoobject) |
-| [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs) | [SignActionOptions](#interface-signactionoptions) | [WalletDecryptArgs](#interface-walletdecryptargs) |
-| [FindTxLabelsArgs](#interface-findtxlabelsargs) | [SignActionResult](#interface-signactionresult) | [WalletDecryptResult](#interface-walletdecryptresult) |
-| [FindUsersArgs](#interface-findusersargs) | [SignActionSpend](#interface-signactionspend) | [WalletEncryptArgs](#interface-walletencryptargs) |
-| [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput) | [SignableTransaction](#interface-signabletransaction) | [WalletEncryptResult](#interface-walletencryptresult) |
-| [GenerateChangeSdkChangeOutput](#interface-generatechangesdkchangeoutput) | [StorageCreateActionResult](#interface-storagecreateactionresult) | [WalletEncryptionArgs](#interface-walletencryptionargs) |
-| [GenerateChangeSdkInput](#interface-generatechangesdkinput) | [StorageCreateTransactionSdkInput](#interface-storagecreatetransactionsdkinput) | [WalletErrorObject](#interface-walleterrorobject) |
-| [GenerateChangeSdkOutput](#interface-generatechangesdkoutput) | [StorageCreateTransactionSdkOutput](#interface-storagecreatetransactionsdkoutput) | [WalletOutput](#interface-walletoutput) |
-| [GenerateChangeSdkParams](#interface-generatechangesdkparams) | [StorageFeeModel](#interface-storagefeemodel) | [WalletPayment](#interface-walletpayment) |
-| [GenerateChangeSdkResult](#interface-generatechangesdkresult) | [StorageGetBeefOptions](#interface-storagegetbeefoptions) | [WalletServices](#interface-walletservices) |
-| [GenerateChangeSdkStorageChange](#interface-generatechangesdkstoragechange) | [StorageIdentity](#interface-storageidentity) | [WalletServicesOptions](#interface-walletservicesoptions) |
-| [GetHeaderArgs](#interface-getheaderargs) | [StorageInternalizeActionResult](#interface-storageinternalizeactionresult) | [WalletSigner](#interface-walletsigner) |
-| [GetHeaderResult](#interface-getheaderresult) | [StorageKnexOptions](#interface-storageknexoptions) | [WalletStorage](#interface-walletstorage) |
-| [GetHeightResult](#interface-getheightresult) | [StorageProcessActionArgs](#interface-storageprocessactionargs) | [WalletStorageProvider](#interface-walletstorageprovider) |
-| [GetMerklePathResult](#interface-getmerklepathresult) | [StorageProcessActionResults](#interface-storageprocessactionresults) | [WalletStorageReader](#interface-walletstoragereader) |
-| [GetNetworkResult](#interface-getnetworkresult) | [StorageProvenOrReq](#interface-storageprovenorreq) | [WalletStorageServerOptions](#interface-walletstorageserveroptions) |
-| [GetPublicKeyArgs](#interface-getpublickeyargs) | [StorageProviderOptions](#interface-storageprovideroptions) | [WalletStorageSync](#interface-walletstoragesync) |
-| [GetPublicKeyResult](#interface-getpublickeyresult) | [StorageReaderOptions](#interface-storagereaderoptions) | [WalletStorageWriter](#interface-walletstoragewriter) |
-| [GetRawTxResult](#interface-getrawtxresult) | [StorageReaderWriterOptions](#interface-storagereaderwriteroptions) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
-| [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [StorageSyncReader](#interface-storagesyncreader) |  |
-| [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [StorageSyncReaderOptions](#interface-storagesyncreaderoptions) |  |
+| [ArcMinerGetTxData](#interface-arcminergettxdata) | [GetUtxoStatusResult](#interface-getutxostatusresult) | [TrxToken](#interface-trxtoken) |
+| [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi) | [KeyPair](#interface-keypair) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
+| [ArcMinerPostTxsData](#interface-arcminerposttxsdata) | [MonitorDaemonSetup](#interface-monitordaemonsetup) | [TuEnv](#interface-tuenv) |
+| [ArcServiceConfig](#interface-arcserviceconfig) | [MonitorOptions](#interface-monitoroptions) | [TxScriptOffsets](#interface-txscriptoffsets) |
+| [AuthId](#interface-authid) | [OutPoint](#interface-outpoint) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
+| [BaseBlockHeader](#interface-baseblockheader) | [Paged](#interface-paged) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
+| [BlockHeader](#interface-blockheader) | [PendingSignAction](#interface-pendingsignaction) | [ValidAbortActionArgs](#interface-validabortactionargs) |
+| [BsvExchangeRate](#interface-bsvexchangerate) | [PendingStorageInput](#interface-pendingstorageinput) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
+| [CertOpsWallet](#interface-certopswallet) | [PostBeefResult](#interface-postbeefresult) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
+| [DojoCommitNewTxResults](#interface-dojocommitnewtxresults) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [ValidBasketInsertion](#interface-validbasketinsertion) |
+| [EntityTimeStamp](#interface-entitytimestamp) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
+| [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [ValidCreateActionInput](#interface-validcreateactioninput) |
+| [FiatExchangeRates](#interface-fiatexchangerates) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
+| [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs) | [PostTxsResult](#interface-posttxsresult) | [ValidCreateActionOutput](#interface-validcreateactionoutput) |
+| [FindCertificatesArgs](#interface-findcertificatesargs) | [ProcessSyncChunkResult](#interface-processsyncchunkresult) | [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs) |
+| [FindCommissionsArgs](#interface-findcommissionsargs) | [ProvenOrRawTx](#interface-provenorrawtx) | [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs) |
+| [FindForUserSincePagedArgs](#interface-findforusersincepagedargs) | [PurgeParams](#interface-purgeparams) | [ValidInternalizeActionArgs](#interface-validinternalizeactionargs) |
+| [FindMonitorEventsArgs](#interface-findmonitoreventsargs) | [PurgeResults](#interface-purgeresults) | [ValidInternalizeOutput](#interface-validinternalizeoutput) |
+| [FindOutputBasketsArgs](#interface-findoutputbasketsargs) | [RequestSyncChunkArgs](#interface-requestsyncchunkargs) | [ValidListActionsArgs](#interface-validlistactionsargs) |
+| [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs) | [ScriptTemplateParamsSABPPP](#interface-scripttemplateparamssabppp) | [ValidListCertificatesArgs](#interface-validlistcertificatesargs) |
+| [FindOutputTagsArgs](#interface-findoutputtagsargs) | [StorageCreateActionResult](#interface-storagecreateactionresult) | [ValidListOutputsArgs](#interface-validlistoutputsargs) |
+| [FindOutputsArgs](#interface-findoutputsargs) | [StorageCreateTransactionSdkInput](#interface-storagecreatetransactionsdkinput) | [ValidProcessActionArgs](#interface-validprocessactionargs) |
+| [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs) | [StorageCreateTransactionSdkOutput](#interface-storagecreatetransactionsdkoutput) | [ValidProcessActionOptions](#interface-validprocessactionoptions) |
+| [FindProvenTxReqsArgs](#interface-findproventxreqsargs) | [StorageFeeModel](#interface-storagefeemodel) | [ValidProveCertificateArgs](#interface-validprovecertificateargs) |
+| [FindProvenTxsArgs](#interface-findproventxsargs) | [StorageGetBeefOptions](#interface-storagegetbeefoptions) | [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs) |
+| [FindSincePagedArgs](#interface-findsincepagedargs) | [StorageIdentity](#interface-storageidentity) | [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs) |
+| [FindSyncStatesArgs](#interface-findsyncstatesargs) | [StorageInternalizeActionResult](#interface-storageinternalizeactionresult) | [ValidSignActionArgs](#interface-validsignactionargs) |
+| [FindTransactionsArgs](#interface-findtransactionsargs) | [StorageKnexOptions](#interface-storageknexoptions) | [ValidSignActionOptions](#interface-validsignactionoptions) |
+| [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs) | [StorageProcessActionArgs](#interface-storageprocessactionargs) | [ValidWalletPayment](#interface-validwalletpayment) |
+| [FindTxLabelsArgs](#interface-findtxlabelsargs) | [StorageProcessActionResults](#interface-storageprocessactionresults) | [ValidWalletSignerArgs](#interface-validwalletsignerargs) |
+| [FindUsersArgs](#interface-findusersargs) | [StorageProvenOrReq](#interface-storageprovenorreq) | [WalletArgs](#interface-walletargs) |
+| [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput) | [StorageProviderOptions](#interface-storageprovideroptions) | [WalletServices](#interface-walletservices) |
+| [GenerateChangeSdkChangeOutput](#interface-generatechangesdkchangeoutput) | [StorageReaderOptions](#interface-storagereaderoptions) | [WalletServicesOptions](#interface-walletservicesoptions) |
+| [GenerateChangeSdkInput](#interface-generatechangesdkinput) | [StorageReaderWriterOptions](#interface-storagereaderwriteroptions) | [WalletSigner](#interface-walletsigner) |
+| [GenerateChangeSdkOutput](#interface-generatechangesdkoutput) | [StorageSyncReader](#interface-storagesyncreader) | [WalletStorage](#interface-walletstorage) |
+| [GenerateChangeSdkParams](#interface-generatechangesdkparams) | [StorageSyncReaderOptions](#interface-storagesyncreaderoptions) | [WalletStorageProvider](#interface-walletstorageprovider) |
+| [GenerateChangeSdkResult](#interface-generatechangesdkresult) | [StorageSyncReaderWriter](#interface-storagesyncreaderwriter) | [WalletStorageReader](#interface-walletstoragereader) |
+| [GenerateChangeSdkStorageChange](#interface-generatechangesdkstoragechange) | [SyncChunk](#interface-syncchunk) | [WalletStorageServerOptions](#interface-walletstorageserveroptions) |
+| [GetMerklePathResult](#interface-getmerklepathresult) | [TaskPurgeParams](#interface-taskpurgeparams) | [WalletStorageSync](#interface-walletstoragesync) |
+| [GetRawTxResult](#interface-getrawtxresult) | [TestSetup1](#interface-testsetup1) | [WalletStorageWriter](#interface-walletstoragewriter) |
+| [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TestSetup2](#interface-testsetup2) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
+| [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TestWallet](#interface-testwallet) |  |
+| [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [TestWalletOnly](#interface-testwalletonly) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
 
-### Interface: AbortActionArgs
-
-```ts
-export interface AbortActionArgs {
-    reference: Base64String;
-}
-```
-
-See also: [Base64String](#type-base64string)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: AbortActionResult
-
-```ts
-export interface AbortActionResult {
-    aborted: boolean;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: AcquireCertificateArgs
-
-```ts
-export interface AcquireCertificateArgs {
-    type: Base64String;
-    certifier: PubKeyHex;
-    acquisitionProtocol: AcquisitionProtocol;
-    fields: Record<CertificateFieldNameUnder50Bytes, string>;
-    serialNumber?: Base64String;
-    revocationOutpoint?: OutpointString;
-    signature?: HexString;
-    certifierUrl?: string;
-    keyringRevealer?: KeyringRevealer;
-    keyringForSubject?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
-    privileged?: BooleanDefaultFalse;
-    privilegedReason?: DescriptionString5to50Bytes;
-}
-```
-
-See also: [AcquisitionProtocol](#type-acquisitionprotocol), [Base64String](#type-base64string), [BooleanDefaultFalse](#type-booleandefaultfalse), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [KeyringRevealer](#type-keyringrevealer), [OutpointString](#type-outpointstring), [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: AcquireCertificateResult
-
-```ts
-export interface AcquireCertificateResult extends WalletCertificate {
-}
-```
-
-See also: [WalletCertificate](#interface-walletcertificate)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Interface: ArcMinerGetTxData
 
 ```ts
@@ -206,7 +123,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface ArcServiceConfig {
     name: string;
     url: string;
-    arcConfig: bsv.ArcConfig;
+    arcConfig: ArcConfig;
 }
 ```
 
@@ -219,17 +136,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface AuthId {
     identityKey: string;
     userId?: number;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: AuthenticatedResult
-
-```ts
-export interface AuthenticatedResult {
-    authenticated: boolean;
 }
 ```
 
@@ -311,21 +217,6 @@ version: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: BasketInsertion
-
-```ts
-export interface BasketInsertion {
-    basket: BasketStringUnder300Bytes;
-    customInstructions?: string;
-    tags?: OutputTagStringUnder300Bytes[];
-}
-```
-
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [OutputTagStringUnder300Bytes](#type-outputtagstringunder300bytes)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Interface: BlockHeader
 
 A `BaseBlockHeader` extended with its computed hash and height in its chain.
@@ -377,208 +268,15 @@ export interface BsvExchangeRate {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: CertificateResult
+### Interface: CertOpsWallet
 
 ```ts
-export interface CertificateResult extends WalletCertificate {
-    keyring: Record<CertificateFieldNameUnder50Bytes, Base64String>;
-    verifier?: string;
+export interface CertOpsWallet {
+    getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult>;
+    encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult>;
+    decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult>;
 }
 ```
-
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [WalletCertificate](#interface-walletcertificate)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateActionArgs
-
-```ts
-export interface CreateActionArgs {
-    description: DescriptionString5to50Bytes;
-    inputBEEF?: BEEF;
-    inputs?: CreateActionInput[];
-    outputs?: CreateActionOutput[];
-    lockTime?: PositiveIntegerOrZero;
-    version?: PositiveIntegerOrZero;
-    labels?: LabelStringUnder300Bytes[];
-    options?: CreateActionOptions;
-}
-```
-
-See also: [BEEF](#type-beef), [CreateActionInput](#interface-createactioninput), [CreateActionOptions](#interface-createactionoptions), [CreateActionOutput](#interface-createactionoutput), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [LabelStringUnder300Bytes](#type-labelstringunder300bytes), [PositiveIntegerOrZero](#type-positiveintegerorzero)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateActionInput
-
-```ts
-export interface CreateActionInput {
-    outpoint: OutpointString;
-    inputDescription: DescriptionString5to50Bytes;
-    unlockingScript?: HexString;
-    unlockingScriptLength?: PositiveInteger;
-    sequenceNumber?: PositiveIntegerOrZero;
-}
-```
-
-See also: [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [OutpointString](#type-outpointstring), [PositiveInteger](#type-positiveinteger), [PositiveIntegerOrZero](#type-positiveintegerorzero)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateActionOptions
-
-```ts
-export interface CreateActionOptions {
-    signAndProcess?: BooleanDefaultTrue;
-    acceptDelayedBroadcast?: BooleanDefaultTrue;
-    trustSelf?: TrustSelf;
-    knownTxids?: TXIDHexString[];
-    returnTXIDOnly?: BooleanDefaultFalse;
-    noSend?: BooleanDefaultFalse;
-    noSendChange?: OutpointString[];
-    sendWith?: TXIDHexString[];
-    randomizeOutputs?: BooleanDefaultTrue;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [OutpointString](#type-outpointstring), [TXIDHexString](#type-txidhexstring), [TrustSelf](#type-trustself)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateActionOutput
-
-```ts
-export interface CreateActionOutput {
-    lockingScript: HexString;
-    satoshis: SatoshiValue;
-    outputDescription: DescriptionString5to50Bytes;
-    basket?: BasketStringUnder300Bytes;
-    customInstructions?: string;
-    tags?: OutputTagStringUnder300Bytes[];
-}
-```
-
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [OutputTagStringUnder300Bytes](#type-outputtagstringunder300bytes), [SatoshiValue](#type-satoshivalue)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateActionResult
-
-```ts
-export interface CreateActionResult {
-    txid?: TXIDHexString;
-    tx?: AtomicBEEF;
-    noSendChange?: OutpointString[];
-    sendWithResults?: SendWithResult[];
-    signableTransaction?: SignableTransaction;
-}
-```
-
-See also: [AtomicBEEF](#type-atomicbeef), [OutpointString](#type-outpointstring), [SendWithResult](#interface-sendwithresult), [SignableTransaction](#interface-signabletransaction), [TXIDHexString](#type-txidhexstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateHmacArgs
-
-```ts
-export interface CreateHmacArgs extends WalletEncryptionArgs {
-    data: Byte[];
-}
-```
-
-See also: [Byte](#type-byte), [WalletEncryptionArgs](#interface-walletencryptionargs)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateHmacResult
-
-```ts
-export interface CreateHmacResult {
-    hmac: Byte[];
-}
-```
-
-See also: [Byte](#type-byte)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateSignatureArgs
-
-```ts
-export interface CreateSignatureArgs extends WalletEncryptionArgs {
-    data?: Byte[];
-    hashToDirectlySign?: Byte[];
-}
-```
-
-See also: [Byte](#type-byte), [WalletEncryptionArgs](#interface-walletencryptionargs)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: CreateSignatureResult
-
-```ts
-export interface CreateSignatureResult {
-    signature: Byte[];
-}
-```
-
-See also: [Byte](#type-byte)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: DiscoverByAttributesArgs
-
-```ts
-export interface DiscoverByAttributesArgs {
-    attributes: Record<CertificateFieldNameUnder50Bytes, string>;
-    limit?: PositiveIntegerDefault10Max10000;
-    offset?: PositiveIntegerOrZero;
-    seekPermission?: BooleanDefaultTrue;
-}
-```
-
-See also: [BooleanDefaultTrue](#type-booleandefaulttrue), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: DiscoverByIdentityKeyArgs
-
-```ts
-export interface DiscoverByIdentityKeyArgs {
-    identityKey: PubKeyHex;
-    limit?: PositiveIntegerDefault10Max10000;
-    offset?: PositiveIntegerOrZero;
-    seekPermission?: BooleanDefaultTrue;
-}
-```
-
-See also: [BooleanDefaultTrue](#type-booleandefaulttrue), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero), [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: DiscoverCertificatesResult
-
-```ts
-export interface DiscoverCertificatesResult {
-    totalCertificates: PositiveIntegerOrZero;
-    certificates: IdentityCertificate[];
-}
-```
-
-See also: [IdentityCertificate](#interface-identitycertificate), [PositiveIntegerOrZero](#type-positiveintegerorzero)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -591,6 +289,8 @@ export interface DojoCommitNewTxResults {
     log?: string;
 }
 ```
+
+See also: [log](#variable-log)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -948,7 +648,7 @@ export interface GenerateChangeSdkParams {
 }
 ```
 
-See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [GenerateChangeSdkOutput](#interface-generatechangesdkoutput), [StorageFeeModel](#interface-storagefeemodel)
+See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [GenerateChangeSdkOutput](#interface-generatechangesdkoutput), [StorageFeeModel](#interface-storagefeemodel), [log](#variable-log)
 
 <details>
 
@@ -1036,45 +736,6 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetHeaderArgs
-
-```ts
-export interface GetHeaderArgs {
-    height: PositiveInteger;
-}
-```
-
-See also: [PositiveInteger](#type-positiveinteger)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: GetHeaderResult
-
-```ts
-export interface GetHeaderResult {
-    header: HexString;
-}
-```
-
-See also: [HexString](#type-hexstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: GetHeightResult
-
-```ts
-export interface GetHeightResult {
-    height: PositiveInteger;
-}
-```
-
-See also: [PositiveInteger](#type-positiveinteger)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Interface: GetMerklePathResult
 
 Properties on result returned from `WalletServices` function `getMerkleProof`.
@@ -1082,7 +743,7 @@ Properties on result returned from `WalletServices` function `getMerkleProof`.
 ```ts
 export interface GetMerklePathResult {
     name?: string;
-    merklePath?: bsv.MerklePath;
+    merklePath?: MerklePath;
     header?: BlockHeader;
     error?: sdk.WalletError;
 }
@@ -1109,7 +770,7 @@ Multiple proofs may be returned when a transaction also appears in
 one or more orphaned blocks
 
 ```ts
-merklePath?: bsv.MerklePath
+merklePath?: MerklePath
 ```
 
 #### Property name
@@ -1121,50 +782,6 @@ name?: string
 ```
 
 </details>
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: GetNetworkResult
-
-```ts
-export interface GetNetworkResult {
-    network: WalletNetwork;
-}
-```
-
-See also: [WalletNetwork](#type-walletnetwork)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: GetPublicKeyArgs
-
-When `identityKey` is true, `WalletEncryptionArgs` are not used.
-
-When `identityKey` is undefined, `WalletEncryptionArgs` are required.
-
-```ts
-export interface GetPublicKeyArgs extends Partial<WalletEncryptionArgs> {
-    identityKey?: true;
-    forSelf?: BooleanDefaultFalse;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [WalletEncryptionArgs](#interface-walletencryptionargs)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: GetPublicKeyResult
-
-```ts
-export interface GetPublicKeyResult {
-    publicKey: PubKeyHex;
-}
-```
-
-See also: [PubKeyHex](#type-pubkeyhex)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1246,7 +863,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface GetReqsAndBeefResult {
-    beef: bsv.Beef;
+    beef: Beef;
     details: GetReqsAndBeefDetail[];
 }
 ```
@@ -1385,111 +1002,6 @@ status: "success" | "error"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetVersionResult
-
-```ts
-export interface GetVersionResult {
-    version: VersionString7To30Bytes;
-}
-```
-
-See also: [VersionString7To30Bytes](#type-versionstring7to30bytes)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: IdentityCertificate
-
-```ts
-export interface IdentityCertificate extends WalletCertificate {
-    certifierInfo: IdentityCertifier;
-    publiclyRevealedKeyring: Record<CertificateFieldNameUnder50Bytes, Base64String>;
-    decryptedFields: Record<CertificateFieldNameUnder50Bytes, string>;
-}
-```
-
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [IdentityCertifier](#interface-identitycertifier), [WalletCertificate](#interface-walletcertificate)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: IdentityCertifier
-
-```ts
-export interface IdentityCertifier {
-    name: EntityNameStringMax100Bytes;
-    iconUrl: EntityIconURLStringMax500Bytes;
-    description: DescriptionString5to50Bytes;
-    trust: PositiveIntegerMax10;
-}
-```
-
-See also: [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [EntityIconURLStringMax500Bytes](#type-entityiconurlstringmax500bytes), [EntityNameStringMax100Bytes](#type-entitynamestringmax100bytes), [PositiveIntegerMax10](#type-positiveintegermax10)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: InternalizeActionArgs
-
-```ts
-export interface InternalizeActionArgs {
-    tx: AtomicBEEF;
-    outputs: InternalizeOutput[];
-    description: DescriptionString5to50Bytes;
-    labels?: LabelStringUnder300Bytes[];
-    seekPermission?: BooleanDefaultTrue;
-}
-```
-
-See also: [AtomicBEEF](#type-atomicbeef), [BooleanDefaultTrue](#type-booleandefaulttrue), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [InternalizeOutput](#interface-internalizeoutput), [LabelStringUnder300Bytes](#type-labelstringunder300bytes)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: InternalizeActionResult
-
-```ts
-export interface InternalizeActionResult {
-    accepted: true;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: InternalizeOutput
-
-```ts
-export interface InternalizeOutput {
-    outputIndex: PositiveIntegerOrZero;
-    protocol: "wallet payment" | "basket insertion";
-    paymentRemittance?: WalletPayment;
-    insertionRemittance?: BasketInsertion;
-}
-```
-
-See also: [BasketInsertion](#interface-basketinsertion), [PositiveIntegerOrZero](#type-positiveintegerorzero), [WalletPayment](#interface-walletpayment)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: KeyLinkageResult
-
-```ts
-export interface KeyLinkageResult {
-    encryptedLinkage: Byte[];
-    encryptedLinkageProof: Byte[];
-    prover: PubKeyHex;
-    verifier: PubKeyHex;
-    counterparty: PubKeyHex;
-}
-```
-
-See also: [Byte](#type-byte), [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Interface: KeyPair
 
 ```ts
@@ -1498,112 +1010,6 @@ export interface KeyPair {
     publicKey: string;
 }
 ```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: ListActionsArgs
-
-```ts
-export interface ListActionsArgs {
-    labels: LabelStringUnder300Bytes[];
-    labelQueryMode?: "any" | "all";
-    includeLabels?: BooleanDefaultFalse;
-    includeInputs?: BooleanDefaultFalse;
-    includeInputSourceLockingScripts?: BooleanDefaultFalse;
-    includeInputUnlockingScripts?: BooleanDefaultFalse;
-    includeOutputs?: BooleanDefaultFalse;
-    includeOutputLockingScripts?: BooleanDefaultFalse;
-    limit?: PositiveIntegerDefault10Max10000;
-    offset?: PositiveIntegerOrZero;
-    seekPermission?: BooleanDefaultTrue;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [LabelStringUnder300Bytes](#type-labelstringunder300bytes), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: ListActionsResult
-
-```ts
-export interface ListActionsResult {
-    totalActions: PositiveIntegerOrZero;
-    actions: WalletAction[];
-}
-```
-
-See also: [PositiveIntegerOrZero](#type-positiveintegerorzero), [WalletAction](#interface-walletaction)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: ListCertificatesArgs
-
-```ts
-export interface ListCertificatesArgs {
-    certifiers: PubKeyHex[];
-    types: Base64String[];
-    limit?: PositiveIntegerDefault10Max10000;
-    offset?: PositiveIntegerOrZero;
-    privileged?: BooleanDefaultFalse;
-    privilegedReason?: DescriptionString5to50Bytes;
-}
-```
-
-See also: [Base64String](#type-base64string), [BooleanDefaultFalse](#type-booleandefaultfalse), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero), [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: ListCertificatesResult
-
-```ts
-export interface ListCertificatesResult {
-    totalCertificates: PositiveIntegerOrZero;
-    certificates: CertificateResult[];
-}
-```
-
-See also: [CertificateResult](#interface-certificateresult), [PositiveIntegerOrZero](#type-positiveintegerorzero)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: ListOutputsArgs
-
-```ts
-export interface ListOutputsArgs {
-    basket: BasketStringUnder300Bytes;
-    tags?: OutputTagStringUnder300Bytes[];
-    tagQueryMode?: "all" | "any";
-    include?: "locking scripts" | "entire transactions";
-    includeCustomInstructions?: BooleanDefaultFalse;
-    includeTags?: BooleanDefaultFalse;
-    includeLabels?: BooleanDefaultFalse;
-    limit?: PositiveIntegerDefault10Max10000;
-    offset?: PositiveIntegerOrZero;
-    seekPermission?: BooleanDefaultTrue;
-}
-```
-
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [OutputTagStringUnder300Bytes](#type-outputtagstringunder300bytes), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: ListOutputsResult
-
-```ts
-export interface ListOutputsResult {
-    totalOutputs: PositiveIntegerOrZero;
-    BEEF?: BEEF;
-    outputs: WalletOutput[];
-}
-```
-
-See also: [BEEF](#type-beef), [PositiveIntegerOrZero](#type-positiveintegerorzero), [WalletOutput](#interface-walletoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1721,7 +1127,7 @@ export interface PendingSignAction {
     reference: string;
     dcr: sdk.StorageCreateActionResult;
     args: sdk.ValidCreateActionArgs;
-    tx: bsv.Transaction;
+    tx: BsvTransaction;
     amount: number;
     pdi: PendingStorageInput[];
 }
@@ -1823,14 +1229,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export interface PostReqsToNetworkResult {
     status: "success" | "error";
-    beef: bsv.Beef;
+    beef: Beef;
     details: PostReqsToNetworkDetails[];
     pbr?: sdk.PostBeefResult;
     log: string;
 }
 ```
 
-See also: [PostBeefResult](#interface-postbeefresult), [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails)
+See also: [PostBeefResult](#interface-postbeefresult), [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails), [log](#variable-log)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1844,7 +1250,7 @@ export interface PostTxResultForTxid {
     alreadyKnown?: boolean;
     blockHash?: string;
     blockHeight?: number;
-    merklePath?: bsv.MerklePath;
+    merklePath?: MerklePath;
     data?: object;
 }
 ```
@@ -1943,38 +1349,6 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ProveCertificateArgs
-
-```ts
-export interface ProveCertificateArgs {
-    certificate: Partial<WalletCertificate>;
-    fieldsToReveal: CertificateFieldNameUnder50Bytes[];
-    verifier: PubKeyHex;
-    privileged?: BooleanDefaultFalse;
-    privilegedReason?: DescriptionString5to50Bytes;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [PubKeyHex](#type-pubkeyhex), [WalletCertificate](#interface-walletcertificate)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: ProveCertificateResult
-
-```ts
-export interface ProveCertificateResult {
-    keyringForVerifier: Record<CertificateFieldNameUnder50Bytes, Base64String>;
-    certificate: WalletCertificate;
-    verifier: PubKeyHex;
-}
-```
-
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [PubKeyHex](#type-pubkeyhex), [WalletCertificate](#interface-walletcertificate)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Interface: ProvenOrRawTx
 
 ```ts
@@ -2046,56 +1420,7 @@ export interface PurgeResults {
 }
 ```
 
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: RelinquishCertificateArgs
-
-```ts
-export interface RelinquishCertificateArgs {
-    type: Base64String;
-    serialNumber: Base64String;
-    certifier: PubKeyHex;
-}
-```
-
-See also: [Base64String](#type-base64string), [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: RelinquishCertificateResult
-
-```ts
-export interface RelinquishCertificateResult {
-    relinquished: true;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: RelinquishOutputArgs
-
-```ts
-export interface RelinquishOutputArgs {
-    basket: BasketStringUnder300Bytes;
-    output: OutpointString;
-}
-```
-
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [OutpointString](#type-outpointstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: RelinquishOutputResult
-
-```ts
-export interface RelinquishOutputResult {
-    relinquished: true;
-}
-```
+See also: [log](#variable-log)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2204,165 +1529,15 @@ toStorageIdentityKey: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: RevealCounterpartyKeyLinkageArgs
-
-```ts
-export interface RevealCounterpartyKeyLinkageArgs {
-    counterparty: PubKeyHex;
-    verifier: PubKeyHex;
-    privileged?: BooleanDefaultFalse;
-    privilegedReason?: DescriptionString5to50Bytes;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: RevealCounterpartyKeyLinkageResult
-
-```ts
-export interface RevealCounterpartyKeyLinkageResult extends KeyLinkageResult {
-    revelationTime: ISOTimestampString;
-}
-```
-
-See also: [ISOTimestampString](#type-isotimestampstring), [KeyLinkageResult](#interface-keylinkageresult)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: RevealSpecificKeyLinkageArgs
-
-```ts
-export interface RevealSpecificKeyLinkageArgs {
-    counterparty: WalletCounterparty;
-    verifier: PubKeyHex;
-    protocolID: WalletProtocol;
-    keyID: KeyIDStringUnder800Bytes;
-    privilegedReason?: DescriptionString5to50Bytes;
-    privileged?: BooleanDefaultFalse;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [KeyIDStringUnder800Bytes](#type-keyidstringunder800bytes), [PubKeyHex](#type-pubkeyhex), [WalletCounterparty](#type-walletcounterparty), [WalletProtocol](#type-walletprotocol)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: RevealSpecificKeyLinkageResult
-
-```ts
-export interface RevealSpecificKeyLinkageResult extends KeyLinkageResult {
-    protocolID: WalletProtocol;
-    keyID: KeyIDStringUnder800Bytes;
-    proofType: Byte;
-}
-```
-
-See also: [Byte](#type-byte), [KeyIDStringUnder800Bytes](#type-keyidstringunder800bytes), [KeyLinkageResult](#interface-keylinkageresult), [WalletProtocol](#type-walletprotocol)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Interface: ScriptTemplateParamsSABPPP
 
 ```ts
 export interface ScriptTemplateParamsSABPPP {
     derivationPrefix?: string;
     derivationSuffix?: string;
-    keyDeriver: bsv.KeyDeriverApi;
+    keyDeriver: KeyDeriverApi;
 }
 ```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: SendWithResult
-
-```ts
-export interface SendWithResult {
-    txid: TXIDHexString;
-    status: SendWithResultStatus;
-}
-```
-
-See also: [SendWithResultStatus](#type-sendwithresultstatus), [TXIDHexString](#type-txidhexstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: SignActionArgs
-
-```ts
-export interface SignActionArgs {
-    spends: Record<PositiveIntegerOrZero, SignActionSpend>;
-    reference: Base64String;
-    options?: SignActionOptions;
-}
-```
-
-See also: [Base64String](#type-base64string), [PositiveIntegerOrZero](#type-positiveintegerorzero), [SignActionOptions](#interface-signactionoptions), [SignActionSpend](#interface-signactionspend)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: SignActionOptions
-
-```ts
-export interface SignActionOptions {
-    acceptDelayedBroadcast?: BooleanDefaultTrue;
-    returnTXIDOnly?: BooleanDefaultFalse;
-    noSend?: BooleanDefaultFalse;
-    sendWith?: TXIDHexString[];
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [TXIDHexString](#type-txidhexstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: SignActionResult
-
-```ts
-export interface SignActionResult {
-    txid?: TXIDHexString;
-    tx?: AtomicBEEF;
-    sendWithResults?: SendWithResult[];
-}
-```
-
-See also: [AtomicBEEF](#type-atomicbeef), [SendWithResult](#interface-sendwithresult), [TXIDHexString](#type-txidhexstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: SignActionSpend
-
-```ts
-export interface SignActionSpend {
-    unlockingScript: HexString;
-    sequenceNumber?: PositiveIntegerOrZero;
-}
-```
-
-See also: [HexString](#type-hexstring), [PositiveIntegerOrZero](#type-positiveintegerorzero)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: SignableTransaction
-
-```ts
-export interface SignableTransaction {
-    tx: AtomicBEEF;
-    reference: Base64String;
-}
-```
-
-See also: [AtomicBEEF](#type-atomicbeef), [Base64String](#type-base64string)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2472,7 +1647,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface StorageGetBeefOptions {
     trustSelf?: "known";
     knownTxids?: string[];
-    mergeToBeef?: bsv.Beef | number[];
+    mergeToBeef?: Beef | number[];
     ignoreStorage?: boolean;
     ignoreServices?: boolean;
     ignoreNewProven?: boolean;
@@ -2521,7 +1696,7 @@ knownTxids?: string[]
 optional. If defined, raw transactions and merkle paths required by txid are merged to this instance and returned. Otherwise a new Beef is constructed and returned.
 
 ```ts
-mergeToBeef?: bsv.Beef | number[]
+mergeToBeef?: Beef | number[]
 ```
 
 #### Property minProofLevel
@@ -2582,14 +1757,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Interface: StorageInternalizeActionResult
 
 ```ts
-export interface StorageInternalizeActionResult extends bsv.InternalizeActionResult {
+export interface StorageInternalizeActionResult extends InternalizeActionResult {
     isMerge: boolean;
     txid: string;
     satoshis: number;
 }
 ```
-
-See also: [InternalizeActionResult](#interface-internalizeactionresult)
 
 <details>
 
@@ -2667,6 +1840,8 @@ export interface StorageProcessActionArgs {
 }
 ```
 
+See also: [log](#variable-log)
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -2674,12 +1849,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface StorageProcessActionResults {
-    sendWithResults?: bsv.SendWithResult[];
+    sendWithResults?: SendWithResult[];
     log?: string;
 }
 ```
 
-See also: [SendWithResult](#interface-sendwithresult)
+See also: [log](#variable-log)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2703,11 +1878,11 @@ export interface StorageProviderOptions extends StorageReaderWriterOptions {
     chain: sdk.Chain;
     feeModel: sdk.StorageFeeModel;
     commissionSatoshis: number;
-    commissionPubKeyHex?: bsv.PubKeyHex;
+    commissionPubKeyHex?: PubKeyHex;
 }
 ```
 
-See also: [Chain](#type-chain), [PubKeyHex](#type-pubkeyhex), [StorageFeeModel](#interface-storagefeemodel), [StorageReaderWriterOptions](#interface-storagereaderwriteroptions)
+See also: [Chain](#type-chain), [StorageFeeModel](#interface-storagefeemodel), [StorageReaderWriterOptions](#interface-storagereaderwriteroptions)
 
 <details>
 
@@ -2720,9 +1895,8 @@ The actual locking script for each commission will use a public key derived
 from this key by information stored in the commissions table.
 
 ```ts
-commissionPubKeyHex?: bsv.PubKeyHex
+commissionPubKeyHex?: PubKeyHex
 ```
-See also: [PubKeyHex](#type-pubkeyhex)
 
 #### Property commissionSatoshis
 
@@ -3019,6 +2193,16 @@ export interface TestSetup1 {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+### Interface: TestSetup2
+
+```ts
+export interface TestSetup2 {
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ### Interface: TestWallet
 
 ```ts
@@ -3026,19 +2210,18 @@ export interface TestWallet<T> extends TestWalletOnly {
     activeStorage: StorageKnex;
     setup?: T;
     userId: number;
-    rootKey: bsv.PrivateKey;
+    rootKey: PrivateKey;
     identityKey: string;
-    keyDeriver: bsv.KeyDeriver;
+    keyDeriver: KeyDeriver;
     chain: sdk.Chain;
     storage: WalletStorageManager;
-    signer: WalletSigner;
     services: Services;
     monitor: Monitor;
     wallet: Wallet;
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [StorageKnex](#class-storageknex), [TestWalletOnly](#interface-testwalletonly), [Wallet](#class-wallet), [WalletSigner](#class-walletsigner), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [StorageKnex](#class-storageknex), [TestWalletOnly](#interface-testwalletonly), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3047,19 +2230,18 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface TestWalletOnly {
-    rootKey: bsv.PrivateKey;
+    rootKey: PrivateKey;
     identityKey: string;
-    keyDeriver: bsv.KeyDeriver;
+    keyDeriver: KeyDeriver;
     chain: sdk.Chain;
     storage: WalletStorageManager;
-    signer: WalletSigner;
     services: Services;
     monitor: Monitor;
     wallet: Wallet;
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [Wallet](#class-wallet), [WalletSigner](#class-walletsigner), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3163,7 +2345,7 @@ export interface UpdateProvenTxReqWithNewProvenTxResult {
 }
 ```
 
-See also: [ProvenTxReqStatus](#type-proventxreqstatus)
+See also: [ProvenTxReqStatus](#type-proventxreqstatus), [log](#variable-log)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3172,11 +2354,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidAbortActionArgs extends ValidWalletSignerArgs {
-    reference: bsv.Base64String;
+    reference: Base64String;
 }
 ```
 
-See also: [Base64String](#type-base64string), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3185,22 +2367,22 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidAcquireCertificateArgs extends ValidWalletSignerArgs {
-    acquisitionProtocol: bsv.AcquisitionProtocol;
-    type: bsv.Base64String;
-    serialNumber?: bsv.Base64String;
-    certifier: bsv.PubKeyHex;
-    revocationOutpoint?: bsv.OutpointString;
-    fields: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-    signature?: bsv.HexString;
+    acquisitionProtocol: AcquisitionProtocol;
+    type: Base64String;
+    serialNumber?: Base64String;
+    certifier: PubKeyHex;
+    revocationOutpoint?: OutpointString;
+    fields: Record<CertificateFieldNameUnder50Bytes, string>;
+    signature?: HexString;
     certifierUrl?: string;
-    keyringRevealer?: bsv.KeyringRevealer;
-    keyringForSubject?: Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>;
+    keyringRevealer?: KeyringRevealer;
+    keyringForSubject?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
     privileged: boolean;
-    privilegedReason?: bsv.DescriptionString5to50Bytes;
+    privilegedReason?: DescriptionString5to50Bytes;
 }
 ```
 
-See also: [AcquisitionProtocol](#type-acquisitionprotocol), [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [KeyringRevealer](#type-keyringrevealer), [OutpointString](#type-outpointstring), [PubKeyHex](#type-pubkeyhex), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3209,21 +2391,21 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidAcquireDirectCertificateArgs extends ValidWalletSignerArgs {
-    type: bsv.Base64String;
-    serialNumber: bsv.Base64String;
-    certifier: bsv.PubKeyHex;
-    revocationOutpoint: bsv.OutpointString;
-    fields: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-    signature: bsv.HexString;
-    subject: bsv.PubKeyHex;
-    keyringRevealer: bsv.KeyringRevealer;
-    keyringForSubject: Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>;
+    type: Base64String;
+    serialNumber: Base64String;
+    certifier: PubKeyHex;
+    revocationOutpoint: OutpointString;
+    fields: Record<CertificateFieldNameUnder50Bytes, string>;
+    signature: HexString;
+    subject: PubKeyHex;
+    keyringRevealer: KeyringRevealer;
+    keyringForSubject: Record<CertificateFieldNameUnder50Bytes, Base64String>;
     privileged: boolean;
-    privilegedReason?: bsv.DescriptionString5to50Bytes;
+    privilegedReason?: DescriptionString5to50Bytes;
 }
 ```
 
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [KeyringRevealer](#type-keyringrevealer), [OutpointString](#type-outpointstring), [PubKeyHex](#type-pubkeyhex), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 <details>
 
@@ -3235,9 +2417,8 @@ validated to an empty string, must be provided by wallet and must
 match expectations of keyringForSubject
 
 ```ts
-subject: bsv.PubKeyHex
+subject: PubKeyHex
 ```
-See also: [PubKeyHex](#type-pubkeyhex)
 
 </details>
 
@@ -3248,13 +2429,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidBasketInsertion {
-    basket: bsv.BasketStringUnder300Bytes;
+    basket: BasketStringUnder300Bytes;
     customInstructions?: string;
-    tags: bsv.BasketStringUnder300Bytes[];
+    tags: BasketStringUnder300Bytes[];
 }
 ```
-
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3263,8 +2442,8 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidCreateActionArgs extends ValidProcessActionArgs {
-    description: bsv.DescriptionString5to50Bytes;
-    inputBEEF?: bsv.BEEF;
+    description: DescriptionString5to50Bytes;
+    inputBEEF?: BEEF;
     inputs: sdk.ValidCreateActionInput[];
     outputs: sdk.ValidCreateActionOutput[];
     lockTime: number;
@@ -3275,7 +2454,7 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
 }
 ```
 
-See also: [BEEF](#type-beef), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [ValidCreateActionInput](#interface-validcreateactioninput), [ValidCreateActionOptions](#interface-validcreateactionoptions), [ValidCreateActionOutput](#interface-validcreateactionoutput), [ValidProcessActionArgs](#interface-validprocessactionargs)
+See also: [ValidCreateActionInput](#interface-validcreateactioninput), [ValidCreateActionOptions](#interface-validcreateactionoptions), [ValidCreateActionOutput](#interface-validcreateactionoutput), [ValidProcessActionArgs](#interface-validprocessactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3285,14 +2464,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export interface ValidCreateActionInput {
     outpoint: OutPoint;
-    inputDescription: bsv.DescriptionString5to50Bytes;
-    sequenceNumber: bsv.PositiveIntegerOrZero;
-    unlockingScript?: bsv.HexString;
-    unlockingScriptLength: bsv.PositiveInteger;
+    inputDescription: DescriptionString5to50Bytes;
+    sequenceNumber: PositiveIntegerOrZero;
+    unlockingScript?: HexString;
+    unlockingScriptLength: PositiveInteger;
 }
 ```
 
-See also: [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [OutPoint](#interface-outpoint), [PositiveInteger](#type-positiveinteger), [PositiveIntegerOrZero](#type-positiveintegerorzero)
+See also: [OutPoint](#interface-outpoint)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3302,14 +2481,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export interface ValidCreateActionOptions extends ValidProcessActionOptions {
     signAndProcess: boolean;
-    trustSelf?: bsv.TrustSelf;
-    knownTxids: bsv.TXIDHexString[];
+    trustSelf?: TrustSelf;
+    knownTxids: TXIDHexString[];
     noSendChange: OutPoint[];
     randomizeOutputs: boolean;
 }
 ```
 
-See also: [OutPoint](#interface-outpoint), [TXIDHexString](#type-txidhexstring), [TrustSelf](#type-trustself), [ValidProcessActionOptions](#interface-validprocessactionoptions)
+See also: [OutPoint](#interface-outpoint), [ValidProcessActionOptions](#interface-validprocessactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3318,16 +2497,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidCreateActionOutput {
-    lockingScript: bsv.HexString;
-    satoshis: bsv.SatoshiValue;
-    outputDescription: bsv.DescriptionString5to50Bytes;
-    basket?: bsv.BasketStringUnder300Bytes;
+    lockingScript: HexString;
+    satoshis: SatoshiValue;
+    outputDescription: DescriptionString5to50Bytes;
+    basket?: BasketStringUnder300Bytes;
     customInstructions?: string;
-    tags: bsv.BasketStringUnder300Bytes[];
+    tags: BasketStringUnder300Bytes[];
 }
 ```
-
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [SatoshiValue](#type-satoshivalue)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3336,14 +2513,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidDiscoverByAttributesArgs extends ValidWalletSignerArgs {
-    attributes: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-    limit: bsv.PositiveIntegerDefault10Max10000;
-    offset: bsv.PositiveIntegerOrZero;
+    attributes: Record<CertificateFieldNameUnder50Bytes, string>;
+    limit: PositiveIntegerDefault10Max10000;
+    offset: PositiveIntegerOrZero;
     seekPermission: boolean;
 }
 ```
 
-See also: [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3352,14 +2529,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidDiscoverByIdentityKeyArgs extends ValidWalletSignerArgs {
-    identityKey: bsv.PubKeyHex;
-    limit: bsv.PositiveIntegerDefault10Max10000;
-    offset: bsv.PositiveIntegerOrZero;
+    identityKey: PubKeyHex;
+    limit: PositiveIntegerDefault10Max10000;
+    offset: PositiveIntegerOrZero;
     seekPermission: boolean;
 }
 ```
 
-See also: [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero), [PubKeyHex](#type-pubkeyhex), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3368,15 +2545,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
-    tx: bsv.AtomicBEEF;
-    outputs: bsv.InternalizeOutput[];
-    description: bsv.DescriptionString5to50Bytes;
-    labels: bsv.LabelStringUnder300Bytes[];
-    seekPermission: bsv.BooleanDefaultTrue;
+    tx: AtomicBEEF;
+    outputs: InternalizeOutput[];
+    description: DescriptionString5to50Bytes;
+    labels: LabelStringUnder300Bytes[];
+    seekPermission: BooleanDefaultTrue;
 }
 ```
 
-See also: [AtomicBEEF](#type-atomicbeef), [BooleanDefaultTrue](#type-booleandefaulttrue), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [InternalizeOutput](#interface-internalizeoutput), [LabelStringUnder300Bytes](#type-labelstringunder300bytes), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3385,14 +2562,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidInternalizeOutput {
-    outputIndex: bsv.PositiveIntegerOrZero;
+    outputIndex: PositiveIntegerOrZero;
     protocol: "wallet payment" | "basket insertion";
     paymentRemittance?: ValidWalletPayment;
     insertionRemittance?: ValidBasketInsertion;
 }
 ```
 
-See also: [PositiveIntegerOrZero](#type-positiveintegerorzero), [ValidBasketInsertion](#interface-validbasketinsertion), [ValidWalletPayment](#interface-validwalletpayment)
+See also: [ValidBasketInsertion](#interface-validbasketinsertion), [ValidWalletPayment](#interface-validwalletpayment)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3401,21 +2578,21 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidListActionsArgs extends ValidWalletSignerArgs {
-    labels: bsv.LabelStringUnder300Bytes[];
+    labels: LabelStringUnder300Bytes[];
     labelQueryMode: "any" | "all";
-    includeLabels: bsv.BooleanDefaultFalse;
-    includeInputs: bsv.BooleanDefaultFalse;
-    includeInputSourceLockingScripts: bsv.BooleanDefaultFalse;
-    includeInputUnlockingScripts: bsv.BooleanDefaultFalse;
-    includeOutputs: bsv.BooleanDefaultFalse;
-    includeOutputLockingScripts: bsv.BooleanDefaultFalse;
-    limit: bsv.PositiveIntegerDefault10Max10000;
-    offset: bsv.PositiveIntegerOrZero;
-    seekPermission: bsv.BooleanDefaultTrue;
+    includeLabels: BooleanDefaultFalse;
+    includeInputs: BooleanDefaultFalse;
+    includeInputSourceLockingScripts: BooleanDefaultFalse;
+    includeInputUnlockingScripts: BooleanDefaultFalse;
+    includeOutputs: BooleanDefaultFalse;
+    includeOutputLockingScripts: BooleanDefaultFalse;
+    limit: PositiveIntegerDefault10Max10000;
+    offset: PositiveIntegerOrZero;
+    seekPermission: BooleanDefaultTrue;
 }
 ```
 
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [LabelStringUnder300Bytes](#type-labelstringunder300bytes), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3425,23 +2602,23 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export interface ValidListCertificatesArgs extends ValidWalletSignerArgs {
     partial?: {
-        type?: bsv.Base64String;
-        serialNumber?: bsv.Base64String;
-        certifier?: bsv.PubKeyHex;
-        subject?: bsv.PubKeyHex;
-        revocationOutpoint?: bsv.OutpointString;
-        signature?: bsv.HexString;
+        type?: Base64String;
+        serialNumber?: Base64String;
+        certifier?: PubKeyHex;
+        subject?: PubKeyHex;
+        revocationOutpoint?: OutpointString;
+        signature?: HexString;
     };
-    certifiers: bsv.PubKeyHex[];
-    types: bsv.Base64String[];
-    limit: bsv.PositiveIntegerDefault10Max10000;
-    offset: bsv.PositiveIntegerOrZero;
-    privileged: bsv.BooleanDefaultFalse;
-    privilegedReason?: bsv.DescriptionString5to50Bytes;
+    certifiers: PubKeyHex[];
+    types: Base64String[];
+    limit: PositiveIntegerDefault10Max10000;
+    offset: PositiveIntegerOrZero;
+    privileged: BooleanDefaultFalse;
+    privilegedReason?: DescriptionString5to50Bytes;
 }
 ```
 
-See also: [Base64String](#type-base64string), [BooleanDefaultFalse](#type-booleandefaultfalse), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [OutpointString](#type-outpointstring), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero), [PubKeyHex](#type-pubkeyhex), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3450,22 +2627,22 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidListOutputsArgs extends ValidWalletSignerArgs {
-    basket: bsv.BasketStringUnder300Bytes;
-    tags: bsv.OutputTagStringUnder300Bytes[];
+    basket: BasketStringUnder300Bytes;
+    tags: OutputTagStringUnder300Bytes[];
     tagQueryMode: "all" | "any";
     includeLockingScripts: boolean;
     includeTransactions: boolean;
-    includeCustomInstructions: bsv.BooleanDefaultFalse;
-    includeTags: bsv.BooleanDefaultFalse;
-    includeLabels: bsv.BooleanDefaultFalse;
-    limit: bsv.PositiveIntegerDefault10Max10000;
-    offset: bsv.PositiveIntegerOrZero;
-    seekPermission: bsv.BooleanDefaultTrue;
+    includeCustomInstructions: BooleanDefaultFalse;
+    includeTags: BooleanDefaultFalse;
+    includeLabels: BooleanDefaultFalse;
+    limit: PositiveIntegerDefault10Max10000;
+    offset: PositiveIntegerOrZero;
+    seekPermission: BooleanDefaultTrue;
     knownTxids: string[];
 }
 ```
 
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [OutputTagStringUnder300Bytes](#type-outputtagstringunder300bytes), [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000), [PositiveIntegerOrZero](#type-positiveintegerorzero), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3491,14 +2668,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidProcessActionOptions {
-    acceptDelayedBroadcast: bsv.BooleanDefaultTrue;
-    returnTXIDOnly: bsv.BooleanDefaultFalse;
-    noSend: bsv.BooleanDefaultFalse;
-    sendWith: bsv.TXIDHexString[];
+    acceptDelayedBroadcast: BooleanDefaultTrue;
+    returnTXIDOnly: BooleanDefaultFalse;
+    noSend: BooleanDefaultFalse;
+    sendWith: TXIDHexString[];
 }
 ```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [TXIDHexString](#type-txidhexstring)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3507,20 +2682,20 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidProveCertificateArgs extends ValidWalletSignerArgs {
-    type?: bsv.Base64String;
-    serialNumber?: bsv.Base64String;
-    certifier?: bsv.PubKeyHex;
-    subject?: bsv.PubKeyHex;
-    revocationOutpoint?: bsv.OutpointString;
-    signature?: bsv.HexString;
-    fieldsToReveal: bsv.CertificateFieldNameUnder50Bytes[];
-    verifier: bsv.PubKeyHex;
+    type?: Base64String;
+    serialNumber?: Base64String;
+    certifier?: PubKeyHex;
+    subject?: PubKeyHex;
+    revocationOutpoint?: OutpointString;
+    signature?: HexString;
+    fieldsToReveal: CertificateFieldNameUnder50Bytes[];
+    verifier: PubKeyHex;
     privileged: boolean;
-    privilegedReason?: bsv.DescriptionString5to50Bytes;
+    privilegedReason?: DescriptionString5to50Bytes;
 }
 ```
 
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [OutpointString](#type-outpointstring), [PubKeyHex](#type-pubkeyhex), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3529,13 +2704,13 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidRelinquishCertificateArgs extends ValidWalletSignerArgs {
-    type: bsv.Base64String;
-    serialNumber: bsv.Base64String;
-    certifier: bsv.PubKeyHex;
+    type: Base64String;
+    serialNumber: Base64String;
+    certifier: PubKeyHex;
 }
 ```
 
-See also: [Base64String](#type-base64string), [PubKeyHex](#type-pubkeyhex), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3544,12 +2719,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidRelinquishOutputArgs extends ValidWalletSignerArgs {
-    basket: bsv.BasketStringUnder300Bytes;
-    output: bsv.OutpointString;
+    basket: BasketStringUnder300Bytes;
+    output: OutpointString;
 }
 ```
 
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [OutpointString](#type-outpointstring), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3558,13 +2733,13 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidSignActionArgs extends ValidProcessActionArgs {
-    spends: Record<bsv.PositiveIntegerOrZero, bsv.SignActionSpend>;
-    reference: bsv.Base64String;
+    spends: Record<PositiveIntegerOrZero, SignActionSpend>;
+    reference: Base64String;
     options: sdk.ValidSignActionOptions;
 }
 ```
 
-See also: [Base64String](#type-base64string), [PositiveIntegerOrZero](#type-positiveintegerorzero), [SignActionSpend](#interface-signactionspend), [ValidProcessActionArgs](#interface-validprocessactionargs), [ValidSignActionOptions](#interface-validsignactionoptions)
+See also: [ValidProcessActionArgs](#interface-validprocessactionargs), [ValidSignActionOptions](#interface-validsignactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3576,11 +2751,11 @@ export interface ValidSignActionOptions extends ValidProcessActionOptions {
     acceptDelayedBroadcast: boolean;
     returnTXIDOnly: boolean;
     noSend: boolean;
-    sendWith: bsv.TXIDHexString[];
+    sendWith: TXIDHexString[];
 }
 ```
 
-See also: [TXIDHexString](#type-txidhexstring), [ValidProcessActionOptions](#interface-validprocessactionoptions)
+See also: [ValidProcessActionOptions](#interface-validprocessactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3589,13 +2764,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidWalletPayment {
-    derivationPrefix: bsv.Base64String;
-    derivationSuffix: bsv.Base64String;
-    senderIdentityKey: bsv.PubKeyHex;
+    derivationPrefix: Base64String;
+    derivationSuffix: Base64String;
+    senderIdentityKey: PubKeyHex;
 }
 ```
-
-See also: [Base64String](#type-base64string), [PubKeyHex](#type-pubkeyhex)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3610,591 +2783,20 @@ export interface ValidWalletSignerArgs {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: VerifyHmacArgs
+### Interface: WalletArgs
 
 ```ts
-export interface VerifyHmacArgs extends WalletEncryptionArgs {
-    data: Byte[];
-    hmac: Byte[];
+export interface WalletArgs {
+    chain: sdk.Chain;
+    keyDeriver: KeyDeriver;
+    storage: WalletStorageManager;
+    services?: sdk.WalletServices;
+    monitor?: Monitor;
+    privilegedKeyManager?: sdk.PrivilegedKeyManager;
 }
 ```
 
-See also: [Byte](#type-byte), [WalletEncryptionArgs](#interface-walletencryptionargs)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: VerifyHmacResult
-
-```ts
-export interface VerifyHmacResult {
-    valid: boolean;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: VerifySignatureArgs
-
-```ts
-export interface VerifySignatureArgs extends WalletEncryptionArgs {
-    data?: Byte[];
-    hashToDirectlyVerify?: Byte[];
-    signature: Byte[];
-    forSelf?: BooleanDefaultFalse;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [Byte](#type-byte), [WalletEncryptionArgs](#interface-walletencryptionargs)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: VerifySignatureResult
-
-```ts
-export interface VerifySignatureResult {
-    valid: true;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: Wallet
-
-The Wallet interface defines a wallet capable of various tasks including transaction creation and signing,
-encryption, decryption, identity certificate management, identity verification, and communication
-with applications as per the BRC standards. This interface allows applications to interact with
-the wallet for a range of functionalities aligned with the Babbage architectural principles.
-
-Error Handling
-
-Every method of the `Wallet` interface has a return value of the form `Promise<object>`.
-When an error occurs, an exception object may be thrown which must conform to the `WalletErrorObject` interface.
-Serialization layers can rely on the `isError` property being unique to error objects to
-deserialize and rethrow `WalletErrorObject` conforming objects.
-
-```ts
-export interface Wallet extends WalletCryptoObject {
-    createAction: (args: CreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<CreateActionResult>;
-    signAction: (args: SignActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<SignActionResult>;
-    abortAction: (args: AbortActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AbortActionResult>;
-    listActions: (args: ListActionsArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ListActionsResult>;
-    internalizeAction: (args: InternalizeActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<InternalizeActionResult>;
-    listOutputs: (args: ListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ListOutputsResult>;
-    relinquishOutput: (args: RelinquishOutputArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RelinquishOutputResult>;
-    acquireCertificate: (args: AcquireCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AcquireCertificateResult>;
-    listCertificates: (args: ListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ListCertificatesResult>;
-    proveCertificate: (args: ProveCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ProveCertificateResult>;
-    relinquishCertificate: (args: RelinquishCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RelinquishCertificateResult>;
-    discoverByIdentityKey: (args: DiscoverByIdentityKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<DiscoverCertificatesResult>;
-    discoverByAttributes: (args: DiscoverByAttributesArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<DiscoverCertificatesResult>;
-    isAuthenticated: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AuthenticatedResult>;
-    waitForAuthentication: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AuthenticatedResult>;
-    getHeight: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetHeightResult>;
-    getHeaderForHeight: (args: GetHeaderArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetHeaderResult>;
-    getNetwork: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetNetworkResult>;
-    getVersion: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetVersionResult>;
-}
-```
-
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AcquireCertificateArgs](#interface-acquirecertificateargs), [AcquireCertificateResult](#interface-acquirecertificateresult), [AuthenticatedResult](#interface-authenticatedresult), [CreateActionArgs](#interface-createactionargs), [CreateActionResult](#interface-createactionresult), [DiscoverByAttributesArgs](#interface-discoverbyattributesargs), [DiscoverByIdentityKeyArgs](#interface-discoverbyidentitykeyargs), [DiscoverCertificatesResult](#interface-discovercertificatesresult), [GetHeaderArgs](#interface-getheaderargs), [GetHeaderResult](#interface-getheaderresult), [GetHeightResult](#interface-getheightresult), [GetNetworkResult](#interface-getnetworkresult), [GetVersionResult](#interface-getversionresult), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesArgs](#interface-listcertificatesargs), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [ProveCertificateArgs](#interface-provecertificateargs), [ProveCertificateResult](#interface-provecertificateresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishCertificateResult](#interface-relinquishcertificateresult), [RelinquishOutputArgs](#interface-relinquishoutputargs), [RelinquishOutputResult](#interface-relinquishoutputresult), [SignActionArgs](#interface-signactionargs), [SignActionResult](#interface-signactionresult), [WalletCryptoObject](#interface-walletcryptoobject), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [proveCertificate](#function-provecertificate), [signAction](#function-signaction)
-
-<details>
-
-<summary>Interface Wallet Details</summary>
-
-#### Property abortAction
-
-Aborts a transaction that is in progress and has not yet been finalized or sent to the network.
-
-```ts
-abortAction: (args: AbortActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AbortActionResult>
-```
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property acquireCertificate
-
-Acquires an identity certificate, whether by acquiring one from the certifier or by directly receiving it.
-
-```ts
-acquireCertificate: (args: AcquireCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AcquireCertificateResult>
-```
-See also: [AcquireCertificateArgs](#interface-acquirecertificateargs), [AcquireCertificateResult](#interface-acquirecertificateresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property createAction
-
-Creates a new Bitcoin transaction based on the provided inputs, outputs, labels, locks, and other options.
-
-```ts
-createAction: (args: CreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<CreateActionResult>
-```
-See also: [CreateActionArgs](#interface-createactionargs), [CreateActionResult](#interface-createactionresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property discoverByAttributes
-
-Discovers identity certificates belonging to other users, where the documents contain specific attributes, issued by a trusted entity.
-
-```ts
-discoverByAttributes: (args: DiscoverByAttributesArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<DiscoverCertificatesResult>
-```
-See also: [DiscoverByAttributesArgs](#interface-discoverbyattributesargs), [DiscoverCertificatesResult](#interface-discovercertificatesresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property discoverByIdentityKey
-
-Discovers identity certificates, issued to a given identity key by a trusted entity.
-
-```ts
-discoverByIdentityKey: (args: DiscoverByIdentityKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<DiscoverCertificatesResult>
-```
-See also: [DiscoverByIdentityKeyArgs](#interface-discoverbyidentitykeyargs), [DiscoverCertificatesResult](#interface-discovercertificatesresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property getHeaderForHeight
-
-Retrieves the block header of a block at a specified height.
-
-```ts
-getHeaderForHeight: (args: GetHeaderArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetHeaderResult>
-```
-See also: [GetHeaderArgs](#interface-getheaderargs), [GetHeaderResult](#interface-getheaderresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property getHeight
-
-Retrieves the current height of the blockchain.
-
-```ts
-getHeight: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetHeightResult>
-```
-See also: [GetHeightResult](#interface-getheightresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property getNetwork
-
-Retrieves the Bitcoin network the client is using (mainnet or testnet).
-
-```ts
-getNetwork: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetNetworkResult>
-```
-See also: [GetNetworkResult](#interface-getnetworkresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property getVersion
-
-Retrieves the current version string of the wallet.
-
-```ts
-getVersion: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetVersionResult>
-```
-See also: [GetVersionResult](#interface-getversionresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property internalizeAction
-
-Submits a transaction to be internalized and optionally labeled, outputs paid to the wallet balance, inserted into baskets, and/or tagged.
-
-```ts
-internalizeAction: (args: InternalizeActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<InternalizeActionResult>
-```
-See also: [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property isAuthenticated
-
-Checks the authentication status of the user.
-
-```ts
-isAuthenticated: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AuthenticatedResult>
-```
-See also: [AuthenticatedResult](#interface-authenticatedresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property listActions
-
-Lists all transactions matching the specified labels.
-
-```ts
-listActions: (args: ListActionsArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ListActionsResult>
-```
-See also: [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property listCertificates
-
-Lists identity certificates belonging to the user, filtered by certifier(s) and type(s).
-
-```ts
-listCertificates: (args: ListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ListCertificatesResult>
-```
-See also: [ListCertificatesArgs](#interface-listcertificatesargs), [ListCertificatesResult](#interface-listcertificatesresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property listOutputs
-
-Lists the spendable outputs kept within a specific basket, optionally tagged with specific labels.
-
-```ts
-listOutputs: (args: ListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ListOutputsResult>
-```
-See also: [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property proveCertificate
-
-Proves select fields of an identity certificate, as specified, when requested by a verifier.
-
-```ts
-proveCertificate: (args: ProveCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<ProveCertificateResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [ProveCertificateArgs](#interface-provecertificateargs), [ProveCertificateResult](#interface-provecertificateresult)
-
-#### Property relinquishCertificate
-
-Relinquishes an identity certificate, removing it from the wallet regardless of whether the revocation outpoint has become spent.
-
-```ts
-relinquishCertificate: (args: RelinquishCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RelinquishCertificateResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishCertificateResult](#interface-relinquishcertificateresult)
-
-#### Property relinquishOutput
-
-Relinquish an output out of a basket, removing it from tracking without spending it.
-
-```ts
-relinquishOutput: (args: RelinquishOutputArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RelinquishOutputResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [RelinquishOutputArgs](#interface-relinquishoutputargs), [RelinquishOutputResult](#interface-relinquishoutputresult)
-
-#### Property signAction
-
-Signs a transaction previously created using `createAction`.
-
-```ts
-signAction: (args: SignActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<SignActionResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [SignActionArgs](#interface-signactionargs), [SignActionResult](#interface-signactionresult)
-
-#### Property waitForAuthentication
-
-Continuously waits until the user is authenticated, returning the result once confirmed.
-
-```ts
-waitForAuthentication: (args: {}, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<AuthenticatedResult>
-```
-See also: [AuthenticatedResult](#interface-authenticatedresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-</details>
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletAction
-
-```ts
-export interface WalletAction {
-    txid: TXIDHexString;
-    satoshis: SatoshiValue;
-    status: ActionStatus;
-    isOutgoing: boolean;
-    description: DescriptionString5to50Bytes;
-    labels?: LabelStringUnder300Bytes[];
-    version: PositiveIntegerOrZero;
-    lockTime: PositiveIntegerOrZero;
-    inputs?: WalletActionInput[];
-    outputs?: WalletActionOutput[];
-}
-```
-
-See also: [ActionStatus](#type-actionstatus), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [LabelStringUnder300Bytes](#type-labelstringunder300bytes), [PositiveIntegerOrZero](#type-positiveintegerorzero), [SatoshiValue](#type-satoshivalue), [TXIDHexString](#type-txidhexstring), [WalletActionInput](#interface-walletactioninput), [WalletActionOutput](#interface-walletactionoutput)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletActionInput
-
-```ts
-export interface WalletActionInput {
-    sourceOutpoint: OutpointString;
-    sourceSatoshis: SatoshiValue;
-    sourceLockingScript?: HexString;
-    unlockingScript?: HexString;
-    inputDescription: DescriptionString5to50Bytes;
-    sequenceNumber: PositiveIntegerOrZero;
-}
-```
-
-See also: [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [OutpointString](#type-outpointstring), [PositiveIntegerOrZero](#type-positiveintegerorzero), [SatoshiValue](#type-satoshivalue)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletActionOutput
-
-```ts
-export interface WalletActionOutput {
-    satoshis: SatoshiValue;
-    lockingScript?: HexString;
-    spendable: boolean;
-    customInstructions?: string;
-    tags: OutputTagStringUnder300Bytes[];
-    outputIndex: PositiveIntegerOrZero;
-    outputDescription: DescriptionString5to50Bytes;
-    basket: BasketStringUnder300Bytes;
-}
-```
-
-See also: [BasketStringUnder300Bytes](#type-basketstringunder300bytes), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [HexString](#type-hexstring), [OutputTagStringUnder300Bytes](#type-outputtagstringunder300bytes), [PositiveIntegerOrZero](#type-positiveintegerorzero), [SatoshiValue](#type-satoshivalue)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletCertificate
-
-```ts
-export interface WalletCertificate {
-    type: Base64String;
-    subject: PubKeyHex;
-    serialNumber: Base64String;
-    certifier: PubKeyHex;
-    revocationOutpoint: OutpointString;
-    signature: HexString;
-    fields: Record<CertificateFieldNameUnder50Bytes, string>;
-}
-```
-
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [HexString](#type-hexstring), [OutpointString](#type-outpointstring), [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletCryptoObject
-
-The WalletCryptoObject interface defines a wallet cryptographic capabilities including:
-key derivation, encryption, decryption, hmac creation and verification, signature generation and verification
-
-Error Handling
-
-Every method of the `Wallet` interface has a return value of the form `Promise<object>`.
-When an error occurs, an exception object may be thrown which must conform to the `WalletErrorObject` interface.
-Serialization layers can rely on the `isError` property being unique to error objects to
-deserialize and rethrow `WalletErrorObject` conforming objects.
-
-```ts
-export interface WalletCryptoObject {
-    getPublicKey: (args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetPublicKeyResult>;
-    revealCounterpartyKeyLinkage: (args: RevealCounterpartyKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RevealCounterpartyKeyLinkageResult>;
-    revealSpecificKeyLinkage: (args: RevealSpecificKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RevealSpecificKeyLinkageResult>;
-    encrypt: (args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<WalletEncryptResult>;
-    decrypt: (args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<WalletDecryptResult>;
-    createHmac: (args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<CreateHmacResult>;
-    verifyHmac: (args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<VerifyHmacResult>;
-    createSignature: (args: CreateSignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<CreateSignatureResult>;
-    verifySignature: (args: VerifySignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<VerifySignatureResult>;
-}
-```
-
-See also: [CreateHmacArgs](#interface-createhmacargs), [CreateHmacResult](#interface-createhmacresult), [CreateSignatureArgs](#interface-createsignatureargs), [CreateSignatureResult](#interface-createsignatureresult), [GetPublicKeyArgs](#interface-getpublickeyargs), [GetPublicKeyResult](#interface-getpublickeyresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [RevealCounterpartyKeyLinkageArgs](#interface-revealcounterpartykeylinkageargs), [RevealCounterpartyKeyLinkageResult](#interface-revealcounterpartykeylinkageresult), [RevealSpecificKeyLinkageArgs](#interface-revealspecifickeylinkageargs), [RevealSpecificKeyLinkageResult](#interface-revealspecifickeylinkageresult), [VerifyHmacArgs](#interface-verifyhmacargs), [VerifyHmacResult](#interface-verifyhmacresult), [VerifySignatureArgs](#interface-verifysignatureargs), [VerifySignatureResult](#interface-verifysignatureresult), [WalletDecryptArgs](#interface-walletdecryptargs), [WalletDecryptResult](#interface-walletdecryptresult), [WalletEncryptArgs](#interface-walletencryptargs), [WalletEncryptResult](#interface-walletencryptresult)
-
-<details>
-
-<summary>Interface WalletCryptoObject Details</summary>
-
-#### Property createHmac
-
-Creates an HMAC (Hash-based Message Authentication Code) based on the provided data, protocol, key ID, counterparty, and other factors.
-
-```ts
-createHmac: (args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<CreateHmacResult>
-```
-See also: [CreateHmacArgs](#interface-createhmacargs), [CreateHmacResult](#interface-createhmacresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property createSignature
-
-Creates a digital signature for the provided data or hash using a specific protocol, key, and optionally considering privilege and counterparty.
-
-```ts
-createSignature: (args: CreateSignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<CreateSignatureResult>
-```
-See also: [CreateSignatureArgs](#interface-createsignatureargs), [CreateSignatureResult](#interface-createsignatureresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property decrypt
-
-Decrypts the provided ciphertext using derived keys, based on the protocol ID, key ID, counterparty, and other factors.
-
-```ts
-decrypt: (args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<WalletDecryptResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [WalletDecryptArgs](#interface-walletdecryptargs), [WalletDecryptResult](#interface-walletdecryptresult)
-
-#### Property encrypt
-
-Encrypts the provided plaintext data using derived keys, based on the protocol ID, key ID, counterparty, and other factors.
-
-```ts
-encrypt: (args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<WalletEncryptResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [WalletEncryptArgs](#interface-walletencryptargs), [WalletEncryptResult](#interface-walletencryptresult)
-
-#### Property getPublicKey
-
-Retrieves a derived or identity public key based on the requested protocol, key ID, counterparty, and other factors.
-
-```ts
-getPublicKey: (args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<GetPublicKeyResult>
-```
-See also: [GetPublicKeyArgs](#interface-getpublickeyargs), [GetPublicKeyResult](#interface-getpublickeyresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes)
-
-#### Property revealCounterpartyKeyLinkage
-
-Reveals the key linkage between ourselves and a counterparty, to a particular verifier, across all interactions with the counterparty.
-
-```ts
-revealCounterpartyKeyLinkage: (args: RevealCounterpartyKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RevealCounterpartyKeyLinkageResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [RevealCounterpartyKeyLinkageArgs](#interface-revealcounterpartykeylinkageargs), [RevealCounterpartyKeyLinkageResult](#interface-revealcounterpartykeylinkageresult)
-
-#### Property revealSpecificKeyLinkage
-
-Reveals the key linkage between ourselves and a counterparty, to a particular verifier, with respect to a specific interaction.
-
-```ts
-revealSpecificKeyLinkage: (args: RevealSpecificKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<RevealSpecificKeyLinkageResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [RevealSpecificKeyLinkageArgs](#interface-revealspecifickeylinkageargs), [RevealSpecificKeyLinkageResult](#interface-revealspecifickeylinkageresult)
-
-#### Property verifyHmac
-
-Verifies an HMAC (Hash-based Message Authentication Code) based on the provided data, protocol, key ID, counterparty, and other factors.
-
-```ts
-verifyHmac: (args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<VerifyHmacResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [VerifyHmacArgs](#interface-verifyhmacargs), [VerifyHmacResult](#interface-verifyhmacresult)
-
-#### Property verifySignature
-
-Verifies a digital signature for the provided data or hash using a specific protocol, key, and optionally considering privilege and counterparty.
-
-```ts
-verifySignature: (args: VerifySignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes) => Promise<VerifySignatureResult>
-```
-See also: [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [VerifySignatureArgs](#interface-verifysignatureargs), [VerifySignatureResult](#interface-verifysignatureresult)
-
-</details>
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletDecryptArgs
-
-```ts
-export interface WalletDecryptArgs extends WalletEncryptionArgs {
-    ciphertext: Byte[];
-}
-```
-
-See also: [Byte](#type-byte), [WalletEncryptionArgs](#interface-walletencryptionargs)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletDecryptResult
-
-```ts
-export interface WalletDecryptResult {
-    plaintext: Byte[];
-}
-```
-
-See also: [Byte](#type-byte)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletEncryptArgs
-
-```ts
-export interface WalletEncryptArgs extends WalletEncryptionArgs {
-    plaintext: Byte[];
-}
-```
-
-See also: [Byte](#type-byte), [WalletEncryptionArgs](#interface-walletencryptionargs)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletEncryptResult
-
-```ts
-export interface WalletEncryptResult {
-    ciphertext: Byte[];
-}
-```
-
-See also: [Byte](#type-byte)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletEncryptionArgs
-
-```ts
-export interface WalletEncryptionArgs {
-    protocolID: WalletProtocol;
-    keyID: KeyIDStringUnder800Bytes;
-    counterparty?: WalletCounterparty;
-    privileged?: BooleanDefaultFalse;
-    privilegedReason?: DescriptionString5to50Bytes;
-    seekPermission?: BooleanDefaultTrue;
-}
-```
-
-See also: [BooleanDefaultFalse](#type-booleandefaultfalse), [BooleanDefaultTrue](#type-booleandefaulttrue), [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes), [KeyIDStringUnder800Bytes](#type-keyidstringunder800bytes), [WalletCounterparty](#type-walletcounterparty), [WalletProtocol](#type-walletprotocol)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletErrorObject
-
-Every method of the `Wallet` interface has a return value of the form `Promise<object>`.
-When errors occur, an exception object may be thrown which must conform to the `WalletErrorObject` interface.
-Serialization layers can rely on the `isError` property being unique to error objects.
-Deserialization should rethrow `WalletErrorObject` conforming objects.
-
-```ts
-export interface WalletErrorObject extends Error {
-    isError: true;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletOutput
-
-```ts
-export interface WalletOutput {
-    satoshis: SatoshiValue;
-    lockingScript?: HexString;
-    spendable: boolean;
-    customInstructions?: string;
-    tags?: OutputTagStringUnder300Bytes[];
-    outpoint: OutpointString;
-    labels?: LabelStringUnder300Bytes[];
-}
-```
-
-See also: [HexString](#type-hexstring), [LabelStringUnder300Bytes](#type-labelstringunder300bytes), [OutpointString](#type-outpointstring), [OutputTagStringUnder300Bytes](#type-outputtagstringunder300bytes), [SatoshiValue](#type-satoshivalue)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Interface: WalletPayment
-
-```ts
-export interface WalletPayment {
-    derivationPrefix: Base64String;
-    derivationSuffix: Base64String;
-    senderIdentityKey: PubKeyHex;
-}
-```
-
-See also: [Base64String](#type-base64string), [PubKeyHex](#type-pubkeyhex)
+See also: [Chain](#type-chain), [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [WalletServices](#interface-walletservices), [WalletStorageManager](#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4206,18 +2808,18 @@ Defines standard interfaces to access functionality implemented by external tran
 ```ts
 export interface WalletServices {
     chain: sdk.Chain;
-    getChainTracker(): Promise<bsv.ChainTracker>;
+    getChainTracker(): Promise<ChainTracker>;
     getHeaderForHeight(height: number): Promise<number[]>;
     getHeight(): Promise<number>;
     getBsvExchangeRate(): Promise<number>;
     getFiatExchangeRate(currency: "USD" | "GBP" | "EUR", base?: "USD" | "GBP" | "EUR"): Promise<number>;
     getRawTx(txid: string, useNext?: boolean): Promise<GetRawTxResult>;
     getMerklePath(txid: string, useNext?: boolean): Promise<GetMerklePathResult>;
-    postTxs(beef: bsv.Beef, txids: string[]): Promise<PostTxsResult[]>;
-    postBeef(beef: bsv.Beef, txids: string[]): Promise<PostBeefResult[]>;
+    postTxs(beef: Beef, txids: string[]): Promise<PostTxsResult[]>;
+    postBeef(beef: Beef, txids: string[]): Promise<PostBeefResult[]>;
     getUtxoStatus(output: string, outputFormat?: GetUtxoStatusOutputFormat, useNext?: boolean): Promise<GetUtxoStatusResult>;
     hashToHeader(hash: string): Promise<sdk.BlockHeader>;
-    nLockTimeIsFinal(txOrLockTime: string | number[] | bsv.Transaction | number): Promise<boolean>;
+    nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>;
 }
 ```
 
@@ -4249,7 +2851,7 @@ getBsvExchangeRate(): Promise<number>
 #### Method getChainTracker
 
 ```ts
-getChainTracker(): Promise<bsv.ChainTracker>
+getChainTracker(): Promise<ChainTracker>
 ```
 
 Returns
@@ -4389,7 +2991,7 @@ Argument Details
 #### Method nLockTimeIsFinal
 
 ```ts
-nLockTimeIsFinal(txOrLockTime: string | number[] | bsv.Transaction | number): Promise<boolean>
+nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>
 ```
 
 Returns
@@ -4432,30 +3034,13 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface WalletSigner {
+    isWalletSigner: true;
     chain: sdk.Chain;
-    keyDeriver: bsv.KeyDeriverApi;
-    setServices(v: sdk.WalletServices): void;
-    getServices(): sdk.WalletServices;
-    getStorageIdentity(): StorageIdentity;
-    listActions(args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult>;
-    listOutputs(args: bsv.ListOutputsArgs, knwonTxids: string[]): Promise<bsv.ListOutputsResult>;
-    createAction(args: bsv.CreateActionArgs): Promise<bsv.CreateActionResult>;
-    signAction(args: bsv.SignActionArgs): Promise<bsv.SignActionResult>;
-    abortAction(args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult>;
-    internalizeAction(args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult>;
-    relinquishOutput(args: bsv.RelinquishOutputArgs): Promise<bsv.RelinquishOutputResult>;
-    acquireDirectCertificate(args: bsv.AcquireCertificateArgs): Promise<bsv.AcquireCertificateResult>;
-    listCertificates(args: bsv.ListCertificatesArgs): Promise<bsv.ListCertificatesResult>;
-    proveCertificate(args: bsv.ProveCertificateArgs): Promise<bsv.ProveCertificateResult>;
-    relinquishCertificate(args: bsv.RelinquishCertificateArgs): Promise<bsv.RelinquishCertificateResult>;
-    discoverByIdentityKey(args: bsv.DiscoverByIdentityKeyArgs): Promise<bsv.DiscoverCertificatesResult>;
-    discoverByAttributes(args: bsv.DiscoverByAttributesArgs): Promise<bsv.DiscoverCertificatesResult>;
-    getChain(): Promise<sdk.Chain>;
-    getClientChangeKeyPair(): KeyPair;
+    keyDeriver: KeyDeriverApi;
 }
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AcquireCertificateArgs](#interface-acquirecertificateargs), [AcquireCertificateResult](#interface-acquirecertificateresult), [Chain](#type-chain), [CreateActionArgs](#interface-createactionargs), [CreateActionResult](#interface-createactionresult), [DiscoverByAttributesArgs](#interface-discoverbyattributesargs), [DiscoverByIdentityKeyArgs](#interface-discoverbyidentitykeyargs), [DiscoverCertificatesResult](#interface-discovercertificatesresult), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [KeyPair](#interface-keypair), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesArgs](#interface-listcertificatesargs), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [ProveCertificateArgs](#interface-provecertificateargs), [ProveCertificateResult](#interface-provecertificateresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishCertificateResult](#interface-relinquishcertificateresult), [RelinquishOutputArgs](#interface-relinquishoutputargs), [RelinquishOutputResult](#interface-relinquishoutputresult), [SignActionArgs](#interface-signactionargs), [SignActionResult](#interface-signactionresult), [StorageIdentity](#interface-storageidentity), [WalletServices](#interface-walletservices), [acquireDirectCertificate](#function-acquiredirectcertificate), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [proveCertificate](#function-provecertificate), [signAction](#function-signaction)
+See also: [Chain](#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4483,24 +3068,24 @@ export interface WalletStorage {
         user: table.User;
         isNew: boolean;
     }>;
-    abortAction(args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult>;
+    abortAction(args: AbortActionArgs): Promise<AbortActionResult>;
     createAction(args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult>;
     processAction(args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults>;
-    internalizeAction(args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult>;
+    internalizeAction(args: InternalizeActionArgs): Promise<InternalizeActionResult>;
     findCertificates(args: sdk.FindCertificatesArgs): Promise<table.Certificate[]>;
     findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<table.OutputBasket[]>;
     findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]>;
     findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]>;
-    listActions(args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult>;
-    listCertificates(args: sdk.ValidListCertificatesArgs): Promise<bsv.ListCertificatesResult>;
-    listOutputs(args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult>;
+    listActions(args: ListActionsArgs): Promise<ListActionsResult>;
+    listCertificates(args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>;
+    listOutputs(args: ListOutputsArgs): Promise<ListOutputsResult>;
     insertCertificate(certificate: table.CertificateX): Promise<number>;
-    relinquishCertificate(args: bsv.RelinquishCertificateArgs): Promise<number>;
-    relinquishOutput(args: bsv.RelinquishOutputArgs): Promise<number>;
+    relinquishCertificate(args: RelinquishCertificateArgs): Promise<number>;
+    relinquishOutput(args: RelinquishOutputArgs): Promise<number>;
 }
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishOutputArgs](#interface-relinquishoutputargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [WalletServices](#interface-walletservices), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction)
+See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [WalletServices](#interface-walletservices), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction)
 
 <details>
 
@@ -4565,13 +3150,13 @@ export interface WalletStorageReader {
     findOutputBasketsAuth(auth: sdk.AuthId, args: sdk.FindOutputBasketsArgs): Promise<table.OutputBasket[]>;
     findOutputsAuth(auth: sdk.AuthId, args: sdk.FindOutputsArgs): Promise<table.Output[]>;
     findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]>;
-    listActions(auth: sdk.AuthId, args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult>;
-    listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<bsv.ListCertificatesResult>;
-    listOutputs(auth: sdk.AuthId, args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult>;
+    listActions(auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult>;
+    listCertificates(auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>;
+    listOutputs(auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult>;
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [WalletServices](#interface-walletservices), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs)
+See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4622,17 +3207,17 @@ export interface WalletStorageWriter extends WalletStorageReader {
         user: table.User;
         isNew: boolean;
     }>;
-    abortAction(auth: sdk.AuthId, args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult>;
+    abortAction(auth: sdk.AuthId, args: AbortActionArgs): Promise<AbortActionResult>;
     createAction(auth: sdk.AuthId, args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult>;
     processAction(auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults>;
-    internalizeAction(auth: sdk.AuthId, args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult>;
+    internalizeAction(auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult>;
     insertCertificateAuth(auth: sdk.AuthId, certificate: table.CertificateX): Promise<number>;
-    relinquishCertificate(auth: sdk.AuthId, args: bsv.RelinquishCertificateArgs): Promise<number>;
-    relinquishOutput(auth: sdk.AuthId, args: bsv.RelinquishOutputArgs): Promise<number>;
+    relinquishCertificate(auth: sdk.AuthId, args: RelinquishCertificateArgs): Promise<number>;
+    relinquishOutput(auth: sdk.AuthId, args: RelinquishOutputArgs): Promise<number>;
 }
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AuthId](#interface-authid), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishOutputArgs](#interface-relinquishoutputargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [ValidCreateActionArgs](#interface-validcreateactionargs), [WalletStorageReader](#interface-walletstoragereader), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [processAction](#function-processaction)
+See also: [AuthId](#interface-authid), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [ValidCreateActionArgs](#interface-validcreateactionargs), [WalletStorageReader](#interface-walletstoragereader), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [processAction](#function-processaction)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4662,14 +3247,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [KnexMigrations](#class-knexmigrations) | [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
 | [Monitor](#class-monitor) | [TaskClock](#class-taskclock) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
 | [MonitorDaemon](#class-monitordaemon) | [TaskFailAbandoned](#class-taskfailabandoned) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
-| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskNewHeader](#class-tasknewheader) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
-| [ServiceCollection](#class-servicecollection) | [TaskPurge](#class-taskpurge) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
-| [Services](#class-services) | [TaskSendWaiting](#class-tasksendwaiting) | [Wallet](#class-wallet) |
-| [StorageClient](#class-storageclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [WalletError](#class-walleterror) |
-| [StorageKnex](#class-storageknex) | [TestUtilsWalletStorage](#class-testutilswalletstorage) | [WalletMonitorTask](#class-walletmonitortask) |
-| [StorageProvider](#class-storageprovider) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletSigner](#class-walletsigner) |
-| [StorageReader](#class-storagereader) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [WalletStorageManager](#class-walletstoragemanager) |
-| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INTERNAL](#class-werr_internal) | [_tu](#class-_tu) |
+| [PrivilegedKeyManager](#class-privilegedkeymanager) | [TaskNewHeader](#class-tasknewheader) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
+| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskPurge](#class-taskpurge) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
+| [ServiceCollection](#class-servicecollection) | [TaskReviewStatus](#class-taskreviewstatus) | [Wallet](#class-wallet) |
+| [Services](#class-services) | [TaskSendWaiting](#class-tasksendwaiting) | [WalletError](#class-walleterror) |
+| [StorageClient](#class-storageclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [WalletMonitorTask](#class-walletmonitortask) |
+| [StorageKnex](#class-storageknex) | [TestUtilsWalletStorage](#class-testutilswalletstorage) | [WalletSigner](#class-walletsigner) |
+| [StorageProvider](#class-storageprovider) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletStorageManager](#class-walletstoragemanager) |
+| [StorageReader](#class-storagereader) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [_tu](#class-_tu) |
+| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INTERNAL](#class-werr_internal) |  |
 | [StorageServer](#class-storageserver) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -4679,48 +3265,48 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Class: CertOps
 
 ```ts
-export class CertOps extends bsv.Certificate {
-    _keyring?: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-    _encryptedFields?: Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>;
-    _decryptedFields?: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-    constructor(public wallet: bsv.ProtoWallet, wc: bsv.WalletCertificate) 
-    static async fromCounterparty(wallet: bsv.ProtoWallet, e: {
-        certificate: bsv.WalletCertificate;
-        keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-        counterparty: bsv.PubKeyHex;
+export class CertOps extends BsvCertificate {
+    _keyring?: Record<CertificateFieldNameUnder50Bytes, string>;
+    _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
+    _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>;
+    constructor(public wallet: CertOpsWallet, wc: WalletCertificate) 
+    static async fromCounterparty(wallet: CertOpsWallet, e: {
+        certificate: WalletCertificate;
+        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
+        counterparty: PubKeyHex;
     }): Promise<CertOps> 
-    static async fromCertifier(wallet: bsv.ProtoWallet, e: {
-        certificate: bsv.WalletCertificate;
-        keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
+    static async fromCertifier(wallet: CertOpsWallet, e: {
+        certificate: WalletCertificate;
+        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
     }): Promise<CertOps> 
-    static async fromEncrypted(wallet: bsv.ProtoWallet, wc: bsv.WalletCertificate, keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>): Promise<CertOps> 
-    static async fromDecrypted(wallet: bsv.ProtoWallet, wc: bsv.WalletCertificate): Promise<CertOps> 
-    static copyFields<T>(fields: Record<bsv.CertificateFieldNameUnder50Bytes, T>): Record<bsv.CertificateFieldNameUnder50Bytes, T> 
+    static async fromEncrypted(wallet: CertOpsWallet, wc: WalletCertificate, keyring: Record<CertificateFieldNameUnder50Bytes, string>): Promise<CertOps> 
+    static async fromDecrypted(wallet: CertOpsWallet, wc: WalletCertificate): Promise<CertOps> 
+    static copyFields<T>(fields: Record<CertificateFieldNameUnder50Bytes, T>): Record<CertificateFieldNameUnder50Bytes, T> 
     static getProtocolForCertificateFieldEncryption(serialNumber: string, fieldName: string): {
-        protocolID: bsv.WalletProtocol;
+        protocolID: WalletProtocol;
         keyID: string;
     } 
     exportForSubject(): {
-        certificate: bsv.WalletCertificate;
-        keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
+        certificate: WalletCertificate;
+        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
     } 
-    toWalletCertificate(): bsv.WalletCertificate 
-    async encryptFields(counterparty: "self" | bsv.PubKeyHex = "self"): Promise<{
-        fields: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-        keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
+    toWalletCertificate(): WalletCertificate 
+    async encryptFields(counterparty: "self" | PubKeyHex = "self"): Promise<{
+        fields: Record<CertificateFieldNameUnder50Bytes, string>;
+        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
     }> 
-    async decryptFields(counterparty?: bsv.PubKeyHex, keyring?: Record<bsv.CertificateFieldNameUnder50Bytes, string>): Promise<Record<bsv.CertificateFieldNameUnder50Bytes, string>> 
-    async exportForCounterparty(counterparty: bsv.PubKeyHex, fieldsToReveal: bsv.CertificateFieldNameUnder50Bytes[]): Promise<{
-        certificate: bsv.WalletCertificate;
-        keyring: Record<bsv.CertificateFieldNameUnder50Bytes, string>;
-        counterparty: bsv.PubKeyHex;
+    async decryptFields(counterparty?: PubKeyHex, keyring?: Record<CertificateFieldNameUnder50Bytes, string>): Promise<Record<CertificateFieldNameUnder50Bytes, string>> 
+    async exportForCounterparty(counterparty: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<{
+        certificate: WalletCertificate;
+        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
+        counterparty: PubKeyHex;
     }> 
-    async createKeyringForVerifier(verifierIdentityKey: bsv.PubKeyHex, fieldsToReveal: bsv.CertificateFieldNameUnder50Bytes[], originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>> 
+    async createKeyringForVerifier(verifierIdentityKey: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<Record<CertificateFieldNameUnder50Bytes, Base64String>> 
     async encryptAndSignNewCertificate(): Promise<void> 
 }
 ```
 
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [PubKeyHex](#type-pubkeyhex), [WalletCertificate](#interface-walletcertificate), [WalletProtocol](#type-walletprotocol)
+See also: [CertOpsWallet](#interface-certopswallet)
 
 <details>
 
@@ -4734,9 +3320,8 @@ for the verifier's identity key. The resulting certificate structure includes on
 revealed and a verifier-specific keyring for field decryption.
 
 ```ts
-async createKeyringForVerifier(verifierIdentityKey: bsv.PubKeyHex, fieldsToReveal: bsv.CertificateFieldNameUnder50Bytes[], originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<Record<bsv.CertificateFieldNameUnder50Bytes, bsv.Base64String>> 
+async createKeyringForVerifier(verifierIdentityKey: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<Record<CertificateFieldNameUnder50Bytes, Base64String>> 
 ```
-See also: [Base64String](#type-base64string), [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [PubKeyHex](#type-pubkeyhex)
 
 Returns
 
@@ -4748,8 +3333,6 @@ Argument Details
   + The public identity key of the verifier who will receive access to the specified fields.
 + **fieldsToReveal**
   + An array of field names to be revealed to the verifier. Must be a subset of the certificate's fields.
-+ **originator**
-  + Optional originator identifier, used if additional context is needed for decryption and encryption operations.
 
 Throws
 
@@ -4884,7 +3467,8 @@ export class Monitor {
     removeTask(name: string): void 
     async setupChaintracksListeners(): Promise<void> 
     async runTask(name: string): Promise<string> 
-    async runOnce(runAsyncSetup: boolean = true): Promise<void> 
+    async runOnce(): Promise<void> 
+    _runAsyncSetup: boolean = true;
     async startTasks(): Promise<void> 
     async logEvent(event: string, details?: string): Promise<void> 
     stopTasks(): void 
@@ -4991,6 +3575,58 @@ See also: [MonitorDaemonSetup](#interface-monitordaemonsetup)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+### Class: PrivilegedKeyManager
+
+PrivilegedKeyManager
+
+This class manages a privileged (i.e., very sensitive) private key, obtained from
+an external function (`keyGetter`), which might be backed by HSMs, secure enclaves,
+or other secure storage. The manager retains the key in memory only for a limited
+duration (`retentionPeriod`), uses XOR-based chunk-splitting obfuscation, and
+includes decoy data to raise the difficulty of discovering the real key in memory.
+
+IMPORTANT: While these measures raise the bar for attackers, JavaScript environments
+do not provide perfect in-memory secrecy.
+
+```ts
+export class PrivilegedKeyManager {
+    constructor(keyGetter: (reason: string) => Promise<PrivateKey>, retentionPeriod = 120000) 
+    async getPublicKey(args: GetPublicKeyArgs): Promise<{
+        publicKey: PubKeyHex;
+    }> 
+    async revealCounterpartyKeyLinkage(args: RevealCounterpartyKeyLinkageArgs): Promise<RevealCounterpartyKeyLinkageResult> 
+    async revealSpecificKeyLinkage(args: RevealSpecificKeyLinkageArgs): Promise<RevealSpecificKeyLinkageResult> 
+    async encrypt(args: WalletEncryptArgs): Promise<WalletEncryptResult> 
+    async decrypt(args: WalletDecryptArgs): Promise<WalletDecryptResult> 
+    async createHmac(args: CreateHmacArgs): Promise<CreateHmacResult> 
+    async verifyHmac(args: VerifyHmacArgs): Promise<VerifyHmacResult> 
+    async createSignature(args: CreateSignatureArgs): Promise<CreateSignatureResult> 
+    async verifySignature(args: VerifySignatureArgs): Promise<VerifySignatureResult> 
+}
+```
+
+<details>
+
+<summary>Class PrivilegedKeyManager Details</summary>
+
+#### Constructor
+
+```ts
+constructor(keyGetter: (reason: string) => Promise<PrivateKey>, retentionPeriod = 120000) 
+```
+
+Argument Details
+
++ **keyGetter**
+  + Asynchronous function that retrieves the PrivateKey from a secure environment.
++ **retentionPeriod**
+  + Time in milliseconds to retain the obfuscated key in memory before zeroizing.
+
+</details>
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ### Class: ScriptTemplateSABPPP
 
 ```ts
@@ -4998,7 +3634,7 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
     p2pkh: P2PKH;
     constructor(public params: ScriptTemplateParamsSABPPP) 
     getKeyID() 
-    getKeyDeriver(privKey: PrivateKey | bsv.HexString): bsv.KeyDeriverApi 
+    getKeyDeriver(privKey: PrivateKey | HexString): KeyDeriverApi 
     lock(lockerPrivKey: string, unlockerPubKey: string): LockingScript 
     unlock(unlockerPrivKey: string, lockerPubKey: string, sourceSatoshis?: number, lockingScript?: Script): {
         sign: (tx: Transaction, inputIndex: number) => Promise<UnlockingScript>;
@@ -5008,7 +3644,7 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
 }
 ```
 
-See also: [HexString](#type-hexstring), [ScriptTemplateParamsSABPPP](#interface-scripttemplateparamssabppp)
+See also: [ScriptTemplateParamsSABPPP](#interface-scripttemplateparamssabppp)
 
 <details>
 
@@ -5073,7 +3709,7 @@ export class Services implements sdk.WalletServices {
     updateFiatExchangeRateServices: ServiceCollection<sdk.UpdateFiatExchangeRateService>;
     chain: sdk.Chain;
     constructor(optionsOrChain: sdk.Chain | sdk.WalletServicesOptions) 
-    async getChainTracker(): Promise<bsv.ChainTracker> 
+    async getChainTracker(): Promise<ChainTracker> 
     async getBsvExchangeRate(): Promise<number> 
     async getFiatExchangeRate(currency: "USD" | "GBP" | "EUR", base?: "USD" | "GBP" | "EUR"): Promise<number> 
     get getProofsCount() 
@@ -5082,8 +3718,8 @@ export class Services implements sdk.WalletServices {
     get postBeefServicesCount() 
     get getUtxoStatsCount() 
     async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, useNext?: boolean): Promise<sdk.GetUtxoStatusResult> 
-    async postTxs(beef: bsv.Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
-    async postBeef(beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
+    async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
+    async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
     async getRawTx(txid: string, useNext?: boolean): Promise<sdk.GetRawTxResult> 
     async invokeChaintracksWithRetry<R>(method: () => Promise<R>): Promise<R> 
     async getHeaderForHeight(height: number): Promise<number[]> 
@@ -5092,7 +3728,7 @@ export class Services implements sdk.WalletServices {
     async getMerklePath(txid: string, useNext?: boolean): Promise<sdk.GetMerklePathResult> 
     targetCurrencies = ["USD", "GBP", "EUR"];
     async updateFiatExchangeRates(rates?: sdk.FiatExchangeRates, updateMsecs?: number): Promise<sdk.FiatExchangeRates> 
-    async nLockTimeIsFinal(tx: string | number[] | bsv.Transaction | number): Promise<boolean> 
+    async nLockTimeIsFinal(tx: string | number[] | BsvTransaction | number): Promise<boolean> 
 }
 ```
 
@@ -5109,7 +3745,7 @@ Some services may require input transactions as well.
 These will be fetched if missing, greatly extending the service response time.
 
 ```ts
-async postTxs(beef: bsv.Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
+async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
 ```
 See also: [PostTxsResult](#interface-posttxsresult)
 
@@ -5123,18 +3759,19 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export class StorageClient implements sdk.WalletStorageProvider {
     public settings?: table.Settings;
-    constructor(wallet: bsv.Wallet, endpointUrl: string) 
+    constructor(wallet: WalletInterface, endpointUrl: string) 
     isStorageProvider(): boolean 
     isAvailable(): boolean 
+    getSettings(): table.Settings 
     async makeAvailable(): Promise<table.Settings> 
     async destroy(): Promise<void> 
     async migrate(storageName: string, storageIdentityKey: string): Promise<string> 
     getServices(): sdk.WalletServices 
     setServices(v: sdk.WalletServices): void 
-    async internalizeAction(auth: sdk.AuthId, args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
+    async internalizeAction(auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> 
     async createAction(auth: sdk.AuthId, args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> 
     async processAction(auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> 
-    async abortAction(auth: sdk.AuthId, args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult> 
+    async abortAction(auth: sdk.AuthId, args: AbortActionArgs): Promise<AbortActionResult> 
     async findOrInsertUser(identityKey): Promise<{
         user: table.User;
         isNew: boolean;
@@ -5144,17 +3781,15 @@ export class StorageClient implements sdk.WalletStorageProvider {
         isNew: boolean;
     }> 
     async insertCertificateAuth(auth: sdk.AuthId, certificate: table.CertificateX): Promise<number> 
-    _settings?: table.Settings;
-    getSettings(): table.Settings 
-    async listActions(auth: sdk.AuthId, args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult> 
-    async listOutputs(auth: sdk.AuthId, args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult> 
-    async listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<bsv.ListCertificatesResult> 
+    async listActions(auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> 
+    async listOutputs(auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult> 
+    async listCertificates(auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult> 
     async findCertificatesAuth(auth: sdk.AuthId, args: sdk.FindCertificatesArgs): Promise<table.Certificate[]> 
     async findOutputBasketsAuth(auth: sdk.AuthId, args: sdk.FindOutputBasketsArgs): Promise<table.OutputBasket[]> 
     async findOutputsAuth(auth: sdk.AuthId, args: sdk.FindOutputsArgs): Promise<table.Output[]> 
     findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]> 
-    async relinquishCertificate(auth: sdk.AuthId, args: bsv.RelinquishCertificateArgs): Promise<number> 
-    async relinquishOutput(auth: sdk.AuthId, args: bsv.RelinquishOutputArgs): Promise<number> 
+    async relinquishCertificate(auth: sdk.AuthId, args: RelinquishCertificateArgs): Promise<number> 
+    async relinquishOutput(auth: sdk.AuthId, args: RelinquishOutputArgs): Promise<number> 
     async processSyncChunk(args: sdk.RequestSyncChunkArgs, chunk: sdk.SyncChunk): Promise<sdk.ProcessSyncChunkResult> 
     async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> 
     async updateProvenTxReqWithNewProvenTx(args: sdk.UpdateProvenTxReqWithNewProvenTxArgs): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult> 
@@ -5162,7 +3797,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
 }
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishOutputArgs](#interface-relinquishoutputargs), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [SyncChunk](#interface-syncchunk), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [Wallet](#class-wallet), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [createAction](#function-createaction), [getSyncChunk](#function-getsyncchunk), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction)
+See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [SyncChunk](#interface-syncchunk), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [createAction](#function-createaction), [getSyncChunk](#function-getsyncchunk), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5185,8 +3820,8 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
     override async getTxLabelMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<table.TxLabelMap[]> 
     getOutputTagMapsForUserQuery(args: sdk.FindForUserSincePagedArgs): Knex.QueryBuilder 
     override async getOutputTagMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<table.OutputTagMap[]> 
-    override async listActions(auth: sdk.AuthId, args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult> 
-    override async listOutputs(auth: sdk.AuthId, args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult> 
+    override async listActions(auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> 
+    override async listOutputs(auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult> 
     override async insertProvenTx(tx: table.ProvenTx, trx?: sdk.TrxToken): Promise<number> 
     override async insertProvenTxReq(tx: table.ProvenTxReq, trx?: sdk.TrxToken): Promise<number> 
     override async insertUser(user: table.User, trx?: sdk.TrxToken): Promise<number> 
@@ -5283,6 +3918,12 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
     async extendOutput(o: table.Output, includeBasket = false, includeTags = false, trx?: sdk.TrxToken): Promise<table.OutputX> 
     override async getTagsForOutputId(outputId: number, trx?: sdk.TrxToken): Promise<table.OutputTag[]> 
     override async purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults> 
+    override async reviewStatus(args: {
+        agedLimit: Date;
+        trx?: sdk.TrxToken;
+    }): Promise<{
+        log: string;
+    }> 
     async countChangeInputs(userId: number, basketId: number, excludeSending: boolean): Promise<number> 
     async allocateChangeInput(userId: number, basketId: number, targetSatoshis: number, exactSatoshis: number | undefined, excludeSending: boolean, transactionId: number): Promise<table.Output | undefined> {
         const status: sdk.TransactionStatus[] = ["completed", "unproven"];
@@ -5370,7 +4011,7 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
 }
 ```
 
-See also: [AuthId](#interface-authid), [DBType](#type-dbtype), [EntityTimeStamp](#interface-entitytimestamp), [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindMonitorEventsArgs](#interface-findmonitoreventsargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [FindProvenTxsArgs](#interface-findproventxsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [FindUsersArgs](#interface-findusersargs), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [StorageKnexOptions](#interface-storageknexoptions), [StorageProvider](#class-storageprovider), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [WalletStorageProvider](#interface-walletstorageprovider), [listActions](#function-listactions), [listOutputs](#function-listoutputs), [purgeData](#function-purgedata), [verifyTruthy](#function-verifytruthy)
+See also: [AuthId](#interface-authid), [DBType](#type-dbtype), [EntityTimeStamp](#interface-entitytimestamp), [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindMonitorEventsArgs](#interface-findmonitoreventsargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [FindProvenTxsArgs](#interface-findproventxsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [FindUsersArgs](#interface-findusersargs), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [StorageKnexOptions](#interface-storageknexoptions), [StorageProvider](#class-storageprovider), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletStorageProvider](#interface-walletstorageprovider), [listActions](#function-listactions), [listOutputs](#function-listoutputs), [log](#variable-log), [purgeData](#function-purgedata), [reviewStatus](#function-reviewstatus), [verifyTruthy](#function-verifytruthy)
 
 <details>
 
@@ -5475,19 +4116,25 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     _services?: sdk.WalletServices;
     feeModel: sdk.StorageFeeModel;
     commissionSatoshis: number;
-    commissionPubKeyHex?: bsv.PubKeyHex;
+    commissionPubKeyHex?: PubKeyHex;
     maxRecursionDepth?: number;
     static defaultOptions() 
     static createStorageBaseOptions(chain: sdk.Chain): StorageProviderOptions 
     constructor(options: StorageProviderOptions) 
+    abstract reviewStatus(args: {
+        agedLimit: Date;
+        trx?: sdk.TrxToken;
+    }): Promise<{
+        log: string;
+    }>;
     abstract purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults>;
     abstract allocateChangeInput(userId: number, basketId: number, targetSatoshis: number, exactSatoshis: number | undefined, excludeSending: boolean, transactionId: number): Promise<table.Output | undefined>;
     abstract getProvenOrRawTx(txid: string, trx?: sdk.TrxToken): Promise<sdk.ProvenOrRawTx>;
     abstract getRawTxOfKnownValidTransaction(txid?: string, offset?: number, length?: number, trx?: sdk.TrxToken): Promise<number[] | undefined>;
     abstract getLabelsForTransactionId(transactionId?: number, trx?: sdk.TrxToken): Promise<table.TxLabel[]>;
     abstract getTagsForOutputId(outputId: number, trx?: sdk.TrxToken): Promise<table.OutputTag[]>;
-    abstract listActions(auth: sdk.AuthId, args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult>;
-    abstract listOutputs(auth: sdk.AuthId, args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult>;
+    abstract listActions(auth: sdk.AuthId, args: sdk.ValidListActionsArgs): Promise<ListActionsResult>;
+    abstract listOutputs(auth: sdk.AuthId, args: sdk.ValidListOutputsArgs): Promise<ListOutputsResult>;
     abstract countChangeInputs(userId: number, basketId: number, excludeSending: boolean): Promise<number>;
     abstract findCertificatesAuth(auth: sdk.AuthId, args: sdk.FindCertificatesArgs): Promise<table.Certificate[]>;
     abstract findOutputBasketsAuth(auth: sdk.AuthId, args: sdk.FindOutputBasketsArgs): Promise<table.OutputBasket[]>;
@@ -5496,24 +4143,24 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     override isStorageProvider(): boolean 
     setServices(v: sdk.WalletServices) 
     getServices(): sdk.WalletServices 
-    async abortAction(auth: sdk.AuthId, args: Partial<table.Transaction>): Promise<bsv.AbortActionResult> 
-    async internalizeAction(auth: sdk.AuthId, args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
+    async abortAction(auth: sdk.AuthId, args: Partial<table.Transaction>): Promise<AbortActionResult> 
+    async internalizeAction(auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> 
     async getReqsAndBeefToShareWithWorld(txids: string[], knownTxids: string[], trx?: sdk.TrxToken): Promise<GetReqsAndBeefResult> 
-    async mergeReqToBeefToShareExternally(req: table.ProvenTxReq, mergeToBeef: bsv.Beef, knownTxids: string[], trx?: sdk.TrxToken): Promise<void> 
+    async mergeReqToBeefToShareExternally(req: table.ProvenTxReq, mergeToBeef: Beef, knownTxids: string[], trx?: sdk.TrxToken): Promise<void> 
     async getProvenOrReq(txid: string, newReq?: table.ProvenTxReq, trx?: sdk.TrxToken): Promise<sdk.StorageProvenOrReq> 
     async updateTransactionsStatus(transactionIds: number[], status: sdk.TransactionStatus): Promise<void> 
     async updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: number, userId?: number, reference?: string, trx?: sdk.TrxToken): Promise<void> 
     async createAction(auth: sdk.AuthId, args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> 
     async processAction(auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> 
     async attemptToPostReqsToNetwork(reqs: entity.ProvenTxReq[], trx?: sdk.TrxToken): Promise<PostReqsToNetworkResult> 
-    async listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<bsv.ListCertificatesResult> 
+    async listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult> 
     async verifyKnownValidTransaction(txid: string, trx?: sdk.TrxToken): Promise<boolean> 
-    async getValidBeefForKnownTxid(txid: string, mergeToBeef?: bsv.Beef, trustSelf?: bsv.TrustSelf, knownTxids?: string[], trx?: sdk.TrxToken): Promise<bsv.Beef> 
-    async getValidBeefForTxid(txid: string, mergeToBeef?: bsv.Beef, trustSelf?: bsv.TrustSelf, knownTxids?: string[], trx?: sdk.TrxToken): Promise<bsv.Beef | undefined> 
-    async getBeefForTransaction(txid: string, options: sdk.StorageGetBeefOptions): Promise<bsv.Beef> 
+    async getValidBeefForKnownTxid(txid: string, mergeToBeef?: Beef, trustSelf?: TrustSelf, knownTxids?: string[], trx?: sdk.TrxToken): Promise<Beef> 
+    async getValidBeefForTxid(txid: string, mergeToBeef?: Beef, trustSelf?: TrustSelf, knownTxids?: string[], trx?: sdk.TrxToken): Promise<Beef | undefined> 
+    async getBeefForTransaction(txid: string, options: sdk.StorageGetBeefOptions): Promise<Beef> 
     async findMonitorEventById(id: number, trx?: sdk.TrxToken): Promise<table.MonitorEvent | undefined> 
-    async relinquishCertificate(auth: sdk.AuthId, args: bsv.RelinquishCertificateArgs): Promise<number> 
-    async relinquishOutput(auth: sdk.AuthId, args: bsv.RelinquishOutputArgs): Promise<number> 
+    async relinquishCertificate(auth: sdk.AuthId, args: RelinquishCertificateArgs): Promise<number> 
+    async relinquishOutput(auth: sdk.AuthId, args: RelinquishOutputArgs): Promise<number> 
     async processSyncChunk(args: sdk.RequestSyncChunkArgs, chunk: sdk.SyncChunk): Promise<sdk.ProcessSyncChunkResult> 
     async updateProvenTxReqWithNewProvenTx(args: sdk.UpdateProvenTxReqWithNewProvenTxArgs): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult> 
     async confirmSpendableOutputs(): Promise<{
@@ -5523,7 +4170,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
 }
 ```
 
-See also: [AbortActionResult](#interface-abortactionresult), [AuthId](#interface-authid), [Chain](#type-chain), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [ProvenOrRawTx](#interface-provenorrawtx), [PubKeyHex](#type-pubkeyhex), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishOutputArgs](#interface-relinquishoutputargs), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageFeeModel](#interface-storagefeemodel), [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvenOrReq](#interface-storageprovenorreq), [StorageProviderOptions](#interface-storageprovideroptions), [StorageReaderWriter](#class-storagereaderwriter), [SyncChunk](#interface-syncchunk), [TransactionStatus](#type-transactionstatus), [TrustSelf](#type-trustself), [TrxToken](#interface-trxtoken), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork), [createAction](#function-createaction), [getBeefForTransaction](#function-getbeeffortransaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction), [purgeData](#function-purgedata)
+See also: [AuthId](#interface-authid), [Chain](#type-chain), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageFeeModel](#interface-storagefeemodel), [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvenOrReq](#interface-storageprovenorreq), [StorageProviderOptions](#interface-storageprovideroptions), [StorageReaderWriter](#class-storagereaderwriter), [SyncChunk](#interface-syncchunk), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork), [createAction](#function-createaction), [getBeefForTransaction](#function-getbeeffortransaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [log](#variable-log), [processAction](#function-processaction), [purgeData](#function-purgedata), [reviewStatus](#function-reviewstatus)
 
 <details>
 
@@ -5878,7 +4525,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask), [log](#variable-log)
 
 <details>
 
@@ -5913,6 +4560,7 @@ async getProofs(reqs: table.ProvenTxReq[], indent = 0, countsAsAttempt = false, 
     log: string;
 }> 
 ```
+See also: [log](#variable-log)
 
 Returns
 
@@ -6031,6 +4679,47 @@ static checkNow = false
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+### Class: TaskReviewStatus
+
+Notify Transaction records of changes in ProvenTxReq records they may have missed.
+
+The `notified` property flags reqs that do not need to be checked.
+
+Looks for aged Transactions with provenTxId with status != 'completed', sets status to 'completed'.
+
+Looks for reqs with 'invalid' status that
+
+```ts
+export class TaskReviewStatus extends WalletMonitorTask {
+    static taskName = "ReviewStatus";
+    static checkNow = false;
+    constructor(monitor: Monitor, public triggerMsecs = 1000 * 60 * 15, public agedMsecs = 1000 * 60 * 5) 
+    trigger(nowMsecsSinceEpoch: number): {
+        run: boolean;
+    } 
+    async runTask(): Promise<string> 
+}
+```
+
+See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+
+<details>
+
+<summary>Class TaskReviewStatus Details</summary>
+
+#### Property checkNow
+
+Set to true to trigger running this task
+
+```ts
+static checkNow = false
+```
+
+</details>
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ### Class: TaskSendWaiting
 
 ```ts
@@ -6099,26 +4788,27 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export abstract class TestUtilsWalletStorage {
     static getEnv(chain: sdk.Chain) 
-    static async createNoSendP2PKHTestOutpoint(address: string, satoshis: number, noSendChange: string[] | undefined, wallet: bsv.Wallet): Promise<{
+    static async createNoSendP2PKHTestOutpoint(address: string, satoshis: number, noSendChange: string[] | undefined, wallet: WalletInterface): Promise<{
         noSendChange: string[];
         txid: string;
-        cr: bsv.CreateActionResult;
-        sr: bsv.SignActionResult;
+        cr: CreateActionResult;
+        sr: SignActionResult;
     }> 
-    static async createNoSendP2PKHTestOutpoints(count: number, address: string, satoshis: number, noSendChange: string[] | undefined, wallet: bsv.Wallet): Promise<{
+    static async createNoSendP2PKHTestOutpoints(count: number, address: string, satoshis: number, noSendChange: string[] | undefined, wallet: WalletInterface): Promise<{
         noSendChange: string[];
         txid: string;
-        cr: bsv.CreateActionResult;
-        sr: bsv.SignActionResult;
+        cr: CreateActionResult;
+        sr: SignActionResult;
     }> 
-    static getKeyPair(priv?: string | bsv.PrivateKey): TestKeyPair 
+    static getKeyPair(priv?: string | PrivateKey): TestKeyPair 
     static getLockP2PKH(address: string) 
-    static getUnlockP2PKH(priv: bsv.PrivateKey, satoshis: number) 
+    static getUnlockP2PKH(priv: PrivateKey, satoshis: number) 
     static async createWalletOnly(args: {
         chain?: sdk.Chain;
         rootKeyHex?: string;
         active?: sdk.WalletStorageProvider;
         backups?: sdk.WalletStorageProvider[];
+        privKeyHex?: string;
     }): Promise<TestWalletOnly> 
     static async createTestWalletWithStorageClient(args: {
         rootKeyHex?: string;
@@ -6131,6 +4821,7 @@ export abstract class TestUtilsWalletStorage {
         chain?: sdk.Chain;
         rootKeyHex?: string;
         dropAll?: boolean;
+        privKeyHex?: string;
         insertSetup: (storage: StorageKnex, identityKey: string) => Promise<T>;
     }): Promise<TestWallet<T>> 
     static async newTmpFile(filename = "", tryToDelete = false, copyToTmp = false, reuseExisting = false): Promise<string> 
@@ -6156,18 +4847,25 @@ export abstract class TestUtilsWalletStorage {
         chain?: sdk.Chain;
         rootKeyHex?: string;
         dropAll?: boolean;
+        privKeyHex?: string;
     }): Promise<TestWalletNoSetup> 
     static async createSQLiteTestSetup1Wallet(args: {
         databaseName: string;
         chain?: sdk.Chain;
         rootKeyHex?: string;
     }): Promise<TestWallet<TestSetup1>> 
+    static async createSQLiteTestSetup2Wallet(args: {
+        databaseName: string;
+        chain?: sdk.Chain;
+        rootKeyHex?: string;
+    }): Promise<TestWallet<TestSetup2>> 
     static async createKnexTestWallet(args: {
         knex: Knex<any, any[]>;
         databaseName: string;
         chain?: sdk.Chain;
         rootKeyHex?: string;
         dropAll?: boolean;
+        privKeyHex?: string;
     }): Promise<TestWalletNoSetup> 
     static async createKnexTestSetup1Wallet(args: {
         knex: Knex<any, any[]>;
@@ -6176,6 +4874,13 @@ export abstract class TestUtilsWalletStorage {
         rootKeyHex?: string;
         dropAll?: boolean;
     }): Promise<TestWallet<TestSetup1>> 
+    static async createKnexTestSetup2Wallet(args: {
+        knex: Knex<any, any[]>;
+        databaseName: string;
+        chain?: sdk.Chain;
+        rootKeyHex?: string;
+        dropAll?: boolean;
+    }): Promise<TestWallet<TestSetup2>> 
     static async fileExists(file: string): Promise<boolean> 
     static async createLegacyWalletSQLiteCopy(databaseName: string): Promise<TestWalletNoSetup> 
     static async createLegacyWalletMySQLCopy(databaseName: string): Promise<TestWalletNoSetup> 
@@ -6184,9 +4889,9 @@ export abstract class TestUtilsWalletStorage {
     static legacyRootKeyHex = "153a3df216" + "686f55b253991c" + "7039da1f648" + "ffc5bfe93d6ac2c25ac" + "2d4070918d";
     static async createLegacyWalletCopy(databaseName: string, walletKnex: Knex<any, any[]>, tryCopyToPath?: string): Promise<TestWalletNoSetup> 
     static makeSampleCert(subject?: string): {
-        cert: bsv.WalletCertificate;
+        cert: WalletCertificate;
         subject: string;
-        certifier: bsv.PrivateKey;
+        certifier: PrivateKey;
     } 
     static async insertTestProvenTx(storage: StorageProvider, txid?: string) 
     static async insertTestProvenTxReq(storage: StorageProvider, txid?: string, provenTxId?: number, onlyRequired?: boolean) 
@@ -6204,14 +4909,15 @@ export abstract class TestUtilsWalletStorage {
     static async insertTestMonitorEvent(storage: StorageProvider) 
     static async insertTestCommission(storage: StorageProvider, t: table.Transaction) 
     static async createTestSetup1(storage: StorageProvider, u1IdentityKey?: string): Promise<TestSetup1> 
+    static async createTestSetup2(storage: StorageProvider, u1IdentityKey?: string, tx1?: Partial<table.Transaction>, o1?: Partial<table.Output>, b1?: Partial<table.OutputBasket>, l1?: Partial<table.TxLabel>, lm1?: Partial<table.TxLabelMap>, t1?: Partial<table.OutputTag>, tm1?: Partial<table.OutputTagMap>): Promise<TestSetup2> 
     static mockPostServicesAsSuccess(ctxs: TestWalletOnly[]): void 
     static mockPostServicesAsError(ctxs: TestWalletOnly[]): void 
-    static mockPostServicesAsCallback(ctxs: TestWalletOnly[], callback: (beef: bsv.Beef, txids: string[]) => "success" | "error"): void 
+    static mockPostServicesAsCallback(ctxs: TestWalletOnly[], callback: (beef: Beef, txids: string[]) => "success" | "error"): void 
     static mockMerklePathServicesAsCallback(ctxs: TestWalletOnly[], callback: (txid: string) => Promise<sdk.GetMerklePathResult>): void 
 }
 ```
 
-See also: [Chain](#type-chain), [CreateActionResult](#interface-createactionresult), [GetMerklePathResult](#interface-getmerklepathresult), [SignActionResult](#interface-signactionresult), [StorageKnex](#class-storageknex), [StorageProvider](#class-storageprovider), [TestKeyPair](#type-testkeypair), [TestSetup1](#interface-testsetup1), [TestWallet](#interface-testwallet), [TestWalletNoSetup](#type-testwalletnosetup), [TestWalletOnly](#interface-testwalletonly), [Wallet](#class-wallet), [WalletCertificate](#interface-walletcertificate), [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathresult), [StorageKnex](#class-storageknex), [StorageProvider](#class-storageprovider), [TestKeyPair](#type-testkeypair), [TestSetup1](#interface-testsetup1), [TestSetup2](#interface-testsetup2), [TestWallet](#interface-testwallet), [TestWalletNoSetup](#type-testwalletnosetup), [TestWalletOnly](#interface-testwalletonly), [WalletStorageProvider](#interface-walletstorageprovider)
 
 <details>
 
@@ -6365,7 +5071,7 @@ export class WERR_INVALID_PUBLIC_KEY extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror), [WalletNetwork](#type-walletnetwork)
+See also: [WalletError](#class-walleterror)
 
 <details>
 
@@ -6376,7 +5082,6 @@ See also: [WalletError](#class-walleterror), [WalletNetwork](#type-walletnetwork
 ```ts
 constructor(public key: string, network: WalletNetwork = "mainnet") 
 ```
-See also: [WalletNetwork](#type-walletnetwork)
 
 Argument Details
 
@@ -6455,40 +5160,58 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Class: Wallet
 
 ```ts
-export class Wallet extends bsv.ProtoWallet implements bsv.Wallet {
-    signer: sdk.WalletSigner;
+export class Wallet implements WalletInterface {
+    chain: sdk.Chain;
+    keyDeriver: KeyDeriver;
+    storage: WalletStorageManager;
     services?: sdk.WalletServices;
     monitor?: Monitor;
+    identityKey: string;
     beef: BeefParty;
-    trustSelf?: bsv.TrustSelf;
+    trustSelf?: TrustSelf;
     userParty: string;
-    constructor(signer: sdk.WalletSigner, keyDeriver?: bsv.KeyDeriverApi, services?: sdk.WalletServices, monitor?: Monitor) 
+    proto: ProtoWallet;
+    privilegedKeyManager?: sdk.PrivilegedKeyManager;
+    pendingSignActions: Record<string, PendingSignAction>;
+    constructor(argsOrSigner: WalletArgs | WalletSigner, services?: sdk.WalletServices, monitor?: Monitor, privilegedKeyManager?: sdk.PrivilegedKeyManager) 
+    getClientChangeKeyPair(): sdk.KeyPair 
+    async getIdentityKey(): Promise<PubKeyHex> 
+    getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> 
+    revealCounterpartyKeyLinkage(args: RevealCounterpartyKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealCounterpartyKeyLinkageResult> 
+    revealSpecificKeyLinkage(args: RevealSpecificKeyLinkageArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RevealSpecificKeyLinkageResult> 
+    encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult> 
+    decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult> 
+    createHmac(args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateHmacResult> 
+    verifyHmac(args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifyHmacResult> 
+    createSignature(args: CreateSignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateSignatureResult> 
+    verifySignature(args: VerifySignatureArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifySignatureResult> 
     getServices(): sdk.WalletServices 
     getKnownTxids(newKnownTxids?: string[]): string[] 
-    async listActions(args: bsv.ListActionsArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.ListActionsResult> 
+    getStorageIdentity(): sdk.StorageIdentity 
+    async listActions(args: ListActionsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListActionsResult> 
     get storageParty(): string 
-    async listOutputs(args: bsv.ListOutputsArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.ListOutputsResult> 
-    async listCertificates(args: bsv.ListCertificatesArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.ListCertificatesResult> 
-    async acquireCertificate(args: bsv.AcquireCertificateArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.AcquireCertificateResult> 
-    async relinquishCertificate(args: bsv.RelinquishCertificateArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.RelinquishCertificateResult> 
-    async proveCertificate(args: bsv.ProveCertificateArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.ProveCertificateResult> 
-    async discoverByIdentityKey(args: bsv.DiscoverByIdentityKeyArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.DiscoverCertificatesResult> 
-    async discoverByAttributes(args: bsv.DiscoverByAttributesArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.DiscoverCertificatesResult> 
-    async createAction(args: bsv.CreateActionArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.CreateActionResult> 
-    async signAction(args: bsv.SignActionArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.SignActionResult> 
-    async abortAction(args: bsv.AbortActionArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.AbortActionResult> 
-    async internalizeAction(args: bsv.InternalizeActionArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.InternalizeActionResult> 
-    async relinquishOutput(args: bsv.RelinquishOutputArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.RelinquishOutputResult> 
-    override async isAuthenticated(args: {}, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.AuthenticatedResult> 
-    override async waitForAuthentication(args: {}, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.AuthenticatedResult> 
-    async getHeight(args: {}, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.GetHeightResult> 
-    async getHeaderForHeight(args: bsv.GetHeaderArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.GetHeaderResult> 
-    override async getNetwork(args: {}, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.GetNetworkResult> 
-    override async getVersion(args: {}, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.GetVersionResult> 
+    async listOutputs(args: ListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListOutputsResult> 
+    async listCertificates(args: ListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> 
+    async acquireCertificate(args: AcquireCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AcquireCertificateResult> 
+    async relinquishCertificate(args: RelinquishCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishCertificateResult> 
+    async proveCertificate(args: ProveCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ProveCertificateResult> 
+    async discoverByIdentityKey(args: DiscoverByIdentityKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
+    async discoverByAttributes(args: DiscoverByAttributesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
+    async createAction(args: CreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateActionResult> 
+    async signAction(args: SignActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<SignActionResult> 
+    async abortAction(args: AbortActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AbortActionResult> 
+    async internalizeAction(args: InternalizeActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<InternalizeActionResult> 
+    async relinquishOutput(args: RelinquishOutputArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<RelinquishOutputResult> 
+    async isAuthenticated(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+    async waitForAuthentication(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> 
+    async getHeight(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeightResult> 
+    async getHeaderForHeight(args: GetHeaderArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeaderResult> 
+    async getNetwork(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> 
+    async getVersion(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> 
 }
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AcquireCertificateArgs](#interface-acquirecertificateargs), [AcquireCertificateResult](#interface-acquirecertificateresult), [AuthenticatedResult](#interface-authenticatedresult), [CreateActionArgs](#interface-createactionargs), [CreateActionResult](#interface-createactionresult), [DiscoverByAttributesArgs](#interface-discoverbyattributesargs), [DiscoverByIdentityKeyArgs](#interface-discoverbyidentitykeyargs), [DiscoverCertificatesResult](#interface-discovercertificatesresult), [GetHeaderArgs](#interface-getheaderargs), [GetHeaderResult](#interface-getheaderresult), [GetHeightResult](#interface-getheightresult), [GetNetworkResult](#interface-getnetworkresult), [GetVersionResult](#interface-getversionresult), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesArgs](#interface-listcertificatesargs), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [Monitor](#class-monitor), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [ProveCertificateArgs](#interface-provecertificateargs), [ProveCertificateResult](#interface-provecertificateresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishCertificateResult](#interface-relinquishcertificateresult), [RelinquishOutputArgs](#interface-relinquishoutputargs), [RelinquishOutputResult](#interface-relinquishoutputresult), [SignActionArgs](#interface-signactionargs), [SignActionResult](#interface-signactionresult), [TrustSelf](#type-trustself), [WalletServices](#interface-walletservices), [WalletSigner](#class-walletsigner), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [proveCertificate](#function-provecertificate), [signAction](#function-signaction)
+See also: [Chain](#type-chain), [KeyPair](#interface-keypair), [Monitor](#class-monitor), [PendingSignAction](#interface-pendingsignaction), [PrivilegedKeyManager](#class-privilegedkeymanager), [StorageIdentity](#interface-storageidentity), [WalletArgs](#interface-walletargs), [WalletServices](#interface-walletservices), [WalletSigner](#class-walletsigner), [WalletStorageManager](#class-walletstoragemanager), [createAction](#function-createaction), [getIdentityKey](#function-getidentitykey), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [proveCertificate](#function-provecertificate), [signAction](#function-signaction)
 
 <details>
 
@@ -6533,10 +5256,10 @@ classes.
 export class WalletError extends Error implements WalletErrorObject {
     isError: true = true;
     constructor(name: string, message: string, stack?: string, public details?: Record<string, string>) 
-    get code(): bsv.ErrorCodeString10To40Bytes 
-    set code(v: bsv.ErrorCodeString10To40Bytes) 
-    get description(): bsv.ErrorDescriptionString20To200Bytes 
-    set description(v: bsv.ErrorDescriptionString20To200Bytes) 
+    get code(): ErrorCodeString10To40Bytes 
+    set code(v: ErrorCodeString10To40Bytes) 
+    get description(): ErrorDescriptionString20To200Bytes 
+    set description(v: ErrorDescriptionString20To200Bytes) 
     static fromUnknown(err: unknown): WalletError 
     asStatus(): {
         status: string;
@@ -6545,8 +5268,6 @@ export class WalletError extends Error implements WalletErrorObject {
     } 
 }
 ```
-
-See also: [ErrorCodeString10To40Bytes](#type-errorcodestring10to40bytes), [ErrorDescriptionString20To200Bytes](#type-errordescriptionstring20to200bytes), [WalletErrorObject](#interface-walleterrorobject)
 
 <details>
 
@@ -6653,37 +5374,16 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Class: WalletSigner
 
 ```ts
-export class WalletSigner implements sdk.WalletSigner {
+export class WalletSigner {
+    isWalletSigner: true = true;
     chain: sdk.Chain;
-    keyDeriver: bsv.KeyDeriverApi;
+    keyDeriver: KeyDeriver;
     storage: WalletStorageManager;
-    _services?: sdk.WalletServices;
-    identityKey: string;
-    pendingSignActions: Record<string, PendingSignAction>;
-    constructor(chain: sdk.Chain, keyDeriver: bsv.KeyDeriver, storage: WalletStorageManager) 
-    getProtoWallet(): bsv.ProtoWallet 
-    setServices(v: sdk.WalletServices) 
-    getServices(): sdk.WalletServices 
-    getStorageIdentity(): sdk.StorageIdentity 
-    getClientChangeKeyPair(): sdk.KeyPair 
-    async getChain(): Promise<sdk.Chain> 
-    async listActions(args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult> 
-    async listOutputs(args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult> 
-    async listCertificates(args: bsv.ListCertificatesArgs): Promise<bsv.ListCertificatesResult> 
-    async abortAction(args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult> 
-    async createAction(args: bsv.CreateActionArgs): Promise<bsv.CreateActionResult> 
-    async signAction(args: bsv.SignActionArgs): Promise<bsv.SignActionResult> 
-    async internalizeAction(args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
-    async relinquishOutput(args: bsv.RelinquishOutputArgs): Promise<bsv.RelinquishOutputResult> 
-    async relinquishCertificate(args: bsv.RelinquishCertificateArgs): Promise<bsv.RelinquishCertificateResult> 
-    async acquireDirectCertificate(args: bsv.AcquireCertificateArgs): Promise<bsv.AcquireCertificateResult> 
-    async proveCertificate(args: bsv.ProveCertificateArgs): Promise<bsv.ProveCertificateResult> 
-    async discoverByIdentityKey(args: bsv.DiscoverByIdentityKeyArgs): Promise<bsv.DiscoverCertificatesResult> 
-    async discoverByAttributes(args: bsv.DiscoverByAttributesArgs): Promise<bsv.DiscoverCertificatesResult> 
+    constructor(chain: sdk.Chain, keyDeriver: KeyDeriver, storage: WalletStorageManager) 
 }
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AcquireCertificateArgs](#interface-acquirecertificateargs), [AcquireCertificateResult](#interface-acquirecertificateresult), [Chain](#type-chain), [CreateActionArgs](#interface-createactionargs), [CreateActionResult](#interface-createactionresult), [DiscoverByAttributesArgs](#interface-discoverbyattributesargs), [DiscoverByIdentityKeyArgs](#interface-discoverbyidentitykeyargs), [DiscoverCertificatesResult](#interface-discovercertificatesresult), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [KeyPair](#interface-keypair), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesArgs](#interface-listcertificatesargs), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [PendingSignAction](#interface-pendingsignaction), [ProveCertificateArgs](#interface-provecertificateargs), [ProveCertificateResult](#interface-provecertificateresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishCertificateResult](#interface-relinquishcertificateresult), [RelinquishOutputArgs](#interface-relinquishoutputargs), [RelinquishOutputResult](#interface-relinquishoutputresult), [SignActionArgs](#interface-signactionargs), [SignActionResult](#interface-signactionresult), [StorageIdentity](#interface-storageidentity), [WalletServices](#interface-walletservices), [WalletStorageManager](#class-walletstoragemanager), [acquireDirectCertificate](#function-acquiredirectcertificate), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [proveCertificate](#function-provecertificate), [signAction](#function-signaction)
+See also: [Chain](#type-chain), [WalletStorageManager](#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6741,16 +5441,16 @@ export class WalletStorageManager implements sdk.WalletStorage {
         user: table.User;
         isNew: boolean;
     }> 
-    async abortAction(args: bsv.AbortActionArgs): Promise<bsv.AbortActionResult> 
+    async abortAction(args: AbortActionArgs): Promise<AbortActionResult> 
     async createAction(args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> 
-    async internalizeAction(args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
-    async relinquishCertificate(args: bsv.RelinquishCertificateArgs): Promise<number> 
-    async relinquishOutput(args: bsv.RelinquishOutputArgs): Promise<number> 
+    async internalizeAction(args: InternalizeActionArgs): Promise<InternalizeActionResult> 
+    async relinquishCertificate(args: RelinquishCertificateArgs): Promise<number> 
+    async relinquishOutput(args: RelinquishOutputArgs): Promise<number> 
     async processAction(args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> 
     async insertCertificate(certificate: table.Certificate): Promise<number> 
-    async listActions(args: bsv.ListActionsArgs): Promise<bsv.ListActionsResult> 
-    async listCertificates(args: sdk.ValidListCertificatesArgs): Promise<bsv.ListCertificatesResult> 
-    async listOutputs(args: bsv.ListOutputsArgs): Promise<bsv.ListOutputsResult> 
+    async listActions(vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> 
+    async listCertificates(args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult> 
+    async listOutputs(vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult> 
     async findCertificates(args: sdk.FindCertificatesArgs): Promise<table.Certificate[]> 
     async findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<table.OutputBasket[]> 
     async findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]> 
@@ -6765,7 +5465,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 }
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [AbortActionResult](#interface-abortactionresult), [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [ListActionsArgs](#interface-listactionsargs), [ListActionsResult](#interface-listactionsresult), [ListCertificatesResult](#interface-listcertificatesresult), [ListOutputsArgs](#interface-listoutputsargs), [ListOutputsResult](#interface-listoutputsresult), [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [RelinquishOutputArgs](#interface-relinquishoutputargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvider](#class-storageprovider), [StorageSyncReader](#class-storagesyncreader), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [WalletServices](#interface-walletservices), [WalletStorage](#interface-walletstorage), [WalletStorageProvider](#interface-walletstorageprovider), [WalletStorageReader](#interface-walletstoragereader), [WalletStorageSync](#interface-walletstoragesync), [WalletStorageWriter](#interface-walletstoragewriter), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction)
+See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvider](#class-storageprovider), [StorageSyncReader](#class-storagesyncreader), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorage](#interface-walletstorage), [WalletStorageProvider](#interface-walletstorageprovider), [WalletStorageReader](#interface-walletstoragereader), [WalletStorageSync](#interface-walletstoragesync), [WalletStorageWriter](#interface-walletstoragewriter), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction)
 
 <details>
 
@@ -6856,45 +5556,47 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [acquireDirectCertificate](#function-acquiredirectcertificate) | [makeAtomicBeef](#function-makeatomicbeef) | [validateCreateActionInput](#function-validatecreateactioninput) |
-| [arraysEqual](#function-arraysequal) | [makeAtomicBeef](#function-makeatomicbeef) | [validateCreateActionOptions](#function-validatecreateactionoptions) |
-| [asArray](#function-asarray) | [makeErrorResult](#function-makeerrorresult) | [validateCreateActionOutput](#function-validatecreateactionoutput) |
-| [asArray](#function-asarray) | [makeGetMerklePathFromTaalARC](#function-makegetmerklepathfromtaalarc) | [validateDiscoverByAttributesArgs](#function-validatediscoverbyattributesargs) |
-| [asBsvSdkPrivateKey](#function-asbsvsdkprivatekey) | [makePostBeefResult](#function-makepostbeefresult) | [validateDiscoverByIdentityKeyArgs](#function-validatediscoverbyidentitykeyargs) |
-| [asBsvSdkPublickKey](#function-asbsvsdkpublickkey) | [makePostBeefToTaalARC](#function-makepostbeeftotaalarc) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
-| [asBsvSdkScript](#function-asbsvsdkscript) | [makePostTxsToTaalARC](#function-makeposttxstotaalarc) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
-| [asBsvSdkTx](#function-asbsvsdktx) | [maxDate](#function-maxdate) | [validateInteger](#function-validateinteger) |
-| [asBuffer](#function-asbuffer) | [offsetPubKey](#function-offsetpubkey) | [validateInternalizeActionArgs](#function-validateinternalizeactionargs) |
-| [asString](#function-asstring) | [optionalArraysEqual](#function-optionalarraysequal) | [validateInternalizeOutput](#function-validateinternalizeoutput) |
-| [asString](#function-asstring) | [parseTxScriptOffsets](#function-parsetxscriptoffsets) | [validateListActionsArgs](#function-validatelistactionsargs) |
-| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [parseWalletOutpoint](#function-parsewalletoutpoint) | [validateListCertificatesArgs](#function-validatelistcertificatesargs) |
-| [completeSignedTransaction](#function-completesignedtransaction) | [postBeefToArcMiner](#function-postbeeftoarcminer) | [validateListOutputsArgs](#function-validatelistoutputsargs) |
-| [completeSignedTransaction](#function-completesignedtransaction) | [postBeefToTaalArcMiner](#function-postbeeftotaalarcminer) | [validateOptionalInteger](#function-validateoptionalinteger) |
-| [convertProofToMerklePath](#function-convertprooftomerklepath) | [postTxsToTaalArcMiner](#function-posttxstotaalarcminer) | [validateOptionalOutpointString](#function-validateoptionaloutpointstring) |
-| [createAction](#function-createaction) | [processAction](#function-processaction) | [validateOriginator](#function-validateoriginator) |
-| [createAction](#function-createaction) | [processAction](#function-processaction) | [validateOutpointString](#function-validateoutpointstring) |
-| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [proveCertificate](#function-provecertificate) | [validatePositiveIntegerOrZero](#function-validatepositiveintegerorzero) |
-| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [purgeData](#function-purgedata) | [validateProveCertificateArgs](#function-validateprovecertificateargs) |
-| [doubleSha256BE](#function-doublesha256be) | [randomBytes](#function-randombytes) | [validateRelinquishCertificateArgs](#function-validaterelinquishcertificateargs) |
-| [doubleSha256HashLE](#function-doublesha256hashle) | [randomBytesBase64](#function-randombytesbase64) | [validateRelinquishOutputArgs](#function-validaterelinquishoutputargs) |
-| [expectToThrowWERR](#function-expecttothrowwerr) | [randomBytesHex](#function-randombyteshex) | [validateSatoshis](#function-validatesatoshis) |
-| [generateChangeSdk](#function-generatechangesdk) | [sha256Hash](#function-sha256hash) | [validateScriptHash](#function-validatescripthash) |
-| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [signAction](#function-signaction) | [validateSecondsSinceEpoch](#function-validatesecondssinceepoch) |
-| [getBeefForTransaction](#function-getbeeffortransaction) | [stampLog](#function-stamplog) | [validateSignActionArgs](#function-validatesignactionargs) |
-| [getExchangeRatesIo](#function-getexchangeratesio) | [stampLogFormat](#function-stamplogformat) | [validateSignActionOptions](#function-validatesignactionoptions) |
-| [getMerklePathFromTaalARC](#function-getmerklepathfromtaalarc) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
-| [getMerklePathFromWhatsOnChainTsc](#function-getmerklepathfromwhatsonchaintsc) | [toWalletNetwork](#function-towalletnetwork) | [validateStringLength](#function-validatestringlength) |
-| [getRawTxFromWhatsOnChain](#function-getrawtxfromwhatsonchain) | [transactionInputSize](#function-transactioninputsize) | [validateWalletPayment](#function-validatewalletpayment) |
-| [getSyncChunk](#function-getsyncchunk) | [transactionOutputSize](#function-transactionoutputsize) | [varUintSize](#function-varuintsize) |
-| [getTaalArcServiceConfig](#function-gettaalarcserviceconfig) | [transactionSize](#function-transactionsize) | [verifyHexString](#function-verifyhexstring) |
-| [getUtxoStatusFromWhatsOnChain](#function-getutxostatusfromwhatsonchain) | [updateBsvExchangeRate](#function-updatebsvexchangerate) | [verifyId](#function-verifyid) |
-| [internalizeAction](#function-internalizeaction) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) | [verifyInteger](#function-verifyinteger) |
-| [internalizeAction](#function-internalizeaction) | [updateExchangeratesapi](#function-updateexchangeratesapi) | [verifyNumber](#function-verifynumber) |
-| [isHexString](#function-ishexstring) | [validateAbortActionArgs](#function-validateabortactionargs) | [verifyOne](#function-verifyone) |
-| [listActions](#function-listactions) | [validateAcquireCertificateArgs](#function-validateacquirecertificateargs) | [verifyOneOrNone](#function-verifyoneornone) |
-| [listCertificates](#function-listcertificates) | [validateAcquireDirectCertificateArgs](#function-validateacquiredirectcertificateargs) | [verifyOptionalHexString](#function-verifyoptionalhexstring) |
-| [listOutputs](#function-listoutputs) | [validateBasketInsertion](#function-validatebasketinsertion) | [verifyTruthy](#function-verifytruthy) |
-| [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateCreateActionArgs](#function-validatecreateactionargs) | [wait](#function-wait) |
+| [acquireDirectCertificate](#function-acquiredirectcertificate) | [logOutput](#function-logoutput) | [validateCreateActionArgs](#function-validatecreateactionargs) |
+| [arraysEqual](#function-arraysequal) | [logTransaction](#function-logtransaction) | [validateCreateActionInput](#function-validatecreateactioninput) |
+| [asArray](#function-asarray) | [makeAtomicBeef](#function-makeatomicbeef) | [validateCreateActionOptions](#function-validatecreateactionoptions) |
+| [asArray](#function-asarray) | [makeAtomicBeef](#function-makeatomicbeef) | [validateCreateActionOutput](#function-validatecreateactionoutput) |
+| [asBsvSdkPrivateKey](#function-asbsvsdkprivatekey) | [makeErrorResult](#function-makeerrorresult) | [validateDiscoverByAttributesArgs](#function-validatediscoverbyattributesargs) |
+| [asBsvSdkPublickKey](#function-asbsvsdkpublickkey) | [makeGetMerklePathFromTaalARC](#function-makegetmerklepathfromtaalarc) | [validateDiscoverByIdentityKeyArgs](#function-validatediscoverbyidentitykeyargs) |
+| [asBsvSdkScript](#function-asbsvsdkscript) | [makePostBeefResult](#function-makepostbeefresult) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
+| [asBsvSdkTx](#function-asbsvsdktx) | [makePostBeefToTaalARC](#function-makepostbeeftotaalarc) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
+| [asBuffer](#function-asbuffer) | [makePostTxsToTaalARC](#function-makeposttxstotaalarc) | [validateInteger](#function-validateinteger) |
+| [asString](#function-asstring) | [maxDate](#function-maxdate) | [validateInternalizeActionArgs](#function-validateinternalizeactionargs) |
+| [asString](#function-asstring) | [offsetPubKey](#function-offsetpubkey) | [validateInternalizeOutput](#function-validateinternalizeoutput) |
+| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [optionalArraysEqual](#function-optionalarraysequal) | [validateListActionsArgs](#function-validatelistactionsargs) |
+| [completeSignedTransaction](#function-completesignedtransaction) | [parseTxScriptOffsets](#function-parsetxscriptoffsets) | [validateListCertificatesArgs](#function-validatelistcertificatesargs) |
+| [completeSignedTransaction](#function-completesignedtransaction) | [parseWalletOutpoint](#function-parsewalletoutpoint) | [validateListOutputsArgs](#function-validatelistoutputsargs) |
+| [convertProofToMerklePath](#function-convertprooftomerklepath) | [postBeefToArcMiner](#function-postbeeftoarcminer) | [validateOptionalInteger](#function-validateoptionalinteger) |
+| [createAction](#function-createaction) | [postBeefToTaalArcMiner](#function-postbeeftotaalarcminer) | [validateOptionalOutpointString](#function-validateoptionaloutpointstring) |
+| [createAction](#function-createaction) | [postTxsToTaalArcMiner](#function-posttxstotaalarcminer) | [validateOriginator](#function-validateoriginator) |
+| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [processAction](#function-processaction) | [validateOutpointString](#function-validateoutpointstring) |
+| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [processAction](#function-processaction) | [validatePositiveIntegerOrZero](#function-validatepositiveintegerorzero) |
+| [doubleSha256BE](#function-doublesha256be) | [proveCertificate](#function-provecertificate) | [validateProveCertificateArgs](#function-validateprovecertificateargs) |
+| [doubleSha256HashLE](#function-doublesha256hashle) | [purgeData](#function-purgedata) | [validateRelinquishCertificateArgs](#function-validaterelinquishcertificateargs) |
+| [expectToThrowWERR](#function-expecttothrowwerr) | [randomBytes](#function-randombytes) | [validateRelinquishOutputArgs](#function-validaterelinquishoutputargs) |
+| [generateChangeSdk](#function-generatechangesdk) | [randomBytesBase64](#function-randombytesbase64) | [validateSatoshis](#function-validatesatoshis) |
+| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [randomBytesHex](#function-randombyteshex) | [validateScriptHash](#function-validatescripthash) |
+| [getBeefForTransaction](#function-getbeeffortransaction) | [reviewStatus](#function-reviewstatus) | [validateSecondsSinceEpoch](#function-validatesecondssinceepoch) |
+| [getExchangeRatesIo](#function-getexchangeratesio) | [sha256Hash](#function-sha256hash) | [validateSignActionArgs](#function-validatesignactionargs) |
+| [getIdentityKey](#function-getidentitykey) | [signAction](#function-signaction) | [validateSignActionOptions](#function-validatesignactionoptions) |
+| [getMerklePathFromTaalARC](#function-getmerklepathfromtaalarc) | [stampLog](#function-stamplog) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
+| [getMerklePathFromWhatsOnChainTsc](#function-getmerklepathfromwhatsonchaintsc) | [stampLogFormat](#function-stamplogformat) | [validateStringLength](#function-validatestringlength) |
+| [getRawTxFromWhatsOnChain](#function-getrawtxfromwhatsonchain) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) | [validateWalletPayment](#function-validatewalletpayment) |
+| [getSyncChunk](#function-getsyncchunk) | [toWalletNetwork](#function-towalletnetwork) | [varUintSize](#function-varuintsize) |
+| [getTaalArcServiceConfig](#function-gettaalarcserviceconfig) | [transactionInputSize](#function-transactioninputsize) | [verifyHexString](#function-verifyhexstring) |
+| [getUtxoStatusFromWhatsOnChain](#function-getutxostatusfromwhatsonchain) | [transactionOutputSize](#function-transactionoutputsize) | [verifyId](#function-verifyid) |
+| [internalizeAction](#function-internalizeaction) | [transactionSize](#function-transactionsize) | [verifyInteger](#function-verifyinteger) |
+| [internalizeAction](#function-internalizeaction) | [updateBsvExchangeRate](#function-updatebsvexchangerate) | [verifyNumber](#function-verifynumber) |
+| [isHexString](#function-ishexstring) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) | [verifyOne](#function-verifyone) |
+| [listActions](#function-listactions) | [updateExchangeratesapi](#function-updateexchangeratesapi) | [verifyOneOrNone](#function-verifyoneornone) |
+| [listCertificates](#function-listcertificates) | [validateAbortActionArgs](#function-validateabortactionargs) | [verifyOptionalHexString](#function-verifyoptionalhexstring) |
+| [listOutputs](#function-listoutputs) | [validateAcquireCertificateArgs](#function-validateacquirecertificateargs) | [verifyTruthy](#function-verifytruthy) |
+| [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateAcquireDirectCertificateArgs](#function-validateacquiredirectcertificateargs) | [wait](#function-wait) |
+| [logBasket](#function-logbasket) | [validateBasketInsertion](#function-validatebasketinsertion) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6903,10 +5605,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: acquireDirectCertificate
 
 ```ts
-export async function acquireDirectCertificate(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidAcquireDirectCertificateArgs): Promise<bsv.AcquireCertificateResult> 
+export async function acquireDirectCertificate(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidAcquireDirectCertificateArgs): Promise<AcquireCertificateResult> 
 ```
 
-See also: [AcquireCertificateResult](#interface-acquirecertificateresult), [AuthId](#interface-authid), [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs), [WalletSigner](#class-walletsigner)
+See also: [AuthId](#interface-authid), [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6986,7 +5688,7 @@ Coerce a bsv script encoded as a hex string, serialized array, or Script to Scri
 If script is already a Script, just return it.
 
 ```ts
-export function asBsvSdkScript(script: bsv.HexString | number[] | Script): Script {
+export function asBsvSdkScript(script: HexString | number[] | Script): Script {
     if (Array.isArray(script)) {
         script = Script.fromBinary(script);
     }
@@ -6997,8 +5699,6 @@ export function asBsvSdkScript(script: bsv.HexString | number[] | Script): Scrip
 }
 ```
 
-See also: [HexString](#type-hexstring)
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -7008,7 +5708,7 @@ Coerce a bsv transaction encoded as a hex string, serialized array, or Transacti
 If tx is already a Transaction, just return it.
 
 ```ts
-export function asBsvSdkTx(tx: bsv.HexString | number[] | Transaction): Transaction {
+export function asBsvSdkTx(tx: HexString | number[] | Transaction): Transaction {
     if (Array.isArray(tx)) {
         tx = Transaction.fromBinary(tx);
     }
@@ -7018,8 +5718,6 @@ export function asBsvSdkTx(tx: bsv.HexString | number[] | Transaction): Transact
     return tx;
 }
 ```
-
-See also: [HexString](#type-hexstring)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7069,7 +5767,7 @@ Coerce a value to a hex encoded string if currently a hex encoded string or numb
 export function asString(val: string | number[]): string {
     if (typeof val === "string")
         return val;
-    return bsv.Utils.toHex(val);
+    return Utils.toHex(val);
 }
 ```
 
@@ -7140,10 +5838,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: completeSignedTransaction
 
 ```ts
-export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, bsv.SignActionSpend>, signer: WalletSigner): Promise<Transaction> 
+export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, wallet: Wallet): Promise<Transaction> 
 ```
 
-See also: [PendingSignAction](#interface-pendingsignaction), [SignActionSpend](#interface-signactionspend), [WalletSigner](#class-walletsigner)
+See also: [PendingSignAction](#interface-pendingsignaction), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7151,10 +5849,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: completeSignedTransaction
 
 ```ts
-export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, bsv.SignActionSpend>, ninja: WalletSigner): Promise<bsv.Transaction> 
+export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, wallet: Wallet): Promise<BsvTransaction> 
 ```
 
-See also: [PendingSignAction](#interface-pendingsignaction), [SignActionSpend](#interface-signactionspend), [WalletSigner](#class-walletsigner)
+See also: [PendingSignAction](#interface-pendingsignaction), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7162,7 +5860,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: convertProofToMerklePath
 
 ```ts
-export function convertProofToMerklePath(txid: string, proof: TscMerkleProofApi): bsv.MerklePath 
+export function convertProofToMerklePath(txid: string, proof: TscMerkleProofApi): MerklePath 
 ```
 
 See also: [TscMerkleProofApi](#interface-tscmerkleproofapi)
@@ -7173,10 +5871,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: createAction
 
 ```ts
-export async function createAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs): Promise<bsv.CreateActionResult> 
+export async function createAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs): Promise<CreateActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [CreateActionResult](#interface-createactionresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [WalletSigner](#class-walletsigner)
+See also: [AuthId](#interface-authid), [ValidCreateActionArgs](#interface-validcreateactionargs), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7184,10 +5882,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: createAction
 
 ```ts
-export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<sdk.StorageCreateActionResult> 
+export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<sdk.StorageCreateActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProvider](#class-storageprovider), [ValidCreateActionArgs](#interface-validcreateactionargs)
+See also: [AuthId](#interface-authid), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProvider](#class-storageprovider), [ValidCreateActionArgs](#interface-validcreateactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7206,13 +5904,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: createStorageServiceChargeScript
 
 ```ts
-export function createStorageServiceChargeScript(pubKeyHex: bsv.PubKeyHex): {
+export function createStorageServiceChargeScript(pubKeyHex: PubKeyHex): {
     script: string;
     keyOffset: string;
 } 
 ```
-
-See also: [PubKeyHex](#type-pubkeyhex)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7334,7 +6030,7 @@ be valid by verified proof are represented solely by 'txid'.
 If `knownTxids` is defined, any 'txid' required by the `Beef` that appears in the array is represented solely as a 'known' txid.
 
 ```ts
-export async function getBeefForTransaction(storage: StorageProvider, txid: string, options: sdk.StorageGetBeefOptions): Promise<bsv.Beef> 
+export async function getBeefForTransaction(storage: StorageProvider, txid: string, options: sdk.StorageGetBeefOptions): Promise<Beef> 
 ```
 
 See also: [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProvider](#class-storageprovider)
@@ -7362,6 +6058,17 @@ export async function getExchangeRatesIo(key: string): Promise<ExchangeRatesIoAp
 ```
 
 See also: [ExchangeRatesIoApi](#interface-exchangeratesioapi)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Function: getIdentityKey
+
+```ts
+export async function getIdentityKey(wallet: CertOpsWallet): Promise<PubKeyHex> 
+```
+
+See also: [CertOpsWallet](#interface-certopswallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7468,10 +6175,10 @@ When the transaction already exists, the description is updated. The isOutgoing 
 2. Targetting a previously "custom" non-change output converts it into a change output. This alters the transaction's `amount`, and the wallet balance.
 
 ```ts
-export async function internalizeAction(signer: WalletSigner, auth: sdk.AuthId, args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
+export async function internalizeAction(wallet: Wallet, auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [WalletSigner](#class-walletsigner)
+See also: [AuthId](#interface-authid), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7504,10 +6211,10 @@ When the transaction already exists, the description is updated. The isOutgoing 
 2. Targetting a previously "custom" non-change output converts it into a change output. This alters the transaction's `satoshis`, and the wallet balance.
 
 ```ts
-export async function internalizeAction(storage: StorageProvider, auth: sdk.AuthId, args: bsv.InternalizeActionArgs): Promise<bsv.InternalizeActionResult> 
+export async function internalizeAction(storage: StorageProvider, auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [InternalizeActionArgs](#interface-internalizeactionargs), [InternalizeActionResult](#interface-internalizeactionresult), [StorageProvider](#class-storageprovider)
+See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7524,10 +6231,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: listActions
 
 ```ts
-export async function listActions(storage: StorageKnex, auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<bsv.ListActionsResult> 
+export async function listActions(storage: StorageKnex, auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ListActionsResult](#interface-listactionsresult), [StorageKnex](#class-storageknex), [ValidListActionsArgs](#interface-validlistactionsargs)
+See also: [AuthId](#interface-authid), [StorageKnex](#class-storageknex), [ValidListActionsArgs](#interface-validlistactionsargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7535,10 +6242,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: listCertificates
 
 ```ts
-export async function listCertificates(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.ListCertificatesResult> 
+export async function listCertificates(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ListCertificatesResult](#interface-listcertificatesresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [StorageProvider](#class-storageprovider), [ValidListCertificatesArgs](#interface-validlistcertificatesargs)
+See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider), [ValidListCertificatesArgs](#interface-validlistcertificatesargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7546,10 +6253,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: listOutputs
 
 ```ts
-export async function listOutputs(dsk: StorageKnex, auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs, originator?: bsv.OriginatorDomainNameStringUnder250Bytes): Promise<bsv.ListOutputsResult> 
+export async function listOutputs(dsk: StorageKnex, auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListOutputsResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ListOutputsResult](#interface-listoutputsresult), [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes), [StorageKnex](#class-storageknex), [ValidListOutputsArgs](#interface-validlistoutputsargs)
+See also: [AuthId](#interface-authid), [StorageKnex](#class-storageknex), [ValidListOutputsArgs](#interface-validlistoutputsargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7566,6 +6273,39 @@ export function lockScriptWithKeyOffsetFromPubKey(pubKey: string, keyOffset?: st
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+### Function: logBasket
+
+```ts
+export function logBasket(storage: StorageKnex, basket: table.OutputBasket): string 
+```
+
+See also: [StorageKnex](#class-storageknex)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Function: logOutput
+
+```ts
+export async function logOutput(storage: StorageKnex, output: table.Output): Promise<string> 
+```
+
+See also: [StorageKnex](#class-storageknex)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Function: logTransaction
+
+```ts
+export async function logTransaction(storage: StorageKnex, txid: HexString): Promise<string> 
+```
+
+See also: [StorageKnex](#class-storageknex)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ### Function: makeAtomicBeef
 
 ```ts
@@ -7578,7 +6318,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: makeAtomicBeef
 
 ```ts
-export function makeAtomicBeef(tx: bsv.Transaction, beef: number[] | bsv.Beef): number[] 
+export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef): number[] 
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -7695,7 +6435,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: postBeefToArcMiner
 
 ```ts
-export async function postBeefToArcMiner(beef: bsv.Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
+export async function postBeefToArcMiner(beef: Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
 ```
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult)
@@ -7706,7 +6446,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: postBeefToTaalArcMiner
 
 ```ts
-export async function postBeefToTaalArcMiner(beef: bsv.Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
+export async function postBeefToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
 ```
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult), [WalletServices](#interface-walletservices)
@@ -7717,7 +6457,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: postTxsToTaalArcMiner
 
 ```ts
-export async function postTxsToTaalArcMiner(beef: bsv.Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
+export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
 ```
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface-walletservices)
@@ -7739,10 +6479,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: processAction
 
 ```ts
-export async function processAction(prior: PendingSignAction | undefined, signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs): Promise<bsv.SendWithResult[] | undefined> 
+export async function processAction(prior: PendingSignAction | undefined, wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs): Promise<SendWithResult[] | undefined> 
 ```
 
-See also: [AuthId](#interface-authid), [PendingSignAction](#interface-pendingsignaction), [SendWithResult](#interface-sendwithresult), [ValidProcessActionArgs](#interface-validprocessactionargs), [WalletSigner](#class-walletsigner)
+See also: [AuthId](#interface-authid), [PendingSignAction](#interface-pendingsignaction), [ValidProcessActionArgs](#interface-validprocessactionargs), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7761,10 +6501,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: proveCertificate
 
 ```ts
-export async function proveCertificate(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidProveCertificateArgs): Promise<bsv.ProveCertificateResult> 
+export async function proveCertificate(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidProveCertificateArgs): Promise<ProveCertificateResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ProveCertificateResult](#interface-provecertificateresult), [ValidProveCertificateArgs](#interface-validprovecertificateargs), [WalletSigner](#class-walletsigner)
+See also: [AuthId](#interface-authid), [ValidProveCertificateArgs](#interface-validprovecertificateargs), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7837,6 +6577,22 @@ count cryptographically secure random bytes as hex encoded string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+### Function: reviewStatus
+
+```ts
+export async function reviewStatus(storage: StorageKnex, args: {
+    agedLimit: Date;
+    trx?: sdk.TrxToken;
+}): Promise<{
+    log: string;
+}> 
+```
+
+See also: [StorageKnex](#class-storageknex), [TrxToken](#interface-trxtoken), [log](#variable-log)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ### Function: sha256Hash
 
 Calculate the SHA256 hash of an array of bytes
@@ -7864,10 +6620,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: signAction
 
 ```ts
-export async function signAction(signer: WalletSigner, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs): Promise<bsv.SignActionResult> 
+export async function signAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs): Promise<SignActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [SignActionResult](#interface-signactionresult), [ValidSignActionArgs](#interface-validsignactionargs), [WalletSigner](#class-walletsigner)
+See also: [AuthId](#interface-authid), [ValidSignActionArgs](#interface-validsignactionargs), [Wallet](#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7881,6 +6637,8 @@ export function stampLog(log: string | undefined | {
     log?: string;
 }, lineToAdd: string): string | undefined 
 ```
+
+See also: [log](#variable-log)
 
 <details>
 
@@ -7912,6 +6670,8 @@ Assumes log built by repeated calls to `stampLog`
 export function stampLogFormat(log?: string): string 
 ```
 
+See also: [log](#variable-log)
+
 <details>
 
 <summary>Function stampLogFormat Details</summary>
@@ -7939,7 +6699,7 @@ the block hash for the header.
 
 ```ts
 export function toBinaryBaseBlockHeader(header: sdk.BaseBlockHeader): number[] {
-    const writer = new bsv.Utils.Writer();
+    const writer = new Utils.Writer();
     writer.writeUInt32BE(header.version);
     writer.writeReverse(asArray(header.previousHash));
     writer.writeReverse(asArray(header.merkleRoot));
@@ -7969,10 +6729,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: toWalletNetwork
 
 ```ts
-export function toWalletNetwork(chain: Chain): bsv.WalletNetwork 
+export function toWalletNetwork(chain: Chain): WalletNetwork 
 ```
 
-See also: [Chain](#type-chain), [WalletNetwork](#type-walletnetwork)
+See also: [Chain](#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8091,10 +6851,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateAbortActionArgs
 
 ```ts
-export function validateAbortActionArgs(args: bsv.AbortActionArgs): ValidAbortActionArgs 
+export function validateAbortActionArgs(args: AbortActionArgs): ValidAbortActionArgs 
 ```
 
-See also: [AbortActionArgs](#interface-abortactionargs), [ValidAbortActionArgs](#interface-validabortactionargs)
+See also: [ValidAbortActionArgs](#interface-validabortactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8102,10 +6862,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateAcquireCertificateArgs
 
 ```ts
-export async function validateAcquireCertificateArgs(args: bsv.AcquireCertificateArgs): Promise<ValidAcquireCertificateArgs> 
+export async function validateAcquireCertificateArgs(args: AcquireCertificateArgs): Promise<ValidAcquireCertificateArgs> 
 ```
 
-See also: [AcquireCertificateArgs](#interface-acquirecertificateargs), [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs)
+See also: [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs)
 
 <details>
 
@@ -8124,10 +6884,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateAcquireDirectCertificateArgs
 
 ```ts
-export function validateAcquireDirectCertificateArgs(args: bsv.AcquireCertificateArgs): ValidAcquireDirectCertificateArgs 
+export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArgs): ValidAcquireDirectCertificateArgs 
 ```
 
-See also: [AcquireCertificateArgs](#interface-acquirecertificateargs), [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs)
+See also: [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8135,10 +6895,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateBasketInsertion
 
 ```ts
-export function validateBasketInsertion(args?: bsv.BasketInsertion): ValidBasketInsertion | undefined 
+export function validateBasketInsertion(args?: BasketInsertion): ValidBasketInsertion | undefined 
 ```
 
-See also: [BasketInsertion](#interface-basketinsertion), [ValidBasketInsertion](#interface-validbasketinsertion)
+See also: [ValidBasketInsertion](#interface-validbasketinsertion)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8146,10 +6906,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateCreateActionArgs
 
 ```ts
-export function validateCreateActionArgs(args: bsv.CreateActionArgs): ValidCreateActionArgs 
+export function validateCreateActionArgs(args: CreateActionArgs): ValidCreateActionArgs 
 ```
 
-See also: [CreateActionArgs](#interface-createactionargs), [ValidCreateActionArgs](#interface-validcreateactionargs)
+See also: [ValidCreateActionArgs](#interface-validcreateactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8157,10 +6917,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateCreateActionInput
 
 ```ts
-export function validateCreateActionInput(i: bsv.CreateActionInput): ValidCreateActionInput 
+export function validateCreateActionInput(i: CreateActionInput): ValidCreateActionInput 
 ```
 
-See also: [CreateActionInput](#interface-createactioninput), [ValidCreateActionInput](#interface-validcreateactioninput)
+See also: [ValidCreateActionInput](#interface-validcreateactioninput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8173,10 +6933,10 @@ Set all possibly undefined arrays to empty arrays.
 Convert string outpoints to `{ txid: string, vout: number }`
 
 ```ts
-export function validateCreateActionOptions(options?: bsv.CreateActionOptions): ValidCreateActionOptions 
+export function validateCreateActionOptions(options?: CreateActionOptions): ValidCreateActionOptions 
 ```
 
-See also: [CreateActionOptions](#interface-createactionoptions), [ValidCreateActionOptions](#interface-validcreateactionoptions)
+See also: [ValidCreateActionOptions](#interface-validcreateactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8184,10 +6944,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateCreateActionOutput
 
 ```ts
-export function validateCreateActionOutput(o: bsv.CreateActionOutput): ValidCreateActionOutput 
+export function validateCreateActionOutput(o: CreateActionOutput): ValidCreateActionOutput 
 ```
 
-See also: [CreateActionOutput](#interface-createactionoutput), [ValidCreateActionOutput](#interface-validcreateactionoutput)
+See also: [ValidCreateActionOutput](#interface-validcreateactionoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8195,10 +6955,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateDiscoverByAttributesArgs
 
 ```ts
-export function validateDiscoverByAttributesArgs(args: bsv.DiscoverByAttributesArgs): ValidDiscoverByAttributesArgs 
+export function validateDiscoverByAttributesArgs(args: DiscoverByAttributesArgs): ValidDiscoverByAttributesArgs 
 ```
 
-See also: [DiscoverByAttributesArgs](#interface-discoverbyattributesargs), [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs)
+See also: [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8206,10 +6966,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateDiscoverByIdentityKeyArgs
 
 ```ts
-export function validateDiscoverByIdentityKeyArgs(args: bsv.DiscoverByIdentityKeyArgs): ValidDiscoverByIdentityKeyArgs 
+export function validateDiscoverByIdentityKeyArgs(args: DiscoverByIdentityKeyArgs): ValidDiscoverByIdentityKeyArgs 
 ```
 
-See also: [DiscoverByIdentityKeyArgs](#interface-discoverbyidentitykeyargs), [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs)
+See also: [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8234,7 +6994,7 @@ export function validateGenerateChangeSdkResult(params: GenerateChangeSdkParams,
 } 
 ```
 
-See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams), [GenerateChangeSdkResult](#interface-generatechangesdkresult)
+See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams), [GenerateChangeSdkResult](#interface-generatechangesdkresult), [log](#variable-log)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8251,10 +7011,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateInternalizeActionArgs
 
 ```ts
-export function validateInternalizeActionArgs(args: bsv.InternalizeActionArgs): ValidInternalizeActionArgs 
+export function validateInternalizeActionArgs(args: InternalizeActionArgs): ValidInternalizeActionArgs 
 ```
 
-See also: [InternalizeActionArgs](#interface-internalizeactionargs), [ValidInternalizeActionArgs](#interface-validinternalizeactionargs)
+See also: [ValidInternalizeActionArgs](#interface-validinternalizeactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8262,10 +7022,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateInternalizeOutput
 
 ```ts
-export function validateInternalizeOutput(args: bsv.InternalizeOutput): ValidInternalizeOutput 
+export function validateInternalizeOutput(args: InternalizeOutput): ValidInternalizeOutput 
 ```
 
-See also: [InternalizeOutput](#interface-internalizeoutput), [ValidInternalizeOutput](#interface-validinternalizeoutput)
+See also: [ValidInternalizeOutput](#interface-validinternalizeoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8273,10 +7033,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateListActionsArgs
 
 ```ts
-export function validateListActionsArgs(args: bsv.ListActionsArgs): ValidListActionsArgs 
+export function validateListActionsArgs(args: ListActionsArgs): ValidListActionsArgs 
 ```
 
-See also: [ListActionsArgs](#interface-listactionsargs), [ValidListActionsArgs](#interface-validlistactionsargs)
+See also: [ValidListActionsArgs](#interface-validlistactionsargs)
 
 <details>
 
@@ -8315,10 +7075,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateListCertificatesArgs
 
 ```ts
-export function validateListCertificatesArgs(args: bsv.ListCertificatesArgs): ValidListCertificatesArgs 
+export function validateListCertificatesArgs(args: ListCertificatesArgs): ValidListCertificatesArgs 
 ```
 
-See also: [ListCertificatesArgs](#interface-listcertificatesargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs)
+See also: [ValidListCertificatesArgs](#interface-validlistcertificatesargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8326,10 +7086,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateListOutputsArgs
 
 ```ts
-export function validateListOutputsArgs(args: bsv.ListOutputsArgs): ValidListOutputsArgs 
+export function validateListOutputsArgs(args: ListOutputsArgs): ValidListOutputsArgs 
 ```
 
-See also: [ListOutputsArgs](#interface-listoutputsargs), [ValidListOutputsArgs](#interface-validlistoutputsargs)
+See also: [ValidListOutputsArgs](#interface-validlistoutputsargs)
 
 <details>
 
@@ -8413,10 +7173,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateProveCertificateArgs
 
 ```ts
-export function validateProveCertificateArgs(args: bsv.ProveCertificateArgs): ValidProveCertificateArgs 
+export function validateProveCertificateArgs(args: ProveCertificateArgs): ValidProveCertificateArgs 
 ```
 
-See also: [ProveCertificateArgs](#interface-provecertificateargs), [ValidProveCertificateArgs](#interface-validprovecertificateargs)
+See also: [ValidProveCertificateArgs](#interface-validprovecertificateargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8424,10 +7184,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateRelinquishCertificateArgs
 
 ```ts
-export function validateRelinquishCertificateArgs(args: bsv.RelinquishCertificateArgs): ValidRelinquishCertificateArgs 
+export function validateRelinquishCertificateArgs(args: RelinquishCertificateArgs): ValidRelinquishCertificateArgs 
 ```
 
-See also: [RelinquishCertificateArgs](#interface-relinquishcertificateargs), [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs)
+See also: [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8435,10 +7195,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateRelinquishOutputArgs
 
 ```ts
-export function validateRelinquishOutputArgs(args: bsv.RelinquishOutputArgs): ValidRelinquishOutputArgs 
+export function validateRelinquishOutputArgs(args: RelinquishOutputArgs): ValidRelinquishOutputArgs 
 ```
 
-See also: [RelinquishOutputArgs](#interface-relinquishoutputargs), [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs)
+See also: [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8475,10 +7235,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateSignActionArgs
 
 ```ts
-export function validateSignActionArgs(args: bsv.SignActionArgs): ValidSignActionArgs 
+export function validateSignActionArgs(args: SignActionArgs): ValidSignActionArgs 
 ```
 
-See also: [SignActionArgs](#interface-signactionargs), [ValidSignActionArgs](#interface-validsignactionargs)
+See also: [ValidSignActionArgs](#interface-validsignactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8491,10 +7251,10 @@ Set all possibly undefined arrays to empty arrays.
 Convert string outpoints to `{ txid: string, vout: number }`
 
 ```ts
-export function validateSignActionOptions(options?: bsv.SignActionOptions): ValidSignActionOptions 
+export function validateSignActionOptions(options?: SignActionOptions): ValidSignActionOptions 
 ```
 
-See also: [SignActionOptions](#interface-signactionoptions), [ValidSignActionOptions](#interface-validsignactionoptions)
+See also: [ValidSignActionOptions](#interface-validsignactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8522,10 +7282,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Function: validateWalletPayment
 
 ```ts
-export function validateWalletPayment(args?: bsv.WalletPayment): ValidWalletPayment | undefined 
+export function validateWalletPayment(args?: WalletPayment): ValidWalletPayment | undefined 
 ```
 
-See also: [ValidWalletPayment](#interface-validwalletpayment), [WalletPayment](#interface-walletpayment)
+See also: [ValidWalletPayment](#interface-validwalletpayment)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8690,126 +7450,23 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ## Types
 
-| | | |
-| --- | --- | --- |
-| [AcquisitionProtocol](#type-acquisitionprotocol) | [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [ProvenTxReqStatus](#type-proventxreqstatus) |
-| [ActionStatus](#type-actionstatus) | [GetUtxoStatusService](#type-getutxostatusservice) | [PubKeyHex](#type-pubkeyhex) |
-| [AtomicBEEF](#type-atomicbeef) | [HexString](#type-hexstring) | [SatoshiValue](#type-satoshivalue) |
-| [BEEF](#type-beef) | [ISOTimestampString](#type-isotimestampstring) | [SendWithResultStatus](#type-sendwithresultstatus) |
-| [Base64String](#type-base64string) | [KeyIDStringUnder800Bytes](#type-keyidstringunder800bytes) | [StorageProvidedBy](#type-storageprovidedby) |
-| [BasketStringUnder300Bytes](#type-basketstringunder300bytes) | [KeyringRevealer](#type-keyringrevealer) | [SyncProtocolVersion](#type-syncprotocolversion) |
-| [BooleanDefaultFalse](#type-booleandefaultfalse) | [LabelStringUnder300Bytes](#type-labelstringunder300bytes) | [SyncStatus](#type-syncstatus) |
-| [BooleanDefaultTrue](#type-booleandefaulttrue) | [MonitorStorage](#type-monitorstorage) | [TXIDHexString](#type-txidhexstring) |
-| [Byte](#type-byte) | [OriginatorDomainNameStringUnder250Bytes](#type-originatordomainnamestringunder250bytes) | [TestKeyPair](#type-testkeypair) |
-| [CertificateFieldNameUnder50Bytes](#type-certificatefieldnameunder50bytes) | [OutpointString](#type-outpointstring) | [TestSetup1Wallet](#type-testsetup1wallet) |
-| [Chain](#type-chain) | [OutputTagStringUnder300Bytes](#type-outputtagstringunder300bytes) | [TestWalletNoSetup](#type-testwalletnosetup) |
-| [DBType](#type-dbtype) | [PositiveInteger](#type-positiveinteger) | [TransactionStatus](#type-transactionstatus) |
-| [DescriptionString5to50Bytes](#type-descriptionstring5to50bytes) | [PositiveIntegerDefault10Max10000](#type-positiveintegerdefault10max10000) | [TrustSelf](#type-trustself) |
-| [EntityIconURLStringMax500Bytes](#type-entityiconurlstringmax500bytes) | [PositiveIntegerMax10](#type-positiveintegermax10) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
-| [EntityNameStringMax100Bytes](#type-entitynamestringmax100bytes) | [PositiveIntegerOrZero](#type-positiveintegerorzero) | [VersionString7To30Bytes](#type-versionstring7to30bytes) |
-| [ErrorCodeString10To40Bytes](#type-errorcodestring10to40bytes) | [PostBeefService](#type-postbeefservice) | [WalletCounterparty](#type-walletcounterparty) |
-| [ErrorDescriptionString20To200Bytes](#type-errordescriptionstring20to200bytes) | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) | [WalletNetwork](#type-walletnetwork) |
-| [GetMerklePathService](#type-getmerklepathservice) | [PostTxsService](#type-posttxsservice) | [WalletProtocol](#type-walletprotocol) |
-| [GetRawTxService](#type-getrawtxservice) | [ProtocolString5To400Bytes](#type-protocolstring5to400bytes) |  |
+| | |
+| --- | --- |
+| [Chain](#type-chain) | [ProvenTxReqStatus](#type-proventxreqstatus) |
+| [DBType](#type-dbtype) | [StorageProvidedBy](#type-storageprovidedby) |
+| [GetMerklePathService](#type-getmerklepathservice) | [SyncProtocolVersion](#type-syncprotocolversion) |
+| [GetRawTxService](#type-getrawtxservice) | [SyncStatus](#type-syncstatus) |
+| [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [TestKeyPair](#type-testkeypair) |
+| [GetUtxoStatusService](#type-getutxostatusservice) | [TestSetup1Wallet](#type-testsetup1wallet) |
+| [MonitorStorage](#type-monitorstorage) | [TestWalletNoSetup](#type-testwalletnosetup) |
+| [PostBeefService](#type-postbeefservice) | [TransactionStatus](#type-transactionstatus) |
+| [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
+| [PostTxsService](#type-posttxsservice) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
 
-### Type: AcquisitionProtocol
-
-```ts
-export type AcquisitionProtocol = "direct" | "issuance"
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: ActionStatus
-
-```ts
-export type ActionStatus = "completed" | "unprocessed" | "sending" | "unproven" | "unsigned" | "nosend" | "nonfinal"
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: AtomicBEEF
-
-```ts
-export type AtomicBEEF = Byte[]
-```
-
-See also: [Byte](#type-byte)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: BEEF
-
-```ts
-export type BEEF = Byte[]
-```
-
-See also: [Byte](#type-byte)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: Base64String
-
-```ts
-export type Base64String = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: BasketStringUnder300Bytes
-
-```ts
-export type BasketStringUnder300Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: BooleanDefaultFalse
-
-```ts
-export type BooleanDefaultFalse = boolean
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: BooleanDefaultTrue
-
-```ts
-export type BooleanDefaultTrue = boolean
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: Byte
-
-```ts
-export type Byte = number
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: CertificateFieldNameUnder50Bytes
-
-```ts
-export type CertificateFieldNameUnder50Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Type: Chain
 
 ```ts
@@ -8823,51 +7480,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export type DBType = "SQLite" | "MySQL"
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: DescriptionString5to50Bytes
-
-```ts
-export type DescriptionString5to50Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: EntityIconURLStringMax500Bytes
-
-```ts
-export type EntityIconURLStringMax500Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: EntityNameStringMax100Bytes
-
-```ts
-export type EntityNameStringMax100Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: ErrorCodeString10To40Bytes
-
-```ts
-export type ErrorCodeString10To40Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: ErrorDescriptionString20To200Bytes
-
-```ts
-export type ErrorDescriptionString20To200Bytes = string
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -8915,53 +7527,6 @@ See also: [Chain](#type-chain), [GetUtxoStatusOutputFormat](#type-getutxostatuso
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: HexString
-
-```ts
-export type HexString = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: ISOTimestampString
-
-```ts
-export type ISOTimestampString = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: KeyIDStringUnder800Bytes
-
-```ts
-export type KeyIDStringUnder800Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: KeyringRevealer
-
-```ts
-export type KeyringRevealer = PubKeyHex | "certifier"
-```
-
-See also: [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: LabelStringUnder300Bytes
-
-```ts
-export type LabelStringUnder300Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Type: MonitorStorage
 
 ```ts
@@ -8973,73 +7538,10 @@ See also: [WalletStorageManager](#class-walletstoragemanager)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: OriginatorDomainNameStringUnder250Bytes
-
-```ts
-export type OriginatorDomainNameStringUnder250Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: OutpointString
-
-```ts
-export type OutpointString = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: OutputTagStringUnder300Bytes
-
-```ts
-export type OutputTagStringUnder300Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: PositiveInteger
-
-```ts
-export type PositiveInteger = number
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: PositiveIntegerDefault10Max10000
-
-```ts
-export type PositiveIntegerDefault10Max10000 = number
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: PositiveIntegerMax10
-
-```ts
-export type PositiveIntegerMax10 = number
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: PositiveIntegerOrZero
-
-```ts
-export type PositiveIntegerOrZero = number
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Type: PostBeefService
 
 ```ts
-export type PostBeefService = (beef: bsv.Beef, txids: string[], services: WalletServices) => Promise<PostBeefResult>
+export type PostBeefService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostBeefResult>
 ```
 
 See also: [PostBeefResult](#interface-postbeefresult), [WalletServices](#interface-walletservices)
@@ -9059,19 +7561,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Type: PostTxsService
 
 ```ts
-export type PostTxsService = (beef: bsv.Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
+export type PostTxsService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
 ```
 
 See also: [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface-walletservices)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: ProtocolString5To400Bytes
-
-```ts
-export type ProtocolString5To400Bytes = string
-```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -9117,35 +7610,6 @@ export type ProvenTxReqStatus = "sending" | "unsent" | "nosend" | "unknown" | "n
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: PubKeyHex
-
-```ts
-export type PubKeyHex = HexString
-```
-
-See also: [HexString](#type-hexstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: SatoshiValue
-
-```ts
-export type SatoshiValue = number
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: SendWithResultStatus
-
-```ts
-export type SendWithResultStatus = "unproven" | "sending" | "failed"
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Type: StorageProvidedBy
 
 ```ts
@@ -9181,23 +7645,12 @@ export type SyncStatus = "success" | "error" | "identified" | "updated" | "unkno
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: TXIDHexString
-
-```ts
-export type TXIDHexString = HexString
-```
-
-See also: [HexString](#type-hexstring)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Type: TestKeyPair
 
 ```ts
 export type TestKeyPair = {
-    privateKey: bsv.PrivateKey;
-    publicKey: bsv.PublicKey;
+    privateKey: PrivateKey;
+    publicKey: PublicKey;
     address: string;
 }
 ```
@@ -9236,21 +7689,6 @@ export type TransactionStatus = "completed" | "failed" | "unprocessed" | "sendin
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: TrustSelf
-
-Controls behavior of input BEEF validation.
-
-If `known`, input transactions may omit supporting validity proof data for all TXIDs known to this wallet.
-
-If undefined, input BEEFs must be complete and valid.
-
-```ts
-export type TrustSelf = "known"
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Type: UpdateFiatExchangeRateService
 
 ```ts
@@ -9262,49 +7700,6 @@ See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOpti
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: VersionString7To30Bytes
-
-```ts
-export type VersionString7To30Bytes = string
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: WalletCounterparty
-
-```ts
-export type WalletCounterparty = PubKeyHex | "self" | "anyone"
-```
-
-See also: [PubKeyHex](#type-pubkeyhex)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: WalletNetwork
-
-```ts
-export type WalletNetwork = "mainnet" | "testnet"
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Type: WalletProtocol
-
-```ts
-export type WalletProtocol = [
-    0 | 1 | 2,
-    ProtocolString5To400Bytes
-]
-```
-
-See also: [ProtocolString5To400Bytes](#type-protocolstring5to400bytes)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ## Variables
 
 | |
@@ -9312,6 +7707,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [ProvenTxReqNonTerminalStatus](#variable-proventxreqnonterminalstatus) |
 | [ProvenTxReqTerminalStatus](#variable-proventxreqterminalstatus) |
 | [brc29ProtocolID](#variable-brc29protocolid) |
+| [log](#variable-log) |
+| [logUniqueConstraintError](#variable-loguniqueconstrainterror) |
+| [normalizeDate](#variable-normalizedate) |
+| [setLogging](#variable-setlogging) |
+| [triggerForeignKeyConstraintError](#variable-triggerforeignkeyconstrainterror) |
+| [triggerUniqueConstraintError](#variable-triggeruniqueconstrainterror) |
+| [updateTable](#variable-updatetable) |
+| [validateUpdateTime](#variable-validateupdatetime) |
+| [verifyValues](#variable-verifyvalues) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -9356,10 +7760,224 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Variable: brc29ProtocolID
 
 ```ts
-brc29ProtocolID: bsv.WalletProtocol = [2, "3241645161d8"]
+brc29ProtocolID: WalletProtocol = [2, "3241645161d8"]
 ```
 
-See also: [WalletProtocol](#type-walletprotocol)
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: log
+
+```ts
+log = (message: string, ...optionalParams: any[]): void => {
+    if (logEnabled) {
+        console.log(message, ...optionalParams);
+    }
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: logUniqueConstraintError
+
+```ts
+logUniqueConstraintError = (error: any, tableName: string, columnNames: string[], logEnabled: boolean = false): void => {
+    if (logEnabled) {
+        const expectedErrorString = `SQLITE_CONSTRAINT: UNIQUE constraint failed: ${columnNames.map(col => `${tableName}.${col}`).join(", ")}`;
+        log("expectedErrorString=", expectedErrorString);
+        if (error.message.includes(expectedErrorString)) {
+            console.log(`Unique constraint error for columns ${columnNames.join(", ")} caught as expected:`, error.message);
+        }
+        else {
+            console.log("Unexpected error message:", error.message);
+        }
+    }
+    if (!error.message.includes(`SQLITE_CONSTRAINT: UNIQUE constraint failed: ${columnNames.map(col => `${tableName}.${col}`).join(", ")}`)) {
+        console.log("Unexpected error:", error.message);
+        throw new Error(`Unexpected error: ${error.message}`);
+    }
+}
+```
+
+See also: [log](#variable-log)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: normalizeDate
+
+```ts
+normalizeDate = (value: any): string | null => {
+    if (value instanceof Date) {
+        return value.toISOString();
+    }
+    else if (typeof value === "string" && !isNaN(Date.parse(value))) {
+        return new Date(value).toISOString();
+    }
+    return null;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: setLogging
+
+```ts
+setLogging = (enabled: boolean): void => {
+    logEnabled = enabled;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: triggerForeignKeyConstraintError
+
+```ts
+triggerForeignKeyConstraintError = async (storage: any, findMethod: string, updateMethod: string, tableName: string, columnName: string, invalidValue: any, id: number = 1, logEnabled: boolean = false): Promise<boolean> => {
+    setLogging(logEnabled);
+    const rows = await storage[findMethod]({});
+    if (!rows || rows.length < 2) {
+        throw new Error(`Expected at least two rows in the table "${tableName}", but found only ${rows.length}. Please add more rows for the test.`);
+    }
+    if (!(columnName in rows[0])) {
+        throw new Error(`Column "${columnName}" does not exist in the table "${tableName}".`);
+    }
+    if (id === invalidValue[columnName]) {
+        throw new Error(`Failed to update "${columnName}" in the table "${tableName}" as id ${id} is same as update value ${invalidValue[columnName]}".`);
+    }
+    try {
+        const r = await storage[updateMethod](id, invalidValue);
+        log("r=", r);
+        return false;
+    }
+    catch (error: any) {
+        logForeignConstraintError(error, tableName, columnName, logEnabled);
+        return true;
+    }
+}
+```
+
+See also: [setLogging](#variable-setlogging)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: triggerUniqueConstraintError
+
+```ts
+triggerUniqueConstraintError = async (storage: any, findMethod: string, updateMethod: string, tableName: string, columnName: string, invalidValue: any, id: number = 1, logEnabled: boolean = false): Promise<boolean> => {
+    setLogging(logEnabled);
+    const rows = await storage[findMethod]({});
+    if (logEnabled) {
+        log("rows=", rows);
+    }
+    if (!rows || rows.length < 2) {
+        throw new Error(`Expected at least two rows in the table "${tableName}", but found only ${rows.length}. Please add more rows for the test.`);
+    }
+    if (!(columnName in rows[0])) {
+        throw new Error(`Column "${columnName}" does not exist in the table "${tableName}".`);
+    }
+    if (id === invalidValue[columnName]) {
+        throw new Error(`Failed to update "${columnName}" in the table "${tableName}" as id ${id} is same as update value ${invalidValue[columnName]}".`);
+    }
+    if (logEnabled) {
+        log("invalidValue=", invalidValue);
+    }
+    const columnNames = Object.keys(invalidValue);
+    try {
+        if (logEnabled) {
+            log("update id=", id);
+        }
+        await storage[updateMethod](id, invalidValue);
+        return false;
+    }
+    catch (error: any) {
+        logUniqueConstraintError(error, tableName, columnNames, logEnabled);
+        return true;
+    }
+}
+```
+
+See also: [log](#variable-log), [logUniqueConstraintError](#variable-loguniqueconstrainterror), [setLogging](#variable-setlogging)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: updateTable
+
+```ts
+updateTable = async (updateFunction, id, testValues) => {
+    for (const [key, value] of Object.entries(testValues)) {
+        log("id=", id, "[key]=", [key], "value=", value);
+        await updateFunction(id, { [key]: value });
+    }
+}
+```
+
+See also: [log](#variable-log)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: validateUpdateTime
+
+```ts
+validateUpdateTime = (actualTime: Date, expectedTime: Date, referenceTime: Date, toleranceMs: number = 10, logEnabled: boolean = false): boolean => {
+    const actualTimestamp = actualTime.getTime();
+    const expectedTimestamp = expectedTime.getTime();
+    const referenceTimestamp = referenceTime.getTime();
+    if (logEnabled) {
+        log(`Validation inputs:\n`, `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})\n`, `Expected Time: ${expectedTime.toISOString()} (Timestamp: ${expectedTimestamp})\n`, `Reference Time: ${referenceTime.toISOString()} (Timestamp: ${referenceTimestamp})`);
+    }
+    const isWithinTolerance = Math.abs(actualTimestamp - expectedTimestamp) <= toleranceMs;
+    const isGreaterThanReference = actualTimestamp > referenceTimestamp;
+    const isoMatch = actualTime.toISOString() === expectedTime.toISOString();
+    const utcMatch = actualTime.toUTCString() === expectedTime.toUTCString();
+    const humanReadableMatch = actualTime.toDateString() === expectedTime.toDateString();
+    if (!isWithinTolerance && Math.abs(actualTimestamp - expectedTimestamp) > 100000000) {
+        if (logEnabled) {
+            log(`Skipping validation failure: The difference is unusually large (${Math.abs(actualTimestamp - expectedTimestamp)}ms). Validation passed for extreme outliers.`);
+        }
+        return true;
+    }
+    const isValid = isWithinTolerance || isGreaterThanReference || isoMatch || utcMatch || humanReadableMatch;
+    if (!isValid) {
+        console.error(`Validation failed:\n`, `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})\n`, `Expected Time: ${expectedTime.toISOString()} (Timestamp: ${expectedTimestamp})\n`, `Reference Time: ${referenceTime.toISOString()} (Timestamp: ${referenceTimestamp})\n`, `Tolerance: ±${toleranceMs}ms\n`, `Within Tolerance: ${isWithinTolerance}\n`, `Greater Than Reference: ${isGreaterThanReference}\n`, `ISO Match: ${isoMatch}\n`, `UTC Match: ${utcMatch}\n`, `Human-Readable Match: ${humanReadableMatch}`);
+    }
+    else {
+        if (logEnabled) {
+            log(`Validation succeeded:\n`, `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})`);
+        }
+    }
+    return isValid;
+}
+```
+
+See also: [log](#variable-log)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Variable: verifyValues
+
+```ts
+verifyValues = (targetObject: Record<string, any>, testValues: Record<string, any>, referenceTime: Date) => {
+    Object.entries(testValues).forEach(([key, expectedValue]) => {
+        const actualValue = targetObject[key];
+        if (expectedValue instanceof Date) {
+            expect(validateUpdateTime(actualValue, expectedValue, referenceTime)).toBe(true);
+        }
+        else {
+            expect(actualValue).toStrictEqual(expectedValue);
+        }
+    });
+}
+```
+
+See also: [validateUpdateTime](#variable-validateupdatetime)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

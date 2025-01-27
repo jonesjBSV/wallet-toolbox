@@ -4,7 +4,7 @@ import { generateChangeSdk, GenerateChangeSdkChangeInput, GenerateChangeSdkParam
 
 export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes)
 : Promise<sdk.StorageCreateActionResult> {
-  //stampLog(vargs, `start dojo createTransactionSdk`) 
+  //stampLog(vargs, `start storage createTransactionSdk`) 
 
   if (!vargs.isNewTx)
     // The purpose of this function is to create the initial storage records associated
@@ -13,7 +13,7 @@ export async function createAction(storage: StorageProvider, auth: sdk.AuthId, v
 
   /**
    * Steps to create a transaction:
-   * - Verify that all inputs either have proof in vargs.inputBEEF or that options.trustSelf === 'known' and input txid.vout are known valid to dojo.
+   * - Verify that all inputs either have proof in vargs.inputBEEF or that options.trustSelf === 'known' and input txid.vout are known valid to storage.
    * - Create a new transaction record with status 'unsigned' as the anchor for construction work and to new outputs.
    * - Create all transaction labels.
    * - Add new commission output
@@ -66,7 +66,7 @@ export async function createAction(storage: StorageProvider, auth: sdk.AuthId, v
     noSendChangeOutputVouts: vargs.isNoSend ? changeVouts : undefined
   }
 
-  //stampLog(vargs, `end dojo createTransactionSdk`) 
+  //stampLog(vargs, `end storage createTransactionSdk`) 
   return r
 }
 
@@ -125,7 +125,7 @@ function makeDefaultOutput(userId: number, transactionId: number, satoshis: numb
   return output
 }
 
-async function createNewInputs(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs,
+async function createNewInputs(storage: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs,
   ctx: CreateTransactionSdkContext,
   allocatedChange: table.Output[]
 )
@@ -133,14 +133,12 @@ async function createNewInputs(dojo: StorageProvider, userId: number, vargs: sdk
 {
   const r: sdk.StorageCreateTransactionSdkInput[] = []
 
-  const storage = dojo
-
   const newInputs: {i?: XValidCreateActionInput, o?: table.Output, unlockLen?: number}[] = []
   for (const i of ctx.xinputs) {
     const o = i.output
     newInputs.push({i, o})
     if (o) {
-      await dojo.updateOutput(o.outputId!, {
+      await storage.updateOutput(o.outputId!, {
         spendable: false,
         spentBy: ctx.transactionId,
         spendingDescription: i.inputDescription
@@ -195,7 +193,7 @@ async function createNewInputs(dojo: StorageProvider, userId: number, vargs: sdk
   return r
 }
 
-async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs,
+async function createNewOutputs(storage: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs,
   ctx: CreateTransactionSdkContext,
   changeOutputs: table.Output[]
 )
@@ -203,13 +201,11 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
 {
   const outputs: sdk.StorageCreateTransactionSdkOutput[] = []
 
-  const storage = dojo
-
   // Lookup output baskets
   const txBaskets: Record<string, table.OutputBasket> = {}
   for (const xo of ctx.xoutputs) {
     if (xo.basket !== undefined && !txBaskets[xo.basket])
-      txBaskets[xo.basket] = await dojo.findOrInsertOutputBasket(userId, xo.basket!);
+      txBaskets[xo.basket] = await storage.findOrInsertOutputBasket(userId, xo.basket!);
   }
   // Lookup output tags
   const txTags: Record<string, table.OutputTag> = {}
@@ -225,11 +221,11 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
     const lockingScript = asArray(xo.lockingScript)
     if (xo.purpose === 'service-charge') {
       const now = new Date()
-      await dojo.insertCommission({
+      await storage.insertCommission({
         userId,
         transactionId: ctx.transactionId,
         lockingScript,
-        satoshis: xo.satoshis, // Same as DOJO_SERVICE_FEE
+        satoshis: xo.satoshis,
         isRedeemed: false,
         keyOffset: verifyTruthy(xo.keyOffset),
         created_at: now,
@@ -309,7 +305,7 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
 
   const changeVouts: number[] = []
   for (const { o, tags } of newOutputs) {
-    o.outputId = await dojo.insertOutput(o)
+    o.outputId = await storage.insertOutput(o)
 
     if (o.change && o.purpose === 'change' && o.providedBy === 'storage')
       changeVouts.push(o.vout!)
@@ -338,7 +334,7 @@ async function createNewOutputs(dojo: StorageProvider, userId: number, vargs: sd
   return {outputs, changeVouts}
 }
 
-async function createNewTxRecord(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs, storageBeef: Beef)
+async function createNewTxRecord(storage: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs, storageBeef: Beef)
 : Promise<table.Transaction>
 {
   const now = new Date()
@@ -358,11 +354,11 @@ async function createNewTxRecord(dojo: StorageProvider, userId: number, vargs: s
     txid: undefined,
     rawTx: undefined,
   };
-  newTx.transactionId = await dojo.insertTransaction(newTx);
+  newTx.transactionId = await storage.insertTransaction(newTx);
 
   for (const label of vargs.labels) {
-    const txLabel = await dojo.findOrInsertTxLabel(userId, label)
-    await dojo.findOrInsertTxLabelMap(verifyId(newTx.transactionId), verifyId(txLabel.txLabelId))
+    const txLabel = await storage.findOrInsertTxLabel(userId, label)
+    await storage.findOrInsertTxLabelMap(verifyId(newTx.transactionId), verifyId(txLabel.txLabelId))
   }
 
   return newTx;
@@ -390,7 +386,7 @@ async function createNewTxRecord(dojo: StorageProvider, userId: number, vargs: s
  * @param vargs 
  * @returns xoutputs
  */
-function validateRequiredOutputs(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs) : XValidCreateActionOutput[]
+function validateRequiredOutputs(storage: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs) : XValidCreateActionOutput[]
 {
   const xoutputs: XValidCreateActionOutput[] = []
   let vout = -1;
@@ -407,12 +403,12 @@ function validateRequiredOutputs(dojo: StorageProvider, userId: number, vargs: s
     xoutputs.push(xo);
   }
 
-  if (dojo.commissionSatoshis > 0 && dojo.commissionPubKeyHex) {
+  if (storage.commissionSatoshis > 0 && storage.commissionPubKeyHex) {
     vout++
-    const { script, keyOffset } = createStorageServiceChargeScript(dojo.commissionPubKeyHex)
+    const { script, keyOffset } = createStorageServiceChargeScript(storage.commissionPubKeyHex)
     xoutputs.push({
       lockingScript: script,
-      satoshis: dojo.commissionSatoshis,
+      satoshis: storage.commissionSatoshis,
       outputDescription: 'Storage Service Charge',
       basket: undefined,
       tags: [],
@@ -441,17 +437,17 @@ function validateRequiredOutputs(dojo: StorageProvider, userId: number, vargs: s
  * 
  * This data may be pruned again before being returned to the user based on `vargs.options.knownTxids`.
  * 
- * @param dojo 
+ * @param storage 
  * @param userId 
  * @param vargs 
  * @returns {storageBeef} containing only validity proof data for only unknown required inputs.
  * @returns {beef} containing verified validity proof data for all required inputs.
  * @returns {xinputs} extended validated required inputs.
  */
-async function validateRequiredInputs(dojo: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs)
+async function validateRequiredInputs(storage: StorageProvider, userId: number, vargs: sdk.ValidCreateActionArgs)
 : Promise<{storageBeef: Beef, beef: Beef, xinputs: XValidCreateActionInput[]}>
 {
-  //stampLog(vargs, `start dojo verifyInputBeef`)
+  //stampLog(vargs, `start storage verifyInputBeef`)
 
   const beef = new Beef()
 
@@ -467,7 +463,7 @@ async function validateRequiredInputs(dojo: StorageProvider, userId: number, var
   for (const input of xinputs) inputTxids[input.outpoint.txid] = true
 
   // Check beef from user that either there are no txidOnly entries,
-  // or that we can trust dojo data and it does indeed vouch
+  // or that we can trust storage data and it does indeed vouch
   // for any txidOnly entries
   for (const btx of beef.txs) {
     if (btx.isTxidOnly) {
@@ -475,7 +471,7 @@ async function validateRequiredInputs(dojo: StorageProvider, userId: number, var
         throw new sdk.WERR_INVALID_PARAMETER('inputBEEF', `valid and contain complete proof data for ${btx.txid}`);
       if (!inputTxids[btx.txid]) {
         // inputTxids are checked next
-        const isKnown = await dojo.verifyKnownValidTransaction(btx.txid)
+        const isKnown = await storage.verifyKnownValidTransaction(btx.txid)
         if (!isKnown)
           throw new sdk.WERR_INVALID_PARAMETER('inputBEEF', `valid and contain complete proof data for unknown ${btx.txid}`);
       }
@@ -486,14 +482,14 @@ async function validateRequiredInputs(dojo: StorageProvider, userId: number, var
   for (const txid of Object.keys(inputTxids)) {
     let btx = beef.findTxid(txid)
     if (!btx && trustSelf) {
-      if (await dojo.verifyKnownValidTransaction(txid))
+      if (await storage.verifyKnownValidTransaction(txid))
         btx = beef.mergeTxidOnly(txid)
     }
     if (!btx)
       throw new sdk.WERR_INVALID_PARAMETER('inputBEEF', `valid and contain proof data for possibly known ${txid}`);
   }
 
-  if (!await beef.verify(await dojo.getServices().getChainTracker(), true)) {
+  if (!await beef.verify(await storage.getServices().getChainTracker(), true)) {
     console.log(`verifyInputBeef failed, inputBEEF failed to verify.\n${beef.toLogString()}\n`)
     //console.log(`verifyInputBeef failed, inputBEEF failed to verify.\n${stampLogFormat(vargs.log)}\n${beef.toLogString()}\n`)
     throw new sdk.WERR_INVALID_PARAMETER('inputBEEF', 'valid Beef when factoring options.trustSelf')
@@ -505,7 +501,7 @@ async function validateRequiredInputs(dojo: StorageProvider, userId: number, var
 
   for (const input of xinputs) {
     const { txid, vout } = input.outpoint
-    const output = verifyOneOrNone(await dojo.findOutputs({ partial: { userId, txid, vout }}))
+    const output = verifyOneOrNone(await storage.findOutputs({ partial: { userId, txid, vout }}))
     if (output) {
       input.output = output
       if (!Array.isArray(output.lockingScript) || !Number.isInteger(output.satoshis))
@@ -518,8 +514,8 @@ async function validateRequiredInputs(dojo: StorageProvider, userId: number, var
     } else {
       let btx = beef.findTxid(txid)!
       if (btx.isTxidOnly) {
-        const { rawTx, proven } = await dojo.getProvenOrRawTx(txid)
-        //stampLog(vargs, `... dojo verifyInputBeef getProvenOrRawTx ${txid} ${proven ? 'proven' : rawTx ? 'rawTx' : 'unknown'}`)
+        const { rawTx, proven } = await storage.getProvenOrRawTx(txid)
+        //stampLog(vargs, `... storage verifyInputBeef getProvenOrRawTx ${txid} ${proven ? 'proven' : rawTx ? 'rawTx' : 'unknown'}`)
         if (!rawTx)
           throw new sdk.WERR_INVALID_PARAMETER('inputBEEF', `valid and contain proof data for ${txid}`);
         btx = beef.mergeRawTx(asArray(rawTx))

@@ -1,6 +1,5 @@
 import { Beef, InternalizeActionArgs, InternalizeActionResult, InternalizeOutput, P2PKH, WalletProtocol } from '@bsv/sdk'
-import { sdk } from "../../index.client";
-import { WalletSigner } from "../WalletSigner";
+import { sdk, Wallet } from "../../index.client";
 
 /**
  * Internalize Action allows a wallet to take ownership of outputs in a pre-existing transaction.
@@ -28,14 +27,9 @@ import { WalletSigner } from "../WalletSigner";
  * 1. Targetting an existing change "default" basket output results in a no-op. No error. No alterations made.
  * 2. Targetting a previously "custom" non-change output converts it into a change output. This alters the transaction's `amount`, and the wallet balance.
  * 
- * 
- * @param ninja 
- * @param vargs 
- * @param originator 
- * @returns 
  */
 export async function internalizeAction(
-  signer: WalletSigner,
+  wallet: Wallet,
   auth: sdk.AuthId,
   args: InternalizeActionArgs
 )
@@ -55,7 +49,7 @@ export async function internalizeAction(
     }
   }
 
-  const r: InternalizeActionResult = await signer.storage.internalizeAction(args)
+  const r: InternalizeActionResult = await wallet.storage.internalizeAction(args)
 
   return r
 
@@ -66,7 +60,7 @@ export async function internalizeAction(
 
     const keyID = `${p.derivationPrefix} ${p.derivationSuffix}`
 
-    const privKey = signer.keyDeriver!.derivePrivateKey(brc29ProtocolID, keyID, p.senderIdentityKey)
+    const privKey = wallet.keyDeriver!.derivePrivateKey(brc29ProtocolID, keyID, p.senderIdentityKey)
     const expectedLockScript = new P2PKH().lock(privKey.toAddress())
     if (output.lockingScript.toHex() !== expectedLockScript.toHex())
       throw new sdk.WERR_INVALID_PARAMETER('paymentRemitance', `locked by script conforming to BRC-29`);
@@ -80,7 +74,10 @@ export async function internalizeAction(
 
   async function validateAtomicBeef() {
     const ab = Beef.fromBinary(vargs.tx);
-    const txValid = await ab.verify(await signer.getServices().getChainTracker(), false);
+
+    // TODO: Add support for known txids...
+    
+    const txValid = await ab.verify(await wallet.getServices().getChainTracker(), false);
     if (!txValid || !ab.atomicTxid)
       throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF');
     const txid = ab.atomicTxid;
