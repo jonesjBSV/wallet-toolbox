@@ -36,6 +36,7 @@ export async function reviewStatus(storage: StorageKnex, args: { agedLimit: Date
         */
         q: k<table.Transaction>('transactions')
         .update({ status: 'failed' })
+        .whereNot({ status: 'failed' })
         .whereExists(function() {
             this.select(k.raw(1)).from('proven_tx_reqs as r').whereRaw(`transactions.txid = r.txid and r.status = 'invalid'`)
         })
