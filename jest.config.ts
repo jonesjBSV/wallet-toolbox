@@ -21,15 +21,6 @@ export default async (): Promise<Config> => {
     // default []
     testRegex: [],
     transform: { '^.+\\.ts$': ['ts-jest', { rootDir: '.' }] },
-    reporters: ['default', ['jest-simple-summary', { summary: true, colors: true }]],
-    // Add coverage collection
-    collectCoverage: true, // Enable coverage collection
-    coverageDirectory: 'coverage', // Output directory for coverage reports
-    coverageReporters: ['html', 'text', 'lcov'], // Include HTML for index.html and text for console output
-    collectCoverageFrom: [
-      '<rootDir>/src/**/*.{ts,js}', // Include all source files
-      '!<rootDir>/node_modules/**', // Exclude dependencies
-      '!<rootDir>/src/**/*.d.ts' // Exclude type declaration files
-    ]
+    reporters: ['default', ['jest-simple-summary', { summary: true, colors: true }]]
   }
 }
