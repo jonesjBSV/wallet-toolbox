@@ -429,7 +429,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
             const oldActive = this.stores[0]
             this.stores[0] = this.stores[newActiveIndex]
             this.stores[newActiveIndex] = oldActive
-            this._authId = { ...this._authId, userId: undefined }
+            this._authId = { ...this._authId, userId: undefined, isActive: undefined }
         })
     }
 }
