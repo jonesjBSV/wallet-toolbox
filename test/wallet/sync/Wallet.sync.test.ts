@@ -1,4 +1,4 @@
-import { verifyOne, verifyOneOrNone, verifyTruthy, wait, WalletStorageManager } from "../../../src/index.client"
+import { verifyOne, verifyOneOrNone, verifyTruthy, wait, Wallet, WalletStorageManager } from "../../../src/index.client"
 import { StorageKnex } from "../../../src/storage/StorageKnex";
 import { _tu, TestWalletNoSetup } from "../../utils/TestUtilsWalletStorage"
 
@@ -51,12 +51,12 @@ describe('Wallet sync tests', () => {
     test('1a setActive to backup and back to original without backup first', async () => {
         // wallet will be the original active wallet, a backup is added, then setActive is used to initiate backup in each direction.
         const ctx = await _tu.createLegacyWalletSQLiteCopy('walletSyncTest1aSource')
-        const backup = (await _tu.createSQLiteTestWallet({ databaseName: 'walletSyncTest1aBackup', dropAll: true })).activeStorage;
+        const { activeStorage: backup, wallet: backupWallet } = await _tu.createSQLiteTestWallet({ databaseName: 'walletSyncTest1aBackup', dropAll: true })
         await ctx.storage.addWalletStorageProvider(backup);
 
-        await setActiveTwice(ctx, false, backup);
+        await setActiveTwice(ctx, false, backup, backupWallet);
 
-        await setActiveTwice(ctx, false, backup);
+        await setActiveTwice(ctx, false, backup, backupWallet);
 
         await ctx.storage.destroy()
     })
@@ -75,7 +75,7 @@ describe('Wallet sync tests', () => {
     })
 })
 
-async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, backup: StorageKnex) {
+async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, backup: StorageKnex, backupWallet?: Wallet) {
     const { storage: storageManager, activeStorage: original, userId: originalUserId } = ctx;
 
     if (withBackupFirst) {
@@ -101,6 +101,10 @@ async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, 
     // sync to backup and make it active.
     await storageManager.setActive(backupIdentityKey);
 
+    await expect(ctx.wallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.')
+    if (backupWallet)
+        await expect(backupWallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.');
+
     let originalUserAfter = verifyTruthy(await original.findUserById(originalAuth.userId!));
     let backupUserAfter = verifyOne(await backup.findUsers({ partial: { identityKey: originalAuth.identityKey } }));
 
@@ -117,6 +121,10 @@ async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, 
 
     // sync back to original and make it active.
     await storageManager.setActive(original.getSettings().storageIdentityKey);
+
+    await expect(ctx.wallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.')
+    if (backupWallet)
+        await expect(backupWallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.');
 
     originalUserAfter = verifyTruthy(await original.findUserById(originalAuth.userId!));
     backupUserAfter = verifyOne(await backup.findUsers({ partial: { identityKey: originalAuth.identityKey } }));
