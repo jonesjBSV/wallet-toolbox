@@ -1,8 +1,6 @@
 import * as bsv from '@bsv/sdk'
-import { sdk, StorageProvider, table } from '../../../src/index.client'
-import { _tu, expectToThrowWERR, MockData, TestSetup1, TestSetup2, TestWalletNoSetup, updateTable } from '../../utils/TestUtilsWalletStorage'
-import { asBuffer, StorageKnex } from '../../../src'
-import { Script, Transaction, TransactionInput } from '@bsv/sdk'
+import { sdk, StorageProvider } from '../../../src/index.client'
+import { _tu, expectToThrowWERR, MockData, TestSetup2, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('listActions tests', () => {
   jest.setTimeout(99999999)
@@ -60,7 +58,7 @@ describe('listActions tests', () => {
       await activeStorage.dropAllData()
       await activeStorage.migrate('insert tests', '3'.repeat(64))
     }
-    expect(setups).toBeTruthy() // Ensure setups were initialized correctly
+    expect(setups).toBeTruthy()
 
     for (const { activeStorage: storage, identityKey } of ctxs) {
       // Setup test environment with mock data
