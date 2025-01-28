@@ -36,10 +36,11 @@ export async function listActions(
 
     const isQueryModeAll = vargs.labelQueryMode === 'all'
     if (isQueryModeAll && labelIds.length < vargs.labels.length)
+        // all the required labels don't exist, impossible to satisfy.
         return r
 
-    if (isQueryModeAll && labelIds.length < vargs.labels.length)
-        // No actions will match if a required label doesn't exist yet...
+    if (!isQueryModeAll && labelIds.length === 0 && vargs.labels.length > 0)
+        // any and only non-existing labels, impossible to satisfy.
         return r
 
     const columns: string[] = ['transactionId', 'txid', 'satoshis', 'status', 'isOutgoing', 'description', 'version', 'lockTime']

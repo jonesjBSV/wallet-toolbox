@@ -246,7 +246,7 @@ export class Wallet implements WalletInterface {
       for (const txid of newKnownTxids) this.beef.mergeTxidOnly(txid)
     }
     const r = this.beef.sortTxs()
-    const knownTxids = r.valid.concat(r.txidOnly)
+    const knownTxids = r.valid
     return knownTxids
   }
 
