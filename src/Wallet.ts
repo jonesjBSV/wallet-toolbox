@@ -70,6 +70,7 @@ import { proveCertificate } from "./signer/methods/proveCertificate";
 import { createAction } from "./signer/methods/createAction";
 import { signAction } from "./signer/methods/signAction";
 import { internalizeAction } from "./signer/methods/internalizeAction";
+import { ValidAcquireDirectCertificateArgs } from "./sdk";
 
 export interface WalletArgs {
   chain: sdk.Chain
@@ -327,8 +328,7 @@ export class Wallet implements WalletInterface {
     }
 
     if (args.acquisitionProtocol === 'issuance') {
-      // const vargs = await sdk.validateAcquireCertificateArgs(args,sdk.validateAcquireIssuanceCertificateArgs)
-      const ownIdentityKey = (await this.getPublicKey({ identityKey: true })).publicKey
+      await sdk.validateAcquireCertificateArgs(args)
       // Create a random nonce that the server can verify
       const clientNonce = await createNonce(this, args.certifier)
       const authClient = new AuthFetch(this)
@@ -405,8 +405,8 @@ export class Wallet implements WalletInterface {
       if (signedCertificate.type !== args.type) {
         throw new Error(`Invalid certificate type! Expected: ${args.type}, Received: ${signedCertificate.type}`)
       }
-      if (signedCertificate.subject !== ownIdentityKey) {
-        throw new Error(`Invalid certificate subject! Expected: ${ownIdentityKey}, Received: ${signedCertificate.subject}`)
+      if (signedCertificate.subject !== this.identityKey) {
+        throw new Error(`Invalid certificate subject! Expected: ${this.identityKey}, Received: ${signedCertificate.subject}`)
       }
       if (signedCertificate.certifier !== args.certifier) {
         throw new Error(`Invalid certifier! Expected: ${args.certifier}, Received: ${signedCertificate.certifier}`)
@@ -429,7 +429,16 @@ export class Wallet implements WalletInterface {
       await signedCertificate.verify()
 
       // Store the newly issued certificate
-      await this.storage.insertCertificate(signedCertificate)
+      return await acquireDirectCertificate(
+        this,
+        { identityKey: this.identityKey },
+        {
+          ...certificate,
+          keyringRevealer: 'certifier',
+          keyringForSubject: certificateToRequestSigning.masterKeyring,
+          privileged: args.privileged
+        }
+      )
     }
 
     throw new sdk.WERR_INVALID_PARAMETER('acquisitionProtocol', `valid.${args.acquisitionProtocol} is unrecognized.`)
