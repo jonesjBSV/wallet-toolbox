@@ -15,7 +15,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [BlockHeader](#interface-blockheader) | [OutPoint](#interface-outpoint) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
 | [BsvExchangeRate](#interface-bsvexchangerate) | [Paged](#interface-paged) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
 | [CertOpsWallet](#interface-certopswallet) | [PendingSignAction](#interface-pendingsignaction) | [ValidBasketInsertion](#interface-validbasketinsertion) |
-| [DojoCommitNewTxResults](#interface-dojocommitnewtxresults) | [PendingStorageInput](#interface-pendingstorageinput) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
+| [CommitNewTxResults](#interface-commitnewtxresults) | [PendingStorageInput](#interface-pendingstorageinput) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
 | [EntityTimeStamp](#interface-entitytimestamp) | [PostBeefResult](#interface-postbeefresult) | [ValidCreateActionInput](#interface-validcreateactioninput) |
 | [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
 | [FiatExchangeRates](#interface-fiatexchangerates) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [ValidCreateActionOutput](#interface-validcreateactionoutput) |
@@ -133,6 +133,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface AuthId {
     identityKey: string;
     userId?: number;
+    isActive?: boolean;
 }
 ```
 
@@ -278,10 +279,10 @@ export interface CertOpsWallet {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: DojoCommitNewTxResults
+### Interface: CommitNewTxResults
 
 ```ts
-export interface DojoCommitNewTxResults {
+export interface CommitNewTxResults {
     req: entity.ProvenTxReq;
     log?: string;
 }
@@ -1631,7 +1632,7 @@ export interface StorageGetBeefOptions {
 
 #### Property ignoreNewProven
 
-optional. Default is false. If true, raw transactions with proofs missing from `dojo.storage` and obtained from `dojo.getServices` are not inserted to `dojo.storage`.
+optional. Default is false. If true, raw transactions with proofs missing from `storage` and obtained from `getServices` are not inserted to `storage`.
 
 ```ts
 ignoreNewProven?: boolean
@@ -1639,7 +1640,7 @@ ignoreNewProven?: boolean
 
 #### Property ignoreServices
 
-optional. Default is false. `dojo.getServices` is used for raw transaction and merkle proof lookup
+optional. Default is false. `getServices` is used for raw transaction and merkle proof lookup
 
 ```ts
 ignoreServices?: boolean
@@ -1647,7 +1648,7 @@ ignoreServices?: boolean
 
 #### Property ignoreStorage
 
-optional. Default is false. `dojo.storage` is used for raw transaction and merkle proof lookup
+optional. Default is false. `storage` is used for raw transaction and merkle proof lookup
 
 ```ts
 ignoreStorage?: boolean
@@ -3049,14 +3050,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [CertOps](#class-certops) | [TaskClock](#class-taskclock) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
 | [Monitor](#class-monitor) | [TaskFailAbandoned](#class-taskfailabandoned) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
 | [PrivilegedKeyManager](#class-privilegedkeymanager) | [TaskNewHeader](#class-tasknewheader) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
-| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskPurge](#class-taskpurge) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
-| [ServiceCollection](#class-servicecollection) | [TaskReviewStatus](#class-taskreviewstatus) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
-| [Services](#class-services) | [TaskSendWaiting](#class-tasksendwaiting) | [Wallet](#class-wallet) |
-| [StorageClient](#class-storageclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [WalletError](#class-walleterror) |
-| [StorageProvider](#class-storageprovider) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletMonitorTask](#class-walletmonitortask) |
-| [StorageReader](#class-storagereader) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [WalletSigner](#class-walletsigner) |
-| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INTERNAL](#class-werr_internal) | [WalletStorageManager](#class-walletstoragemanager) |
-| [StorageSyncReader](#class-storagesyncreader) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |  |
+| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskPurge](#class-taskpurge) | [WERR_NOT_ACTIVE](#class-werr_not_active) |
+| [ServiceCollection](#class-servicecollection) | [TaskReviewStatus](#class-taskreviewstatus) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
+| [Services](#class-services) | [TaskSendWaiting](#class-tasksendwaiting) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
+| [StorageClient](#class-storageclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [Wallet](#class-wallet) |
+| [StorageProvider](#class-storageprovider) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletError](#class-walleterror) |
+| [StorageReader](#class-storagereader) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [WalletMonitorTask](#class-walletmonitortask) |
+| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INTERNAL](#class-werr_internal) | [WalletSigner](#class-walletsigner) |
+| [StorageSyncReader](#class-storagesyncreader) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) | [WalletStorageManager](#class-walletstoragemanager) |
 | [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -3294,6 +3295,7 @@ do not provide perfect in-memory secrecy.
 ```ts
 export class PrivilegedKeyManager {
     constructor(keyGetter: (reason: string) => Promise<PrivateKey>, retentionPeriod = 120000) 
+    destroyKey(): void 
     async getPublicKey(args: GetPublicKeyArgs): Promise<{
         publicKey: PubKeyHex;
     }> 
@@ -3324,6 +3326,16 @@ Argument Details
   + Asynchronous function that retrieves the PrivateKey from a secure environment.
 + **retentionPeriod**
   + Time in milliseconds to retain the obfuscated key in memory before zeroizing.
+
+#### Method destroyKey
+
+Safely destroys the in-memory obfuscated key material by zeroizing
+and deleting related fields. Also destroys some (but not all) decoy
+properties to further confuse an attacker.
+
+```ts
+destroyKey(): void 
+```
 
 </details>
 
@@ -4332,6 +4344,21 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+### Class: WERR_NOT_ACTIVE
+
+WalletStorageManager is not accessing user's active storage.
+
+```ts
+export class WERR_NOT_ACTIVE extends WalletError {
+    constructor(message?: string) 
+}
+```
+
+See also: [WalletError](#class-walleterror)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ### Class: WERR_NOT_IMPLEMENTED
 
 Not implemented.
@@ -4379,6 +4406,7 @@ export class Wallet implements WalletInterface {
     privilegedKeyManager?: sdk.PrivilegedKeyManager;
     pendingSignActions: Record<string, PendingSignAction>;
     constructor(argsOrSigner: WalletArgs | WalletSigner, services?: sdk.WalletServices, monitor?: Monitor, privilegedKeyManager?: sdk.PrivilegedKeyManager) 
+    async destroy(): Promise<void> 
     getClientChangeKeyPair(): sdk.KeyPair 
     async getIdentityKey(): Promise<PubKeyHex> 
     getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> 
@@ -4623,7 +4651,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
     constructor(identityKey: string, active?: sdk.WalletStorageProvider, backups?: sdk.WalletStorageProvider[]) 
     isStorageProvider(): boolean 
     async getUserId(): Promise<number> 
-    async getAuth(): Promise<sdk.AuthId> 
+    async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> 
     getActive(): sdk.WalletStorageProvider 
     async getActiveForWriter(): Promise<sdk.WalletStorageWriter> 
     async getActiveForReader(): Promise<sdk.WalletStorageReader> 
@@ -4647,7 +4675,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
         isNew: boolean;
     }> 
     async abortAction(args: AbortActionArgs): Promise<AbortActionResult> 
-    async createAction(args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> 
+    async createAction(vargs: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> 
     async internalizeAction(args: InternalizeActionArgs): Promise<InternalizeActionResult> 
     async relinquishCertificate(args: RelinquishCertificateArgs): Promise<number> 
     async relinquishOutput(args: RelinquishOutputArgs): Promise<number> 
@@ -5120,13 +5148,13 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 Creates a `Beef` to support the validity of a transaction identified by its `txid`.
 
-`dojo.storage` is used to retrieve proven transactions and their merkle paths,
+`storage` is used to retrieve proven transactions and their merkle paths,
 or proven_tx_req record with beef of external inputs (internal inputs meged by recursion).
 Otherwise external services are used.
 
-`dojo.options.maxRecursionDepth` can be set to prevent overly deep chained dependencies. Will throw ERR_EXTSVS_ENVELOPE_DEPTH if exceeded.
+`options.maxRecursionDepth` can be set to prevent overly deep chained dependencies. Will throw ERR_EXTSVS_ENVELOPE_DEPTH if exceeded.
 
-If `trustSelf` is true, a partial `Beef` will be returned where transactions known by `dojo.storage` to
+If `trustSelf` is true, a partial `Beef` will be returned where transactions known by `storage` to
 be valid by verified proof are represented solely by 'txid'.
 
 If `knownTxids` is defined, any 'txid' required by the `Beef` that appears in the array is represented solely as a 'known' txid.
@@ -6644,11 +6672,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ### Type: SyncStatus
 
-success: Last sync of this user from this dojo was successful.
+success: Last sync of this user from this storage was successful.
 
-error: Last sync protocol operation for this user to this dojo threw and error.
+error: Last sync protocol operation for this user to this storage threw and error.
 
-identified: Configured sync dojo has been identified but not sync'ed.
+identified: Configured sync storage has been identified but not sync'ed.
 
 unknown: Sync protocol state is unknown.
 
