@@ -60,6 +60,21 @@ describe('listActions tests', () => {
     }
   })
 
+  test('2 non-existing label with any', async () => {
+    for (const { wallet } of ctxs) {
+      {
+        const args: ListActionsArgs = {
+          includeLabels: true,
+          labels: ['xyzzy'],
+          labelQueryMode: 'any'
+        }
+        const r = await wallet.listActions(args)
+        expect(r.totalActions).toBe(0)
+        expect(r.actions.length).toBe(0)
+      }
+    }
+  })
+
   test('3_label babbage_protocol_perm', async () => {
     for (const { wallet } of ctxs) {
       {
