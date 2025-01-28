@@ -51,7 +51,11 @@ describe('Wallet sync tests', () => {
     test('1a setActive to backup and back to original without backup first', async () => {
         // wallet will be the original active wallet, a backup is added, then setActive is used to initiate backup in each direction.
         const ctx = await _tu.createLegacyWalletSQLiteCopy('walletSyncTest1aSource')
-        const { activeStorage: backup, wallet: backupWallet } = await _tu.createSQLiteTestWallet({ databaseName: 'walletSyncTest1aBackup', dropAll: true })
+        const { activeStorage: backup, wallet: backupWallet } = await _tu.createSQLiteTestWallet({
+            databaseName: 'walletSyncTest1aBackup',
+            rootKeyHex: ctx.rootKey.toHex(),
+            dropAll: true,
+        })
         await ctx.storage.addWalletStorageProvider(backup);
 
         await setActiveTwice(ctx, false, backup, backupWallet);
@@ -93,6 +97,8 @@ async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, 
     const originalUserBefore = verifyTruthy(await original.findUserById(originalAuth.userId!));
     const backupUserBefore = verifyOneOrNone(await backup.findUsers({ partial: { identityKey: originalAuth.identityKey } }));
 
+    expect(originalUserBefore.activeStorage === undefined || originalUserBefore.activeStorage === originalIdentityKey)
+
     let now = Date.now();
 
     expect(originalUserBefore.updated_at.getTime()).toBeLessThan(now);
@@ -101,10 +107,6 @@ async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, 
     // sync to backup and make it active.
     await storageManager.setActive(backupIdentityKey);
 
-    await expect(ctx.wallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.')
-    if (backupWallet)
-        await expect(backupWallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.');
-
     let originalUserAfter = verifyTruthy(await original.findUserById(originalAuth.userId!));
     let backupUserAfter = verifyOne(await backup.findUsers({ partial: { identityKey: originalAuth.identityKey } }));
 
@@ -112,6 +114,10 @@ async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, 
     expect(backupUserAfter.updated_at.getTime()).toBeGreaterThanOrEqual(now);
     expect(originalUserAfter.activeStorage).toBe(backupIdentityKey);
     expect(backupUserAfter.activeStorage).toBe(backupIdentityKey);
+
+    await expect(ctx.wallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.')
+    if (backupWallet)
+        await expect(backupWallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.');
 
 
     const backupAuth = await storageManager.getAuth();
@@ -122,10 +128,6 @@ async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, 
     // sync back to original and make it active.
     await storageManager.setActive(original.getSettings().storageIdentityKey);
 
-    await expect(ctx.wallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.')
-    if (backupWallet)
-        await expect(backupWallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.');
-
     originalUserAfter = verifyTruthy(await original.findUserById(originalAuth.userId!));
     backupUserAfter = verifyOne(await backup.findUsers({ partial: { identityKey: originalAuth.identityKey } }));
 
@@ -133,5 +135,12 @@ async function setActiveTwice(ctx: TestWalletNoSetup, withBackupFirst: boolean, 
     expect(backupUserAfter.updated_at.getTime()).toBeGreaterThanOrEqual(now);
     expect(originalUserAfter.activeStorage).toBe(originalIdentityKey);
     expect(backupUserAfter.activeStorage).toBe(originalIdentityKey);
+
+    await expect(ctx.wallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow('Result must exist and be unique.')
+    if (backupWallet) {
+        expect(backupWallet?.storage.stores.length === 1)
+        expect(backupWallet?.storage.stores[0] === backup)
+        await expect(backupWallet.relinquishOutput({ basket: "xyzzy", output: `${'1'.repeat(64)}.42` })).rejects.toThrow(`WalletStorageManager is not accessing user's active storage.`);
+    }
 }
 
