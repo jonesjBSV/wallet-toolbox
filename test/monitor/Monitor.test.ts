@@ -330,7 +330,7 @@ describe('Monitor tests', () => {
             const task = new TaskReviewStatus(monitor, 1, 1000 * 5)
             monitor._tasks.push(task)
             const log = await monitor.runTask('ReviewStatus')
-            console.log(log)
+            //console.log(log)
 
         }
 

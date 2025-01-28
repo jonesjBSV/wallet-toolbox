@@ -170,11 +170,11 @@ describe('Transaction class method tests', () => {
 
       // Debugging: Log inserted outputs
       const outputs = await activeStorage.findOutputs({ partial: { spentBy: tx.transactionId } })
-      console.log('Inserted Outputs:', outputs)
+      //console.log('Inserted Outputs:', outputs)
 
       // Get inputs from the transaction
       const inputs = await tx.getInputs(activeStorage)
-      console.log('Transaction Inputs:', inputs)
+      //console.log('Transaction Inputs:', inputs)
 
       // Validate the inputs
       expect(inputs).toHaveLength(2)

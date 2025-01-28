@@ -518,7 +518,7 @@ describe('ProvenTxReq class method tests', () => {
 
     // Log the actual merged notes for debugging
     const mergedNotes = provenTxReq.history.notes || {}
-    console.log('Merged notes:', mergedNotes)
+    //console.log('Merged notes:', mergedNotes)
 
     // Adjust the expectation to match the actual result
     expect(Object.keys(mergedNotes).length).toBe(1) // Adjusted based on observed behavior
