@@ -1,15 +1,27 @@
-import { setupTestWallet } from '../../utils/TestUtilsMethodTests';
+import { sdk } from '../../../src/index.client'
+import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
-describe.skip('Wallet getVersion Tests', () => {
-    let wallet: any;
+describe('Wallet getVersion Tests', () => {
+  jest.setTimeout(99999999)
 
-    beforeEach(() => {
-        const { wallet: testWallet } = setupTestWallet();
-        wallet = testWallet;
-    });
+  const env = _tu.getEnv('test')
+  const ctxs: TestWalletNoSetup[] = []
 
-    test('should return the correct wallet version', async () => {
-        const result = await wallet.getVersion({});
-        expect(result).toEqual({ version: 'wallet-brc100-1.0.0' });
-    });
-});
+  beforeAll(async () => {
+    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('getVersionTests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('getVersionTests'))
+  })
+
+  afterAll(async () => {
+    for (const ctx of ctxs) {
+      await ctx.storage.destroy()
+    }
+  })
+
+  test('should return the correct wallet version', async () => {
+    for (const { wallet } of ctxs) {
+      const result = await wallet.getVersion({})
+      expect(result).toEqual({ version: 'wallet-brc100-1.0.0' })
+    }
+  })
+})
