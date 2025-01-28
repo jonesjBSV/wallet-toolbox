@@ -3,8 +3,8 @@ import { sdk } from "../index.client";
 import { OutPoint } from "./types";
 
 export function parseWalletOutpoint(outpoint: string): { txid: string; vout: number; } {
-    const [ txid, vout ] = outpoint.split('.')
-    return { txid, vout: Number(vout)}
+  const [txid, vout] = outpoint.split('.')
+  return { txid, vout: Number(vout) }
 }
 
 function defaultTrue(v?: boolean) { return v === undefined ? true : v }
@@ -15,15 +15,15 @@ function defaultOne(v?: number) { return v === undefined ? 1 : v }
 function defaultEmpty<T>(v?: T[]) { return v === undefined ? [] : v }
 
 function validateOptionalStringLength(s: string | undefined, name: string, min?: number, max?: number): string | undefined {
-    if (s === undefined) return undefined
-    return validateStringLength(s, name, min, max)
+  if (s === undefined) return undefined
+  return validateStringLength(s, name, min, max)
 }
 
 export function validateSatoshis(v: number | undefined, name: string, min?: number): number {
   if (v === undefined || !Number.isInteger(v) || v < 0 || v > 21e14)
     throw new sdk.WERR_INVALID_PARAMETER(name, 'a valid number of satoshis')
   if (min !== undefined && v < min)
-      throw new sdk.WERR_INVALID_PARAMETER(name, `at least ${min} satoshis.`)
+    throw new sdk.WERR_INVALID_PARAMETER(name, `at least ${min} satoshis.`)
   return v
 }
 
@@ -41,9 +41,9 @@ export function validateInteger(v: number | undefined, name: string, defaultValu
     throw new sdk.WERR_INVALID_PARAMETER(name, 'an integer')
   v = Number(v)
   if (min !== undefined && v < min)
-      throw new sdk.WERR_INVALID_PARAMETER(name, `at least ${min} length.`)
+    throw new sdk.WERR_INVALID_PARAMETER(name, `at least ${min} length.`)
   if (max !== undefined && v > max)
-      throw new sdk.WERR_INVALID_PARAMETER(name, `no more than ${max} length.`)
+    throw new sdk.WERR_INVALID_PARAMETER(name, `no more than ${max} length.`)
   return v
 }
 
@@ -112,8 +112,8 @@ function validateBase64String(s: string, name: string, min?: number, max?: numbe
 }
 
 function validateOptionalHexString(s: string | undefined, name: string, min?: number, max?: number): string | undefined {
-    if (s === undefined) return undefined
-    return validateHexString(s, name, min, max)
+  if (s === undefined) return undefined
+  return validateHexString(s, name, min, max)
 }
 
 /**
@@ -137,7 +137,7 @@ function validateHexString(s: string, name: string, min?: number, max?: number):
   return s
 }
 
-export function isHexString(s: string) : boolean {
+export function isHexString(s: string): boolean {
   s = s.trim()
   if (s.length % 2 === 1)
     return false
@@ -159,20 +159,20 @@ export interface ValidCreateActionInput {
 }
 
 export function validateCreateActionInput(i: CreateActionInput): ValidCreateActionInput {
-    if (i.unlockingScript === undefined && i.unlockingScriptLength === undefined)
-        throw new sdk.WERR_INVALID_PARAMETER('unlockingScript, unlockingScriptLength', `at least one valid value.`)
-    const unlockingScript = validateOptionalHexString(i.unlockingScript, 'unlockingScript')
-    const unlockingScriptLength = i.unlockingScriptLength || unlockingScript!.length / 2
-    if (unlockingScript && unlockingScriptLength !== unlockingScript.length / 2)
-        throw new sdk.WERR_INVALID_PARAMETER('unlockingScriptLength', `length unlockingScript if both valid.`)
-    const vi: ValidCreateActionInput = {
-        outpoint: parseWalletOutpoint(i.outpoint),
-        inputDescription: validateStringLength(i.inputDescription, 'inputDescription', 5, 50),
-        unlockingScript,
-        unlockingScriptLength,
-        sequenceNumber: default0xffffffff(i.sequenceNumber)
-    }
-    return vi
+  if (i.unlockingScript === undefined && i.unlockingScriptLength === undefined)
+    throw new sdk.WERR_INVALID_PARAMETER('unlockingScript, unlockingScriptLength', `at least one valid value.`)
+  const unlockingScript = validateOptionalHexString(i.unlockingScript, 'unlockingScript')
+  const unlockingScriptLength = i.unlockingScriptLength || unlockingScript!.length / 2
+  if (unlockingScript && unlockingScriptLength !== unlockingScript.length / 2)
+    throw new sdk.WERR_INVALID_PARAMETER('unlockingScriptLength', `length unlockingScript if both valid.`)
+  const vi: ValidCreateActionInput = {
+    outpoint: parseWalletOutpoint(i.outpoint),
+    inputDescription: validateStringLength(i.inputDescription, 'inputDescription', 5, 50),
+    unlockingScript,
+    unlockingScriptLength,
+    sequenceNumber: default0xffffffff(i.sequenceNumber)
+  }
+  return vi
 }
 
 export interface ValidCreateActionOutput {
@@ -185,15 +185,15 @@ export interface ValidCreateActionOutput {
 }
 
 export function validateCreateActionOutput(o: CreateActionOutput): ValidCreateActionOutput {
-    const vo: ValidCreateActionOutput = {
-        lockingScript: validateHexString(o.lockingScript, 'lockingScript'),
-        satoshis: validateSatoshis(o.satoshis, 'satoshis'),
-        outputDescription: validateStringLength(o.outputDescription, 'outputDescription', 5, 50),
-        basket: validateOptionalBasket(o.basket),
-        customInstructions: o.customInstructions,
-        tags: defaultEmpty(o.tags).map(t => validateTag(t))
-    }
-    return vo
+  const vo: ValidCreateActionOutput = {
+    lockingScript: validateHexString(o.lockingScript, 'lockingScript'),
+    satoshis: validateSatoshis(o.satoshis, 'satoshis'),
+    outputDescription: validateStringLength(o.outputDescription, 'outputDescription', 5, 50),
+    basket: validateOptionalBasket(o.basket),
+    customInstructions: o.customInstructions,
+    tags: defaultEmpty(o.tags).map(t => validateTag(t))
+  }
+  return vo
 }
 
 /**
@@ -202,7 +202,7 @@ export function validateCreateActionOutput(o: CreateActionOutput): ValidCreateAc
  * Set all possibly undefined arrays to empty arrays.
  * Convert string outpoints to `{ txid: string, vout: number }`
  */
-export function validateCreateActionOptions(options?: CreateActionOptions) : ValidCreateActionOptions {
+export function validateCreateActionOptions(options?: CreateActionOptions): ValidCreateActionOptions {
   const o = options || {}
   const vo: ValidCreateActionOptions = {
     signAndProcess: defaultTrue(o.signAndProcess),
@@ -272,32 +272,32 @@ export interface ValidSignActionArgs extends ValidProcessActionArgs {
   options: sdk.ValidSignActionOptions
 }
 
-export function validateCreateActionArgs(args: CreateActionArgs) : ValidCreateActionArgs {
-    const vargs: ValidCreateActionArgs = {
-      description: validateStringLength(args.description, 'description', 5, 50),
-      inputBEEF: args.inputBEEF,
-      inputs: defaultEmpty(args.inputs).map(i => validateCreateActionInput(i)),
-      outputs: defaultEmpty(args.outputs).map(o => validateCreateActionOutput(o)),
-      lockTime: defaultZero(args.lockTime),
-      version: defaultOne(args.version),
-      labels: defaultEmpty(args.labels?.map(l => validateLabel(l))),
-      options: validateCreateActionOptions(args.options),
-      isSendWith: false,
-      isDelayed: false,
-      isNoSend: false,
-      isNewTx: false,
-      isSignAction: false,
-    }
-    vargs.isSendWith = vargs.options.sendWith.length > 0
-    vargs.isNewTx = (vargs.inputs.length > 0) || (vargs.outputs.length > 0)
-    vargs.isSignAction = vargs.isNewTx && (vargs.options.signAndProcess === false || vargs.inputs.some(i => i.unlockingScript === undefined))
-    vargs.isDelayed = vargs.options.acceptDelayedBroadcast
-    vargs.isNoSend = vargs.options.noSend
+export function validateCreateActionArgs(args: CreateActionArgs): ValidCreateActionArgs {
+  const vargs: ValidCreateActionArgs = {
+    description: validateStringLength(args.description, 'description', 5, 50),
+    inputBEEF: args.inputBEEF,
+    inputs: defaultEmpty(args.inputs).map(i => validateCreateActionInput(i)),
+    outputs: defaultEmpty(args.outputs).map(o => validateCreateActionOutput(o)),
+    lockTime: defaultZero(args.lockTime),
+    version: defaultOne(args.version),
+    labels: defaultEmpty(args.labels?.map(l => validateLabel(l))),
+    options: validateCreateActionOptions(args.options),
+    isSendWith: false,
+    isDelayed: false,
+    isNoSend: false,
+    isNewTx: false,
+    isSignAction: false,
+  }
+  vargs.isSendWith = vargs.options.sendWith.length > 0
+  vargs.isNewTx = (vargs.inputs.length > 0) || (vargs.outputs.length > 0)
+  vargs.isSignAction = vargs.isNewTx && (vargs.options.signAndProcess === false || vargs.inputs.some(i => i.unlockingScript === undefined))
+  vargs.isDelayed = vargs.options.acceptDelayedBroadcast
+  vargs.isNoSend = vargs.options.noSend
 
-    if (!vargs.isSendWith && !vargs.isNewTx)
-      throw new sdk.WERR_INVALID_PARAMETER('args', 'either at least one input or output, or a sendWith.')
+  if (!vargs.isSendWith && !vargs.isNewTx)
+    throw new sdk.WERR_INVALID_PARAMETER('args', 'either at least one input or output, or a sendWith.')
 
-    return vargs
+  return vargs
 }
 
 /**
@@ -306,7 +306,7 @@ export function validateCreateActionArgs(args: CreateActionArgs) : ValidCreateAc
  * Set all possibly undefined arrays to empty arrays.
  * Convert string outpoints to `{ txid: string, vout: number }`
  */
-export function validateSignActionOptions(options?: SignActionOptions) : ValidSignActionOptions {
+export function validateSignActionOptions(options?: SignActionOptions): ValidSignActionOptions {
   const o = options || {}
   const vo: ValidSignActionOptions = {
     acceptDelayedBroadcast: defaultTrue(o.acceptDelayedBroadcast),
@@ -317,33 +317,33 @@ export function validateSignActionOptions(options?: SignActionOptions) : ValidSi
   return vo
 }
 
-export function validateSignActionArgs(args: SignActionArgs) : ValidSignActionArgs {
-    const vargs: ValidSignActionArgs = {
-      spends: args.spends,
-      reference: args.reference,
-      options: validateSignActionOptions(args.options),
-      isSendWith: false,
-      isDelayed: false,
-      isNoSend: false,
-      isNewTx: true,
-    }
-    vargs.isSendWith = vargs.options.sendWith.length > 0
-    vargs.isDelayed = vargs.options.acceptDelayedBroadcast
-    vargs.isNoSend = vargs.options.noSend
+export function validateSignActionArgs(args: SignActionArgs): ValidSignActionArgs {
+  const vargs: ValidSignActionArgs = {
+    spends: args.spends,
+    reference: args.reference,
+    options: validateSignActionOptions(args.options),
+    isSendWith: false,
+    isDelayed: false,
+    isNoSend: false,
+    isNewTx: true,
+  }
+  vargs.isSendWith = vargs.options.sendWith.length > 0
+  vargs.isDelayed = vargs.options.acceptDelayedBroadcast
+  vargs.isNoSend = vargs.options.noSend
 
-    return vargs
+  return vargs
 }
 
 export interface ValidAbortActionArgs extends ValidWalletSignerArgs {
   reference: Base64String
 }
 
-export function validateAbortActionArgs(args: AbortActionArgs) : ValidAbortActionArgs {
-    const vargs: ValidAbortActionArgs = {
-      reference: validateBase64String(args.reference, 'reference'),
-    }
+export function validateAbortActionArgs(args: AbortActionArgs): ValidAbortActionArgs {
+  const vargs: ValidAbortActionArgs = {
+    reference: validateBase64String(args.reference, 'reference'),
+  }
 
-    return vargs
+  return vargs
 }
 
 export interface ValidWalletPayment {
@@ -352,7 +352,7 @@ export interface ValidWalletPayment {
   senderIdentityKey: PubKeyHex
 }
 
-export function validateWalletPayment(args?: WalletPayment) : ValidWalletPayment | undefined {
+export function validateWalletPayment(args?: WalletPayment): ValidWalletPayment | undefined {
   if (args === undefined) return undefined
   const v: ValidWalletPayment = {
     derivationPrefix: validateBase64String(args.derivationPrefix, 'derivationPrefix'),
@@ -368,7 +368,7 @@ export interface ValidBasketInsertion {
   tags: BasketStringUnder300Bytes[]
 }
 
-export function validateBasketInsertion(args?: BasketInsertion) : ValidBasketInsertion | undefined {
+export function validateBasketInsertion(args?: BasketInsertion): ValidBasketInsertion | undefined {
   if (args === undefined) return undefined
   const v: ValidBasketInsertion = {
     basket: validateBasket(args.basket),
@@ -385,7 +385,7 @@ export interface ValidInternalizeOutput {
   insertionRemittance?: ValidBasketInsertion
 }
 
-export function validateInternalizeOutput(args: InternalizeOutput) : ValidInternalizeOutput {
+export function validateInternalizeOutput(args: InternalizeOutput): ValidInternalizeOutput {
   if (args.protocol !== 'basket insertion' && args.protocol !== 'wallet payment')
     throw new sdk.WERR_INVALID_PARAMETER('protocol', `'basket insertion' or 'wallet payment'`)
   const v: ValidInternalizeOutput = {
@@ -405,7 +405,7 @@ export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
   seekPermission: BooleanDefaultTrue
 }
 
-export function validateOriginator(s?: string) : string | undefined {
+export function validateOriginator(s?: string): string | undefined {
   if (s === undefined) return undefined
   s = s.trim().toLowerCase()
   validateStringLength(s, 'originator', 1, 250)
@@ -415,26 +415,26 @@ export function validateOriginator(s?: string) : string | undefined {
   }
 }
 
-export function validateInternalizeActionArgs(args: InternalizeActionArgs) : ValidInternalizeActionArgs {
-    const vargs: ValidInternalizeActionArgs = {
-      tx: args.tx,
-      outputs: args.outputs.map(o => validateInternalizeOutput(o)),
-      description: validateStringLength(args.description, 'description', 5, 50),
-      labels: (args.labels || []).map(t => validateLabel(t)),
-      seekPermission: defaultTrue(args.seekPermission),
-    }
+export function validateInternalizeActionArgs(args: InternalizeActionArgs): ValidInternalizeActionArgs {
+  const vargs: ValidInternalizeActionArgs = {
+    tx: args.tx,
+    outputs: args.outputs.map(o => validateInternalizeOutput(o)),
+    description: validateStringLength(args.description, 'description', 5, 50),
+    labels: (args.labels || []).map(t => validateLabel(t)),
+    seekPermission: defaultTrue(args.seekPermission),
+  }
 
-    try {
-      const beef = Beef.fromBinary(vargs.tx)
-      if (beef.txs.length < 1)
-        throw new sdk.WERR_INVALID_PARAMETER('tx', `at least one transaction to internalize an output from`)
-    } catch {
-      throw new sdk.WERR_INVALID_PARAMETER('tx', `valid with at least one transaction to internalize an output from`)
-    }
-    if (vargs.outputs.length < 1)
-      throw new sdk.WERR_INVALID_PARAMETER('outputs', `at least one output to internalize from the transaction`)
+  try {
+    const beef = Beef.fromBinary(vargs.tx)
+    if (beef.txs.length < 1)
+      throw new sdk.WERR_INVALID_PARAMETER('tx', `at least one transaction to internalize an output from`)
+  } catch {
+    throw new sdk.WERR_INVALID_PARAMETER('tx', `valid with at least one transaction to internalize an output from`)
+  }
+  if (vargs.outputs.length < 1)
+    throw new sdk.WERR_INVALID_PARAMETER('outputs', `at least one output to internalize from the transaction`)
 
-    return vargs
+  return vargs
 }
 
 export function validateOptionalOutpointString(outpoint: string | undefined, name: string): string | undefined {
@@ -456,13 +456,13 @@ export interface ValidRelinquishOutputArgs extends ValidWalletSignerArgs {
   output: OutpointString
 }
 
-export function validateRelinquishOutputArgs(args: RelinquishOutputArgs) : ValidRelinquishOutputArgs {
-    const vargs: ValidRelinquishOutputArgs = {
-      basket: validateBasket(args.basket),
-      output: validateOutpointString(args.output, 'output'),
-    }
+export function validateRelinquishOutputArgs(args: RelinquishOutputArgs): ValidRelinquishOutputArgs {
+  const vargs: ValidRelinquishOutputArgs = {
+    basket: validateBasket(args.basket),
+    output: validateOutpointString(args.output, 'output'),
+  }
 
-    return vargs
+  return vargs
 }
 
 export interface ValidRelinquishCertificateArgs extends ValidWalletSignerArgs {
@@ -471,14 +471,14 @@ export interface ValidRelinquishCertificateArgs extends ValidWalletSignerArgs {
   certifier: PubKeyHex
 }
 
-export function validateRelinquishCertificateArgs(args: RelinquishCertificateArgs) : ValidRelinquishCertificateArgs {
-    const vargs: ValidRelinquishCertificateArgs = {
-      type: validateBase64String(args.type, 'type'),
-      serialNumber: validateBase64String(args.serialNumber, 'serialNumber'),
-      certifier: validateHexString(args.certifier, 'certifier'),
-    }
+export function validateRelinquishCertificateArgs(args: RelinquishCertificateArgs): ValidRelinquishCertificateArgs {
+  const vargs: ValidRelinquishCertificateArgs = {
+    type: validateBase64String(args.type, 'type'),
+    serialNumber: validateBase64String(args.serialNumber, 'serialNumber'),
+    certifier: validateHexString(args.certifier, 'certifier'),
+  }
 
-    return vargs
+  return vargs
 }
 
 export interface ValidListCertificatesArgs extends ValidWalletSignerArgs {
@@ -498,17 +498,17 @@ export interface ValidListCertificatesArgs extends ValidWalletSignerArgs {
   privilegedReason?: DescriptionString5to50Bytes
 }
 
-export function validateListCertificatesArgs(args: ListCertificatesArgs) : ValidListCertificatesArgs {
-    const vargs: ValidListCertificatesArgs = {
-      certifiers: defaultEmpty(args.certifiers.map(c => validateHexString(c.trim(), 'certifiers'))),
-      types: defaultEmpty(args.types.map(t => validateBase64String(t.trim(), 'types'))),
-      limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
-      offset: validatePositiveIntegerOrZero(defaultZero(args.offset), 'offset'),
-      privileged: defaultFalse(args.privileged),
-      privilegedReason: validateOptionalStringLength(args.privilegedReason, 'privilegedReason', 5, 50),
-      partial: undefined,
-    }
-    return vargs
+export function validateListCertificatesArgs(args: ListCertificatesArgs): ValidListCertificatesArgs {
+  const vargs: ValidListCertificatesArgs = {
+    certifiers: defaultEmpty(args.certifiers.map(c => validateHexString(c.trim(), 'certifiers'))),
+    types: defaultEmpty(args.types.map(t => validateBase64String(t.trim(), 'types'))),
+    limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
+    offset: validatePositiveIntegerOrZero(defaultZero(args.offset), 'offset'),
+    privileged: defaultFalse(args.privileged),
+    privilegedReason: validateOptionalStringLength(args.privilegedReason, 'privilegedReason', 5, 50),
+    partial: undefined,
+  }
+  return vargs
 }
 
 export interface ValidAcquireCertificateArgs extends ValidWalletSignerArgs {
@@ -531,28 +531,24 @@ export interface ValidAcquireCertificateArgs extends ValidWalletSignerArgs {
 }
 
 function validateCertificateFields(fields: Record<CertificateFieldNameUnder50Bytes, string>):
-Record<CertificateFieldNameUnder50Bytes, string>
-{
+  Record<CertificateFieldNameUnder50Bytes, string> {
   for (const fieldName of Object.keys(fields)) {
     validateStringLength(fieldName, 'field name', 1, 50)
   }
   return fields
 }
 
-function validateKeyringRevealer(kr: KeyringRevealer, name: string) : KeyringRevealer
-{
+function validateKeyringRevealer(kr: KeyringRevealer, name: string): KeyringRevealer {
   if (kr === 'certifier') return kr
   return validateHexString(kr, name)
 }
 
-function validateOptionalKeyringRevealer(kr: KeyringRevealer | undefined, name: string) : KeyringRevealer | undefined
-{
+function validateOptionalKeyringRevealer(kr: KeyringRevealer | undefined, name: string): KeyringRevealer | undefined {
   if (kr === undefined) return undefined
   return validateKeyringRevealer(kr, name)
 }
 
-function validateKeyringForSubject(kr: Record<CertificateFieldNameUnder50Bytes, Base64String>, name: string) : Record<CertificateFieldNameUnder50Bytes, Base64String>
-{
+function validateKeyringForSubject(kr: Record<CertificateFieldNameUnder50Bytes, Base64String>, name: string): Record<CertificateFieldNameUnder50Bytes, Base64String> {
   for (const fn of Object.keys(kr)) {
     validateStringLength(fn, `${name} field name`, 1, 50);
     validateBase64String(kr[fn], `${name} field value`)
@@ -560,7 +556,7 @@ function validateKeyringForSubject(kr: Record<CertificateFieldNameUnder50Bytes, 
   return kr
 }
 
-function validateOptionalKeyringForSubject(kr: Record<CertificateFieldNameUnder50Bytes, Base64String> | undefined, name: string) : Record<CertificateFieldNameUnder50Bytes, Base64String> | undefined {
+function validateOptionalKeyringForSubject(kr: Record<CertificateFieldNameUnder50Bytes, Base64String> | undefined, name: string): Record<CertificateFieldNameUnder50Bytes, Base64String> | undefined {
   if (kr === undefined) return undefined
   return validateKeyringForSubject(kr, name)
 }
@@ -571,7 +567,7 @@ function validateOptionalKeyringForSubject(kr: Record<CertificateFieldNameUnder5
  * @param subject Must be valid for "direct" `acquisitionProtocol`. public key of the certificate subject.
  * @returns 
  */
-export async function validateAcquireCertificateArgs(args: AcquireCertificateArgs) : Promise<ValidAcquireCertificateArgs> {
+export async function validateAcquireCertificateArgs(args: AcquireCertificateArgs): Promise<ValidAcquireCertificateArgs> {
   const vargs: ValidAcquireCertificateArgs = {
     acquisitionProtocol: args.acquisitionProtocol,
     type: validateBase64String(args.type, 'type'),
@@ -617,7 +613,23 @@ export interface ValidAcquireDirectCertificateArgs extends ValidWalletSignerArgs
   privilegedReason?: DescriptionString5to50Bytes
 }
 
-export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArgs) : ValidAcquireDirectCertificateArgs {
+export interface ValidAcquireIssuanceCertificateArgs extends ValidWalletSignerArgs {
+  type: Base64String
+  certifier: PubKeyHex
+  certifierUrl: string
+  fields: Record<CertificateFieldNameUnder50Bytes, string>
+
+  /**
+   * validated to an empty string, must be provided by wallet and must
+   * match expectations of keyringForSubject
+   */
+  subject: PubKeyHex
+
+  privileged: boolean
+  privilegedReason?: DescriptionString5to50Bytes
+}
+
+export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArgs): ValidAcquireDirectCertificateArgs {
   if (args.acquisitionProtocol !== 'direct') throw new sdk.WERR_INTERNAL('Only acquire direct certificate requests allowed here.')
   if (!args.serialNumber) throw new sdk.WERR_INVALID_PARAMETER('serialNumber', 'valid when acquisitionProtocol is "direct"')
   if (!args.signature) throw new sdk.WERR_INVALID_PARAMETER('signature', 'valid when acquisitionProtocol is "direct"')
@@ -642,6 +654,27 @@ export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArg
   return vargs
 }
 
+export function validateAcquireIssuanceCertificateArgs(args: AcquireCertificateArgs): ValidAcquireIssuanceCertificateArgs {
+  if (args.acquisitionProtocol !== 'issuance') throw new sdk.WERR_INTERNAL('Only acquire certificate via issuance requests allowed here.')
+  if (args.serialNumber) throw new sdk.WERR_INVALID_PARAMETER('serialNumber', 'valid when acquisitionProtocol is "direct"')
+  if (args.signature) throw new sdk.WERR_INVALID_PARAMETER('signature', 'valid when acquisitionProtocol is "direct"')
+  if (args.revocationOutpoint) throw new sdk.WERR_INVALID_PARAMETER('revocationOutpoint', 'valid when acquisitionProtocol is "direct"')
+  if (args.keyringRevealer) throw new sdk.WERR_INVALID_PARAMETER('keyringRevealer', 'valid when acquisitionProtocol is "direct"')
+  if (args.keyringForSubject) throw new sdk.WERR_INVALID_PARAMETER('keyringForSubject', 'valid when acquisitionProtocol is "direct"')
+  if (args.privileged && !args.privilegedReason) throw new sdk.WERR_INVALID_PARAMETER('privilegedReason', `valid when 'privileged' is true `)
+
+  const vargs: ValidAcquireIssuanceCertificateArgs = {
+    type: validateBase64String(args.type, 'type'),
+    certifier: validateHexString(args.certifier, 'certifier'),
+    certifierUrl: args.certifierUrl,
+    fields: validateCertificateFields(args.fields),
+    privileged: defaultFalse(args.privileged),
+    privilegedReason: validateOptionalStringLength(args.privilegedReason, 'privilegedReason', 5, 50),
+    subject: ''
+  }
+  return vargs
+}
+
 export interface ValidProveCertificateArgs extends ValidWalletSignerArgs {
   type?: Base64String
   serialNumber?: Base64String
@@ -649,7 +682,7 @@ export interface ValidProveCertificateArgs extends ValidWalletSignerArgs {
   subject?: PubKeyHex
   revocationOutpoint?: OutpointString
   signature?: HexString
-  
+
   fieldsToReveal: CertificateFieldNameUnder50Bytes[]
   verifier: PubKeyHex
   privileged: boolean
@@ -657,8 +690,7 @@ export interface ValidProveCertificateArgs extends ValidWalletSignerArgs {
 }
 
 export function validateProveCertificateArgs(args: ProveCertificateArgs)
-: ValidProveCertificateArgs
-{
+  : ValidProveCertificateArgs {
   if (args.privileged && !args.privilegedReason) throw new sdk.WERR_INVALID_PARAMETER('privilegedReason', `valid when 'privileged' is true `)
 
   const vargs: ValidProveCertificateArgs = {
@@ -684,8 +716,7 @@ export interface ValidDiscoverByIdentityKeyArgs extends ValidWalletSignerArgs {
 }
 
 export function validateDiscoverByIdentityKeyArgs(args: DiscoverByIdentityKeyArgs)
-: ValidDiscoverByIdentityKeyArgs
-{
+  : ValidDiscoverByIdentityKeyArgs {
   const vargs: ValidDiscoverByIdentityKeyArgs = {
     identityKey: validateHexString(args.identityKey, 'identityKey', 66, 66),
     limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
@@ -703,8 +734,7 @@ export interface ValidDiscoverByAttributesArgs extends ValidWalletSignerArgs {
 }
 
 function validateAttributes(attributes: Record<CertificateFieldNameUnder50Bytes, string>):
-Record<CertificateFieldNameUnder50Bytes, string>
-{
+  Record<CertificateFieldNameUnder50Bytes, string> {
   for (const fieldName of Object.keys(attributes)) {
     validateStringLength(fieldName, `field name ${fieldName}`, 1, 50)
   }
@@ -712,8 +742,7 @@ Record<CertificateFieldNameUnder50Bytes, string>
 }
 
 export function validateDiscoverByAttributesArgs(args: DiscoverByAttributesArgs)
-: ValidDiscoverByAttributesArgs
-{
+  : ValidDiscoverByAttributesArgs {
   const vargs: ValidDiscoverByAttributesArgs = {
     attributes: validateAttributes(args.attributes),
     limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
@@ -751,31 +780,31 @@ export interface ValidListOutputsArgs extends ValidWalletSignerArgs {
    * @param {PositiveIntegerOrZero} [args.offset] - Optional. Number of outputs to skip before starting to return results.
    * @param {BooleanDefaultTrue} [args.seekPermission] — Optional. Whether to seek permission from the user for this operation if required. Default true, will return an error rather than proceed if set to false.
  */
-export function validateListOutputsArgs(args: ListOutputsArgs) : ValidListOutputsArgs {
-    let tagQueryMode: 'any' | 'all'
-    if (args.tagQueryMode === undefined || args.tagQueryMode === 'any')
-      tagQueryMode = 'any'
-    else if (args.tagQueryMode === 'all')
-      tagQueryMode = 'all'
-    else
-      throw new sdk.WERR_INVALID_PARAMETER('tagQueryMode', `undefined, 'any', or 'all'`)
+export function validateListOutputsArgs(args: ListOutputsArgs): ValidListOutputsArgs {
+  let tagQueryMode: 'any' | 'all'
+  if (args.tagQueryMode === undefined || args.tagQueryMode === 'any')
+    tagQueryMode = 'any'
+  else if (args.tagQueryMode === 'all')
+    tagQueryMode = 'all'
+  else
+    throw new sdk.WERR_INVALID_PARAMETER('tagQueryMode', `undefined, 'any', or 'all'`)
 
-    const vargs: ValidListOutputsArgs = {
-      basket: validateStringLength(args.basket, 'basket', 1, 300),
-      tags: (args.tags || []).map(t => validateStringLength(t, 'tag', 1, 300)),
-      tagQueryMode,
-      includeLockingScripts: args.include === 'locking scripts',
-      includeTransactions: args.include === 'entire transactions',
-      includeCustomInstructions: defaultFalse(args.includeCustomInstructions),
-      includeTags: defaultFalse(args.includeTags),
-      includeLabels: defaultFalse(args.includeLabels),
-      limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
-      offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
-      seekPermission: defaultTrue(args.seekPermission),
-      knownTxids: [],
-    }
+  const vargs: ValidListOutputsArgs = {
+    basket: validateStringLength(args.basket, 'basket', 1, 300),
+    tags: (args.tags || []).map(t => validateStringLength(t, 'tag', 1, 300)),
+    tagQueryMode,
+    includeLockingScripts: args.include === 'locking scripts',
+    includeTransactions: args.include === 'entire transactions',
+    includeCustomInstructions: defaultFalse(args.includeCustomInstructions),
+    includeTags: defaultFalse(args.includeTags),
+    includeLabels: defaultFalse(args.includeLabels),
+    limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
+    offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
+    seekPermission: defaultTrue(args.seekPermission),
+    knownTxids: [],
+  }
 
-    return vargs
+  return vargs
 }
 
 export interface ValidListActionsArgs extends ValidWalletSignerArgs {
@@ -805,29 +834,29 @@ export interface ValidListActionsArgs extends ValidWalletSignerArgs {
    * @param {PositiveIntegerOrZero} [args.offset] - Optional. Number of transactions to skip before starting to return the results.
    * @param {BooleanDefaultTrue} [args.seekPermission] — Optional. Whether to seek permission from the user for this operation if required. Default true, will return an error rather than proceed if set to false.
  */
-export function validateListActionsArgs(args: ListActionsArgs) : ValidListActionsArgs {
-    let labelQueryMode: 'any' | 'all'
-    if (args.labelQueryMode === undefined || args.labelQueryMode === 'any')
-      labelQueryMode = 'any'
-    else if (args.labelQueryMode === 'all')
-      labelQueryMode = 'all'
-    else
-      throw new sdk.WERR_INVALID_PARAMETER('labelQueryMode', `undefined, 'any', or 'all'`)
+export function validateListActionsArgs(args: ListActionsArgs): ValidListActionsArgs {
+  let labelQueryMode: 'any' | 'all'
+  if (args.labelQueryMode === undefined || args.labelQueryMode === 'any')
+    labelQueryMode = 'any'
+  else if (args.labelQueryMode === 'all')
+    labelQueryMode = 'all'
+  else
+    throw new sdk.WERR_INVALID_PARAMETER('labelQueryMode', `undefined, 'any', or 'all'`)
 
-    const vargs: ValidListActionsArgs = {
-      labels: (args.labels || []).map(t => validateLabel(t)),
-      labelQueryMode,
-      includeLabels: defaultFalse(args.includeLabels),
-      includeInputs: defaultFalse(args.includeInputs),
-      includeInputSourceLockingScripts: defaultFalse(args.includeInputSourceLockingScripts),
-      includeInputUnlockingScripts: defaultFalse(args.includeInputUnlockingScripts),
-      includeOutputs: defaultFalse(args.includeOutputs),
-      includeOutputLockingScripts: defaultFalse(args.includeOutputLockingScripts),
-      limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
-      offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
-      seekPermission: defaultTrue(args.seekPermission),
-    }
+  const vargs: ValidListActionsArgs = {
+    labels: (args.labels || []).map(t => validateLabel(t)),
+    labelQueryMode,
+    includeLabels: defaultFalse(args.includeLabels),
+    includeInputs: defaultFalse(args.includeInputs),
+    includeInputSourceLockingScripts: defaultFalse(args.includeInputSourceLockingScripts),
+    includeInputUnlockingScripts: defaultFalse(args.includeInputUnlockingScripts),
+    includeOutputs: defaultFalse(args.includeOutputs),
+    includeOutputLockingScripts: defaultFalse(args.includeOutputLockingScripts),
+    limit: validateInteger(args.limit, 'limit', 10, 1, 10000),
+    offset: validateInteger(args.offset, 'offset', 0, 0, undefined),
+    seekPermission: defaultTrue(args.seekPermission),
+  }
 
-    return vargs
+  return vargs
 }
 

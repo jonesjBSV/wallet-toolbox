@@ -328,42 +328,42 @@ export class Wallet implements WalletInterface {
     }
 
     if (args.acquisitionProtocol === 'issuance') {
-      await sdk.validateAcquireCertificateArgs(args)
+      const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateAcquireIssuanceCertificateArgs)
       // Create a random nonce that the server can verify
-      const clientNonce = await createNonce(this, args.certifier)
+      const clientNonce = await createNonce(this, vargs.certifier)
       const authClient = new AuthFetch(this)
 
       // Create a certificate with a master keyring
       const certificateToRequestSigning = await MasterCertificate.issueCertificateForSubject(
         this,
         'self',
-        args.fields,
-        args.type
+        vargs.fields,
+        vargs.type
       )
       // Create a keyring a certifier can use to inspect the fields to certify
       const keyringForCertifier = await certificateToRequestSigning.createKeyringForVerifier(
         this,
-        args.certifier,
-        Object.keys(args.fields),
+        vargs.certifier,
+        Object.keys(vargs.fields),
         originator
       )
 
       // Make a Certificate Signing Request (CSR) to the certifier
-      const response = await authClient.fetch(`${args.certifierUrl}/signCertificate`, {
+      const response = await authClient.fetch(`${vargs.certifierUrl}/signCertificate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           clientNonce,
-          type: args.type,
-          fields: args.fields,
+          type: vargs.type,
+          fields: vargs.fields,
           keyring: keyringForCertifier
         })
       })
 
-      if (response.headers.get('x-bsv-auth-identity-key') !== args.certifier) {
-        throw new Error(`Invalid certifier! Expected: ${args.certifier}, Received: ${response.headers.get('x-bsv-auth-identity-key')}`)
+      if (response.headers.get('x-bsv-auth-identity-key') !== vargs.certifier) {
+        throw new Error(`Invalid certifier! Expected: ${vargs.certifier}, Received: ${response.headers.get('x-bsv-auth-identity-key')}`)
       }
 
       const {
@@ -390,39 +390,39 @@ export class Wallet implements WalletInterface {
       )
 
       // Validate server nonce
-      await verifyNonce(serverNonce, this, args.certifier)
+      await verifyNonce(serverNonce, this, vargs.certifier)
       // Verify the server included our nonce
       const { valid } = await this.verifyHmac({
         hmac: Utils.toArray(signedCertificate.serialNumber, 'base64'),
         data: Utils.toArray(clientNonce + serverNonce, 'base64'),
         protocolID: [2, 'certificate issuance'],
         keyID: serverNonce + clientNonce,
-        counterparty: args.certifier
+        counterparty: vargs.certifier
       })
       if (!valid) throw new Error('Invalid serialNumber')
 
       // Validate the certificate received
-      if (signedCertificate.type !== args.type) {
-        throw new Error(`Invalid certificate type! Expected: ${args.type}, Received: ${signedCertificate.type}`)
+      if (signedCertificate.type !== vargs.type) {
+        throw new Error(`Invalid certificate type! Expected: ${vargs.type}, Received: ${signedCertificate.type}`)
       }
       if (signedCertificate.subject !== this.identityKey) {
         throw new Error(`Invalid certificate subject! Expected: ${this.identityKey}, Received: ${signedCertificate.subject}`)
       }
-      if (signedCertificate.certifier !== args.certifier) {
-        throw new Error(`Invalid certifier! Expected: ${args.certifier}, Received: ${signedCertificate.certifier}`)
+      if (signedCertificate.certifier !== vargs.certifier) {
+        throw new Error(`Invalid certifier! Expected: ${vargs.certifier}, Received: ${signedCertificate.certifier}`)
       }
       if (!signedCertificate.revocationOutpoint) {
         throw new Error(`Invalid revocationOutpoint!`)
       }
-      if (Object.keys(signedCertificate.fields).length !== Object.keys(args.fields).length) {
+      if (Object.keys(signedCertificate.fields).length !== Object.keys(vargs.fields).length) {
         throw new Error(`Fields mismatch! Objects have different numbers of keys.`)
       }
-      for (const field of Object.keys(args.fields)) {
+      for (const field of Object.keys(vargs.fields)) {
         if (!(field in signedCertificate.fields)) {
           throw new Error(`Missing field: ${field} in certificate.fields`)
         }
-        if (signedCertificate.fields[field] !== args.fields[field]) {
-          throw new Error(`Invalid field! Expected: ${args.fields[field]}, Received: ${signedCertificate.fields[field]}`)
+        if (signedCertificate.fields[field] !== vargs.fields[field]) {
+          throw new Error(`Invalid field! Expected: ${vargs.fields[field]}, Received: ${signedCertificate.fields[field]}`)
         }
       }
 
@@ -431,12 +431,12 @@ export class Wallet implements WalletInterface {
       // Store the newly issued certificate
       return await acquireDirectCertificate(
         this,
-        { identityKey: this.identityKey },
+        auth,
         {
           ...certificate,
           keyringRevealer: 'certifier',
           keyringForSubject: certificateToRequestSigning.masterKeyring,
-          privileged: args.privileged
+          privileged: vargs.privileged
         }
       )
     }
