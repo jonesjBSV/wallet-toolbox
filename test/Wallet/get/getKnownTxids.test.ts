@@ -1,57 +1,86 @@
-import { setupTestWallet } from '../../utils/TestUtilsMethodTests';
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import * as bsv from '@bsv/sdk'
 
-describe.skip('Wallet Utility Tests (Unit)', () => {
-    let wallet: any;
-    let mockMergeTxidOnly: jest.Mock;
-    let mockSortTxs: jest.Mock;
+describe('getKnownTxids Tests', () => {
+  jest.setTimeout(99999999)
 
-    beforeEach(() => {
-        const { wallet: testWallet, mockSigner, mockKeyDeriver } = setupTestWallet();
+  const env = _tu.getEnv('test')
+  const ctxs: TestWalletNoSetup[] = []
 
-        wallet = testWallet;
+  beforeAll(async () => {
+    if (!env.noMySQL) {
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy('getKnownTxidsTests'))
+    }
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('getKnownTxidsTests'))
+  })
 
-        // Mock `mergeTxidOnly` and `sortTxs`
-        mockMergeTxidOnly = jest.fn();
-        mockSortTxs = jest.fn();
+  afterAll(async () => {
+    for (const ctx of ctxs) {
+      await ctx.storage.destroy()
+    }
+  })
 
-        wallet.beef = {
-            mergeTxidOnly: mockMergeTxidOnly,
-            sortTxs: mockSortTxs,
-        } as any;
-    });
+  /*********************************************************************************************************
+   * TODOTONE: Duplicates not being handled correctly.
+   **********************************************************************************************************/
+  test('0 should return an empty array when no txids are provided', async () => {
+    for (const { wallet } of ctxs) {
+      const result = wallet.getKnownTxids()
+      expect(result).toEqual([])
+    }
+  })
 
-    test('should return an empty array when no txids are provided', () => {
-        mockSortTxs.mockReturnValue({ valid: [], txidOnly: [] });
+  // Duplicate txids are not being handled correctly
+  test('1 should add new known txids', async () => {
+    for (const { wallet } of ctxs) {
+      const txids = ['txid1']
+      const resultBefore = wallet.getKnownTxids()
+      expect(resultBefore).toEqual([])
 
-        const result = wallet.getKnownTxids();
-        expect(result).toEqual([]);
-        expect(mockSortTxs).toHaveBeenCalled();
-    });
+      wallet.getKnownTxids(txids)
+      const resultAfter = wallet.getKnownTxids()
+      expect(resultAfter).toEqual(txids)
+    }
+  })
 
-    test('should add new known txids', () => {
-        mockSortTxs.mockReturnValue({ valid: ['txid1'], txidOnly: [] });
+  // Duplicate txids are not being handled correctly
+  test('2 should avoid duplicating txids', async () => {
+    for (const { wallet } of ctxs) {
+      const txids = ['txid1', 'txid2']
+      wallet.getKnownTxids(txids)
 
-        const result = wallet.getKnownTxids(['txid1']);
-        expect(result).toEqual(['txid1']);
-        expect(mockMergeTxidOnly).toHaveBeenCalledWith('txid1');
-        expect(mockSortTxs).toHaveBeenCalled();
-    });
+      const resultBefore = wallet.getKnownTxids()
+      expect(resultBefore).toEqual(txids)
 
-    test('should avoid duplicating txids', () => {
-        mockSortTxs.mockReturnValue({ valid: ['txid1', 'txid2'], txidOnly: [] });
+      wallet.getKnownTxids(['txid2']) // Add duplicate txid
+      const resultAfter = wallet.getKnownTxids()
+      expect(resultAfter).toEqual(txids) // Ensure no duplicates are added
+    }
+  })
 
-        const result = wallet.getKnownTxids(['txid1', 'txid2']);
-        expect(result).toEqual(['txid1', 'txid2']);
-        expect(mockMergeTxidOnly).toHaveBeenCalledWith('txid1');
-        expect(mockMergeTxidOnly).toHaveBeenCalledWith('txid2');
-        expect(mockSortTxs).toHaveBeenCalled();
-    });
+  // Duplicate txids are not being handled correctly
+  test('3 should return sorted txids', async () => {
+    for (const { wallet } of ctxs) {
+      const unsortedTxids = ['txid3', 'txid1', 'txid2']
+      wallet.getKnownTxids(unsortedTxids)
 
-    test('should return sorted txids', () => {
-        mockSortTxs.mockReturnValue({ valid: ['txid1', 'txid2', 'txid3'], txidOnly: [] });
+      const result = wallet.getKnownTxids()
+      expect(result).toEqual(['txid1', 'txid2', 'txid3']) // Ensure txids are sorted
+    }
+  })
 
-        const result = wallet.getKnownTxids(['txid3', 'txid1', 'txid2']);
-        expect(result).toEqual(['txid1', 'txid2', 'txid3']);
-        expect(mockSortTxs).toHaveBeenCalled();
-    });
-});
+  test('4 should handle invalid txids gracefully', async () => {
+    for (const { wallet } of ctxs) {
+      const invalidTxids = ['invalid_txid']
+      const validTxids = ['txid1', 'txid2', 'txid3']
+      const inputTxids = [...validTxids, ...invalidTxids]
+
+      // Call the method with both valid and invalid txids
+      const result = wallet.getKnownTxids(inputTxids)
+
+      // Validate the result includes all txids
+      expect(Array.isArray(result)).toBe(true)
+      expect(result).toEqual(expect.arrayContaining(inputTxids))
+    }
+  })
+})

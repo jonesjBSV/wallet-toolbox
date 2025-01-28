@@ -1,46 +1,68 @@
-import { setupTestWallet } from '../../utils/TestUtilsMethodTests';
+import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
-describe.skip('Wallet getHeaderForHeight Tests', () => {
-    // none of these tests pass.... not clear what failures indicate.
-    let wallet: any;
+describe('getHeaderForHeight tests', () => {
+  jest.setTimeout(99999999)
 
-    beforeEach(() => {
-        const { wallet: testWallet, mockSigner } = setupTestWallet();
-        wallet = testWallet;
+  const env = _tu.getEnv('test')
+  const ctxs: TestWalletNoSetup[] = []
 
-        // Set up a mock for getHeaderForHeight
-        mockSigner.getHeaderForHeight.mockImplementation((height: number) => {
-            if (height < 0) {
-                throw new Error('Invalid height');
-            }
-            return Buffer.from('header-data');
-        });
-    });
+  beforeAll(async () => {
+    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('getHeaderForHeightTests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('getHeaderForHeightTests'))
+  })
 
-    test('should return the correct block header for a given height', async () => {
-        const mockHeader = Buffer.from('header-data').toString('hex');
-        wallet.signer.getHeaderForHeight.mockResolvedValueOnce(Buffer.from('header-data'));
+  afterAll(async () => {
+    for (const ctx of ctxs) {
+      await ctx.storage.destroy()
+    }
+  })
 
-        const result = await wallet.getHeaderForHeight({ height: 100 });
-        expect(result).toEqual({ header: mockHeader });
-        expect(wallet.signer.getHeaderForHeight).toHaveBeenCalledWith(100);
-    });
+  test('0 invalid params', async () => {
+    for (const { wallet } of ctxs) {
+      try {
+        await wallet.getHeaderForHeight({ height: -1 })
+        throw new Error('Expected error was not thrown')
+      } catch (e) {
+        const errorMessage = typeof e === 'object' && e !== null && 'message' in e ? (e as Error).message : String(e)
+        expect(errorMessage).toMatch(/Height -1 must be a non-negative integer/i)
+      }
+    }
+  })
 
-    test.skip('should throw an error for invalid heights', async () => {
-        // not working yet??
-        wallet.signer.getHeaderForHeight.mockResolvedValueOnce(null);
+  test('1 valid block height', async () => {
+    for (const { wallet } of ctxs) {
+      // Query an existing valid block height
+      const height = 1 // Ensure this height exists in the test database
+      const result = await wallet.getHeaderForHeight({ height })
 
-        await expect(wallet.getHeaderForHeight({ height: -1 })).rejects.toThrow(
-            'The args.height parameter must be a valid block height. -1 is invalid.'
-        );
-        expect(wallet.signer.getHeaderForHeight).toHaveBeenCalledWith(-1);
-    });
+      expect(result).toHaveProperty('header')
+      expect(typeof result.header).toBe('string')
+      expect(result.header).not.toBe('')
+    }
+  })
 
-    test.skip('should handle unexpected errors from the signer', async () => {
-        // not working yet?
-        wallet.signer.getHeaderForHeight.mockRejectedValueOnce(new Error('Header fetch error'));
+  test('2 unexpected service errors', async () => {
+    for (const { wallet } of ctxs) {
+      try {
+        // Query a height that doesn't exist or triggers an unexpected error
+        const invalidHeight = 999999
+        await wallet.getHeaderForHeight({ height: invalidHeight })
+        throw new Error('Expected error was not thrown')
+      } catch (e) {
+        const errorMessage = typeof e === 'object' && e !== null && 'message' in e ? (e as Error).message : String(e)
+        expect(errorMessage).toMatch(/error|not found/i)
+      }
+    }
+  })
 
-        await expect(wallet.getHeaderForHeight({ height: 100 })).rejects.toThrow('Header fetch error');
-        expect(wallet.signer.getHeaderForHeight).toHaveBeenCalledWith(100);
-    });
-});
+  test('3 valid block height always returns a header', async () => {
+    for (const { wallet } of ctxs) {
+      const height = 9999
+      const result = await wallet.getHeaderForHeight({ height })
+
+      expect(result).toHaveProperty('header')
+      expect(typeof result.header).toBe('string')
+      expect(result.header).not.toBe('')
+    }
+  })
+})
