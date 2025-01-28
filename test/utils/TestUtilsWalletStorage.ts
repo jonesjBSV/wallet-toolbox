@@ -934,7 +934,6 @@ export abstract class TestUtilsWalletStorage {
         lockTime: action.lockTime,
         version: action.version
       })
-      let i: number = 1
       if (action.labels) {
         for (const label of action.labels) {
           const l = await _tu.insertTestTxLabel(storage, user, {

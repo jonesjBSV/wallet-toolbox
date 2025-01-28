@@ -40,7 +40,7 @@ describe('listActions tests', () => {
               sequenceNumber: 0
             }
           ],
-          labels: ['label'],
+          labels: ['label', 'label2'],
           outputs: [
             {
               satoshis: 1,
@@ -137,7 +137,7 @@ describe('listActions tests', () => {
         labels: ['nonexistantlabel'] // Testing with a non-existent label
       }
 
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+      const expectedResult = JSON.parse('{"totalActions":0,"actions":[]}')
 
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
@@ -265,19 +265,20 @@ describe('listActions tests', () => {
     }
   })
 
-  test('27_label mixed case default any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      const mixedCaseLabel = 'LAbEL'
-      await storage.updateTxLabel(1, { label: mixedCaseLabel })
-      const args: bsv.ListActionsArgs = {
-        labels: [mixedCaseLabel]
-      }
+  // Can't test mixed case at storage level
+  // test('27_label mixed case default any', async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     const mixedCaseLabel = 'LAbEL'
+  //     await storage.updateTxLabel(1, { label: mixedCaseLabel })
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: [mixedCaseLabel]
+  //     }
 
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+  //     const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
 
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
 
   test('28_label special characters default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
@@ -293,19 +294,20 @@ describe('listActions tests', () => {
     }
   })
 
-  test('29_label leading and trailing whitespace default any', async () => {
-    for (const { activeStorage: storage, wallet } of ctxs) {
-      const leadTrailSpacesLabel = '  label  '
-      await storage.updateTxLabel(1, { label: leadTrailSpacesLabel })
-      const args: bsv.ListActionsArgs = {
-        labels: [leadTrailSpacesLabel.trim()] // Trim label to check that white space is removed for DB preparation
-      }
+  // Can't test external whitespace at storage level
+  // test('29_label leading and trailing whitespace default any', async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     const leadTrailSpacesLabel = '  label  '
+  //     await storage.updateTxLabel(1, { label: leadTrailSpacesLabel })
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: [leadTrailSpacesLabel]
+  //     }
 
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+  //     const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
 
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
 
   test('30_label numeric default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
@@ -335,12 +337,12 @@ describe('listActions tests', () => {
     }
   })
 
-  test('32_TODOTONE label contains DB label default any', async () => {
+  test('32_label contains default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
       const containsLabel = 'label'
       await storage.updateTxLabel(1, { label: containsLabel })
       const args: bsv.ListActionsArgs = {
-        labels: ['labelOne']
+        labels: ['labelone']
       }
 
       const expectedResult = JSON.parse('{"totalActions":0,"actions":[]}')
@@ -349,114 +351,127 @@ describe('listActions tests', () => {
     }
   })
 
-  test('33_label different case lower any', async () => {
+  // Can't test mixed case at storage level
+  // test('33_label different case lower any', async () => {
+  //   for (const { wallet } of ctxs) {
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label'],
+  //       labelQueryMode: 'any'
+  //     }
+
+  //     const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test('34_label different case upper any', async () => {
+  //   for (const { wallet } of ctxs) {
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['LABEL'],
+  //       labelQueryMode: 'any'
+  //     }
+
+  //     const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  test('35_label with whitespace default any', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const spacedLabel = 'lab  el'
+      await storage.updateTxLabel(1, { label: spacedLabel })
+      const args: bsv.ListActionsArgs = {
+        labels: [spacedLabel]
+      }
+
+      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  // Can't test mixed case at storage level
+  // test('36_label different case lower all', async () => {
+  //   for (const { wallet } of ctxs) {
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label'],
+  //       labelQueryMode: 'all'
+  //     }
+
+  //     const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test('37_label different case upper all', async () => {
+  //   for (const { wallet } of ctxs) {
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['LABEL'],
+  //       labelQueryMode: 'all'
+  //     }
+
+  //     const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test('38_label duplicated default any', async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     const pairSameLabels = ['label', 'label']
+  //     await storage.updateTxLabel(1, { label: pairSameLabels[0] })
+  //     await storage.updateTxLabel(2, { label: pairSameLabels[1] })
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: pairSameLabels
+  //     }
+
+  //     const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  test('39_label requested default any', async () => {
     for (const { activeStorage: storage, wallet } of ctxs) {
       const label = 'label'
       await storage.updateTxLabel(1, { label })
+      await storage.updateTxLabel(2, { label: 'label2' })
       const args: bsv.ListActionsArgs = {
         labels: [label],
-        labelQueryMode: 'any'
-      }
-
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
-
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
-  /* TBD
-  test('34_label different case upper any', async () => {
-    for (const { wallet } of ctxs) {
-      const args: bsv.ListActionsArgs = {
-        labels: ['LABEL'],
-        labelQueryMode: 'any'
-      }
-
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
-
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
-
-  test('35_label with whitespace default any', async () => {
-    for (const { wallet } of ctxs) {
-      const args: bsv.ListActionsArgs = {
-        labels: ['lab  el']
-      }
-
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
-
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
-
-  test('36_label different case lower all', async () => {
-    for (const { wallet } of ctxs) {
-      const args: bsv.ListActionsArgs = {
-        labels: ['label'],
-        labelQueryMode: 'all'
-      }
-
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
-
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
-
-  test('37_label different case upper all', async () => {
-    for (const { wallet } of ctxs) {
-      const args: bsv.ListActionsArgs = {
-        labels: ['LABEL'],
-        labelQueryMode: 'all'
-      }
-
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
-
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
-
-  test('38_label duplicated default any', async () => {
-    for (const { wallet } of ctxs) {
-      const args: bsv.ListActionsArgs = {
-        labels: ['label', 'label']
-      }
-
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
-
-      expect(await wallet.listActions(args)).toEqual(expectedResult)
-    }
-  })
-
-  test('39_label requested default any', async () => {
-    for (const { wallet } of ctxs) {
-      const args: bsv.ListActionsArgs = {
-        labels: ['label'],
         includeLabels: true
       }
 
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"labels":["label"],"description":"Transaction","version":1,"lockTime":0}]}')
+      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"labels":["label","label2"],"description":"Transaction","version":1,"lockTime":0}]}')
 
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
 
   test('40_label not requested default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = 'label'
+      await storage.updateTxLabel(1, { label })
       const args: bsv.ListActionsArgs = {
-        labels: ['label'],
+        labels: [label],
         includeLabels: false
       }
 
-      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
 
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
 
   test('41_label partial match default any', async () => {
-    for (const { wallet } of ctxs) {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'labels' })
+      await storage.updateTxLabel(2, { label: 'label2' })
       const args: bsv.ListActionsArgs = {
-        labels: ['label']
+        labels: ['label'],
+        includeLabels: true
       }
 
       const expectedResult = JSON.parse('{"totalActions":0,"actions":[]}')
@@ -464,7 +479,20 @@ describe('listActions tests', () => {
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
-    */
+
+  test('42_label only one match default any', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'labels' })
+      await storage.updateTxLabel(2, { label: 'label' })
+      const args: bsv.ListActionsArgs = {
+        labels: ['label']
+      }
+
+      const expectedResult = JSON.parse('{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0}]}')
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
 })
 const generateRandomEmojiString = (bytes: number): string => {
   const emojiRange = [
