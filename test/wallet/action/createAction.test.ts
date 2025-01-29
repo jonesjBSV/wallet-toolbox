@@ -7,7 +7,7 @@ import {
   TestWalletNoSetup
 } from '../../utils/TestUtilsWalletStorage'
 
-const noLog = false
+const noLog = true
 
 describe('createAction test', () => {
   jest.setTimeout(99999999)

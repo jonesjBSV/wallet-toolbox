@@ -8,7 +8,7 @@ import {
   TestWalletNoSetup
 } from '../../utils/TestUtilsWalletStorage'
 
-describe('listActions tests', () => {
+describe('listActions2 tests', () => {
   jest.setTimeout(99999999)
 
   const storages: StorageProvider[] = []

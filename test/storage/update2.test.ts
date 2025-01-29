@@ -39,7 +39,7 @@ setLogging(false)
 
 import knex, { Knex } from 'knex'
 
-describe('update tests', () => {
+describe('update2 tests', () => {
   const storages: StorageKnex[] = []
   const setups: { setup: TestSetup1; storage: StorageKnex }[] = []
   const chain: sdk.Chain = 'test'
