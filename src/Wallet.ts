@@ -333,19 +333,12 @@ export class Wallet implements WalletInterface {
       const clientNonce = await createNonce(this, vargs.certifier)
       const authClient = new AuthFetch(this)
 
-      // Create a certificate with a master keyring
-      const certificateToRequestSigning = await MasterCertificate.issueCertificateForSubject(
-        this,
-        'self',
-        vargs.fields,
-        vargs.type
-      )
-      // Create a keyring a certifier can use to inspect the fields to certify
-      const keyringForCertifier = await certificateToRequestSigning.createKeyringForVerifier(
+      // Create a certificate master keyring
+      // The certifier is able to decrypt these fields as they are the counterparty
+      const { certificateFields, masterKeyring } = await MasterCertificate.createCertificateFields(
         this,
         vargs.certifier,
-        Object.keys(vargs.fields),
-        originator
+        vargs.fields
       )
 
       // Make a Certificate Signing Request (CSR) to the certifier
@@ -357,8 +350,8 @@ export class Wallet implements WalletInterface {
         body: JSON.stringify({
           clientNonce,
           type: vargs.type,
-          fields: vargs.fields,
-          keyring: keyringForCertifier
+          fields: certificateFields,
+          masterKeyring
         })
       })
 
@@ -414,15 +407,15 @@ export class Wallet implements WalletInterface {
       if (!signedCertificate.revocationOutpoint) {
         throw new Error(`Invalid revocationOutpoint!`)
       }
-      if (Object.keys(signedCertificate.fields).length !== Object.keys(vargs.fields).length) {
+      if (Object.keys(signedCertificate.fields).length !== Object.keys(certificateFields).length) {
         throw new Error(`Fields mismatch! Objects have different numbers of keys.`)
       }
-      for (const field of Object.keys(vargs.fields)) {
+      for (const field of Object.keys(certificateFields)) {
         if (!(field in signedCertificate.fields)) {
           throw new Error(`Missing field: ${field} in certificate.fields`)
         }
-        if (signedCertificate.fields[field] !== vargs.fields[field]) {
-          throw new Error(`Invalid field! Expected: ${vargs.fields[field]}, Received: ${signedCertificate.fields[field]}`)
+        if (signedCertificate.fields[field] !== certificateFields[field]) {
+          throw new Error(`Invalid field! Expected: ${certificateFields[field]}, Received: ${signedCertificate.fields[field]}`)
         }
       }
 
@@ -435,7 +428,7 @@ export class Wallet implements WalletInterface {
         {
           ...certificate,
           keyringRevealer: 'certifier',
-          keyringForSubject: certificateToRequestSigning.masterKeyring,
+          keyringForSubject: masterKeyring,
           privileged: vargs.privileged
         }
       )
