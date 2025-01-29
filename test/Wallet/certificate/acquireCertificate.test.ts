@@ -172,8 +172,14 @@ describe('acquireCertificate tests', () => {
     await wallet.destroy()
   })
 
-
-  test('acquireCertificate via issuance', async () => {
+  /**
+   * NOTE: This test requires a generic-certifier-backend to be running
+   * with the following configuration:
+   * 
+   *  type: 'h53Tvo8w3nqeF2cPyuRUc/B+gjPXJ3gPS2PKFBZfpDw=',
+   *  certifierIdentityKey: '02be1093d98689b5a5bb49cefff5d98a390213cc5b0a5cd57459407f86a963325f',
+   */
+  test.skip('acquireCertificate via issuance', async () => {
     const { wallet, storage } = await _tu.createSQLiteTestWallet({ databaseName: 'acquireCertificate2', dropAll: true })
     // Attributes to get certified
     const fields = {
