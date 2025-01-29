@@ -191,10 +191,6 @@ describe('acquireCertificate tests', () => {
     }
     // store the new signed certificate in user's wallet
     const r = await wallet.acquireCertificate(args)
-
-    // Attempt to retrieve it... since
-    // the certifier is random this should
-    // always be unique :-)
     const certificatesFound = await wallet.listCertificates({
       certifiers: [args.certifier],
       types: []
