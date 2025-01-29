@@ -9,15 +9,15 @@ import {
   TestWalletNoSetup
 } from '../../utils/TestUtilsWalletStorage'
 
-describe('listActions tests', () => {
+const testName = 'listActions'
+
+describe('listActions single action tests', () => {
   jest.setTimeout(99999999)
 
   let ctxs: TestWalletNoSetup[] = []
-  const chain: sdk.Chain = 'test'
   let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
 
   const env = _tu.getEnv('test')
-  const testName = () => expect.getState().currentTestName || 'test'
 
   beforeEach(async () => {
     setups = []
@@ -31,9 +31,9 @@ describe('listActions tests', () => {
     ctxs = []
 
     if (!env.noMySQL) {
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName()))
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
     }
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName()))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
 
     const mockData: MockData = {
       actions: [
@@ -45,6 +45,7 @@ describe('listActions tests', () => {
           description: 'Transaction',
           version: 1,
           lockTime: 0,
+          labels: ['label', 'label2'],
           inputs: [
             {
               sourceOutpoint: 'tx.0',
@@ -55,7 +56,6 @@ describe('listActions tests', () => {
               sequenceNumber: 0
             }
           ],
-          labels: ['label', 'label2'],
           outputs: [
             {
               satoshis: 1,
@@ -780,20 +780,661 @@ describe('listActions tests', () => {
       expect(await wallet.listActions(args)).toEqual(expectedResult)
     }
   })
+
+  test(`53_outputs locking script not requested`, async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'label' })
+      await storage.updateTxLabel(2, { label: 'label2' })
+      await storage.updateOutputBasket(1, { name: 'new basket' })
+      await storage.updateOutput(2, {
+        satoshis: 1,
+        spendable: false,
+        vout: 2,
+        outputDescription: 'new description',
+        basketId: 1,
+        lockingScript: hexStringToNumberArray('0123456789abcdef')
+      })
+      await storage.updateOutputTag(2, { tag: 'new tag' })
+      await storage.updateOutputTagMap(1, 2, {})
+
+      const args: bsv.ListActionsArgs = {
+        labels: ['label2'],
+        includeOutputs: true,
+        includeOutputLockingScripts: false
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test(`54_outputs locking script undefined`, async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'label' })
+      await storage.updateTxLabel(2, { label: 'label2' })
+      await storage.updateOutputBasket(1, { name: 'new basket' })
+      await storage.updateOutput(2, {
+        satoshis: 1,
+        spendable: false,
+        vout: 2,
+        outputDescription: 'new description',
+        basketId: 1,
+        lockingScript: undefined
+      })
+      await storage.updateOutputTag(2, { tag: 'new tag' })
+      await storage.updateOutputTagMap(1, 2, {})
+
+      const args: bsv.ListActionsArgs = {
+        labels: ['label2'],
+        includeOutputs: true,
+        includeOutputLockingScripts: false
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  //TBD requires many mock actions to be performed
+  // test(`55_limit is default`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test(`56_limit 1`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  test('57_limit 0', async () => {
+    for (const { wallet } of ctxs) {
+      const args: bsv.ListActionsArgs = {
+        labels: ['label'],
+        limit: 0
+      }
+
+      await expectToThrowWERR(
+        sdk.WERR_INVALID_PARAMETER,
+        async () => await wallet.listActions(args)
+      )
+    }
+  })
+
+  test('58_limit 10001', async () => {
+    for (const { wallet } of ctxs) {
+      const args: bsv.ListActionsArgs = {
+        labels: ['label'],
+        limit: 10001
+      }
+
+      await expectToThrowWERR(
+        sdk.WERR_INVALID_PARAMETER,
+        async () => await wallet.listActions(args)
+      )
+    }
+  })
+
+  // TBD requires many mock actions to be performed
+  // test(`59_offset less than number of actions`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test(`60_offset equal to number of actions`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test(`61_offset above number of actions`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  test('62_offset is invalid', async () => {
+    for (const { wallet } of ctxs) {
+      const args: bsv.ListActionsArgs = {
+        labels: ['label'],
+        offset: -1
+      }
+
+      await expectToThrowWERR(
+        sdk.WERR_INVALID_PARAMETER,
+        async () => await wallet.listActions(args)
+      )
+    }
+  })
+
+  //TBD requires many mock actions to be performed
+  // test(`63_offset below limit with same number of actions`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test(`64_offset below limit greater than number of actions`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test(`65_offset skips all actions with limit set`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test(`66_limit exceeds remaining actions after offset`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+
+  // test(`67_limit exceeds remaining actions after offset`, async () => {
+  //   for (const { activeStorage: storage, wallet } of ctxs) {
+  //     await storage.updateTxLabel(1, { label: 'label' })
+  //     await storage.updateTxLabel(2, { label: 'label2' })
+  //     await storage.updateOutputBasket(1, { name: 'new basket' })
+  //     await storage.updateOutput(2, {
+  //       satoshis: 1,
+  //       spendable: false,
+  //       vout: 2,
+  //       outputDescription: 'new description',
+  //       basketId: 1,
+  //       lockingScript: undefined
+  //     })
+  //     await storage.updateOutputTag(2, { tag: 'new tag' })
+  //     await storage.updateOutputTagMap(1, 2, {})
+
+  //     const args: bsv.ListActionsArgs = {
+  //       labels: ['label2'],
+  //       includeOutputs: true,
+  //       includeOutputLockingScripts: false
+  //     }
+
+  //     const expectedResult = JSON.parse(
+  //       '{"totalActions":1,"actions":[{"txid":"tx","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction","version":1,"lockTime":0,"outputs":[{"satoshis":1,"spendable":false,"tags":["tag","new tag"],"outputIndex":2,"outputDescription":"new description","basket":"new basket"}]}]}'
+  //     )
+
+  //     expect(await wallet.listActions(args)).toEqual(expectedResult)
+  //   }
+  // })
+})
+
+describe('listActions two action tests', () => {
+  jest.setTimeout(99999999)
+
+  let ctxs: TestWalletNoSetup[] = []
+  let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
+
+  const env = _tu.getEnv('test')
+
+  beforeEach(async () => {
+    setups = []
+    ctxs = []
+
+    await Promise.all(
+      ctxs.map(async ctx => {
+        await ctx.storage.destroy()
+      })
+    )
+    ctxs = []
+
+    if (!env.noMySQL) {
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
+    }
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
+
+    const mockData: MockData = {
+      actions: [
+        {
+          txid: 'tx1',
+          satoshis: 1,
+          status: 'completed',
+          isOutgoing: true,
+          description: 'Transaction 1',
+          version: 1,
+          lockTime: 0,
+          labels: ['label 1', 'label a'],
+          inputs: [
+            {
+              sourceOutpoint: 'tx1.1',
+              sourceSatoshis: 1,
+              //sourceLockingScript: '0123456789abcdef',
+              //unlockingScript: '0123456789abcdef',
+              inputDescription: 'description 1',
+              sequenceNumber: 1
+            }
+          ],
+          outputs: [
+            {
+              satoshis: 1,
+              spendable: false,
+              tags: ['tag1'],
+              outputIndex: 1,
+              outputDescription: 'description 1',
+              basket: 'basket'
+              //lockingScript: '0123456789abcdef'
+            }
+          ]
+        },
+        {
+          txid: 'tx2',
+          satoshis: 2,
+          status: 'completed',
+          isOutgoing: true,
+          description: 'Transaction 2',
+          version: 1,
+          lockTime: 0,
+          labels: ['label2', 'label b'],
+          inputs: [
+            {
+              sourceOutpoint: 'tx2.2',
+              sourceSatoshis: 2,
+              //sourceLockingScript: '0123456789abcdef',
+              //unlockingScript: '0123456789abcdef',
+              inputDescription: 'description 2',
+              sequenceNumber: 2
+            }
+          ],
+          outputs: [
+            {
+              satoshis: 2,
+              spendable: false,
+              tags: ['tag2'],
+              outputIndex: 2,
+              outputDescription: 'description 2',
+              basket: 'basket 2'
+              //lockingScript: '0123456789abcdef'
+            }
+          ]
+        }
+      ]
+    }
+    for (const ctx of ctxs) {
+      const { activeStorage } = ctx
+      await activeStorage.dropAllData()
+      await activeStorage.migrate('insert tests', '3'.repeat(64))
+    }
+    expect(setups).toBeTruthy()
+
+    for (const { activeStorage: storage, identityKey } of ctxs) {
+      await _tu.createTestSetup2(storage, identityKey, mockData)
+    }
+  })
+
+  afterEach(async () => {
+    await Promise.all(
+      ctxs.map(async ctx => {
+        await ctx.storage.destroy()
+      })
+    )
+    ctxs = []
+  })
+
+  test('100_no labels (default) matched default any', async () => {
+    for (const { wallet } of ctxs) {
+      const args: bsv.ListActionsArgs = {
+        labels: []
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":2,"actions":[{"txid":"tx1","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction 1","version":1,"lockTime":0},{"txid":"tx2","satoshis":2,"status":"completed","isOutgoing":true,"description":"Transaction 2","version":1,"lockTime":0}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test('101_label 1 matched default any', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = 'label 1'
+      await storage.updateTxLabel(1, { label })
+      await storage.updateTxLabel(2, { label: 'label a' })
+      await storage.updateTxLabel(3, { label: 'label 2' })
+      await storage.updateTxLabel(4, { label: 'label b' })
+      const args: bsv.ListActionsArgs = {
+        labels: [label]
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":1,"actions":[{"txid":"tx1","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction 1","version":1,"lockTime":0}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test('102_label 2 matched default any', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      const label = 'label 2'
+      await storage.updateTxLabel(1, { label: 'label 1' })
+      await storage.updateTxLabel(2, { label: 'label a' })
+      await storage.updateTxLabel(3, { label })
+      await storage.updateTxLabel(4, { label: 'label b' })
+      const args: bsv.ListActionsArgs = {
+        labels: [label]
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":1,"actions":[{"txid":"tx2","satoshis":2,"status":"completed","isOutgoing":true,"description":"Transaction 2","version":1,"lockTime":0}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test('103_no label matched default any', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'label 1' })
+      await storage.updateTxLabel(2, { label: 'label a' })
+      await storage.updateTxLabel(3, { label: 'label 2' })
+      await storage.updateTxLabel(4, { label: 'label b' })
+      const args: bsv.ListActionsArgs = {
+        labels: ['label']
+      }
+
+      const expectedResult = JSON.parse('{"totalActions":0,"actions":[]}')
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test('104_both labels matched default any', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'label 1' })
+      await storage.updateTxLabel(2, { label: 'label a' })
+      await storage.updateTxLabel(3, { label: 'label 2' })
+      await storage.updateTxLabel(4, { label: 'label b' })
+      const args: bsv.ListActionsArgs = {
+        labels: ['label 1', 'label 2']
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":2,"actions":[{"txid":"tx1","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction 1","version":1,"lockTime":0},{"txid":"tx2","satoshis":2,"status":"completed","isOutgoing":true,"description":"Transaction 2","version":1,"lockTime":0}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test('105_first label pair matches mode all', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'label 1' })
+      await storage.updateTxLabel(2, { label: 'label a' })
+      await storage.updateTxLabel(3, { label: 'label 2' })
+      await storage.updateTxLabel(4, { label: 'label b' })
+      const args: bsv.ListActionsArgs = {
+        labels: ['label 1', 'label a'],
+        labelQueryMode: 'all'
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":1,"actions":[{"txid":"tx1","satoshis":1,"status":"completed","isOutgoing":true,"description":"Transaction 1","version":1,"lockTime":0}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
+
+  test('106_second label pair matches mode all', async () => {
+    for (const { activeStorage: storage, wallet } of ctxs) {
+      await storage.updateTxLabel(1, { label: 'label 1' })
+      await storage.updateTxLabel(2, { label: 'label a' })
+      await storage.updateTxLabel(3, { label: 'label 2' })
+      await storage.updateTxLabel(4, { label: 'label b' })
+      const args: bsv.ListActionsArgs = {
+        labels: ['label 2', 'label b'],
+        labelQueryMode: 'all'
+      }
+
+      const expectedResult = JSON.parse(
+        '{"totalActions":1,"actions":[{"txid":"tx2","satoshis":2,"status":"completed","isOutgoing":true,"description":"Transaction 2","version":1,"lockTime":0}]}'
+      )
+
+      expect(await wallet.listActions(args)).toEqual(expectedResult)
+    }
+  })
 })
 
 const generateRandomEmojiString = (bytes: number): string => {
   const emojiRange = [
-    '\u{1F600}', // Grinning face
-    '\u{1F603}', // Smiling face
-    '\u{1F604}', // Laughing face
-    '\u{1F609}', // Winking face
-    '\u{1F60A}', // Blushing face
-    '\u{1F60D}', // Heart eyes
-    '\u{1F618}', // Kissing face
-    '\u{1F61C}', // Tongue out
-    '\u{1F923}', // Rolling on the floor laughing
-    '\u{1F44D}' // Thumbs up
+    '\u{1F600}',
+    '\u{1F603}',
+    '\u{1F604}',
+    '\u{1F609}',
+    '\u{1F60A}',
+    '\u{1F60D}',
+    '\u{1F618}',
+    '\u{1F61C}',
+    '\u{1F923}',
+    '\u{1F44D}'
   ]
 
   const bytesPerEmoji = 4 // Each emoji is 4 bytes in UTF-8
