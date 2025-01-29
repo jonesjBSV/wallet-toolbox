@@ -14,7 +14,7 @@ describe('OutputTagMap class method tests', () => {
   const ctxs2: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('OutputTagMapTests'))
       ctxs2.push(await _tu.createLegacyWalletMySQLCopy('OutputTagMapTests2'))
     }

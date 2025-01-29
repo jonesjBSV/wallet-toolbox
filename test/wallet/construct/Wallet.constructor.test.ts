@@ -9,7 +9,7 @@ describe('Wallet constructor tests', () => {
   const env = _tu.getEnv(chain)
 
   beforeAll(async () => {
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       ctxs.push(
         await _tu.createMySQLTestSetup1Wallet({
           databaseName: 'walletConstruct',

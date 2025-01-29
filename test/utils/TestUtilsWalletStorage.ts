@@ -62,27 +62,19 @@ export abstract class TestUtilsWalletStorage {
   static getEnv(chain: sdk.Chain) {
     // Identity keys of the lead maintainer of this repo...
     const identityKey =
-      chain === 'main'
+      (chain === 'main'
         ? process.env.MY_MAIN_IDENTITY
-        : process.env.MY_TEST_IDENTITY
-    if (!identityKey)
-      throw new sdk.WERR_INTERNAL(
-        '.env file configuration is missing or incomplete.'
-      )
+        : process.env.MY_TEST_IDENTITY) || ''
     const identityKey2 =
-      chain === 'main'
+      (chain === 'main'
         ? process.env.MY_MAIN_IDENTITY2
-        : process.env.MY_TEST_IDENTITY2
-    const userId = Number(
-      chain === 'main' ? process.env.MY_MAIN_USERID : process.env.MY_TEST_USERID
-    )
+        : process.env.MY_TEST_IDENTITY2) || ''
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const logTests = !!process.env.LOGTESTS
-    const noMySQL = !!process.env.NOMYSQL
+    const runMySQL = !!process.env.RUNMYSQL
     const runSlowTests = !!process.env.RUNSLOWTESTS
     return {
       chain,
-      userId,
       identityKey,
       identityKey2,
       mainTaalApiKey: verifyTruthy(
@@ -94,7 +86,7 @@ export abstract class TestUtilsWalletStorage {
         `.env value for 'testTaalApiKey' is required.`
       ),
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
-      noMySQL,
+      runMySQL,
       runSlowTests,
       logTests
     }

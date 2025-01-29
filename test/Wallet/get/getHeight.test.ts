@@ -5,12 +5,13 @@ describe('getHeight tests', () => {
   jest.setTimeout(99999999)
 
   const ctxs: any[] = []
+  const env = _tu.getEnv('test')
 
   beforeAll(async () => {
     ctxs.push(
       await _tu.createSQLiteTestWallet({ databaseName: 'getHeightTestsSQLite' })
     )
-    if (!_tu.getEnv('test').noMySQL) {
+    if (env.runMySQL) {
       ctxs.push(
         await _tu.createMySQLTestWallet({ databaseName: 'getHeightTestsMySQL' })
       )

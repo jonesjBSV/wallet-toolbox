@@ -14,7 +14,7 @@ describe('RelinquishOutputArgs tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL)
+    if (env.runMySQL)
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('relinquishActionTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('relinquishActionTests'))
   })

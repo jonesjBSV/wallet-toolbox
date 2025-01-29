@@ -19,7 +19,7 @@ describe('createAction test', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL)
+    if (env.runMySQL)
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('createActionTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('createActionTests'))
     _tu.mockPostServicesAsSuccess(ctxs)

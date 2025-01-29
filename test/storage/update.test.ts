@@ -1,19 +1,14 @@
-import { Base64String } from '@bsv/sdk'
 import { _tu, TestSetup1 } from '../utils/TestUtilsWalletStorage'
 import {
   sdk,
   StorageProvider,
   StorageKnex,
-  table,
   verifyOne
 } from '../../src/index.all'
 import {
   normalizeDate,
   setLogging,
-  triggerForeignKeyConstraintError,
-  triggerUniqueConstraintError,
   updateTable,
-  validateUpdateTime,
   verifyValues
 } from '../utils/TestUtilsWalletStorage'
 import {
@@ -60,7 +55,7 @@ describe('update tests', () => {
         knex: knexSQLite
       })
     )
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       const knexMySQL = _tu.createLocalMySQL(`${databaseName}.mysql`)
       storages.push(
         new StorageKnex({

@@ -20,7 +20,7 @@ describe('listActions tests', () => {
   const name = testName.name
 
   beforeAll(async () => {
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy(name))
     }
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy(name))

@@ -14,7 +14,7 @@ describe('TxLabel Class Tests', () => {
 
   beforeAll(async () => {
     // Set up MySQL and SQLite databases for testing
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('txLabelTests_db1'))
       ctxs2.push(await _tu.createLegacyWalletMySQLCopy('txLabelTests_db2'))
     }

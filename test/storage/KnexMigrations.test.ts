@@ -18,7 +18,7 @@ describe('KnexMigrations tests', () => {
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
     knexs.push(knexSQLite)
 
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       const knexMySQL = _tu.createLocalMySQL('migratetest')
       knexs.push(knexMySQL)
     }

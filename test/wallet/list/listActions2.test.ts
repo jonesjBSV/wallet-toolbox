@@ -20,7 +20,7 @@ describe('listActions tests', () => {
   const testName = () => expect.getState().currentTestName || 'test'
 
   beforeAll(async () => {
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName()))
     }
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName()))
