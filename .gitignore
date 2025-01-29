@@ -27,7 +27,7 @@ yarn-error.log*
 
 tmp
 .eslintrc.json
-
+.prettierrc
 /dist
 
 out
