@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { StorageClient } from '../../../src/index.all'
-import {
-  _tu,
-  TestWalletOnly
-} from '../../utils/TestUtilsWalletStorage'
+import { _tu, TestWalletOnly } from '../../utils/TestUtilsWalletStorage'
 
 /**
  * WARNING: This test hangs the commit to master automated test run cycle if included in regular tests...

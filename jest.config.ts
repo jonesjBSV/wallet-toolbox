@@ -21,9 +21,5 @@ export default async (): Promise<Config> => {
     // default []
     testRegex: [],
     transform: { '^.+\\.ts$': ['ts-jest', { rootDir: '.' }] },
-    reporters: [
-      "default",
-      ["jest-simple-summary", { summary: true, colors: true }]
-    ]
   }
 }
