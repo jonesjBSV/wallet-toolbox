@@ -1,5 +1,8 @@
 import { stampLog, stampLogFormat } from '../../../../../src/utility/stampLog'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import {
+  TestUtilsWalletStorage as _tu,
+  TestWalletNoSetup
+} from '../../../../../test/utils/TestUtilsWalletStorage'
 
 describe('stampLog and stampLogFormat Tests', () => {
   jest.setTimeout(99999999)
@@ -24,7 +27,9 @@ describe('stampLog and stampLogFormat Tests', () => {
       const lineToAdd = 'Event 2'
       const updatedLog = stampLog(initialLog, lineToAdd)
       expect(updatedLog).toContain('Event 2')
-      expect(updatedLog).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z Event 2\n$/)
+      expect(updatedLog).toMatch(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z Event 2\n$/
+      )
     }
   })
 
@@ -35,7 +40,9 @@ describe('stampLog and stampLogFormat Tests', () => {
       const lineToAdd = 'Event 2'
       const updatedLog = stampLog(initialLog, lineToAdd)
       expect(updatedLog).toContain('Event 2')
-      expect(updatedLog).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z Event 2\n$/)
+      expect(updatedLog).toMatch(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z Event 2\n$/
+      )
     }
   })
 

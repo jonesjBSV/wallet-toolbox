@@ -1,7 +1,10 @@
 import { Knex } from 'knex'
 import * as bsv from '@bsv/sdk'
 import { entity, table, sdk } from '../../../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import {
+  TestUtilsWalletStorage as _tu,
+  TestWalletNoSetup
+} from '../../../../../test/utils/TestUtilsWalletStorage'
 import { Transaction } from '../../../../../src/storage/schema/entities/Transaction'
 
 describe('Transaction class method tests', () => {
@@ -128,7 +131,9 @@ describe('Transaction class method tests', () => {
   // Test: `getBsvTx` returns parsed transaction
   test('3_getBsvTx_returns_parsed_transaction', () => {
     const rawTx = Uint8Array.from([1, 2, 3])
-    const tx = new Transaction({ rawTx: Array.from(rawTx) } as table.Transaction)
+    const tx = new Transaction({
+      rawTx: Array.from(rawTx)
+    } as table.Transaction)
 
     const bsvTx = tx.getBsvTx()
     expect(bsvTx).toBeInstanceOf(bsv.Transaction)
@@ -144,7 +149,9 @@ describe('Transaction class method tests', () => {
   // Test: `getBsvTxIns` returns parsed inputs
   test('5_getBsvTxIns_returns_inputs', () => {
     const rawTx = Uint8Array.from([1, 2, 3])
-    const tx = new Transaction({ rawTx: Array.from(rawTx) } as table.Transaction)
+    const tx = new Transaction({
+      rawTx: Array.from(rawTx)
+    } as table.Transaction)
 
     const inputs = tx.getBsvTxIns()
     expect(inputs).toBeInstanceOf(Array)
@@ -154,7 +161,11 @@ describe('Transaction class method tests', () => {
   test('6_getInputs_combines_spentBy_and_rawTx_inputs', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert the transaction into the database
-      const txData = await _tu.insertTestTransaction(activeStorage, undefined, true)
+      const txData = await _tu.insertTestTransaction(
+        activeStorage,
+        undefined,
+        true
+      )
       const tx = new Transaction(txData.tx)
 
       // Assign rawTx to simulate transaction inputs
@@ -163,13 +174,19 @@ describe('Transaction class method tests', () => {
 
       // Insert test outputs with spentBy linked to the transaction
       const output1 = await _tu.insertTestOutput(activeStorage, tx, 0, 100)
-      await activeStorage.updateOutput(output1.outputId, { spentBy: tx.transactionId })
+      await activeStorage.updateOutput(output1.outputId, {
+        spentBy: tx.transactionId
+      })
 
       const output2 = await _tu.insertTestOutput(activeStorage, tx, 1, 200)
-      await activeStorage.updateOutput(output2.outputId, { spentBy: tx.transactionId })
+      await activeStorage.updateOutput(output2.outputId, {
+        spentBy: tx.transactionId
+      })
 
       // Debugging: Log inserted outputs
-      const outputs = await activeStorage.findOutputs({ partial: { spentBy: tx.transactionId } })
+      const outputs = await activeStorage.findOutputs({
+        partial: { spentBy: tx.transactionId }
+      })
       //console.log('Inserted Outputs:', outputs)
 
       // Get inputs from the transaction
@@ -178,7 +195,12 @@ describe('Transaction class method tests', () => {
 
       // Validate the inputs
       expect(inputs).toHaveLength(2)
-      expect(inputs).toEqual(expect.arrayContaining([expect.objectContaining({ vout: 0, satoshis: 100 }), expect.objectContaining({ vout: 1, satoshis: 200 })]))
+      expect(inputs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ vout: 0, satoshis: 100 }),
+          expect.objectContaining({ vout: 1, satoshis: 200 })
+        ])
+      )
     }
   })
 
@@ -190,7 +212,11 @@ describe('Transaction class method tests', () => {
   test('9_mergeExisting_updates_when_ei_updated_at_is_newer', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert a test transaction into the database
-      const txData = await _tu.insertTestTransaction(activeStorage, undefined, true)
+      const txData = await _tu.insertTestTransaction(
+        activeStorage,
+        undefined,
+        true
+      )
 
       // Create the `Transaction` instance with an earlier updated_at timestamp
       const tx = new Transaction({
@@ -207,22 +233,87 @@ describe('Transaction class method tests', () => {
 
       // Prepare a syncMap
       const syncMap: entity.SyncMap = {
-        transaction: { idMap: { 456: 123 }, entityName: 'Transaction', maxUpdated_at: undefined, count: 1 },
-        provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-        outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-        provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-        txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-        txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-        output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-        outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-        outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-        certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-        certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-        commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+        transaction: {
+          idMap: { 456: 123 },
+          entityName: 'Transaction',
+          maxUpdated_at: undefined,
+          count: 1
+        },
+        provenTx: {
+          idMap: {},
+          entityName: 'ProvenTx',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputBasket: {
+          idMap: {},
+          entityName: 'OutputBasket',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        provenTxReq: {
+          idMap: {},
+          entityName: 'ProvenTxReq',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabel: {
+          idMap: {},
+          entityName: 'TxLabel',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabelMap: {
+          idMap: {},
+          entityName: 'TxLabelMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        output: {
+          idMap: {},
+          entityName: 'Output',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTag: {
+          idMap: {},
+          entityName: 'OutputTag',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTagMap: {
+          idMap: {},
+          entityName: 'OutputTagMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificate: {
+          idMap: {},
+          entityName: 'Certificate',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificateField: {
+          idMap: {},
+          entityName: 'CertificateField',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        commission: {
+          idMap: {},
+          entityName: 'Commission',
+          maxUpdated_at: undefined,
+          count: 0
+        }
       }
 
       // Execute `mergeExisting`
-      const result = await tx.mergeExisting(activeStorage, new Date(), ei, syncMap)
+      const result = await tx.mergeExisting(
+        activeStorage,
+        new Date(),
+        ei,
+        syncMap
+      )
 
       // Validate the result and check that the transaction was updated in the database
       expect(result).toBe(true)
@@ -250,7 +341,11 @@ describe('Transaction class method tests', () => {
   test('11_getInputs_handles_storage_lookups_and_input_merging', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert a test transaction into the database
-      const { tx } = await _tu.insertTestTransaction(activeStorage, undefined, true)
+      const { tx } = await _tu.insertTestTransaction(
+        activeStorage,
+        undefined,
+        true
+      )
 
       // Create a Transaction instance with the inserted transaction's data
       const transaction = new Transaction(tx)
@@ -275,14 +370,25 @@ describe('Transaction class method tests', () => {
 
       // Assign rawTx to the transaction and simulate `getBsvTxIns` behavior
       transaction.rawTx = Array.from(Uint8Array.from([1, 2, 3]))
-      transaction.getBsvTxIns = () => [{ sourceTXID: externalInput.txid, sourceOutputIndex: 3 } as bsv.TransactionInput]
+      transaction.getBsvTxIns = () => [
+        {
+          sourceTXID: externalInput.txid,
+          sourceOutputIndex: 3
+        } as bsv.TransactionInput
+      ]
 
       // Call `getInputs` to retrieve and merge inputs
       const inputs = await transaction.getInputs(activeStorage)
 
       // Validate the merged inputs
       expect(inputs).toHaveLength(3) // Known inputs + external input
-      expect(inputs).toEqual(expect.arrayContaining([expect.objectContaining({ outputId: input1.outputId }), expect.objectContaining({ outputId: input2.outputId }), expect.objectContaining({ txid: externalInput.txid, vout: 3 })]))
+      expect(inputs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ outputId: input1.outputId }),
+          expect.objectContaining({ outputId: input2.outputId }),
+          expect.objectContaining({ txid: externalInput.txid, vout: 3 })
+        ])
+      )
     }
   })
 
@@ -293,7 +399,9 @@ describe('Transaction class method tests', () => {
       const provenTx = await _tu.insertTestProvenTx(activeStorage)
 
       // Create a Transaction instance with a valid provenTxId
-      const tx = new Transaction({ provenTxId: provenTx.provenTxId } as table.Transaction)
+      const tx = new Transaction({
+        provenTxId: provenTx.provenTxId
+      } as table.Transaction)
 
       // Retrieve the ProvenTx using the getProvenTx method
       const retrievedProvenTx = await tx.getProvenTx(activeStorage)
@@ -336,7 +444,11 @@ describe('Transaction class method tests', () => {
   test('18_getInputs_merges_known_inputs_correctly', async () => {
     for (const { activeStorage } of ctxs) {
       // Step 1: Insert a Transaction
-      const { tx } = await _tu.insertTestTransaction(activeStorage, undefined, true)
+      const { tx } = await _tu.insertTestTransaction(
+        activeStorage,
+        undefined,
+        true
+      )
 
       // Step 2: Insert outputs associated with the transaction
       const output1 = await _tu.insertTestOutput(activeStorage, tx, 0, 100) // vout = 0
@@ -350,7 +462,16 @@ describe('Transaction class method tests', () => {
       } as table.Transaction)
 
       // Step 4: Simulate rawTx inputs
-      transaction.getBsvTxIns = () => [{ sourceTXID: output1.txid, sourceOutputIndex: output1.vout } as bsv.TransactionInput, { sourceTXID: output2.txid, sourceOutputIndex: output2.vout } as bsv.TransactionInput]
+      transaction.getBsvTxIns = () => [
+        {
+          sourceTXID: output1.txid,
+          sourceOutputIndex: output1.vout
+        } as bsv.TransactionInput,
+        {
+          sourceTXID: output2.txid,
+          sourceOutputIndex: output2.vout
+        } as bsv.TransactionInput
+      ]
 
       // Step 5: Call `getInputs` to retrieve and merge known inputs
       const inputs = await transaction.getInputs(activeStorage)
@@ -401,7 +522,11 @@ describe('Transaction class method tests', () => {
   test('25_equals_returns_false_for_mismatched_other_properties', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert a test transaction to use as the baseline
-      const txData = await _tu.insertTestTransaction(activeStorage, undefined, true)
+      const txData = await _tu.insertTestTransaction(
+        activeStorage,
+        undefined,
+        true
+      )
 
       const syncMap: entity.SyncMap = {
         transaction: {
@@ -410,17 +535,72 @@ describe('Transaction class method tests', () => {
           maxUpdated_at: undefined,
           count: 1
         },
-        provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-        outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-        provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-        txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-        txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-        output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-        outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-        outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-        certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-        certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-        commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+        provenTx: {
+          idMap: {},
+          entityName: 'ProvenTx',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputBasket: {
+          idMap: {},
+          entityName: 'OutputBasket',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        provenTxReq: {
+          idMap: {},
+          entityName: 'ProvenTxReq',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabel: {
+          idMap: {},
+          entityName: 'TxLabel',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabelMap: {
+          idMap: {},
+          entityName: 'TxLabelMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        output: {
+          idMap: {},
+          entityName: 'Output',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTag: {
+          idMap: {},
+          entityName: 'OutputTag',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTagMap: {
+          idMap: {},
+          entityName: 'OutputTagMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificate: {
+          idMap: {},
+          entityName: 'Certificate',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificateField: {
+          idMap: {},
+          entityName: 'CertificateField',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        commission: {
+          idMap: {},
+          entityName: 'Commission',
+          maxUpdated_at: undefined,
+          count: 0
+        }
       }
 
       const tx = new Transaction({
@@ -457,7 +637,11 @@ describe('Transaction class method tests', () => {
   test('26_getInputs_handles_known_and_unknown_inputs', async () => {
     for (const { activeStorage } of ctxs) {
       // Step 1: Insert a Transaction into the database
-      const { tx } = await _tu.insertTestTransaction(activeStorage, undefined, true)
+      const { tx } = await _tu.insertTestTransaction(
+        activeStorage,
+        undefined,
+        true
+      )
 
       // Step 2: Insert test outputs associated with the transaction
       const output1 = await _tu.insertTestOutput(activeStorage, tx, 0, 100) // vout = 0, satoshis = 100
@@ -547,17 +731,72 @@ describe('Transaction class method tests', () => {
         maxUpdated_at: undefined,
         count: 1
       },
-      provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-      outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-      provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-      txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-      output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-      outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-      certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-      certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-      commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+      provenTx: {
+        idMap: {},
+        entityName: 'ProvenTx',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputBasket: {
+        idMap: {},
+        entityName: 'OutputBasket',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      provenTxReq: {
+        idMap: {},
+        entityName: 'ProvenTxReq',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      txLabel: {
+        idMap: {},
+        entityName: 'TxLabel',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      txLabelMap: {
+        idMap: {},
+        entityName: 'TxLabelMap',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      output: {
+        idMap: {},
+        entityName: 'Output',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputTag: {
+        idMap: {},
+        entityName: 'OutputTag',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputTagMap: {
+        idMap: {},
+        entityName: 'OutputTagMap',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      certificate: {
+        idMap: {},
+        entityName: 'Certificate',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      certificateField: {
+        idMap: {},
+        entityName: 'CertificateField',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      commission: {
+        idMap: {},
+        entityName: 'Commission',
+        maxUpdated_at: undefined,
+        count: 0
+      }
     }
 
     // Verify the transactions match
@@ -607,17 +846,72 @@ describe('Transaction class method tests', () => {
         maxUpdated_at: undefined,
         count: 1
       },
-      provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-      outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-      provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-      txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-      output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-      outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-      certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-      certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-      commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+      provenTx: {
+        idMap: {},
+        entityName: 'ProvenTx',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputBasket: {
+        idMap: {},
+        entityName: 'OutputBasket',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      provenTxReq: {
+        idMap: {},
+        entityName: 'ProvenTxReq',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      txLabel: {
+        idMap: {},
+        entityName: 'TxLabel',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      txLabelMap: {
+        idMap: {},
+        entityName: 'TxLabelMap',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      output: {
+        idMap: {},
+        entityName: 'Output',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputTag: {
+        idMap: {},
+        entityName: 'OutputTag',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputTagMap: {
+        idMap: {},
+        entityName: 'OutputTagMap',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      certificate: {
+        idMap: {},
+        entityName: 'Certificate',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      certificateField: {
+        idMap: {},
+        entityName: 'CertificateField',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      commission: {
+        idMap: {},
+        entityName: 'Commission',
+        maxUpdated_at: undefined,
+        count: 0
+      }
     }
 
     // Verify the transactions do not match

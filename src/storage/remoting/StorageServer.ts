@@ -7,7 +7,10 @@
 
 import { WalletInterface } from '@bsv/sdk'
 import express, { Request, Response } from 'express'
-import { AuthMiddlewareOptions, createAuthMiddleware } from '@bsv/auth-express-middleware'
+import {
+  AuthMiddlewareOptions,
+  createAuthMiddleware
+} from '@bsv/auth-express-middleware'
 import { createPaymentMiddleware } from '@bsv/payment-express-middleware'
 import { sdk, Wallet, StorageProvider } from '../../index.all'
 
@@ -75,7 +78,9 @@ export class StorageServer {
 
       // Basic JSON-RPC protocol checks:
       if (jsonrpc !== '2.0' || !method || typeof method !== 'string') {
-        return res.status(400).json({ error: { code: -32600, message: 'Invalid Request' } })
+        return res
+          .status(400)
+          .json({ error: { code: -32600, message: 'Invalid Request' } })
       }
 
       try {
@@ -99,7 +104,10 @@ export class StorageServer {
               break
             case 'findOrInsertUser':
               {
-                if (params[0] !== req.auth.identityKey) throw new sdk.WERR_UNAUTHORIZED('function may only access authenticated user.')
+                if (params[0] !== req.auth.identityKey)
+                  throw new sdk.WERR_UNAUTHORIZED(
+                    'function may only access authenticated user.'
+                  )
               }
               break
             default:
@@ -107,17 +115,32 @@ export class StorageServer {
                 if (typeof params[0] !== 'object' || !params[0]) {
                   params = [{}]
                 }
-                if (params[0]['identityKey'] && params[0]['identityKey'] !== req.auth.identityKey) throw new sdk.WERR_UNAUTHORIZED('identityKey does not match authentiation')
-                console.log('looking up user with identityKey:', req.auth.identityKey)
-                const { user, isNew } = await this.storage.findOrInsertUser(req.auth.identityKey)
+                if (
+                  params[0]['identityKey'] &&
+                  params[0]['identityKey'] !== req.auth.identityKey
+                )
+                  throw new sdk.WERR_UNAUTHORIZED(
+                    'identityKey does not match authentiation'
+                  )
+                console.log(
+                  'looking up user with identityKey:',
+                  req.auth.identityKey
+                )
+                const { user, isNew } = await this.storage.findOrInsertUser(
+                  req.auth.identityKey
+                )
                 params[0].reqAuthUserId = user.userId
                 if (params[0]['identityKey']) params[0].userId = user.userId
               }
               break
           }
-          console.log(`StorageServer: method=${method} params=${JSON.stringify(params).slice(0, 512)}`)
+          console.log(
+            `StorageServer: method=${method} params=${JSON.stringify(params).slice(0, 512)}`
+          )
           const result = await (this.storage as any)[method](...(params || []))
-          console.log(`StorageServer: method=${method} result=${JSON.stringify(result || 'void').slice(0, 512)}`)
+          console.log(
+            `StorageServer: method=${method} result=${JSON.stringify(result || 'void').slice(0, 512)}`
+          )
           return res.json({ jsonrpc: '2.0', result, id })
         } else {
           // Unknown method
@@ -148,7 +171,9 @@ export class StorageServer {
 
   public start(): void {
     this.app.listen(this.port, () => {
-      console.log(`WalletStorageServer listening at http://localhost:${this.port}`)
+      console.log(
+        `WalletStorageServer listening at http://localhost:${this.port}`
+      )
     })
   }
 }

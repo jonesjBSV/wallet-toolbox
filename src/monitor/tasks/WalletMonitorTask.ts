@@ -1,4 +1,4 @@
-import { MonitorStorage, Monitor } from '../Monitor';
+import { MonitorStorage, Monitor } from '../Monitor'
 
 /**
  * A monitor task performs some periodic or state triggered maintenance function
@@ -17,32 +17,31 @@ import { MonitorStorage, Monitor } from '../Monitor';
  */
 
 export abstract class WalletMonitorTask {
+  /**
+   * Set by monitor each time runTask completes
+   */
+  lastRunMsecsSinceEpoch = 0
 
-    /**
-     * Set by monitor each time runTask completes
-     */
-    lastRunMsecsSinceEpoch = 0;
+  storage: MonitorStorage
 
-    storage: MonitorStorage;
+  constructor(
+    public monitor: Monitor,
+    public name: string
+  ) {
+    this.storage = monitor.storage
+  }
 
-    constructor(
-        public monitor: Monitor,
-        public name: string
-    ) {
-        this.storage = monitor.storage;
-    }
+  /**
+   * Override to handle async task setup configuration.
+   *
+   * Called before first call to `trigger`
+   */
+  async asyncSetup(): Promise<void> {}
 
-    /**
-     * Override to handle async task setup configuration.
-     *
-     * Called before first call to `trigger`
-     */
-    async asyncSetup(): Promise<void> { }
+  /**
+   * Return true if `runTask` needs to be called now.
+   */
+  abstract trigger(nowMsecsSinceEpoch: number): { run: boolean }
 
-    /**
-     * Return true if `runTask` needs to be called now.
-     */
-    abstract trigger(nowMsecsSinceEpoch: number): { run: boolean; };
-
-    abstract runTask(): Promise<string>;
+  abstract runTask(): Promise<string>
 }

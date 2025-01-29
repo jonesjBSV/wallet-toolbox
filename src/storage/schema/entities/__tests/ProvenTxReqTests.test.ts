@@ -1,7 +1,13 @@
 import * as bsv from '@bsv/sdk'
 import { entity, table, sdk } from '../../../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { ProvenTxReq, ProvenTxReqHistorySummaryApi } from '../../../../../src/storage/schema/entities/ProvenTxReq'
+import {
+  TestUtilsWalletStorage as _tu,
+  TestWalletNoSetup
+} from '../../../../../test/utils/TestUtilsWalletStorage'
+import {
+  ProvenTxReq,
+  ProvenTxReqHistorySummaryApi
+} from '../../../../../src/storage/schema/entities/ProvenTxReq'
 
 describe('ProvenTxReq class method tests', () => {
   jest.setTimeout(99999999)
@@ -170,7 +176,9 @@ describe('ProvenTxReq class method tests', () => {
       updated_at: currentTime,
       txid: 'test-equals',
       rawTx: [1, 2, 3],
-      history: JSON.stringify({ notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' } }),
+      history: JSON.stringify({
+        notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' }
+      }),
       notify: JSON.stringify({ transactionIds: [100] }),
       attempts: 0,
       status: 'unknown',
@@ -185,7 +193,9 @@ describe('ProvenTxReq class method tests', () => {
       updated_at: currentTime,
       txid: 'test-equals',
       rawTx: [1, 2, 3],
-      history: JSON.stringify({ notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' } }),
+      history: JSON.stringify({
+        notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' }
+      }),
       notify: JSON.stringify({ transactionIds: [200] }),
       attempts: 0,
       status: 'unknown',
@@ -237,7 +247,9 @@ describe('ProvenTxReq class method tests', () => {
       updated_at: currentTime,
       txid: 'test-equals-1', // Different txid
       rawTx: [1, 2, 3],
-      history: JSON.stringify({ notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' } }),
+      history: JSON.stringify({
+        notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' }
+      }),
       notify: JSON.stringify({ transactionIds: [100] }),
       attempts: 0,
       status: 'unknown',
@@ -252,7 +264,9 @@ describe('ProvenTxReq class method tests', () => {
       updated_at: currentTime,
       txid: 'test-equals-2', // Different txid
       rawTx: [1, 2, 3],
-      history: JSON.stringify({ notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' } }),
+      history: JSON.stringify({
+        notes: { '2025-01-01T00:00:00.000Z': 'test-note-1' }
+      }),
       notify: JSON.stringify({ transactionIds: [200] }),
       attempts: 0,
       status: 'unknown',
@@ -418,7 +432,11 @@ describe('ProvenTxReq class method tests', () => {
 
     const testCases = [
       {
-        note: JSON.stringify({ what: 'ProvenTxReq.set status', old: 'unmined', new: 'completed' }),
+        note: JSON.stringify({
+          what: 'ProvenTxReq.set status',
+          old: 'unmined',
+          new: 'completed'
+        }),
         expected: 'set status unmined to completed',
         summary: {
           setToCompleted: false,
@@ -434,11 +452,19 @@ describe('ProvenTxReq class method tests', () => {
         }
       },
       {
-        note: JSON.stringify({ what: 'postReqsToNetwork result', name: 'TestName', result: { status: 'success', txid: '123abc' } }),
+        note: JSON.stringify({
+          what: 'postReqsToNetwork result',
+          name: 'TestName',
+          result: { status: 'success', txid: '123abc' }
+        }),
         expected: 'posted by TestName status=success txid=123abc'
       },
       {
-        note: JSON.stringify({ what: 'getMerkleProof invalid', attempts: 3, ageInMinutes: 45 }),
+        note: JSON.stringify({
+          what: 'getMerkleProof invalid',
+          attempts: 3,
+          ageInMinutes: 45
+        }),
         expected: 'getMerkleProof failing after 3 attempts over 45 minutes'
       },
       {
@@ -480,7 +506,9 @@ describe('ProvenTxReq class method tests', () => {
       updated_at: new Date(),
       txid: 'test-merge-history',
       rawTx: [],
-      history: JSON.stringify({ notes: { '2025-01-01T00:00:00.000Z': 'Initial note' } }),
+      history: JSON.stringify({
+        notes: { '2025-01-01T00:00:00.000Z': 'Initial note' }
+      }),
       notify: JSON.stringify({}),
       attempts: 0,
       status: 'unknown',
@@ -530,7 +558,8 @@ describe('ProvenTxReq class method tests', () => {
     const ctx = ctxs[0]
 
     // Fetch terminal statuses if they are stored in the database or available via context
-    const terminalStatuses: sdk.ProvenTxReqStatus[] = sdk.ProvenTxReqTerminalStatus
+    const terminalStatuses: sdk.ProvenTxReqStatus[] =
+      sdk.ProvenTxReqTerminalStatus
 
     // Test cases for valid and invalid statuses
     const testCases: { status: sdk.ProvenTxReqStatus; expected: boolean }[] = [
@@ -554,7 +583,9 @@ describe('ProvenTxReq class method tests', () => {
       updated_at: new Date('2025-01-01T00:00:00.000Z'),
       txid: 'existing-txid',
       rawTx: [1, 2, 3],
-      history: JSON.stringify({ notes: { '2025-01-01T00:00:00.000Z': 'Existing note' } }),
+      history: JSON.stringify({
+        notes: { '2025-01-01T00:00:00.000Z': 'Existing note' }
+      }),
       notify: JSON.stringify({ transactionIds: [100] }),
       attempts: 0,
       status: 'unknown',
@@ -571,7 +602,9 @@ describe('ProvenTxReq class method tests', () => {
       updated_at: new Date('2025-01-02T00:00:00.000Z'),
       txid: 'existing-txid', // Matching txid
       rawTx: [1, 2, 3],
-      history: JSON.stringify({ notes: { '2025-01-02T00:00:00.000Z': 'Incoming note' } }),
+      history: JSON.stringify({
+        notes: { '2025-01-02T00:00:00.000Z': 'Incoming note' }
+      }),
       notify: JSON.stringify({ transactionIds: [200] }),
       attempts: 0,
       status: 'unknown',
@@ -596,13 +629,20 @@ describe('ProvenTxReq class method tests', () => {
     }
 
     // Call mergeExisting
-    const result = await existingProvenTxReq.mergeExisting(ctx.activeStorage, undefined, incomingProvenTxReq.toApi(), syncMap)
+    const result = await existingProvenTxReq.mergeExisting(
+      ctx.activeStorage,
+      undefined,
+      incomingProvenTxReq.toApi(),
+      syncMap
+    )
 
     // Validate the merge outcome
     expect(result).toBe(false)
 
     // Fetch the updated ProvenTxReq from the database
-    const mergedProvenTxReqs = await ctx.activeStorage.findProvenTxReqs({ partial: { txid: 'existing-txid' } })
+    const mergedProvenTxReqs = await ctx.activeStorage.findProvenTxReqs({
+      partial: { txid: 'existing-txid' }
+    })
     expect(mergedProvenTxReqs.length).toBe(1)
 
     const mergedProvenTxReq = new entity.ProvenTxReq(mergedProvenTxReqs[0])
@@ -613,7 +653,9 @@ describe('ProvenTxReq class method tests', () => {
     // Verify that history has been merged correctly
     expect(Object.keys(mergedNotes).length).toBe(2) // Two notes: existing and incoming
     expect(mergedNotes['2025-01-01T00:00:00.000Z']).toBe('Existing note')
-    expect(mergedNotes['2025-01-02T00:00:00.000Z']).toBe(JSON.stringify({ what: 'string', note: 'Incoming note' })) // Adjusted format
+    expect(mergedNotes['2025-01-02T00:00:00.000Z']).toBe(
+      JSON.stringify({ what: 'string', note: 'Incoming note' })
+    ) // Adjusted format
 
     // Ensure notify is initialized if undefined
     const mergedNotify = mergedProvenTxReq.notify.transactionIds || []

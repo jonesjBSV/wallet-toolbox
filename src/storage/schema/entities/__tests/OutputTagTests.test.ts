@@ -1,5 +1,8 @@
 import { entity, table, sdk } from '../../../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import {
+  TestUtilsWalletStorage as _tu,
+  TestWalletNoSetup
+} from '../../../../../test/utils/TestUtilsWalletStorage'
 import { OutputTag } from '../../../../../src/storage/schema/entities/OutputTag'
 
 describe('OutputTag class method tests', () => {
@@ -63,17 +66,72 @@ describe('OutputTag class method tests', () => {
           maxUpdated_at: undefined,
           count: 0
         },
-        provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-        outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-        transaction: { idMap: {}, entityName: 'Transaction', maxUpdated_at: undefined, count: 0 },
-        provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-        txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-        txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-        output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-        outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-        certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-        certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-        commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+        provenTx: {
+          idMap: {},
+          entityName: 'ProvenTx',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputBasket: {
+          idMap: {},
+          entityName: 'OutputBasket',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        transaction: {
+          idMap: {},
+          entityName: 'Transaction',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        provenTxReq: {
+          idMap: {},
+          entityName: 'ProvenTxReq',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabel: {
+          idMap: {},
+          entityName: 'TxLabel',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabelMap: {
+          idMap: {},
+          entityName: 'TxLabelMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        output: {
+          idMap: {},
+          entityName: 'Output',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTagMap: {
+          idMap: {},
+          entityName: 'OutputTagMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificate: {
+          idMap: {},
+          entityName: 'Certificate',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificateField: {
+          idMap: {},
+          entityName: 'CertificateField',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        commission: {
+          idMap: {},
+          entityName: 'Commission',
+          maxUpdated_at: undefined,
+          count: 0
+        }
       },
       undefined
     )
@@ -131,17 +189,72 @@ describe('OutputTag class method tests', () => {
           maxUpdated_at: undefined,
           count: 0
         },
-        provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-        outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-        transaction: { idMap: {}, entityName: 'Transaction', maxUpdated_at: undefined, count: 0 },
-        provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-        txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-        txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-        output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-        outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-        certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-        certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-        commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+        provenTx: {
+          idMap: {},
+          entityName: 'ProvenTx',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputBasket: {
+          idMap: {},
+          entityName: 'OutputBasket',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        transaction: {
+          idMap: {},
+          entityName: 'Transaction',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        provenTxReq: {
+          idMap: {},
+          entityName: 'ProvenTxReq',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabel: {
+          idMap: {},
+          entityName: 'TxLabel',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabelMap: {
+          idMap: {},
+          entityName: 'TxLabelMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        output: {
+          idMap: {},
+          entityName: 'Output',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTagMap: {
+          idMap: {},
+          entityName: 'OutputTagMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificate: {
+          idMap: {},
+          entityName: 'Certificate',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificateField: {
+          idMap: {},
+          entityName: 'CertificateField',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        commission: {
+          idMap: {},
+          entityName: 'Commission',
+          maxUpdated_at: undefined,
+          count: 0
+        }
       },
       undefined
     )
@@ -155,7 +268,9 @@ describe('OutputTag class method tests', () => {
     expect(entity.isDeleted).toBe(0)
 
     // Verify that the database is not updated
-    const record = await ctx.activeStorage.findOutputTags({ partial: { outputTagId: 1 } })
+    const record = await ctx.activeStorage.findOutputTags({
+      partial: { outputTagId: 1 }
+    })
     expect(record.length).toBe(1)
     expect(record[0].isDeleted).toBe(false)
   })
@@ -250,18 +365,78 @@ describe('OutputTag class method tests', () => {
 
     // SyncMap with valid mapping
     const syncMap: entity.SyncMap = {
-      outputTag: { idMap: { 1: 1 }, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-      provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-      outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-      transaction: { idMap: {}, entityName: 'Transaction', maxUpdated_at: undefined, count: 0 },
-      provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-      txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-      output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-      certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-      certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-      commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+      outputTag: {
+        idMap: { 1: 1 },
+        entityName: 'OutputTag',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      provenTx: {
+        idMap: {},
+        entityName: 'ProvenTx',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputBasket: {
+        idMap: {},
+        entityName: 'OutputBasket',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      transaction: {
+        idMap: {},
+        entityName: 'Transaction',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      provenTxReq: {
+        idMap: {},
+        entityName: 'ProvenTxReq',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      txLabel: {
+        idMap: {},
+        entityName: 'TxLabel',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      txLabelMap: {
+        idMap: {},
+        entityName: 'TxLabelMap',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      output: {
+        idMap: {},
+        entityName: 'Output',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      outputTagMap: {
+        idMap: {},
+        entityName: 'OutputTagMap',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      certificate: {
+        idMap: {},
+        entityName: 'Certificate',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      certificateField: {
+        idMap: {},
+        entityName: 'CertificateField',
+        maxUpdated_at: undefined,
+        count: 0
+      },
+      commission: {
+        idMap: {},
+        entityName: 'Commission',
+        maxUpdated_at: undefined,
+        count: 0
+      }
     }
 
     // Verify that equals returns true with syncMap

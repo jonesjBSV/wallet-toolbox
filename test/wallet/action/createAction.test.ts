@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AtomicBEEF, Beef, CreateActionArgs, SignActionArgs } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
-import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import {
+  _tu,
+  expectToThrowWERR,
+  TestWalletNoSetup
+} from '../../utils/TestUtilsWalletStorage'
 
 const noLog = false
 
@@ -15,7 +19,8 @@ describe('createAction test', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('createActionTests'))
+    if (!env.noMySQL)
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy('createActionTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('createActionTests'))
     _tu.mockPostServicesAsSuccess(ctxs)
   })
@@ -33,17 +38,27 @@ describe('createAction test', () => {
           description: ''
         }
         // description is too short...
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.createAction(args))
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
+          wallet.createAction(args)
+        )
         args.description = 'five.'
         // no outputs, inputs or sendWith
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.createAction(args))
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
+          wallet.createAction(args)
+        )
         args.options = { signAndProcess: false }
-        args.outputs = [{ satoshis: 42, lockingScript: 'fred', outputDescription: 'pay fred' }]
+        args.outputs = [
+          { satoshis: 42, lockingScript: 'fred', outputDescription: 'pay fred' }
+        ]
         // lockingScript must be hexadecimal
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.createAction(args))
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
+          wallet.createAction(args)
+        )
         args.outputs[0].lockingScript = 'fre'
         // lockingScript must be even length
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.createAction(args))
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
+          wallet.createAction(args)
+        )
         if (!noLog) console.log(log)
       }
     }
@@ -63,7 +78,13 @@ describe('createAction test', () => {
       {
         const createArgs: CreateActionArgs = {
           description: `${kp.address} of ${root}`,
-          outputs: [{ satoshis: outputSatoshis, lockingScript: _tu.getLockP2PKH(kp.address).toHex(), outputDescription: 'pay fred' }],
+          outputs: [
+            {
+              satoshis: outputSatoshis,
+              lockingScript: _tu.getLockP2PKH(kp.address).toHex(),
+              outputDescription: 'pay fred'
+            }
+          ],
           options: {
             randomizeOutputs: false,
             signAndProcess: false,

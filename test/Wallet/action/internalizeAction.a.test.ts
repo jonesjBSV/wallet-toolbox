@@ -1,6 +1,10 @@
 import { Beef, InternalizeOutput } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
-import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import {
+  _tu,
+  expectToThrowWERR,
+  TestWalletNoSetup
+} from '../../utils/TestUtilsWalletStorage'
 import { getBeefForTransaction } from '../../../src/storage/methods/getBeefForTransaction'
 
 /**
@@ -13,7 +17,8 @@ describe.skip('internalizeAction tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('internalizeActionTests'))
+    if (!env.noMySQL)
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy('internalizeActionTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('internalizeActionTests'))
   })
 
@@ -59,7 +64,10 @@ describe.skip('internalizeAction tests', () => {
         }
 
         // Fetch Beef object
-        const beef = await storage.getBeefForTransaction('2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122', options)
+        const beef = await storage.getBeefForTransaction(
+          '2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122',
+          options
+        )
 
         //console.log('Beef Object:\n', beef.toLogString())
 
@@ -78,7 +86,9 @@ describe.skip('internalizeAction tests', () => {
         expect(beef.atomicTxid).toBeUndefined()
 
         // Convert to AtomicBEEF transaction
-        const atomicTx = beef.toBinaryAtomic('2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122')
+        const atomicTx = beef.toBinaryAtomic(
+          '2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122'
+        )
         //console.log('Atomic Transaction:', atomicTx)
 
         // {
@@ -95,7 +105,8 @@ describe.skip('internalizeAction tests', () => {
           paymentRemittance: {
             derivationPrefix: 'y0tgyMJbVWKhds2/MWkDBA==',
             derivationSuffix: 'J1Q1E8re2RbvKONkEiEHDA==',
-            senderIdentityKey: '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
+            senderIdentityKey:
+              '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
           }
         }
 
@@ -149,7 +160,10 @@ describe.skip('internalizeAction tests', () => {
         }
 
         // Fetch Beef object
-        const beef = await storage.getBeefForTransaction('a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7', options)
+        const beef = await storage.getBeefForTransaction(
+          'a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7',
+          options
+        )
 
         //console.log('Beef Object:\n', beef.toLogString())
 
@@ -168,12 +182,16 @@ describe.skip('internalizeAction tests', () => {
         expect(beef.atomicTxid).toBeUndefined()
 
         // Convert to AtomicBEEF transaction
-        const atomicTx = beef.toBinaryAtomic('a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7')
+        const atomicTx = beef.toBinaryAtomic(
+          'a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7'
+        )
         //console.log('Atomic Transaction:', atomicTx)
 
         {
           const abeef = Beef.fromBinary(atomicTx)
-          expect(abeef.atomicTxid).toBe('a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7')
+          expect(abeef.atomicTxid).toBe(
+            'a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7'
+          )
         }
 
         // This needs to be a real output (the locking script and derivation bits / key need to work with each other)
@@ -189,7 +207,13 @@ describe.skip('internalizeAction tests', () => {
           // }
           insertionRemittance: {
             basket: 'babbage-token-access',
-            tags: ['babbage_originator todo.babbage.systems', 'babbage_action_originator projectbabbage.com', 'babbage_protocolname todo list', 'babbage_protocolsecuritylevel 2', 'babbage_counterparty self']
+            tags: [
+              'babbage_originator todo.babbage.systems',
+              'babbage_action_originator projectbabbage.com',
+              'babbage_protocolname todo list',
+              'babbage_protocolsecuritylevel 2',
+              'babbage_counterparty self'
+            ]
           }
         }
 
@@ -219,7 +243,10 @@ describe.skip('internalizeAction tests', () => {
         }
 
         // Fetch Beef object
-        const beef = await storage.getBeefForTransaction('2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122', options)
+        const beef = await storage.getBeefForTransaction(
+          '2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122',
+          options
+        )
 
         //console.log('Beef Object:', beef)
 
@@ -238,7 +265,9 @@ describe.skip('internalizeAction tests', () => {
         expect(beef.atomicTxid).toBeDefined()
 
         // Convert to AtomicBEEF transaction
-        const atomicTx = beef.toBinaryAtomic('2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122')
+        const atomicTx = beef.toBinaryAtomic(
+          '2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122'
+        )
         //console.log('Atomic Transaction:', atomicTx)
 
         // Prepare output for internalization
@@ -248,7 +277,8 @@ describe.skip('internalizeAction tests', () => {
           paymentRemittance: {
             derivationPrefix: 'y0tgyMJbVWKhds2/MWkDBA==',
             derivationSuffix: 'J1Q1E8re2RbvKONkEiEHDA==',
-            senderIdentityKey: '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
+            senderIdentityKey:
+              '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
           }
         }
 
@@ -268,5 +298,4 @@ describe.skip('internalizeAction tests', () => {
       }
     }
   })
-
 })

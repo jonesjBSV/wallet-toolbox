@@ -1,6 +1,9 @@
 import { User } from '../../../../../src/storage/schema/entities/User'
 import { entity, table, sdk } from '../../../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import {
+  TestUtilsWalletStorage as _tu,
+  TestWalletNoSetup
+} from '../../../../../test/utils/TestUtilsWalletStorage'
 describe('User class method tests', () => {
   jest.setTimeout(99999999) // Extend timeout for database operations
 
@@ -109,17 +112,72 @@ describe('User class method tests', () => {
             maxUpdated_at: undefined,
             count: 1
           },
-          provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-          outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-          provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-          txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-          txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-          output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-          outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-          outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-          certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-          certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-          commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+          provenTx: {
+            idMap: {},
+            entityName: 'ProvenTx',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputBasket: {
+            idMap: {},
+            entityName: 'OutputBasket',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTxReq: {
+            idMap: {},
+            entityName: 'ProvenTxReq',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabel: {
+            idMap: {},
+            entityName: 'TxLabel',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabelMap: {
+            idMap: {},
+            entityName: 'TxLabelMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          output: {
+            idMap: {},
+            entityName: 'Output',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTag: {
+            idMap: {},
+            entityName: 'OutputTag',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTagMap: {
+            idMap: {},
+            entityName: 'OutputTagMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          certificate: {
+            idMap: {},
+            entityName: 'Certificate',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          certificateField: {
+            idMap: {},
+            entityName: 'CertificateField',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          commission: {
+            idMap: {},
+            entityName: 'Commission',
+            maxUpdated_at: undefined,
+            count: 0
+          }
         }
 
         // Verify the entities match across databases
@@ -158,17 +216,72 @@ describe('User class method tests', () => {
             maxUpdated_at: undefined,
             count: 1
           },
-          provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-          outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-          provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-          txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-          txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-          output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-          outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-          outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-          certificate: { idMap: {}, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-          certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-          commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+          provenTx: {
+            idMap: {},
+            entityName: 'ProvenTx',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputBasket: {
+            idMap: {},
+            entityName: 'OutputBasket',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTxReq: {
+            idMap: {},
+            entityName: 'ProvenTxReq',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabel: {
+            idMap: {},
+            entityName: 'TxLabel',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabelMap: {
+            idMap: {},
+            entityName: 'TxLabelMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          output: {
+            idMap: {},
+            entityName: 'Output',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTag: {
+            idMap: {},
+            entityName: 'OutputTag',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTagMap: {
+            idMap: {},
+            entityName: 'OutputTagMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          certificate: {
+            idMap: {},
+            entityName: 'Certificate',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          certificateField: {
+            idMap: {},
+            entityName: 'CertificateField',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          commission: {
+            idMap: {},
+            entityName: 'Commission',
+            maxUpdated_at: undefined,
+            count: 0
+          }
         }
 
         // Verify the entities do not match across databases
@@ -365,6 +478,8 @@ describe('User class method tests', () => {
     const trx = undefined // Optional transaction token, set as undefined.
 
     // The method should throw an error when called
-    await expect(user.mergeNew(storage as any, userId, syncMap as any, trx)).rejects.toThrowError('a sync chunk merge must never create a new user')
+    await expect(
+      user.mergeNew(storage as any, userId, syncMap as any, trx)
+    ).rejects.toThrowError('a sync chunk merge must never create a new user')
   })
 })

@@ -7,9 +7,13 @@ describe('getHeight tests', () => {
   const ctxs: any[] = []
 
   beforeAll(async () => {
-    ctxs.push(await _tu.createSQLiteTestWallet({ databaseName: 'getHeightTestsSQLite' }))
+    ctxs.push(
+      await _tu.createSQLiteTestWallet({ databaseName: 'getHeightTestsSQLite' })
+    )
     if (!_tu.getEnv('test').noMySQL) {
-      ctxs.push(await _tu.createMySQLTestWallet({ databaseName: 'getHeightTestsMySQL' }))
+      ctxs.push(
+        await _tu.createMySQLTestWallet({ databaseName: 'getHeightTestsMySQL' })
+      )
     }
   })
 

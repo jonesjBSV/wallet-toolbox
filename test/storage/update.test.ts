@@ -1,8 +1,38 @@
 import { Base64String } from '@bsv/sdk'
 import { _tu, TestSetup1 } from '../utils/TestUtilsWalletStorage'
-import { sdk, StorageProvider, StorageKnex, table, verifyOne } from '../../src/index.all'
-import { normalizeDate, setLogging, triggerForeignKeyConstraintError, triggerUniqueConstraintError, updateTable, validateUpdateTime, verifyValues } from '../utils/TestUtilsWalletStorage'
-import { ProvenTx, ProvenTxReq, User, Certificate, CertificateField, OutputBasket, Transaction, Commission, Output, OutputTag, OutputTagMap, TxLabel, TxLabelMap, MonitorEvent, SyncState } from '../../src/storage/schema/tables'
+import {
+  sdk,
+  StorageProvider,
+  StorageKnex,
+  table,
+  verifyOne
+} from '../../src/index.all'
+import {
+  normalizeDate,
+  setLogging,
+  triggerForeignKeyConstraintError,
+  triggerUniqueConstraintError,
+  updateTable,
+  validateUpdateTime,
+  verifyValues
+} from '../utils/TestUtilsWalletStorage'
+import {
+  ProvenTx,
+  ProvenTxReq,
+  User,
+  Certificate,
+  CertificateField,
+  OutputBasket,
+  Transaction,
+  Commission,
+  Output,
+  OutputTag,
+  OutputTagMap,
+  TxLabel,
+  TxLabelMap,
+  MonitorEvent,
+  SyncState
+} from '../../src/storage/schema/tables'
 
 setLogging(false)
 
@@ -16,12 +46,29 @@ describe('update tests', () => {
   const databaseName = 'updateTest'
 
   beforeAll(async () => {
-    const localSQLiteFile = await _tu.newTmpFile(`${databaseName}.sqlite`, false, false, true)
+    const localSQLiteFile = await _tu.newTmpFile(
+      `${databaseName}.sqlite`,
+      false,
+      false,
+      true
+    )
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
-    storages.push(new StorageKnex({ ...StorageKnex.defaultOptions(), chain, knex: knexSQLite }))
+    storages.push(
+      new StorageKnex({
+        ...StorageKnex.defaultOptions(),
+        chain,
+        knex: knexSQLite
+      })
+    )
     if (!env.noMySQL) {
       const knexMySQL = _tu.createLocalMySQL(`${databaseName}.mysql`)
-      storages.push(new StorageKnex({ ...StorageKnex.defaultOptions(), chain, knex: knexMySQL }))
+      storages.push(
+        new StorageKnex({
+          ...StorageKnex.defaultOptions(),
+          chain,
+          knex: knexMySQL
+        })
+      )
     }
     for (const storage of storages) {
       await storage.dropAllData()
@@ -41,8 +88,15 @@ describe('update tests', () => {
       const records = await storage.findProvenTxs({ partial: {} })
       const time = new Date('2001-01-02T12:00:00.000Z')
       for (const record of records) {
-        await storage.updateProvenTx(record.provenTxId, { blockHash: 'fred', updated_at: time })
-        const t = verifyOne(await storage.findProvenTxs({ partial: { provenTxId: record.provenTxId } }))
+        await storage.updateProvenTx(record.provenTxId, {
+          blockHash: 'fred',
+          updated_at: time
+        })
+        const t = verifyOne(
+          await storage.findProvenTxs({
+            partial: { provenTxId: record.provenTxId }
+          })
+        )
         expect(t.provenTxId).toBe(record.provenTxId)
         expect(t.blockHash).toBe('fred')
         expect(t.updated_at.getTime()).toBe(time.getTime())
@@ -69,8 +123,16 @@ describe('update tests', () => {
             merkleRoot: '1234',
             rawTx: [4, 3, 2, 1]
           }
-          await updateTable(storage.updateProvenTx.bind(storage), record[primaryKey], testValues)
-          const updatedTx = verifyOne(await storage.findProvenTxs({ partial: { [primaryKey]: record[primaryKey] } }))
+          await updateTable(
+            storage.updateProvenTx.bind(storage),
+            record[primaryKey],
+            testValues
+          )
+          const updatedTx = verifyOne(
+            await storage.findProvenTxs({
+              partial: { [primaryKey]: record[primaryKey] }
+            })
+          )
           verifyValues(updatedTx, testValues, referenceTime)
           for (const [key, value] of Object.entries(testValues)) {
             if (key === primaryKey) {
@@ -78,35 +140,64 @@ describe('update tests', () => {
             }
             if (typeof value === 'string') {
               const validString = `valid${key}`
-              const r1 = await storage.updateProvenTx(record[primaryKey], { [key]: validString })
+              const r1 = await storage.updateProvenTx(record[primaryKey], {
+                [key]: validString
+              })
               expect(r1).toBe(1)
-              const updatedRow = verifyOne(await storage.findProvenTxs({ partial: { [primaryKey]: record[primaryKey] } }))
+              const updatedRow = verifyOne(
+                await storage.findProvenTxs({
+                  partial: { [primaryKey]: record[primaryKey] }
+                })
+              )
               expect(updatedRow[key]).toBe(validString)
             }
             if (typeof value === 'number') {
               const validNumber = value + 1
-              const r1 = await storage.updateProvenTx(record[primaryKey], { [key]: validNumber })
+              const r1 = await storage.updateProvenTx(record[primaryKey], {
+                [key]: validNumber
+              })
               expect(r1).toBe(1)
-              const updatedRow = verifyOne(await storage.findProvenTxs({ partial: { [primaryKey]: record[primaryKey] } }))
+              const updatedRow = verifyOne(
+                await storage.findProvenTxs({
+                  partial: { [primaryKey]: record[primaryKey] }
+                })
+              )
               expect(updatedRow[key]).toBe(validNumber)
             }
             if (value instanceof Date) {
               const validDate = new Date('2024-12-31T00:00:00Z')
-              const r1 = await storage.updateProvenTx(record[primaryKey], { [key]: validDate })
+              const r1 = await storage.updateProvenTx(record[primaryKey], {
+                [key]: validDate
+              })
               expect(r1).toBe(1)
-              const updatedRow = verifyOne(await storage.findProvenTxs({ partial: { [primaryKey]: record[primaryKey] } }))
-              expect(new Date(updatedRow[key]).toISOString()).toBe(validDate.toISOString())
+              const updatedRow = verifyOne(
+                await storage.findProvenTxs({
+                  partial: { [primaryKey]: record[primaryKey] }
+                })
+              )
+              expect(new Date(updatedRow[key]).toISOString()).toBe(
+                validDate.toISOString()
+              )
             }
             if (Array.isArray(value)) {
               const validArray = value.map(v => v + 1)
-              const r1 = await storage.updateProvenTx(record[primaryKey], { [key]: validArray })
+              const r1 = await storage.updateProvenTx(record[primaryKey], {
+                [key]: validArray
+              })
               expect(r1).toBe(1)
-              const updatedRow = verifyOne(await storage.findProvenTxs({ partial: { [primaryKey]: record[primaryKey] } }))
+              const updatedRow = verifyOne(
+                await storage.findProvenTxs({
+                  partial: { [primaryKey]: record[primaryKey] }
+                })
+              )
               expect(updatedRow[key]).toEqual(validArray)
             }
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying ProvenTx record with ${primaryKey}=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying ProvenTx record with ${primaryKey}=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -134,9 +225,16 @@ describe('update tests', () => {
             notify: JSON.stringify({ email: 'test@example.com', sent: true }),
             rawTx: [1, 2, 3, 4]
           }
-          const r1 = await storage.updateProvenTxReq(record[primaryKey], testValues)
+          const r1 = await storage.updateProvenTxReq(
+            record[primaryKey],
+            testValues
+          )
           expect(r1).toBe(1)
-          const updatedRow = verifyOne(await storage.findProvenTxReqs({ partial: { [primaryKey]: record[primaryKey] } }))
+          const updatedRow = verifyOne(
+            await storage.findProvenTxReqs({
+              partial: { [primaryKey]: record[primaryKey] }
+            })
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -145,24 +243,43 @@ describe('update tests', () => {
               expect(normalizedActual).toBe(normalizedExpected)
               continue
             }
-            if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
+            if (
+              typeof value === 'string' &&
+              value.startsWith('{') &&
+              value.endsWith('}')
+            ) {
               expect(JSON.parse(actualValue)).toStrictEqual(JSON.parse(value))
               continue
             }
-            if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+            if (
+              typeof value === 'string' ||
+              typeof value === 'number' ||
+              typeof value === 'boolean'
+            ) {
               expect(actualValue).toBe(value)
               continue
             }
-            if (typeof actualValue === 'object' && actualValue?.type === 'Buffer') {
+            if (
+              typeof actualValue === 'object' &&
+              actualValue?.type === 'Buffer'
+            ) {
               const actualArray = actualValue.data || actualValue
-              const expectedArray = Buffer.isBuffer(value) || Array.isArray(value) ? Array.from(value as ArrayLike<number>) : value
+              const expectedArray =
+                Buffer.isBuffer(value) || Array.isArray(value)
+                  ? Array.from(value as ArrayLike<number>)
+                  : value
               expect(actualArray).toStrictEqual(expectedArray)
               continue
             }
-            expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
+            expect(
+              JSON.stringify({ type: 'Buffer', data: actualValue })
+            ).toStrictEqual(JSON.stringify(value))
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying ProvenTxReq record with ${primaryKey}=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying ProvenTxReq record with ${primaryKey}=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -181,9 +298,16 @@ describe('update tests', () => {
             created_at: new Date('2024-12-30T23:00:00Z'),
             updated_at: new Date('2024-12-30T23:05:00Z')
           }
-          const updateResult = await storage.updateUser(record[primaryKey], testValues)
+          const updateResult = await storage.updateUser(
+            record[primaryKey],
+            testValues
+          )
           expect(updateResult).toBe(1)
-          const updatedRow = verifyOne(await storage.findUsers({ partial: { [primaryKey]: record[primaryKey] } }))
+          const updatedRow = verifyOne(
+            await storage.findUsers({
+              partial: { [primaryKey]: record[primaryKey] }
+            })
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -195,7 +319,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying User record with ${primaryKey}=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying User record with ${primaryKey}=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -221,9 +348,16 @@ describe('update tests', () => {
             signature: 'mockSignature',
             subject: 'mockSubject'
           }
-          const r1 = await storage.updateCertificate(record[primaryKey], testValues)
+          const r1 = await storage.updateCertificate(
+            record[primaryKey],
+            testValues
+          )
           expect(r1).toBe(1)
-          const updatedRow = verifyOne(await storage.findCertificates({ partial: { [primaryKey]: record[primaryKey] } }))
+          const updatedRow = verifyOne(
+            await storage.findCertificates({
+              partial: { [primaryKey]: record[primaryKey] }
+            })
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -232,7 +366,11 @@ describe('update tests', () => {
               expect(normalizedActual).toBe(normalizedExpected)
               continue
             }
-            if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
+            if (
+              typeof value === 'string' &&
+              value.startsWith('{') &&
+              value.endsWith('}')
+            ) {
               expect(JSON.parse(actualValue)).toStrictEqual(JSON.parse(value))
               continue
             }
@@ -242,7 +380,9 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
+                throw new Error(
+                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
+                )
               }
               continue
             }
@@ -250,16 +390,27 @@ describe('update tests', () => {
               expect(actualValue).toBe(value)
               continue
             }
-            if (typeof actualValue === 'object' && actualValue?.type === 'Buffer') {
+            if (
+              typeof actualValue === 'object' &&
+              actualValue?.type === 'Buffer'
+            ) {
               const actualArray = actualValue.data || actualValue
-              const expectedArray = Buffer.isBuffer(value) || Array.isArray(value) ? Array.from(value as ArrayLike<number>) : value
+              const expectedArray =
+                Buffer.isBuffer(value) || Array.isArray(value)
+                  ? Array.from(value as ArrayLike<number>)
+                  : value
               expect(actualArray).toStrictEqual(expectedArray)
               continue
             }
-            expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
+            expect(
+              JSON.stringify({ type: 'Buffer', data: actualValue })
+            ).toStrictEqual(JSON.stringify(value))
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying Certificate record with ${primaryKey}=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying Certificate record with ${primaryKey}=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -269,7 +420,9 @@ describe('update tests', () => {
   test('5_update CertificateField', async () => {
     const primaryKey = 'certificateId'
     for (const { storage } of setups) {
-      const records = await storage.findCertificateFields({ partial: { fieldName: 'bob' } })
+      const records = await storage.findCertificateFields({
+        partial: { fieldName: 'bob' }
+      })
       for (const record of records) {
         try {
           const testValues: CertificateField = {
@@ -281,12 +434,22 @@ describe('update tests', () => {
             fieldValue: 'your uncle',
             masterKey: 'key'
           }
-          const updateResult = await storage.updateCertificateField(record.certificateId, testValues.fieldName, testValues)
+          const updateResult = await storage.updateCertificateField(
+            record.certificateId,
+            testValues.fieldName,
+            testValues
+          )
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findCertificateFields({
-            partial: { certificateId: record.certificateId, fieldName: testValues.fieldName }
+            partial: {
+              certificateId: record.certificateId,
+              fieldName: testValues.fieldName
+            }
           })
-          const updatedRow = verifyOne(updatedRecords, `Updated CertificateField with certificateId=${record.certificateId}, fieldName=${testValues.fieldName} was not unique or missing.`)
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated CertificateField with certificateId=${record.certificateId}, fieldName=${testValues.fieldName} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -298,7 +461,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying CertificateField record with certificateId=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying CertificateField record with certificateId=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -321,12 +487,18 @@ describe('update tests', () => {
             minimumDesiredUTXOValue: 5000,
             isDeleted: false
           }
-          const updateResult = await storage.updateOutputBasket(record.basketId, testValues)
+          const updateResult = await storage.updateOutputBasket(
+            record.basketId,
+            testValues
+          )
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findOutputBaskets({
             partial: { basketId: record.basketId, name: testValues.name }
           })
-          const updatedRow = verifyOne(updatedRecords, `Updated OutputBasket with basketId=${record.basketId}, name=${testValues.name} was not unique or missing.`)
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated OutputBasket with basketId=${record.basketId}, name=${testValues.name} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             if (typeof actualValue === 'boolean') {
@@ -335,7 +507,9 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
+                throw new Error(
+                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
+                )
               }
               continue
             }
@@ -348,7 +522,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying OutputBasket record with basketId=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying OutputBasket record with basketId=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -376,12 +553,18 @@ describe('update tests', () => {
             satoshis: 20000,
             version: 2
           }
-          const updateResult = await storage.updateTransaction(record.transactionId, testValues)
+          const updateResult = await storage.updateTransaction(
+            record.transactionId,
+            testValues
+          )
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findTransactions({
             partial: { transactionId: record.transactionId }
           })
-          const updatedRow = verifyOne(updatedRecords, `Updated Transaction with transactionId=${record.transactionId} was not unique or missing.`)
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated Transaction with transactionId=${record.transactionId} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -393,7 +576,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying Transaction record with transactionId=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying Transaction record with transactionId=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -401,12 +587,23 @@ describe('update tests', () => {
   })
 
   test('7a updateTransactionStatus', async () => {
-    const { activeStorage: storage } = await _tu.createLegacyWalletSQLiteCopy('updateTransactionStatus6a')
+    const { activeStorage: storage } = await _tu.createLegacyWalletSQLiteCopy(
+      'updateTransactionStatus6a'
+    )
 
-    let tx = verifyOne(await storage.findTransactions({ partial: { status: 'unproven' }, paged: { limit: 1 } }))
+    let tx = verifyOne(
+      await storage.findTransactions({
+        partial: { status: 'unproven' },
+        paged: { limit: 1 }
+      })
+    )
     expect(tx.status).toBe('unproven')
     await storage.updateTransactionStatus('completed', tx.transactionId)
-    tx = verifyOne(await storage.findTransactions({ partial: { transactionId: tx.transactionId } }))
+    tx = verifyOne(
+      await storage.findTransactions({
+        partial: { transactionId: tx.transactionId }
+      })
+    )
     expect(tx.status).toBe('completed')
 
     await storage.destroy()
@@ -429,12 +626,18 @@ describe('update tests', () => {
             isRedeemed: true,
             lockingScript: [1, 2, 3, 4]
           }
-          const updateResult = await storage.updateCommission(record.commissionId, testValues)
+          const updateResult = await storage.updateCommission(
+            record.commissionId,
+            testValues
+          )
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findCommissions({
             partial: { commissionId: record.commissionId }
           })
-          const updatedRow = verifyOne(updatedRecords, `Updated Commission with commissionId=${record.commissionId} was not unique or missing.`)
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated Commission with commissionId=${record.commissionId} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -444,13 +647,18 @@ describe('update tests', () => {
               continue
             }
             if (Buffer.isBuffer(actualValue) || Array.isArray(actualValue)) {
-              expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
+              expect(
+                JSON.stringify({ type: 'Buffer', data: actualValue })
+              ).toStrictEqual(JSON.stringify(value))
               continue
             }
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying Commission record with commissionId=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying Commission record with commissionId=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -465,16 +673,22 @@ describe('update tests', () => {
         if (!record.transactionId) record.transactionId = 1
         if (!record.basketId) record.basketId = 1
         if (!record.userId || !record.transactionId || !record.basketId) {
-          throw new Error(`Missing required foreign keys for record ${JSON.stringify(record)}`)
+          throw new Error(
+            `Missing required foreign keys for record ${JSON.stringify(record)}`
+          )
         }
       }
       for (const record of records) {
         const existingRecords = await storage.findOutputs({ partial: {} })
-        const usedCombinations = new Set(existingRecords.map(r => `${r.transactionId}-${r.vout}-${r.userId}`))
+        const usedCombinations = new Set(
+          existingRecords.map(r => `${r.transactionId}-${r.vout}-${r.userId}`)
+        )
         let testTransactionId = record.transactionId
         let testVout = record.vout + 1
         let testUserId = record.userId
-        while (usedCombinations.has(`${testTransactionId}-${testVout}-${testUserId}`)) {
+        while (
+          usedCombinations.has(`${testTransactionId}-${testVout}-${testUserId}`)
+        ) {
           testVout += 1
         }
         try {
@@ -505,10 +719,18 @@ describe('update tests', () => {
             type: 'updated_type',
             outputDescription: 'outputDescription'
           }
-          const updateResult = await storage.updateOutput(record.outputId, testValues)
+          const updateResult = await storage.updateOutput(
+            record.outputId,
+            testValues
+          )
           expect(updateResult).toBe(1)
-          const updatedRecords = await storage.findOutputs({ partial: { outputId: record.outputId } })
-          const updatedRow = verifyOne(updatedRecords, `Updated Output with outputId=${record.outputId} was not unique or missing.`)
+          const updatedRecords = await storage.findOutputs({
+            partial: { outputId: record.outputId }
+          })
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated Output with outputId=${record.outputId} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -518,13 +740,18 @@ describe('update tests', () => {
               continue
             }
             if (Buffer.isBuffer(actualValue) || Array.isArray(actualValue)) {
-              expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
+              expect(
+                JSON.stringify({ type: 'Buffer', data: actualValue })
+              ).toStrictEqual(JSON.stringify(value))
               continue
             }
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying Output record with outputId=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying Output record with outputId=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -539,7 +766,9 @@ describe('update tests', () => {
         if (!record.userId) record.userId = 1
         if (!record.tag) record.tag = `default_tag_${record.outputTagId}`
         if (!record.userId || !record.tag) {
-          throw new Error(`Missing required fields for record ${JSON.stringify(record)}`)
+          throw new Error(
+            `Missing required fields for record ${JSON.stringify(record)}`
+          )
         }
       }
       for (const record of records) {
@@ -553,10 +782,18 @@ describe('update tests', () => {
           isDeleted: false
         }
         try {
-          const updateResult = await storage.updateOutputTag(record.outputTagId, testValues)
+          const updateResult = await storage.updateOutputTag(
+            record.outputTagId,
+            testValues
+          )
           expect(updateResult).toBe(1)
-          const updatedRecords = await storage.findOutputTags({ partial: { outputTagId: record.outputTagId } })
-          const updatedRow = verifyOne(updatedRecords, `Updated OutputTag with outputTagId=${record.outputTagId} was not unique or missing.`)
+          const updatedRecords = await storage.findOutputTags({
+            partial: { outputTagId: record.outputTagId }
+          })
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated OutputTag with outputTagId=${record.outputTagId} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             if (typeof actualValue === 'boolean') {
@@ -565,7 +802,9 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
+                throw new Error(
+                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
+                )
               }
               continue
             }
@@ -578,7 +817,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying OutputTag record with outputTagId=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying OutputTag record with outputTagId=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -590,8 +832,14 @@ describe('update tests', () => {
     for (const { storage } of setups) {
       const records = await storage.findOutputTagMaps({ partial: {} })
       for (const record of records) {
-        if (!record.outputTagId) throw new Error(`Missing outputTagId for record: ${JSON.stringify(record)}`)
-        if (!record.outputId) throw new Error(`Missing outputId for record: ${JSON.stringify(record)}`)
+        if (!record.outputTagId)
+          throw new Error(
+            `Missing outputTagId for record: ${JSON.stringify(record)}`
+          )
+        if (!record.outputId)
+          throw new Error(
+            `Missing outputId for record: ${JSON.stringify(record)}`
+          )
         try {
           const testValues: OutputTagMap = {
             outputTagId: record.outputTagId,
@@ -600,10 +848,22 @@ describe('update tests', () => {
             updated_at: new Date('2024-12-30T23:05:00Z'),
             isDeleted: false
           }
-          const updateResult = await storage.updateOutputTagMap(record.outputId, record.outputTagId, testValues)
+          const updateResult = await storage.updateOutputTagMap(
+            record.outputId,
+            record.outputTagId,
+            testValues
+          )
           expect(updateResult).toBe(1)
-          const updatedRecords = await storage.findOutputTagMaps({ partial: { outputTagId: record.outputTagId, outputId: record.outputId } })
-          const updatedRow = verifyOne(updatedRecords, `Updated OutputTagMap with outputTagId=${record.outputTagId} and outputId=${record.outputId} was not unique or missing.`)
+          const updatedRecords = await storage.findOutputTagMaps({
+            partial: {
+              outputTagId: record.outputTagId,
+              outputId: record.outputId
+            }
+          })
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated OutputTagMap with outputTagId=${record.outputTagId} and outputId=${record.outputId} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             if (typeof actualValue === 'boolean') {
@@ -612,7 +872,9 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
+                throw new Error(
+                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
+                )
               }
               continue
             }
@@ -625,7 +887,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying OutputTagMap record with outputTagId=${record.outputTagId} and outputId=${record.outputId}:`, error.message)
+          console.error(
+            `Error updating or verifying OutputTagMap record with outputTagId=${record.outputTagId} and outputId=${record.outputId}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -638,7 +903,9 @@ describe('update tests', () => {
       const records = await storage.findTxLabels({ partial: {} })
       for (const record of records) {
         if (!record.userId) {
-          throw new Error(`Missing required foreign key userId for record ${JSON.stringify(record)}`)
+          throw new Error(
+            `Missing required foreign key userId for record ${JSON.stringify(record)}`
+          )
         }
       }
       for (const record of records) {
@@ -651,14 +918,24 @@ describe('update tests', () => {
           created_at: new Date('2024-12-30T23:00:00Z'),
           updated_at: new Date('2024-12-30T23:05:00Z')
         }
-        const existingLabel = await storage.findTxLabels({ partial: { label: testValues.label, userId: testValues.userId } })
+        const existingLabel = await storage.findTxLabels({
+          partial: { label: testValues.label, userId: testValues.userId }
+        })
         if (existingLabel.length > 0) {
           continue
         }
-        const updateResult = await storage.updateTxLabel(record.txLabelId, testValues)
+        const updateResult = await storage.updateTxLabel(
+          record.txLabelId,
+          testValues
+        )
         expect(updateResult).toBe(1)
-        const updatedRecords = await storage.findTxLabels({ partial: { txLabelId: record.txLabelId } })
-        const updatedRow = verifyOne(updatedRecords, `Updated TxLabel with txLabelId=${record.txLabelId} was not unique or missing.`)
+        const updatedRecords = await storage.findTxLabels({
+          partial: { txLabelId: record.txLabelId }
+        })
+        const updatedRow = verifyOne(
+          updatedRecords,
+          `Updated TxLabel with txLabelId=${record.txLabelId} was not unique or missing.`
+        )
         for (const [key, value] of Object.entries(testValues)) {
           const actualValue = updatedRow[key]
           if (typeof actualValue === 'boolean') {
@@ -667,7 +944,9 @@ describe('update tests', () => {
             } else if (value === 0) {
               expect(actualValue).toBe(false)
             } else {
-              throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
+              throw new Error(
+                `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
+              )
             }
             continue
           }
@@ -690,7 +969,9 @@ describe('update tests', () => {
       const records = await storage.findTxLabelMaps({ partial: {} })
       for (const record of records) {
         if (!record.transactionId || !record.txLabelId) {
-          throw new Error(`Missing required foreign keys for record ${JSON.stringify(record)}`)
+          throw new Error(
+            `Missing required foreign keys for record ${JSON.stringify(record)}`
+          )
         }
       }
       for (const record of records) {
@@ -702,18 +983,31 @@ describe('update tests', () => {
           isDeleted: false
         }
         const existingRecord = await storage.findTxLabelMaps({
-          partial: { transactionId: testValues.transactionId, txLabelId: testValues.txLabelId }
+          partial: {
+            transactionId: testValues.transactionId,
+            txLabelId: testValues.txLabelId
+          }
         })
         if (existingRecord.length > 0) {
           continue
         }
         try {
-          const updateResult = await storage.updateTxLabelMap(record.transactionId, record.txLabelId, testValues)
+          const updateResult = await storage.updateTxLabelMap(
+            record.transactionId,
+            record.txLabelId,
+            testValues
+          )
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findTxLabelMaps({
-            partial: { transactionId: record.transactionId, txLabelId: record.txLabelId }
+            partial: {
+              transactionId: record.transactionId,
+              txLabelId: record.txLabelId
+            }
           })
-          const updatedRow = verifyOne(updatedRecords, `Updated TxLabelMap with transactionId=${record[primaryKeyTransaction]} and txLabelId=${record[primaryKeyLabel]} was not unique or missing.`)
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated TxLabelMap with transactionId=${record[primaryKeyTransaction]} and txLabelId=${record[primaryKeyLabel]} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -725,7 +1019,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying TxLabelMap record with transactionId=${record[primaryKeyTransaction]} and txLabelId=${record[primaryKeyLabel]}:`, error.message)
+          console.error(
+            `Error updating or verifying TxLabelMap record with transactionId=${record[primaryKeyTransaction]} and txLabelId=${record[primaryKeyLabel]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -745,10 +1042,18 @@ describe('update tests', () => {
             event: 'updated_event',
             details: 'Updated details'
           }
-          const updateResult = await storage.updateMonitorEvent(record.id, testValues)
+          const updateResult = await storage.updateMonitorEvent(
+            record.id,
+            testValues
+          )
           expect(updateResult).toBe(1)
-          const updatedRecords = await storage.findMonitorEvents({ partial: { id: record.id } })
-          const updatedRow = verifyOne(updatedRecords, `Updated MonitorEvent with id=${record.id} was not unique or missing.`)
+          const updatedRecords = await storage.findMonitorEvents({
+            partial: { id: record.id }
+          })
+          const updatedRow = verifyOne(
+            updatedRecords,
+            `Updated MonitorEvent with id=${record.id} was not unique or missing.`
+          )
           for (const [key, value] of Object.entries(testValues)) {
             const actualValue = updatedRow[key]
             const normalizedActual = normalizeDate(actualValue)
@@ -760,7 +1065,10 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(`Error updating or verifying MonitorEvent record with id=${record[primaryKey]}:`, error.message)
+          console.error(
+            `Error updating or verifying MonitorEvent record with id=${record[primaryKey]}:`,
+            error.message
+          )
           throw error
         }
       }
@@ -773,7 +1081,9 @@ describe('update tests', () => {
       const records = await storage.findSyncStates({ partial: {} })
       for (const record of records) {
         if (!record.userId) {
-          throw new Error(`Missing required foreign key userId for record ${JSON.stringify(record)}`)
+          throw new Error(
+            `Missing required foreign key userId for record ${JSON.stringify(record)}`
+          )
         }
       }
       for (const record of records) {
@@ -793,10 +1103,18 @@ describe('update tests', () => {
           syncMap: '{}',
           when: new Date('2025-01-01T02:00:00.000Z')
         }
-        const updateResult = await storage.updateSyncState(record.syncStateId, testValues)
+        const updateResult = await storage.updateSyncState(
+          record.syncStateId,
+          testValues
+        )
         expect(updateResult).toBe(1)
-        const updatedRecords = await storage.findSyncStates({ partial: { syncStateId: record.syncStateId } })
-        const updatedRow = verifyOne(updatedRecords, `Updated SyncState with syncStateId=${record.syncStateId} was not unique or missing.`)
+        const updatedRecords = await storage.findSyncStates({
+          partial: { syncStateId: record.syncStateId }
+        })
+        const updatedRow = verifyOne(
+          updatedRecords,
+          `Updated SyncState with syncStateId=${record.syncStateId} was not unique or missing.`
+        )
         for (const [key, value] of Object.entries(testValues)) {
           const actualValue = updatedRow[key]
           if (typeof actualValue === 'boolean') {
@@ -805,7 +1123,9 @@ describe('update tests', () => {
             } else if (value === 0) {
               expect(actualValue).toBe(false)
             } else {
-              throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
+              throw new Error(
+                `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
+              )
             }
             continue
           }

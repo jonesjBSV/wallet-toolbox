@@ -7,7 +7,8 @@ describe('Wallet getNetwork Tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('getNetworkTests'))
+    if (!env.noMySQL)
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy('getNetworkTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('getNetworkTests'))
   })
 

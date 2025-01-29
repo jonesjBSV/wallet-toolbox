@@ -1,5 +1,8 @@
 import { entity, table, sdk } from '../../../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import {
+  TestUtilsWalletStorage as _tu,
+  TestWalletNoSetup
+} from '../../../../../test/utils/TestUtilsWalletStorage'
 import { CertificateField } from '../../../../../src/storage/schema/entities/CertificateField'
 
 describe('CertificateField class method tests', () => {
@@ -12,7 +15,9 @@ describe('CertificateField class method tests', () => {
   beforeAll(async () => {
     if (!env.noMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('CertificateFieldTests'))
-      ctxs2.push(await _tu.createLegacyWalletMySQLCopy('CertificateFieldTests2'))
+      ctxs2.push(
+        await _tu.createLegacyWalletMySQLCopy('CertificateFieldTests2')
+      )
     }
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('CertificateFieldTests'))
     ctxs2.push(await _tu.createLegacyWalletSQLiteCopy('CertificateFieldTests2'))
@@ -39,10 +44,14 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType').toString('base64'), // Base64-encoded string
         serialNumber: Buffer.from('serial123').toString('base64'), // Base64-encoded string
-        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // PubKeyHex
-        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // PubKeyHex
-        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // OutpointString
-        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // HexString
+        certifier:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // PubKeyHex
+        subject:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // PubKeyHex
+        revocationOutpoint:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // OutpointString
+        signature:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // HexString
         isDeleted: false
       }
 
@@ -66,18 +75,78 @@ describe('CertificateField class method tests', () => {
 
       // Create a valid SyncMap
       const syncMap: entity.SyncMap = {
-        certificate: { idMap: { [certificateId]: certificateId }, entityName: 'Certificate', maxUpdated_at: undefined, count: 0 },
-        outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-        transaction: { idMap: {}, entityName: 'Transaction', maxUpdated_at: undefined, count: 0 },
-        output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-        provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-        outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-        provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-        txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-        txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-        outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-        certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-        commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+        certificate: {
+          idMap: { [certificateId]: certificateId },
+          entityName: 'Certificate',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputBasket: {
+          idMap: {},
+          entityName: 'OutputBasket',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        transaction: {
+          idMap: {},
+          entityName: 'Transaction',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        output: {
+          idMap: {},
+          entityName: 'Output',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        provenTx: {
+          idMap: {},
+          entityName: 'ProvenTx',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTag: {
+          idMap: {},
+          entityName: 'OutputTag',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        provenTxReq: {
+          idMap: {},
+          entityName: 'ProvenTxReq',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabel: {
+          idMap: {},
+          entityName: 'TxLabel',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        txLabelMap: {
+          idMap: {},
+          entityName: 'TxLabelMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        outputTagMap: {
+          idMap: {},
+          entityName: 'OutputTagMap',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        certificateField: {
+          idMap: {},
+          entityName: 'CertificateField',
+          maxUpdated_at: undefined,
+          count: 0
+        },
+        commission: {
+          idMap: {},
+          entityName: 'Commission',
+          maxUpdated_at: undefined,
+          count: 0
+        }
       }
 
       // Test: equals returns true for identical entities without SyncMap
@@ -103,10 +172,14 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType1').toString('base64'), // Unique Base64-encoded string
         serialNumber: Buffer.from('serial123-1').toString('base64'), // Unique Base64-encoded string
-        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // Same PubKeyHex
-        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // Same OutpointString
-        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
+        certifier:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // Same PubKeyHex
+        subject:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        revocationOutpoint:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // Same OutpointString
+        signature:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       })
 
@@ -117,10 +190,14 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType2').toString('base64'), // Unique Base64-encoded string
         serialNumber: Buffer.from('serial123-2').toString('base64'), // Unique Base64-encoded string
-        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:1', // Unique OutpointString
-        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
+        certifier:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        subject:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        revocationOutpoint:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:1', // Unique OutpointString
+        signature:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       })
 
@@ -148,28 +225,89 @@ describe('CertificateField class method tests', () => {
       ]
 
       for (const mismatch of mismatchedEntities) {
-        const mismatchedEntity = new CertificateField({ ...initialData, ...mismatch })
+        const mismatchedEntity = new CertificateField({
+          ...initialData,
+          ...mismatch
+        })
         expect(entity1.equals(mismatchedEntity.toApi())).toBe(false)
 
         // Test with SyncMap, where certificateId is resolved
         const syncMap: entity.SyncMap = {
           certificate: {
-            idMap: { [certificateId1]: certificateId1, [certificateId2]: certificateId2 },
+            idMap: {
+              [certificateId1]: certificateId1,
+              [certificateId2]: certificateId2
+            },
             entityName: 'Certificate',
             maxUpdated_at: undefined,
             count: 0
           },
-          outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-          transaction: { idMap: {}, entityName: 'Transaction', maxUpdated_at: undefined, count: 0 },
-          output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-          provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-          outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-          provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-          txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-          txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-          outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-          certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-          commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+          outputBasket: {
+            idMap: {},
+            entityName: 'OutputBasket',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          transaction: {
+            idMap: {},
+            entityName: 'Transaction',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          output: {
+            idMap: {},
+            entityName: 'Output',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTx: {
+            idMap: {},
+            entityName: 'ProvenTx',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTag: {
+            idMap: {},
+            entityName: 'OutputTag',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTxReq: {
+            idMap: {},
+            entityName: 'ProvenTxReq',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabel: {
+            idMap: {},
+            entityName: 'TxLabel',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabelMap: {
+            idMap: {},
+            entityName: 'TxLabelMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTagMap: {
+            idMap: {},
+            entityName: 'OutputTagMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          certificateField: {
+            idMap: {},
+            entityName: 'CertificateField',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          commission: {
+            idMap: {},
+            entityName: 'Commission',
+            maxUpdated_at: undefined,
+            count: 0
+          }
         }
         expect(entity1.equals(mismatchedEntity.toApi(), syncMap)).toBe(false)
       }
@@ -188,10 +326,14 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleTypeMerge').toString('base64'),
         serialNumber: Buffer.from('serialMerge123').toString('base64'),
-        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
-        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
-        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
-        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+        certifier:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
+        subject:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
+        revocationOutpoint:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
+        signature:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         isDeleted: false
       })
 
@@ -230,17 +372,72 @@ describe('CertificateField class method tests', () => {
             maxUpdated_at: undefined,
             count: 0
           },
-          outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-          transaction: { idMap: {}, entityName: 'Transaction', maxUpdated_at: undefined, count: 0 },
-          output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-          provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-          outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-          provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-          txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-          txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-          outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-          certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-          commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+          outputBasket: {
+            idMap: {},
+            entityName: 'OutputBasket',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          transaction: {
+            idMap: {},
+            entityName: 'Transaction',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          output: {
+            idMap: {},
+            entityName: 'Output',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTx: {
+            idMap: {},
+            entityName: 'ProvenTx',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTag: {
+            idMap: {},
+            entityName: 'OutputTag',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTxReq: {
+            idMap: {},
+            entityName: 'ProvenTxReq',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabel: {
+            idMap: {},
+            entityName: 'TxLabel',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabelMap: {
+            idMap: {},
+            entityName: 'TxLabelMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTagMap: {
+            idMap: {},
+            entityName: 'OutputTagMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          certificateField: {
+            idMap: {},
+            entityName: 'CertificateField',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          commission: {
+            idMap: {},
+            entityName: 'Commission',
+            maxUpdated_at: undefined,
+            count: 0
+          }
         },
         undefined // `trx` is not used
       )
@@ -277,10 +474,14 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleTypeNoMerge').toString('base64'),
         serialNumber: Buffer.from('serialNoMerge123').toString('base64'),
-        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
-        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
-        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
-        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+        certifier:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
+        subject:
+          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
+        revocationOutpoint:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
+        signature:
+          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         isDeleted: false
       })
 
@@ -319,17 +520,72 @@ describe('CertificateField class method tests', () => {
             maxUpdated_at: undefined,
             count: 0
           },
-          outputBasket: { idMap: {}, entityName: 'OutputBasket', maxUpdated_at: undefined, count: 0 },
-          transaction: { idMap: {}, entityName: 'Transaction', maxUpdated_at: undefined, count: 0 },
-          output: { idMap: {}, entityName: 'Output', maxUpdated_at: undefined, count: 0 },
-          provenTx: { idMap: {}, entityName: 'ProvenTx', maxUpdated_at: undefined, count: 0 },
-          outputTag: { idMap: {}, entityName: 'OutputTag', maxUpdated_at: undefined, count: 0 },
-          provenTxReq: { idMap: {}, entityName: 'ProvenTxReq', maxUpdated_at: undefined, count: 0 },
-          txLabel: { idMap: {}, entityName: 'TxLabel', maxUpdated_at: undefined, count: 0 },
-          txLabelMap: { idMap: {}, entityName: 'TxLabelMap', maxUpdated_at: undefined, count: 0 },
-          outputTagMap: { idMap: {}, entityName: 'OutputTagMap', maxUpdated_at: undefined, count: 0 },
-          certificateField: { idMap: {}, entityName: 'CertificateField', maxUpdated_at: undefined, count: 0 },
-          commission: { idMap: {}, entityName: 'Commission', maxUpdated_at: undefined, count: 0 }
+          outputBasket: {
+            idMap: {},
+            entityName: 'OutputBasket',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          transaction: {
+            idMap: {},
+            entityName: 'Transaction',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          output: {
+            idMap: {},
+            entityName: 'Output',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTx: {
+            idMap: {},
+            entityName: 'ProvenTx',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTag: {
+            idMap: {},
+            entityName: 'OutputTag',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          provenTxReq: {
+            idMap: {},
+            entityName: 'ProvenTxReq',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabel: {
+            idMap: {},
+            entityName: 'TxLabel',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          txLabelMap: {
+            idMap: {},
+            entityName: 'TxLabelMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          outputTagMap: {
+            idMap: {},
+            entityName: 'OutputTagMap',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          certificateField: {
+            idMap: {},
+            entityName: 'CertificateField',
+            maxUpdated_at: undefined,
+            count: 0
+          },
+          commission: {
+            idMap: {},
+            entityName: 'Commission',
+            maxUpdated_at: undefined,
+            count: 0
+          }
         },
         undefined // `trx` is not used
       )

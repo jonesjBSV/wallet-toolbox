@@ -1,7 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { BasketStringUnder300Bytes, Beef, ListOutputsArgs, ListOutputsResult, OriginatorDomainNameStringUnder250Bytes, OutputTagStringUnder300Bytes } from '@bsv/sdk'
+import {
+  BasketStringUnder300Bytes,
+  Beef,
+  ListOutputsArgs,
+  ListOutputsResult,
+  OriginatorDomainNameStringUnder250Bytes,
+  OutputTagStringUnder300Bytes
+} from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
-import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import {
+  _tu,
+  expectToThrowWERR,
+  TestWalletNoSetup
+} from '../../utils/TestUtilsWalletStorage'
 
 const noLog = true
 
@@ -15,7 +26,8 @@ describe('listOutputs test', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('listOutputsTests'))
+    if (!env.noMySQL)
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy('listOutputsTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('listOutputsTests'))
   })
 
@@ -32,9 +44,12 @@ describe('listOutputs test', () => {
     for (const o of r.outputs) {
       log += `${i++} ${o.outpoint} ${o.satoshis} ${o.spendable}\n`
       if (o.tags && o.tags.length > 0) log += `  tags: ${o.tags?.join(',')}\n`
-      if (o.labels && o.labels.length > 0) log += `  labels: ${o.labels?.join(',')}\n`
-      if (o.customInstructions) log += `  customInstructions: ${o.customInstructions}\n`
-      if (o.lockingScript) log += `  lockingScript: ${o.lockingScript.length} ${truncate(o.lockingScript)}\n`
+      if (o.labels && o.labels.length > 0)
+        log += `  labels: ${o.labels?.join(',')}\n`
+      if (o.customInstructions)
+        log += `  customInstructions: ${o.customInstructions}\n`
+      if (o.lockingScript)
+        log += `  lockingScript: ${o.lockingScript.length} ${truncate(o.lockingScript)}\n`
     }
     if (r.BEEF) {
       const beef = Beef.fromBinary(r.BEEF)
@@ -61,22 +76,25 @@ describe('listOutputs test', () => {
       const invalidOriginators = [
         'too.long.invalid.domain.'.repeat(20), // Exceeds length limits
         '', // Empty originator
-        '   ', // Whitespace originator
+        '   ' // Whitespace originator
         // Removed invalid-fqdn for this run
       ].filter(originator => originator.trim() !== '') // Remove problematic cases
 
       for (const args of invalidArgs) {
         for (const originator of invalidOriginators) {
-          if (!noLog) console.log('Testing args:', args, 'with originator:', originator)
+          if (!noLog)
+            console.log('Testing args:', args, 'with originator:', originator)
           try {
-            await wallet.listOutputs(args, originator as OriginatorDomainNameStringUnder250Bytes)
+            await wallet.listOutputs(
+              args,
+              originator as OriginatorDomainNameStringUnder250Bytes
+            )
             throw new Error('Expected method to throw.')
           } catch (e) {
             const error = e as Error
             if (!noLog) console.log('Error name:', error.name)
             if (!noLog) console.log('Error message:', error.message)
-            if (error.name != 'WERR_INVALID_PARAMETER')
-              debugger;
+            if (error.name != 'WERR_INVALID_PARAMETER') debugger
 
             // Validate error
             expect(error.name).toBe('WERR_INVALID_PARAMETER')
@@ -101,11 +119,24 @@ describe('listOutputs test', () => {
         seekPermission: true
       }
 
-      const validOriginators = ['example.com', 'localhost', 'subdomain.example.com']
+      const validOriginators = [
+        'example.com',
+        'localhost',
+        'subdomain.example.com'
+      ]
 
       for (const originator of validOriginators) {
-        if (!noLog) console.log('Testing args:', validArgs, 'with originator:', originator)
-        const result = await wallet.listOutputs(validArgs, originator as OriginatorDomainNameStringUnder250Bytes)
+        if (!noLog)
+          console.log(
+            'Testing args:',
+            validArgs,
+            'with originator:',
+            originator
+          )
+        const result = await wallet.listOutputs(
+          validArgs,
+          originator as OriginatorDomainNameStringUnder250Bytes
+        )
         if (!noLog) console.log('Result:', result)
         expect(result.totalOutputs).toBeGreaterThanOrEqual(0)
       }
@@ -142,9 +173,16 @@ describe('listOutputs test', () => {
         const args: ListOutputsArgs = {
           basket: 'default'
         }
-        const validOriginators = ['example.com', 'localhost', 'subdomain.example.com']
+        const validOriginators = [
+          'example.com',
+          'localhost',
+          'subdomain.example.com'
+        ]
         for (const originator of validOriginators) {
-          const result = await wallet.listOutputs(args, originator as OriginatorDomainNameStringUnder250Bytes)
+          const result = await wallet.listOutputs(
+            args,
+            originator as OriginatorDomainNameStringUnder250Bytes
+          )
         }
         const r = await wallet.listOutputs(args)
         log += logResult(r)
@@ -229,7 +267,10 @@ describe('listOutputs test', () => {
           tags: ['babbage_action_originator projectbabbage.com'],
           includeTags: true
         }
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listOutputs(args))
+        await expectToThrowWERR(
+          sdk.WERR_INVALID_PARAMETER,
+          async () => await wallet.listOutputs(args)
+        )
       }
     }
   })
@@ -265,7 +306,11 @@ describe('listOutputs test', () => {
         const r = await wallet.listOutputs(args)
         log += logResult(r)
         expect(r.BEEF).toBeTruthy()
-        expect(await Beef.fromBinary(r.BEEF || []).verify(await services.getChainTracker())).toBe(true)
+        expect(
+          await Beef.fromBinary(r.BEEF || []).verify(
+            await services.getChainTracker()
+          )
+        ).toBe(true)
         if (!noLog) console.log(log)
       }
     }
@@ -311,7 +356,9 @@ describe('listOutputs test', () => {
         let i = 0
         for (const a of r.outputs) {
           expect(Array.isArray(a.tags)).toBe(true)
-          expect(a.tags?.indexOf('babbage_action_originator projectbabbage.com')).toBeGreaterThan(-1)
+          expect(
+            a.tags?.indexOf('babbage_action_originator projectbabbage.com')
+          ).toBeGreaterThan(-1)
           log += `${i++} ${a.labels?.join(',')}\n`
         }
         if (!noLog) console.log(log)
@@ -353,7 +400,11 @@ describe('listOutputs test', () => {
       const args: ListOutputsArgs = {
         basket: 'babbage-token-access',
         includeTags: true,
-        tags: ['babbage_basket todo tokens', 'babbage_action_originator projectbabbage.com', 'babbage_originator localhost:8088'], // Match all actual output tags
+        tags: [
+          'babbage_basket todo tokens',
+          'babbage_action_originator projectbabbage.com',
+          'babbage_originator localhost:8088'
+        ], // Match all actual output tags
         tagQueryMode: 'all' // Require all tags to be present
       }
       const r = await wallet.listOutputs(args)
@@ -364,7 +415,8 @@ describe('listOutputs test', () => {
       r.outputs.forEach((o, index) => {
         log += `totalOutputs=${0} outputs=${r.outputs.length}\n`
         expect(Array.isArray(o.tags)).toBe(true)
-        const missingTags = args.tags?.filter(tag => !o.tags?.includes(tag)) || []
+        const missingTags =
+          args.tags?.filter(tag => !o.tags?.includes(tag)) || []
         if (missingTags.length > 0) {
           console.error(`Output ${index} is missing tags:`, missingTags)
         }
@@ -437,7 +489,10 @@ describe('listOutputs prepare DB with missing custom instructions', () => {
   test('Verify custom instructions for basketId = 4', async () => {
     const db = storage.toDb()
 
-    const results = await db.select('outputId', 'basketId', 'customInstructions').from('outputs').whereIn('outputId', [1, 2, 3])
+    const results = await db
+      .select('outputId', 'basketId', 'customInstructions')
+      .from('outputs')
+      .whereIn('outputId', [1, 2, 3])
 
     if (!noLog) console.log('Results from outputs table:', results)
 
@@ -455,7 +510,10 @@ describe('listOutputs prepare DB with missing custom instructions', () => {
     await cleanDatabase(storage)
 
     // Verify that the rows were reset
-    const results = await db.select('outputId', 'basketId', 'customInstructions').from('outputs').whereIn('outputId', [1, 2, 3])
+    const results = await db
+      .select('outputId', 'basketId', 'customInstructions')
+      .from('outputs')
+      .whereIn('outputId', [1, 2, 3])
 
     if (!noLog) console.log('Results after cleanup:', results)
 
@@ -502,7 +560,10 @@ async function cleanDatabase(storage: StorageKnex) {
     if (!noLog) console.log('Database connection established for cleaning.')
 
     // Remove the updates for basketId = 4 and reset customInstructions
-    const affectedRows = await db('outputs').where('basketId', 4).whereIn('outputId', [1, 2, 3]).update({ basketId: null, customInstructions: null })
+    const affectedRows = await db('outputs')
+      .where('basketId', 4)
+      .whereIn('outputId', [1, 2, 3])
+      .update({ basketId: null, customInstructions: null })
 
     if (!noLog) console.log(`Cleaned database: ${affectedRows} rows updated.`)
   } catch (error) {

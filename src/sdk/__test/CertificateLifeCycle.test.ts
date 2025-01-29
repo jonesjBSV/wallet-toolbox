@@ -1,21 +1,45 @@
-import { Certificate as BsvCertificate, CompletedProtoWallet, KeyDeriver, MasterCertificate, PrivateKey, Utils, WalletCertificate } from "@bsv/sdk"
+import {
+  Certificate as BsvCertificate,
+  CompletedProtoWallet,
+  KeyDeriver,
+  MasterCertificate,
+  PrivateKey,
+  Utils,
+  WalletCertificate
+} from '@bsv/sdk'
 import { sdk } from '../../index.all'
 
 describe('CertificateLifeCycle tests', () => {
   jest.setTimeout(99999999)
 
-
   test('0 encrypt decrypt sign verify', async () => {
     const subjectWallet = new CompletedProtoWallet(PrivateKey.fromRandom())
-    const { cert, certifier, subject } = makeSampleCert(subjectWallet.keyDeriver.rootKey.toString())
+    const { cert, certifier, subject } = makeSampleCert(
+      subjectWallet.keyDeriver.rootKey.toString()
+    )
 
-    const c = new BsvCertificate(cert.type, cert.serialNumber, cert.subject, cert.certifier, cert.revocationOutpoint, cert.fields)
+    const c = new BsvCertificate(
+      cert.type,
+      cert.serialNumber,
+      cert.subject,
+      cert.certifier,
+      cert.revocationOutpoint,
+      cert.fields
+    )
 
     const certifierWallet = new CompletedProtoWallet(certifier)
 
-    const imc = await MasterCertificate.issueCertificateForSubject(certifierWallet, c.subject, c.fields, c.type, async () => c.revocationOutpoint)
+    const imc = await MasterCertificate.issueCertificateForSubject(
+      certifierWallet,
+      c.subject,
+      c.fields,
+      c.type,
+      async () => c.revocationOutpoint
+    )
     const imcSignature = imc.signature
-    await expect(imc.sign(certifierWallet)).rejects.toThrow('Certificate has already been signed')
+    await expect(imc.sign(certifierWallet)).rejects.toThrow(
+      'Certificate has already been signed'
+    )
     expect(imcSignature).toBeTruthy()
     expect(imcSignature).toBe(imc.signature)
     const imcVerified = await imc.verify()
@@ -37,11 +61,12 @@ describe('CertificateLifeCycle tests', () => {
     const verified = await c.verify()
     expect(verified).toBe(true)
 
-
     const co = new sdk.CertOps(certifierWallet, cert)
 
     expect(co.signature).toBe('')
-    await expect(co.verify()).rejects.toThrow('Signature DER must start with 0x30')
+    await expect(co.verify()).rejects.toThrow(
+      'Signature DER must start with 0x30'
+    )
     await co.sign(new CompletedProtoWallet(new KeyDeriver(certifier)))
     expect(await co.verify()).toBe(true)
 
@@ -53,7 +78,6 @@ describe('CertificateLifeCycle tests', () => {
       expect(await co.verify()).toBe(true)
     }
 
-
     await co.decryptFields()
     for (const n of Object.keys(co.fields)) {
       expect(co.fields[n]).toBe(co._decryptedFields![n])
@@ -61,7 +85,9 @@ describe('CertificateLifeCycle tests', () => {
 
     {
       await co.encryptFields()
-      const crypto2 = new CompletedProtoWallet(new KeyDeriver(PrivateKey.fromHex('2'.repeat(64))))
+      const crypto2 = new CompletedProtoWallet(
+        new KeyDeriver(PrivateKey.fromHex('2'.repeat(64)))
+      )
       const co2 = new sdk.CertOps(crypto2, co.toWalletCertificate())
       // even with the keyring, without the right crypto root key decryption will fail.
       co2._keyring = co._keyring
@@ -115,11 +141,17 @@ describe('CertificateLifeCycle tests', () => {
     // And then use a keyRing that their public key will work to reveal decrypted values for 'name' and 'email' only.
     const verifier = PrivateKey.fromRandom()
     // subject makes a keyring for the verifier
-    const exportForVerifier = await cs.exportForCounterparty(verifier.toPublicKey().toString(), ['name', 'email'])
+    const exportForVerifier = await cs.exportForCounterparty(
+      verifier.toPublicKey().toString(),
+      ['name', 'email']
+    )
 
     // The verifier uses their own wallet to import the certificate, verify it, and decrypt their designated fields.
     const verifierWallet = new CompletedProtoWallet(verifier)
-    const cv = await sdk.CertOps.fromCounterparty(verifierWallet, exportForVerifier)
+    const cv = await sdk.CertOps.fromCounterparty(
+      verifierWallet,
+      exportForVerifier
+    )
 
     // verifier must check that the certifier's public key generates a matching signature over all the encrypted
     // certificate field values before using their keyring to decrypt the fields they've been authorized to see.
@@ -132,17 +164,23 @@ describe('CertificateLifeCycle tests', () => {
     expect(cv.fields['email']).toBe('alice@example.com')
     expect(cv.fields['organization']).not.toBe('Example Corp')
   })
-
 })
 
-function makeSampleCert(subjectRootKeyHex?: string): { cert: WalletCertificate, subject: PrivateKey, certifier: PrivateKey } {
-  const subject = subjectRootKeyHex ? PrivateKey.fromString(subjectRootKeyHex) : PrivateKey.fromRandom()
+function makeSampleCert(subjectRootKeyHex?: string): {
+  cert: WalletCertificate
+  subject: PrivateKey
+  certifier: PrivateKey
+} {
+  const subject = subjectRootKeyHex
+    ? PrivateKey.fromString(subjectRootKeyHex)
+    : PrivateKey.fromRandom()
   const certifier = PrivateKey.fromRandom()
   const verifier = PrivateKey.fromRandom()
   const cert: WalletCertificate = {
     type: Utils.toBase64(new Array(32).fill(1)),
     serialNumber: Utils.toBase64(new Array(32).fill(2)),
-    revocationOutpoint: 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef.1',
+    revocationOutpoint:
+      'deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef.1',
     subject: subject.toPublicKey().toString(),
     certifier: certifier.toPublicKey().toString(),
     fields: {
@@ -150,7 +188,7 @@ function makeSampleCert(subjectRootKeyHex?: string): { cert: WalletCertificate, 
       email: 'alice@example.com',
       organization: 'Example Corp'
     },
-    signature: "",
+    signature: ''
   }
   return { cert, subject, certifier }
 }

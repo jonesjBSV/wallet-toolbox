@@ -15,12 +15,28 @@ describe('StorageMySQLDojoReader tests', () => {
   let writer: StorageKnex
 
   beforeAll(async () => {
-    const connection = JSON.parse((chain === 'test' ? process.env.TEST_DOJO_CONNECTION : process.env.MAIN_DOJO_CONNECTION) || '')
+    const connection = JSON.parse(
+      (chain === 'test'
+        ? process.env.TEST_DOJO_CONNECTION
+        : process.env.MAIN_DOJO_CONNECTION) || ''
+    )
     const readerKnex = _tu.createMySQLFromConnection(connection)
-    reader = new StorageMySQLDojoReader({ ...StorageKnex.defaultOptions(), chain, knex: readerKnex })
+    reader = new StorageMySQLDojoReader({
+      ...StorageKnex.defaultOptions(),
+      chain,
+      knex: readerKnex
+    })
 
-    const writerKnex = !env.noMySQL ? _tu.createLocalMySQL('stagingdojotone') : _tu.createLocalSQLite(await _tu.newTmpFile('stagingdojotone', false, false, true))
-    writer = new StorageKnex({ ...StorageKnex.defaultOptions(), chain, knex: writerKnex })
+    const writerKnex = !env.noMySQL
+      ? _tu.createLocalMySQL('stagingdojotone')
+      : _tu.createLocalSQLite(
+          await _tu.newTmpFile('stagingdojotone', false, false, true)
+        )
+    writer = new StorageKnex({
+      ...StorageKnex.defaultOptions(),
+      chain,
+      knex: writerKnex
+    })
     await writer.dropAllData()
     await writer.migrate('stagingdojotone', '1'.repeat(64))
   })
@@ -35,10 +51,17 @@ describe('StorageMySQLDojoReader tests', () => {
     const writerSettings = await writer.getSettings()
 
     const identityKey = process.env.MY_TEST_IDENTITY || ''
-    const ss = await entity.SyncState.fromStorage(writer, identityKey, readerSettings)
+    const ss = await entity.SyncState.fromStorage(
+      writer,
+      identityKey,
+      readerSettings
+    )
 
     for (;;) {
-      const args = ss.makeRequestSyncChunkArgs(identityKey, writerSettings.storageIdentityKey)
+      const args = ss.makeRequestSyncChunkArgs(
+        identityKey,
+        writerSettings.storageIdentityKey
+      )
       const chunk = await reader.getSyncChunk(args)
       const r = await ss.processRequestSyncChunkResult(writer, args, chunk)
       //console.log(`${r.maxUpdated_at} inserted ${r.inserts} updated ${r.updates}`)

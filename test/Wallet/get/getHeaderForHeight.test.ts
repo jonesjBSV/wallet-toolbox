@@ -7,7 +7,10 @@ describe('getHeaderForHeight tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('getHeaderForHeightTests'))
+    if (!env.noMySQL)
+      ctxs.push(
+        await _tu.createLegacyWalletMySQLCopy('getHeaderForHeightTests')
+      )
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('getHeaderForHeightTests'))
   })
 
@@ -23,8 +26,13 @@ describe('getHeaderForHeight tests', () => {
         await wallet.getHeaderForHeight({ height: -1 })
         throw new Error('Expected error was not thrown')
       } catch (e) {
-        const errorMessage = typeof e === 'object' && e !== null && 'message' in e ? (e as Error).message : String(e)
-        expect(errorMessage).toMatch(/Height -1 must be a non-negative integer/i)
+        const errorMessage =
+          typeof e === 'object' && e !== null && 'message' in e
+            ? (e as Error).message
+            : String(e)
+        expect(errorMessage).toMatch(
+          /Height -1 must be a non-negative integer/i
+        )
       }
     }
   })
@@ -49,7 +57,10 @@ describe('getHeaderForHeight tests', () => {
         await wallet.getHeaderForHeight({ height: invalidHeight })
         throw new Error('Expected error was not thrown')
       } catch (e) {
-        const errorMessage = typeof e === 'object' && e !== null && 'message' in e ? (e as Error).message : String(e)
+        const errorMessage =
+          typeof e === 'object' && e !== null && 'message' in e
+            ? (e as Error).message
+            : String(e)
         expect(errorMessage).toMatch(/error|not found/i)
       }
     }

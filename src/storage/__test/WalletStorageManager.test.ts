@@ -1,6 +1,9 @@
 import * as bsv from '@bsv/sdk'
 import { StorageKnex, wait, WalletStorageManager } from '../..'
-import { _tu, TestWalletNoSetup } from '../../../test/utils/TestUtilsWalletStorage'
+import {
+  _tu,
+  TestWalletNoSetup
+} from '../../../test/utils/TestUtilsWalletStorage'
 
 import * as dotenv from 'dotenv'
 
@@ -12,8 +15,13 @@ describe('WalletStorageManager tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('walletStorageManagerTestSource'))
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('walletStorageManagerTestSource'))
+    if (!env.noMySQL)
+      ctxs.push(
+        await _tu.createLegacyWalletMySQLCopy('walletStorageManagerTestSource')
+      )
+    ctxs.push(
+      await _tu.createLegacyWalletSQLiteCopy('walletStorageManagerTestSource')
+    )
   })
 
   afterAll(async () => {
@@ -27,7 +35,9 @@ describe('WalletStorageManager tests', () => {
   const fredsAddress = kp.address
 
   test('1_runAsReader runAsWriter runAsSync interlock correctly', async () => {
-    const { storage } = await _tu.createSQLiteTestSetup1Wallet({ databaseName: 'syncTest1' })
+    const { storage } = await _tu.createSQLiteTestSetup1Wallet({
+      databaseName: 'syncTest1'
+    })
 
     interface Result {
       i: Number
@@ -94,7 +104,13 @@ describe('WalletStorageManager tests', () => {
 
     let log = ''
     for (const r of result) {
-      const overlaps = result.filter(r2 => r2.i != r.i && (r2.t != 'reader' || r.t != 'reader') && r.start > r2.start && r.start < r2.end)
+      const overlaps = result.filter(
+        r2 =>
+          r2.i != r.i &&
+          (r2.t != 'reader' || r.t != 'reader') &&
+          r.start > r2.start &&
+          r.start < r2.end
+      )
       if (overlaps.length > 0) {
         log += `${r.i} ${r.t} ${r.start} overlaps:\n`
         for (const o of overlaps) log += `  ${o.i} ${o.t} ${o.start} ${o.end}\n`
@@ -110,7 +126,9 @@ describe('WalletStorageManager tests', () => {
   })
 
   test('1a_runAsReader runAsWriter runAsSync interlock correctly with low durations', async () => {
-    const { storage } = await _tu.createSQLiteTestSetup1Wallet({ databaseName: 'syncTest1a' })
+    const { storage } = await _tu.createSQLiteTestSetup1Wallet({
+      databaseName: 'syncTest1a'
+    })
 
     interface Result {
       i: Number
@@ -177,7 +195,13 @@ describe('WalletStorageManager tests', () => {
 
     let log = ''
     for (const r of result) {
-      const overlaps = result.filter(r2 => r2.i != r.i && (r2.t != 'reader' || r.t != 'reader') && r.start > r2.start && r.start < r2.end)
+      const overlaps = result.filter(
+        r2 =>
+          r2.i != r.i &&
+          (r2.t != 'reader' || r.t != 'reader') &&
+          r.start > r2.start &&
+          r.start < r2.end
+      )
       if (overlaps.length > 0) {
         log += `${r.i} ${r.t} ${r.start} overlaps:\n`
         for (const o of overlaps) log += `  ${o.i} ${o.t} ${o.start} ${o.end}\n`
@@ -194,14 +218,24 @@ describe('WalletStorageManager tests', () => {
 
   test.skip('2_TODOTONE - AtomicBEEF error', async () => {
     for (const { wallet } of ctxs) {
-      const fred = await _tu.createSQLiteTestWallet({ chain: 'test', databaseName: 'syncTest2Fred', rootKeyHex: '2'.repeat(64), dropAll: true })
+      const fred = await _tu.createSQLiteTestWallet({
+        chain: 'test',
+        databaseName: 'syncTest2Fred',
+        rootKeyHex: '2'.repeat(64),
+        dropAll: true
+      })
       const promises: Promise<number>[] = []
       const result: { i: number; r: any }[] = []
       const crs1: bsv.CreateActionResult[] = []
       /*** maxI = 6 test PASS ***/
       const maxI = 7
 
-      const makeWriter2 = async (fred: TestWalletNoSetup, cr: bsv.CreateActionResult, i: number, result: { i: number; r: any }[]): Promise<number> => {
+      const makeWriter2 = async (
+        fred: TestWalletNoSetup,
+        cr: bsv.CreateActionResult,
+        i: number,
+        result: { i: number; r: any }[]
+      ): Promise<number> => {
         logger(`writer${i}`)
         const internalizeArgs: bsv.InternalizeActionArgs = {
           tx: cr.tx!,
@@ -227,7 +261,13 @@ describe('WalletStorageManager tests', () => {
       for (let i = 0; i < maxI; i++) {
         const createArgs: bsv.CreateActionArgs = {
           description: `${kp.address} of ${root}`,
-          outputs: [{ satoshis: 1, lockingScript: _tu.getLockP2PKH(fredsAddress).toHex(), outputDescription: 'pay fred' }],
+          outputs: [
+            {
+              satoshis: 1,
+              lockingScript: _tu.getLockP2PKH(fredsAddress).toHex(),
+              outputDescription: 'pay fred'
+            }
+          ],
           options: {
             returnTXIDOnly: false,
             randomizeOutputs: false,
@@ -240,7 +280,8 @@ describe('WalletStorageManager tests', () => {
         crs1.push(cr)
       }
       let j = 0
-      for (let i = 0; i < maxI; i++) promises.push(makeWriter2(fred, crs1[j++], i, result))
+      for (let i = 0; i < maxI; i++)
+        promises.push(makeWriter2(fred, crs1[j++], i, result))
       await Promise.all(promises)
       expect(result).toBeTruthy()
     }

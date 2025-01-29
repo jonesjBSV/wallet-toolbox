@@ -20,7 +20,7 @@
     "test": "jest --testPathIgnorePatterns=man.test.ts",
     "test:watch": "jest --testPathIgnorePatterns=man.test.ts --watch",
     "test:coverage": "jest --testPathIgnorePatterns=man.test.ts --coverage",
-    "lint": "prettier --write src/**/*.ts --loglevel silent",
+    "lint": "prettier --write 'src/**/*.ts' --write 'test/**/*.ts' --loglevel silent",
     "build": "tsc --build",
     "prepublish": "npm run lint && npm run build && npm run doc",
     "doc": "ts2md"

@@ -1,6 +1,11 @@
 import { ListActionsArgs } from '@bsv/sdk'
 import { sdk, StorageProvider } from '../../../src/index.client'
-import { _tu, expectToThrowWERR, TestSetup1, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import {
+  _tu,
+  expectToThrowWERR,
+  TestSetup1,
+  TestWalletNoSetup
+} from '../../utils/TestUtilsWalletStorage'
 
 describe('listActions tests', () => {
   jest.setTimeout(99999999)
@@ -35,7 +40,9 @@ describe('listActions tests', () => {
       ]
 
       for (const args of invalidArgs) {
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.listActions(args))
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
+          wallet.listActions(args)
+        )
       }
     }
   })

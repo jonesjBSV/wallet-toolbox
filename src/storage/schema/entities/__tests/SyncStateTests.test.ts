@@ -1,6 +1,9 @@
 import { SyncState } from '../../../../../src/storage/schema/entities/SyncState'
 import { entity, table, sdk } from '../../../../../src'
-import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import {
+  TestUtilsWalletStorage as _tu,
+  TestWalletNoSetup
+} from '../../../../../test/utils/TestUtilsWalletStorage'
 
 describe('SyncState class method tests', () => {
   jest.setTimeout(99999999)
@@ -202,7 +205,11 @@ describe('SyncState class method tests', () => {
       toStorageIdentityKey: 'toKey'
     }
 
-    const result = await syncState.processSyncChunk(ctx.activeStorage, args, chunk)
+    const result = await syncState.processSyncChunk(
+      ctx.activeStorage,
+      args,
+      chunk
+    )
 
     expect(result.done).toBe(true)
     expect(result.updates).toBe(0)
@@ -265,8 +272,16 @@ describe('SyncState class method tests', () => {
     const syncState = new SyncState()
 
     // Test apiErrorLocal and apiErrorOther
-    syncState.errorLocal = { code: 'test_code', description: 'test_description', stack: 'test_stack' }
-    syncState.errorOther = { code: 'test_code2', description: 'test_description2', stack: 'test_stack2' }
+    syncState.errorLocal = {
+      code: 'test_code',
+      description: 'test_description',
+      stack: 'test_stack'
+    }
+    syncState.errorOther = {
+      code: 'test_code2',
+      description: 'test_description2',
+      stack: 'test_stack2'
+    }
     expect(syncState.apiErrorLocal).toBe(JSON.stringify(syncState.errorLocal))
     expect(syncState.apiErrorOther).toBe(JSON.stringify(syncState.errorOther))
 
@@ -324,7 +339,9 @@ describe('SyncState class method tests', () => {
       commission: { idMap: {}, entityName: 'commission', count: 0 }
     }
 
-    await expect(syncState.mergeNew(mockStorage, 1, syncMap, undefined)).resolves.toBeUndefined()
+    await expect(
+      syncState.mergeNew(mockStorage, 1, syncMap, undefined)
+    ).resolves.toBeUndefined()
   })
 
   // Test: mergeExisting method (always returns false)
@@ -347,7 +364,13 @@ describe('SyncState class method tests', () => {
       commission: { idMap: {}, entityName: 'commission', count: 0 }
     }
 
-    const result = await syncState.mergeExisting(mockStorage, new Date(), {} as table.SyncState, syncMap, undefined)
+    const result = await syncState.mergeExisting(
+      mockStorage,
+      new Date(),
+      {} as table.SyncState,
+      syncMap,
+      undefined
+    )
     expect(result).toBe(false)
   })
 })

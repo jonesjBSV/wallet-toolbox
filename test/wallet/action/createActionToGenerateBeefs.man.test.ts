@@ -2,7 +2,16 @@
 import * as bsv from '@bsv/sdk'
 import { sdk, StorageKnex, table, Wallet } from '../../../src/index.all'
 
-import { _tu, expectToThrowWERR, logTransaction, TestKeyPair, TestWalletNoSetup, cleanUnsentTransactionsUsingAbort, cleanUnsignedTransactionsUsingAbort, cleanUnprocessedTransactionsUsingAbort } from '../../utils/TestUtilsWalletStorage'
+import {
+  _tu,
+  expectToThrowWERR,
+  logTransaction,
+  TestKeyPair,
+  TestWalletNoSetup,
+  cleanUnsentTransactionsUsingAbort,
+  cleanUnsignedTransactionsUsingAbort,
+  cleanUnprocessedTransactionsUsingAbort
+} from '../../utils/TestUtilsWalletStorage'
 
 describe('createActionToGenerateBeefs test', () => {
   jest.setTimeout(99999999)
@@ -13,14 +22,18 @@ describe('createActionToGenerateBeefs test', () => {
     ctxs.push(await _tu.createLiveWalletSQLiteWARNING())
     for (const { services } of ctxs) {
       // Mock the services postBeef to avoid actually broadcasting new transactions and collect beef data.
-      services.postBeef = jest.fn().mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
-        const r: sdk.PostBeefResult = {
-          name: 'mock',
-          status: 'success',
-          txidResults: txids.map(txid => ({ txid, status: 'success' }))
-        }
-        return Promise.resolve([r])
-      })
+      services.postBeef = jest
+        .fn()
+        .mockImplementation(
+          (beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+            const r: sdk.PostBeefResult = {
+              name: 'mock',
+              status: 'success',
+              txidResults: txids.map(txid => ({ txid, status: 'success' }))
+            }
+            return Promise.resolve([r])
+          }
+        )
     }
   })
 
@@ -123,7 +136,8 @@ describe('createActionToGenerateBeefs test', () => {
 
   test('3_test tranaction log', async () => {
     for (const { activeStorage: storage } of ctxs) {
-      const txid: bsv.HexString = 'ed11e4b7402e38bac0ec7431063ae7c14ee82370e5f1963d48ae27a70527f784'
+      const txid: bsv.HexString =
+        'ed11e4b7402e38bac0ec7431063ae7c14ee82370e5f1963d48ae27a70527f784'
       const rl = await logTransaction(storage, txid)
       console.log(rl)
       break
@@ -162,7 +176,11 @@ describe('createActionToGenerateBeefs test', () => {
   })
 })
 
-async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): Promise<{ txidPair: bsv.TXIDHexString[]; Beef: bsv.Beef }> {
+async function createAndConsume(
+  wallet: Wallet,
+  root: string,
+  kp: TestKeyPair
+): Promise<{ txidPair: bsv.TXIDHexString[]; Beef: bsv.Beef }> {
   let txid1: bsv.TXIDHexString
   let txid2: bsv.TXIDHexString
   const outputSatoshis = 42
@@ -172,7 +190,13 @@ async function createAndConsume(wallet: Wallet, root: string, kp: TestKeyPair): 
   {
     const createArgs: bsv.CreateActionArgs = {
       description: `${kp.address} of ${root}`,
-      outputs: [{ satoshis: outputSatoshis, lockingScript: _tu.getLockP2PKH(kp.address).toHex(), outputDescription: 'pay fred' }],
+      outputs: [
+        {
+          satoshis: outputSatoshis,
+          lockingScript: _tu.getLockP2PKH(kp.address).toHex(),
+          outputDescription: 'pay fred'
+        }
+      ],
       options: {
         randomizeOutputs: false,
         signAndProcess: false,

@@ -1,31 +1,35 @@
-import { Monitor } from '../Monitor';
-import { WalletMonitorTask } from './WalletMonitorTask';
-
+import { Monitor } from '../Monitor'
+import { WalletMonitorTask } from './WalletMonitorTask'
 
 export class TaskClock extends WalletMonitorTask {
-    static taskName = 'Clock';
-    nextMinute: number
+  static taskName = 'Clock'
+  nextMinute: number
 
-    constructor(monitor: Monitor, public triggerMsecs = 1 * monitor.oneSecond) {
-        super(monitor, TaskClock.taskName);
-        this.nextMinute = this.getNextMinute()
-    }
+  constructor(
+    monitor: Monitor,
+    public triggerMsecs = 1 * monitor.oneSecond
+  ) {
+    super(monitor, TaskClock.taskName)
+    this.nextMinute = this.getNextMinute()
+  }
 
-    trigger(nowMsecsSinceEpoch: number): { run: boolean; } {
-        const s = this.storage;
+  trigger(nowMsecsSinceEpoch: number): { run: boolean } {
+    const s = this.storage
 
-        const run = Date.now() > this.nextMinute
+    const run = Date.now() > this.nextMinute
 
-        return { run };
-    }
+    return { run }
+  }
 
-    async runTask(): Promise<string> {
-        const log = `${new Date(this.nextMinute).toISOString()}`
-        this.nextMinute = this.getNextMinute()
-        return log
-    }
+  async runTask(): Promise<string> {
+    const log = `${new Date(this.nextMinute).toISOString()}`
+    this.nextMinute = this.getNextMinute()
+    return log
+  }
 
-    getNextMinute() : number {
-        return Math.ceil(Date.now() / this.monitor.oneMinute) * this.monitor.oneMinute 
-    }
+  getNextMinute(): number {
+    return (
+      Math.ceil(Date.now() / this.monitor.oneMinute) * this.monitor.oneMinute
+    )
+  }
 }

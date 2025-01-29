@@ -1,15 +1,30 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Beef, Transaction as BsvTransaction, SignActionResult, SignActionSpend } from '@bsv/sdk'
-import { asBsvSdkScript, PendingSignAction, ScriptTemplateSABPPP, sdk, Wallet } from "../../index.client"
+import {
+  Beef,
+  Transaction as BsvTransaction,
+  SignActionResult,
+  SignActionSpend
+} from '@bsv/sdk'
+import {
+  asBsvSdkScript,
+  PendingSignAction,
+  ScriptTemplateSABPPP,
+  sdk,
+  Wallet
+} from '../../index.client'
 import { processAction } from './createAction'
 
-export async function signAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs)
-: Promise<SignActionResult>
-{
+export async function signAction(
+  wallet: Wallet,
+  auth: sdk.AuthId,
+  vargs: sdk.ValidSignActionArgs
+): Promise<SignActionResult> {
   const prior = wallet.pendingSignActions[vargs.reference]
   if (!prior)
-    throw new sdk.WERR_NOT_IMPLEMENTED('recovery of out-of-session signAction reference data is not yet implemented.')
+    throw new sdk.WERR_NOT_IMPLEMENTED(
+      'recovery of out-of-session signAction reference data is not yet implemented.'
+    )
   if (!prior.dcr.inputBeef)
     throw new sdk.WERR_INTERNAL('prior.dcr.inputBeef must be valid')
 
@@ -19,16 +34,20 @@ export async function signAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.Va
 
   const r: SignActionResult = {
     txid: prior.tx.id('hex'),
-    tx: vargs.options.returnTXIDOnly ? undefined : makeAtomicBeef(prior.tx, prior.dcr.inputBeef),
+    tx: vargs.options.returnTXIDOnly
+      ? undefined
+      : makeAtomicBeef(prior.tx, prior.dcr.inputBeef),
     sendWithResults
   }
 
   return r
 }
 
-export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef) : number[] {
-  if (Array.isArray(beef))
-    beef = Beef.fromBinary(beef)
+export function makeAtomicBeef(
+  tx: BsvTransaction,
+  beef: number[] | Beef
+): number[] {
+  if (Array.isArray(beef)) beef = Beef.fromBinary(beef)
   beef.mergeTransaction(tx)
   return beef.toBinaryAtomic(tx.id('hex'))
 }
@@ -36,11 +55,8 @@ export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef) : numb
 export async function completeSignedTransaction(
   prior: PendingSignAction,
   spends: Record<number, SignActionSpend>,
-  wallet: Wallet,
-)
-: Promise<BsvTransaction>
-{
-
+  wallet: Wallet
+): Promise<BsvTransaction> {
   /////////////////////
   // Insert the user provided unlocking scripts from "spends" arg
   /////////////////////
@@ -48,10 +64,21 @@ export async function completeSignedTransaction(
     const vin = Number(key)
     const createInput = prior.args.inputs[vin]
     const input = prior.tx.inputs[vin]
-    if (!createInput || !input || createInput.unlockingScript || !Number.isInteger(createInput.unlockingScriptLength))
-      throw new sdk.WERR_INVALID_PARAMETER('args', `spend does not correspond to prior input with valid unlockingScriptLength.`)
+    if (
+      !createInput ||
+      !input ||
+      createInput.unlockingScript ||
+      !Number.isInteger(createInput.unlockingScriptLength)
+    )
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'args',
+        `spend does not correspond to prior input with valid unlockingScriptLength.`
+      )
     if (spend.unlockingScript.length / 2 > createInput.unlockingScriptLength!)
-      throw new sdk.WERR_INVALID_PARAMETER('args', `spend unlockingScript length ${spend.unlockingScript.length} exceeds expected length ${createInput.unlockingScriptLength}`)
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'args',
+        `spend unlockingScript length ${spend.unlockingScript.length} exceeds expected length ${createInput.unlockingScriptLength}`
+      )
     input.unlockingScript = asBsvSdkScript(spend.unlockingScript)
     if (spend.sequenceNumber !== undefined)
       input.sequence = spend.sequenceNumber
@@ -75,7 +102,12 @@ export async function completeSignedTransaction(
     const unlockerPubKey = pdi.unlockerPubKey || keys.publicKey
     const sourceSatoshis = pdi.sourceSatoshis
     const lockingScript = asBsvSdkScript(pdi.lockingScript)
-    const unlockTemplate = sabppp.unlock(lockerPrivKey, unlockerPubKey, sourceSatoshis, lockingScript)
+    const unlockTemplate = sabppp.unlock(
+      lockerPrivKey,
+      unlockerPubKey,
+      sourceSatoshis,
+      lockingScript
+    )
     const input = prior.tx.inputs[pdi.vin]
     input.unlockingScriptTemplate = unlockTemplate
   }
@@ -84,6 +116,6 @@ export async function completeSignedTransaction(
   // Sign wallet signed inputs making transaction fully valid.
   /////////////////////
   await prior.tx.sign()
-  
+
   return prior.tx
 }

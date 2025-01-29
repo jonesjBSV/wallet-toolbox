@@ -5,9 +5,7 @@ export async function acquireDirectCertificate(
   wallet: Wallet,
   auth: sdk.AuthId,
   vargs: sdk.ValidAcquireDirectCertificateArgs
-)
-: Promise<AcquireCertificateResult>
-{
+): Promise<AcquireCertificateResult> {
   const now = new Date()
   const newCert: table.CertificateX = {
     certificateId: 0, // replaced by storage insert
@@ -16,7 +14,10 @@ export async function acquireDirectCertificate(
     userId: auth.userId!,
     type: vargs.type,
     subject: vargs.subject,
-    verifier: vargs.keyringRevealer === 'certifier' ? vargs.certifier : vargs.keyringRevealer,
+    verifier:
+      vargs.keyringRevealer === 'certifier'
+        ? vargs.certifier
+        : vargs.keyringRevealer,
     serialNumber: vargs.serialNumber,
     certifier: vargs.certifier,
     revocationOutpoint: vargs.revocationOutpoint,
