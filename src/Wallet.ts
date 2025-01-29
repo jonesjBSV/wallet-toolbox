@@ -331,6 +331,7 @@ export class Wallet implements WalletInterface {
       const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateAcquireIssuanceCertificateArgs)
       // Create a random nonce that the server can verify
       const clientNonce = await createNonce(this, vargs.certifier)
+      // TODO: Consider adding support to request certificates from a certifier before acquiring a certificate. 
       const authClient = new AuthFetch(this)
 
       // Create a certificate master keyring
