@@ -6433,7 +6433,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 Helper function.
 
 ```ts
-export function verifyOneOrNone<T>(results: T[]): (T | undefined) 
+export function verifyOneOrNone<T>(results: T[]): T | undefined 
 ```
 
 <details>

@@ -91,7 +91,7 @@ For a more detailed tutorial and advanced examples, check our [Documentation](#d
 
 ## Documentation
 
-[The Docs](https://bitcoin-sv.github.io/wallet-storage) are available here on Github pages.  
+[The Docs](https://bitcoin-sv.github.io/wallet-toolbox) are available here on Github pages.  
 [Example code](https://docs.bsvblockchain.org/guides/sdks/ts/examples) is available over on our gitbook.  
 
 The Toolbox is richly documented with code-level annotations. This should show up well within editors like VSCode.  
