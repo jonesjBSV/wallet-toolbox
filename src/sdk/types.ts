@@ -2,14 +2,14 @@
  * Identifies a unique transaction output by its `txid` and index `vout`
  */
 export interface OutPoint {
-   /**
-    * Transaction double sha256 hash as big endian hex string
-    */
-   txid: string
-   /**
-    * zero based output index within the transaction
-    */
-   vout: number
+  /**
+   * Transaction double sha256 hash as big endian hex string
+   */
+  txid: string
+  /**
+   * zero based output index within the transaction
+   */
+  vout: number
 }
 
 export type Chain = 'main' | 'test'
@@ -22,7 +22,7 @@ export type Chain = 'main' | 'test'
  * unprocessed: indicates req is about to be posted to network by non-acceptDelayedBroadcast application code, after posting status is normally advanced to 'sending'
  *
  * unsent: rawTx has not yet been sent to the network for processing. req is queued for delayed processing.
- * 
+ *
  * sending: At least one attempt to send rawTx to transaction processors has occured without confirmation of acceptance.
  *
  * unknown: rawTx status is unknown but is believed to have been previously sent to the network.
@@ -32,7 +32,7 @@ export type Chain = 'main' | 'test'
  * unknown: Last status update received did not recognize txid or wasn't understood.
  *
  * nonfinal: rawTx has an un-expired nLockTime and is eligible for continuous updating by new transactions with additional outputs and incrementing sequence numbers.
- * 
+ *
  * unmined: Last attempt has txid waiting to be mined, possibly just sent without callback
  *
  * callback: Waiting for proof confirmation callback from transaction processor.
@@ -48,25 +48,49 @@ export type Chain = 'main' | 'test'
  * completed: proven_txs record added, and notifications are complete.
  */
 export type ProvenTxReqStatus =
-   'sending' | 'unsent' | 'nosend' | 'unknown' | 'nonfinal' | 'unprocessed' |
-   'unmined' | 'callback' | 'unconfirmed' |
-   'completed' | 'invalid' | 'doubleSpend'
+  | 'sending'
+  | 'unsent'
+  | 'nosend'
+  | 'unknown'
+  | 'nonfinal'
+  | 'unprocessed'
+  | 'unmined'
+  | 'callback'
+  | 'unconfirmed'
+  | 'completed'
+  | 'invalid'
+  | 'doubleSpend'
 
 export const ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = [
-   'completed', 'invalid', 'doubleSpend'
+  'completed',
+  'invalid',
+  'doubleSpend'
 ]
 
 export const ProvenTxReqNonTerminalStatus: ProvenTxReqStatus[] = [
-   'sending', 'unsent', 'nosend', 'unknown', 'nonfinal', 'unprocessed',
-   'unmined', 'callback', 'unconfirmed'
+  'sending',
+  'unsent',
+  'nosend',
+  'unknown',
+  'nonfinal',
+  'unprocessed',
+  'unmined',
+  'callback',
+  'unconfirmed'
 ]
 
 export type TransactionStatus =
-   'completed' | 'failed' | 'unprocessed' | 'sending' | 'unproven' | 'unsigned' | 'nosend'
+  | 'completed'
+  | 'failed'
+  | 'unprocessed'
+  | 'sending'
+  | 'unproven'
+  | 'unsigned'
+  | 'nosend'
 
 export interface Paged {
-    limit: number
-    offset?: number
+  limit: number
+  offset?: number
 }
 
 export interface KeyPair {
@@ -75,17 +99,17 @@ export interface KeyPair {
 }
 
 export interface StorageIdentity {
-   /**
-    * The identity key (public key) assigned to this storage
-    */
-   storageIdentityKey: string
-   /**
-    * The human readable name assigned to this storage.
-    */
-   storageName: string
+  /**
+   * The identity key (public key) assigned to this storage
+   */
+  storageIdentityKey: string
+  /**
+   * The human readable name assigned to this storage.
+   */
+  storageName: string
 }
 
 export interface EntityTimeStamp {
-    created_at: Date
-    updated_at: Date
+  created_at: Date
+  updated_at: Date
 }
