@@ -627,7 +627,9 @@ export abstract class StorageProvider
         }
       })
     )
-    return await this.updateCertificate(cert.certificateId, { isDeleted: true })
+    return await this.updateCertificate(cert.certificateId, {
+      isDeleted: true
+    })
   }
 
   async relinquishOutput(

@@ -11,6 +11,9 @@ import {
   SignActionArgs,
   SignActionResult,
   Utils,
+  WalletAction,
+  WalletActionInput,
+  WalletActionOutput,
   WalletCertificate,
   WalletInterface
 } from '@bsv/sdk'
@@ -38,7 +41,7 @@ import { Knex, knex as makeKnex } from 'knex'
 import { Beef } from '@bsv/sdk'
 
 import * as dotenv from 'dotenv'
-import { PrivilegedKeyManager } from '../../src/sdk'
+import { PrivilegedKeyManager, TransactionStatus } from '../../src/sdk'
 dotenv.config()
 
 const localMySqlConnection = process.env.LOCAL_MYSQL_CONNECTION || ''
@@ -192,13 +195,7 @@ export abstract class TestUtilsWalletStorage {
     return unlock
   }
 
-  static async createWalletOnly(args: {
-    chain?: sdk.Chain
-    rootKeyHex?: string
-    active?: sdk.WalletStorageProvider
-    backups?: sdk.WalletStorageProvider[]
-    privKeyHex?: string
-  }): Promise<TestWalletOnly> {
+  static async createWalletOnly(args: { chain?: sdk.Chain; rootKeyHex?: string; active?: sdk.WalletStorageProvider; backups?: sdk.WalletStorageProvider[]; privKeyHex?: string }): Promise<TestWalletOnly> {
     args.chain ||= 'test'
     args.rootKeyHex ||= '1'.repeat(64)
     const rootKey = PrivateKey.fromHex(args.rootKeyHex)
@@ -368,14 +365,7 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
-  static async createSQLiteTestWallet(args: {
-    filePath?: string
-    databaseName: string
-    chain?: sdk.Chain
-    rootKeyHex?: string
-    dropAll?: boolean
-    privKeyHex?: string
-  }): Promise<TestWalletNoSetup> {
+  static async createSQLiteTestWallet(args: { filePath?: string; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean; privKeyHex?: string }): Promise<TestWalletNoSetup> {
     const localSQLiteFile = args.filePath || (await _tu.newTmpFile(`${args.databaseName}.sqlite`, false, false, true))
     return await this.createKnexTestWallet({
       ...args,
@@ -401,14 +391,7 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
-  static async createKnexTestWallet(args: {
-    knex: Knex<any, any[]>
-    databaseName: string
-    chain?: sdk.Chain
-    rootKeyHex?: string
-    dropAll?: boolean
-    privKeyHex?: string
-  }): Promise<TestWalletNoSetup> {
+  static async createKnexTestWallet(args: { knex: Knex<any, any[]>; databaseName: string; chain?: sdk.Chain; rootKeyHex?: string; dropAll?: boolean; privKeyHex?: string }): Promise<TestWalletNoSetup> {
     return await _tu.createKnexTestWalletWithSetup({
       ...args,
       insertSetup: insertEmptySetup
@@ -628,7 +611,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestOutputBasket(storage: StorageProvider, u?: table.User | number) {
+  static async insertTestOutputBasket(storage: StorageProvider, u?: table.User | number, partial?: Partial<table.OutputBasket>) {
     const now = new Date()
     if (typeof u === 'number') u = verifyOne(await storage.findUsers({ partial: { userId: u } }))
     u ||= await _tu.insertTestUser(storage)
@@ -640,13 +623,14 @@ export abstract class TestUtilsWalletStorage {
       name: randomBytesHex(6),
       numberOfDesiredUTXOs: 42,
       minimumDesiredUTXOValue: 1642,
-      isDeleted: false
+      isDeleted: false,
+      ...(partial || {})
     }
     await storage.insertOutputBasket(e)
     return e
   }
 
-  static async insertTestTransaction(storage: StorageProvider, u?: table.User, onlyRequired?: boolean) {
+  static async insertTestTransaction(storage: StorageProvider, u?: table.User, onlyRequired?: boolean, partial?: Partial<table.Transaction>) {
     const now = new Date()
     u ||= await _tu.insertTestUser(storage)
     const e: table.Transaction = {
@@ -665,13 +649,14 @@ export abstract class TestUtilsWalletStorage {
       lockTime: onlyRequired ? undefined : 500000000,
       txid: onlyRequired ? undefined : randomBytesHex(32),
       inputBEEF: onlyRequired ? undefined : new Beef().toBinary(),
-      rawTx: onlyRequired ? undefined : [1, 2, 3]
+      rawTx: onlyRequired ? undefined : [1, 2, 3],
+      ...(partial || {})
     }
     await storage.insertTransaction(e)
     return { tx: e, user: u }
   }
 
-  static async insertTestOutput(storage: StorageProvider, t: table.Transaction, vout: number, satoshis: number, basket?: table.OutputBasket, requiredOnly?: boolean) {
+  static async insertTestOutput(storage: StorageProvider, t: table.Transaction, vout: number, satoshis: number, basket?: table.OutputBasket, requiredOnly?: boolean, partial?: Partial<table.Output>) {
     const now = new Date()
     const e: table.Output = {
       created_at: now,
@@ -697,13 +682,14 @@ export abstract class TestUtilsWalletStorage {
       spendingDescription: requiredOnly ? undefined : randomBytesHex(16),
       scriptLength: requiredOnly ? undefined : 36,
       scriptOffset: requiredOnly ? undefined : 12,
-      lockingScript: requiredOnly ? undefined : asArray(randomBytesHex(36))
+      lockingScript: requiredOnly ? undefined : asArray(randomBytesHex(36)),
+      ...(partial || {})
     }
     await storage.insertOutput(e)
     return e
   }
 
-  static async insertTestOutputTag(storage: StorageProvider, u: table.User) {
+  static async insertTestOutputTag(storage: StorageProvider, u: table.User, partial?: Partial<table.OutputTag>) {
     const now = new Date()
     const e: table.OutputTag = {
       created_at: now,
@@ -711,7 +697,8 @@ export abstract class TestUtilsWalletStorage {
       outputTagId: 0,
       userId: u.userId,
       tag: randomBytesHex(6),
-      isDeleted: false
+      isDeleted: false,
+      ...(partial || {})
     }
     await storage.insertOutputTag(e)
     return e
@@ -730,7 +717,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestTxLabel(storage: StorageProvider, u: table.User) {
+  static async insertTestTxLabel(storage: StorageProvider, u: table.User, partial?: Partial<table.TxLabel>) {
     const now = new Date()
     const e: table.TxLabel = {
       created_at: now,
@@ -738,20 +725,22 @@ export abstract class TestUtilsWalletStorage {
       txLabelId: 0,
       userId: u.userId,
       label: randomBytesHex(6),
-      isDeleted: false
+      isDeleted: false,
+      ...(partial || {})
     }
     await storage.insertTxLabel(e)
     return e
   }
 
-  static async insertTestTxLabelMap(storage: StorageProvider, tx: table.Transaction, label: table.TxLabel) {
+  static async insertTestTxLabelMap(storage: StorageProvider, tx: table.Transaction, label: table.TxLabel, partial?: Partial<table.TxLabelMap>) {
     const now = new Date()
     const e: table.TxLabelMap = {
       created_at: now,
       updated_at: now,
       txLabelId: label.txLabelId,
       transactionId: tx.transactionId,
-      isDeleted: false
+      isDeleted: false,
+      ...(partial || {})
     }
     await storage.insertTxLabelMap(e)
     return e
@@ -888,73 +877,54 @@ export abstract class TestUtilsWalletStorage {
     }
   }
 
-  static async createTestSetup2(
-    storage: StorageProvider,
-    u1IdentityKey?: string,
-    tx1?: Partial<table.Transaction>,
-    o1?: Partial<table.Output>,
-    b1?: Partial<table.OutputBasket>,
-    l1?: Partial<table.TxLabel>,
-    lm1?: Partial<table.TxLabelMap>,
-    t1?: Partial<table.OutputTag>,
-    tm1?: Partial<table.OutputTagMap>
-  ): Promise<TestSetup2> {
-    const u1userId = 1
+  static async createTestSetup2(storage: StorageProvider, u1IdentityKey: string, mockData: MockData = { actions: [] }): Promise<TestSetup2> {
+    if (!mockData || !mockData.actions) {
+      throw new Error('mockData.actions is required')
+    }
+
     const now = new Date()
-    const created_at = now
-    const updated_at = now
-    const u1 = storage.insertUser({ created_at, updated_at, userId: u1userId, identityKey: u1IdentityKey! })
-    const u1tx1 = storage.insertTransaction({
-      created_at: now,
-      updated_at: now,
-      transactionId: tx1?.transactionId!,
-      userId: u1userId,
-      status: tx1?.status!,
-      reference: tx1?.reference!,
-      isOutgoing: tx1?.isOutgoing!,
-      satoshis: tx1?.satoshis!,
-      description: tx1?.description!
-    })
-    const u1o1b1 = await storage.insertOutputBasket({
-      created_at: now,
-      updated_at: now,
-      basketId: b1?.basketId!,
-      userId: u1userId,
-      name: b1?.name!,
-      numberOfDesiredUTXOs: 0,
-      minimumDesiredUTXOValue: 0,
-      isDeleted: false
-    })
-    const u1tx1l1 = await storage.insertTxLabel({
-      created_at: now,
-      updated_at: now,
-      txLabelId: l1?.txLabelId!,
-      userId: u1userId,
-      label: l1?.label!,
-      isDeleted: false
-    })
-    const u1tx1lm1 = await storage.insertTxLabelMap({
-      created_at: now,
-      updated_at: now,
-      txLabelId: lm1?.txLabelId!,
-      isDeleted: false,
-      transactionId: tx1?.transactionId!
-    })
-    const u1tx1t1 = await storage.insertOutputTag({
-      created_at: now,
-      updated_at: now,
-      outputTagId: t1?.outputTagId!,
-      userId: u1userId,
-      tag: t1?.tag!,
-      isDeleted: false
-    })
-    const u1tx1tm1 = await storage.insertOutputTagMap({
-      created_at: now,
-      updated_at: now,
-      outputTagId: tm1?.outputTagId!,
-      isDeleted: false,
-      outputId: o1?.outputId!
-    })
+
+    // loop through original mock data and generate correct table rows to comply with contraints(unique/foreign)
+    // WIP working for simple case
+    for (const action of mockData.actions) {
+      const user = await _tu.insertTestUser(storage, u1IdentityKey)
+      const { tx: transaction } = await _tu.insertTestTransaction(storage, user, false, {
+        txid: action.txid,
+        satoshis: action.satoshis,
+        status: action.status as TransactionStatus,
+        description: action.description,
+        lockTime: action.lockTime,
+        version: action.version
+      })
+      if (action.labels) {
+        for (const label of action.labels) {
+          const l = await _tu.insertTestTxLabel(storage, user, {
+            label,
+            isDeleted: false,
+            created_at: now,
+            updated_at: now,
+            txLabelId: 0,
+            userId: user.userId
+          })
+          await _tu.insertTestTxLabelMap(storage, transaction, l)
+        }
+      }
+      if (action.outputs) {
+        for (const output of action.outputs) {
+          const basket = await _tu.insertTestOutputBasket(storage, user, { name: output.basket })
+          const insertedOutput = await _tu.insertTestOutput(storage, transaction, output.outputIndex, output.satoshis, basket, false, {
+            outputDescription: output.outputDescription,
+            spendable: output.spendable
+          })
+          if (output.tags) {
+            for (const tag of output.tags) {
+              const outputTag = await _tu.insertTestOutputTag(storage, user, { tag })
+              await _tu.insertTestOutputTagMap(storage, insertedOutput, outputTag)
+            }
+          }
+        }
+      }
+    }
 
     return {}
   }
@@ -1021,6 +991,12 @@ export interface TestSetup1 {
   req2: table.ProvenTxReq
 
   we1: table.MonitorEvent
+}
+
+export interface MockData {
+  inputs?: WalletActionInput[]
+  outputs?: WalletActionOutput[]
+  actions: WalletAction[]
 }
 
 export interface TestSetup2 {}
@@ -1166,18 +1142,18 @@ export const verifyValues = (targetObject: Record<string, any>, testValues: Reco
 }
 
 /**
- * Comparison function to validate update time.
- * Allows the time to match the expected update time or be greater than a reference time.
- * Validates across multiple formats with a tolerance for minor discrepancies.
- * @param {Date} actualTime - The `updated_at` time returned from the storage.
- * @param {Date} expectedTime - The time you tried to set.
- * @param {Date} referenceTime - A timestamp captured just before the update attempt.
- * @param {number} toleranceMs - Optional tolerance in milliseconds for discrepancies (default: 10ms).
- * @param {boolean} [ logEnabled=false ] - A flag to enable or disable logging for this error.
-
- * @returns {boolean} - Returns `true` if the validation passes; `false` otherwise.
- * Logs human-readable details if the validation fails.
- */
+   * Comparison function to validate update time.
+   * Allows the time to match the expected update time or be greater than a reference time.
+   * Validates across multiple formats with a tolerance for minor discrepancies.
+   * @param {Date} actualTime - The `updated_at` time returned from the storage.
+   * @param {Date} expectedTime - The time you tried to set.
+   * @param {Date} referenceTime - A timestamp captured just before the update attempt.
+   * @param {number} toleranceMs - Optional tolerance in milliseconds for discrepancies (default: 10ms).
+   * @param {boolean} [ logEnabled=false ] - A flag to enable or disable logging for this error.
+  
+   * @returns {boolean} - Returns `true` if the validation passes; `false` otherwise.
+   * Logs human-readable details if the validation fails.
+   */
 export const validateUpdateTime = (actualTime: Date, expectedTime: Date, referenceTime: Date, toleranceMs: number = 10, logEnabled: boolean = false): boolean => {
   const actualTimestamp = actualTime.getTime()
   const expectedTimestamp = expectedTime.getTime()
@@ -1385,7 +1361,16 @@ export const triggerUniqueConstraintError = async (
  *
  * @example await triggerForeignKeyConstraintError(storage, 'findProvenTxReqs', 'updateProvenTxReq', 'proven_tx_reqs', 'provenTxId', { provenTxId: 42 })
  */
-export const triggerForeignKeyConstraintError = async (storage: any, findMethod: string, updateMethod: string, tableName: string, columnName: string, invalidValue: any, id: number = 1, logEnabled: boolean = false): Promise<boolean> => {
+export const triggerForeignKeyConstraintError = async (
+  storage: any,
+  findMethod: string,
+  updateMethod: string,
+  tableName: string,
+  columnName: string,
+  invalidValue: any,
+  id: number = 1,
+  logEnabled: boolean = false
+): Promise<boolean> => {
   // Set logging state based on the argument
   setLogging(logEnabled)
 
@@ -1417,6 +1402,65 @@ export const triggerForeignKeyConstraintError = async (storage: any, findMethod:
   }
 }
 
+/**
+ * Aborts all transactions with a specific status in the storage and asserts they are aborted.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @param {sdk.TransactionStatus} status - The transaction status used to filter transactions.
+ * @returns {Promise<boolean>} - Resolves to `true` if all matching transactions were successfully aborted.
+ */
+async function cleanTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex, status: sdk.TransactionStatus): Promise<boolean> {
+  const transactions = await storage.findTransactions({ partial: { status } })
+
+  await Promise.all(
+    transactions.map(async transaction => {
+      const result = await wallet.abortAction({ reference: transaction.reference })
+      expect(result.aborted).toBe(true)
+    })
+  )
+
+  return true
+}
+
+/**
+ * Aborts all transactions with the status `'nosend'` in the storage and verifies success.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @returns {Promise<boolean>} - Resolves to `true` if all `'nosend'` transactions were successfully aborted.
+ */
+export async function cleanUnsentTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
+  const result = await cleanTransactionsUsingAbort(wallet, storage, 'nosend')
+  expect(result).toBe(true)
+  return result
+}
+
+/**
+ * Aborts all transactions with the status `'unsigned'` in the storage and verifies success.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @returns {Promise<boolean>} - Resolves to `true` if all `'unsigned'` transactions were successfully aborted.
+ */
+export async function cleanUnsignedTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
+  const result = await cleanTransactionsUsingAbort(wallet, storage, 'unsigned')
+  expect(result).toBe(true)
+  return result
+}
+
+/**
+ * Aborts all transactions with the status `'unprocessed'` in the storage and verifies success.
+ *
+ * @param {Wallet} wallet - The wallet instance used to abort actions.
+ * @param {StorageKnex} storage - The storage instance to query transactions from.
+ * @returns {Promise<boolean>} - Resolves to `true` if all `'unprocessed'` transactions were successfully aborted.
+ */
+export async function cleanUnprocessedTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
+  const result = await cleanTransactionsUsingAbort(wallet, storage, 'unprocessed')
+  expect(result).toBe(true)
+  return result
+}
 /**
  * Normalize a date or ISO string to a consistent ISO string format.
  * @param value - The value to normalize (Date object or ISO string).

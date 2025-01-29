@@ -260,7 +260,7 @@ export function isHexString(s: string): boolean {
   return true
 }
 
-export interface ValidWalletSignerArgs {}
+export interface ValidWalletSignerArgs { }
 
 export interface ValidCreateActionInput {
   outpoint: OutPoint
@@ -873,60 +873,14 @@ export interface ValidAcquireDirectCertificateArgs
   privilegedReason?: DescriptionString5to50Bytes
 }
 
-export interface ValidAcquireIssuanceCertificateArgs
-  extends ValidWalletSignerArgs {
-  type: Base64String
-  certifier: PubKeyHex
-  certifierUrl: string
-  fields: Record<CertificateFieldNameUnder50Bytes, string>
-
-  /**
-   * validated to an empty string, must be provided by wallet and must
-   * match expectations of keyringForSubject
-   */
-  subject: PubKeyHex
-
-  privileged: boolean
-  privilegedReason?: DescriptionString5to50Bytes
-}
-
-export function validateAcquireDirectCertificateArgs(
-  args: AcquireCertificateArgs
-): ValidAcquireDirectCertificateArgs {
-  if (args.acquisitionProtocol !== 'direct')
-    throw new sdk.WERR_INTERNAL(
-      'Only acquire direct certificate requests allowed here.'
-    )
-  if (!args.serialNumber)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'serialNumber',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (!args.signature)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'signature',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (!args.revocationOutpoint)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'revocationOutpoint',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (!args.keyringRevealer)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'keyringRevealer',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (!args.keyringForSubject)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'keyringForSubject',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (args.privileged && !args.privilegedReason)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'privilegedReason',
-      `valid when 'privileged' is true `
-    )
+export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArgs): ValidAcquireDirectCertificateArgs {
+  if (args.acquisitionProtocol !== 'direct') throw new sdk.WERR_INTERNAL('Only acquire direct certificate requests allowed here.')
+  if (!args.serialNumber) throw new sdk.WERR_INVALID_PARAMETER('serialNumber', 'valid when acquisitionProtocol is "direct"')
+  if (!args.signature) throw new sdk.WERR_INVALID_PARAMETER('signature', 'valid when acquisitionProtocol is "direct"')
+  if (!args.revocationOutpoint) throw new sdk.WERR_INVALID_PARAMETER('revocationOutpoint', 'valid when acquisitionProtocol is "direct"')
+  if (!args.keyringRevealer) throw new sdk.WERR_INVALID_PARAMETER('keyringRevealer', 'valid when acquisitionProtocol is "direct"')
+  if (!args.keyringForSubject) throw new sdk.WERR_INVALID_PARAMETER('keyringForSubject', 'valid when acquisitionProtocol is "direct"')
+  if (args.privileged && !args.privilegedReason) throw new sdk.WERR_INVALID_PARAMETER('privilegedReason', `valid when 'privileged' is true `)
 
   const vargs: ValidAcquireDirectCertificateArgs = {
     type: validateBase64String(args.type, 'type'),
@@ -947,73 +901,8 @@ export function validateAcquireDirectCertificateArgs(
       'keyringForSubject'
     ),
     privileged: defaultFalse(args.privileged),
-    privilegedReason: validateOptionalStringLength(
-      args.privilegedReason,
-      'privilegedReason',
-      5,
-      50
-    ),
-    subject: ''
-  }
-  return vargs
-}
-
-export function validateAcquireIssuanceCertificateArgs(
-  args: AcquireCertificateArgs
-): ValidAcquireIssuanceCertificateArgs {
-  if (args.acquisitionProtocol !== 'issuance')
-    throw new sdk.WERR_INTERNAL(
-      'Only acquire certificate via issuance requests allowed here.'
-    )
-  if (args.serialNumber)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'serialNumber',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (args.signature)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'signature',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (args.revocationOutpoint)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'revocationOutpoint',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (args.keyringRevealer)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'keyringRevealer',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (args.keyringForSubject)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'keyringForSubject',
-      'valid when acquisitionProtocol is "direct"'
-    )
-  if (!args.certifierUrl)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'certifierUrl',
-      'valid when acquisitionProtocol is "issuance"'
-    )
-  if (args.privileged && !args.privilegedReason)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'privilegedReason',
-      `valid when 'privileged' is true `
-    )
-
-  const vargs: ValidAcquireIssuanceCertificateArgs = {
-    type: validateBase64String(args.type, 'type'),
-    certifier: validateHexString(args.certifier, 'certifier'),
-    certifierUrl: args.certifierUrl,
-    fields: validateCertificateFields(args.fields),
-    privileged: defaultFalse(args.privileged),
-    privilegedReason: validateOptionalStringLength(
-      args.privilegedReason,
-      'privilegedReason',
-      5,
-      50
-    ),
-    subject: ''
+    privilegedReason: validateOptionalStringLength(args.privilegedReason, 'privilegedReason', 5, 50),
+    subject: '',
   }
   return vargs
 }

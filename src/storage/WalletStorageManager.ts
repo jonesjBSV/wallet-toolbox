@@ -74,25 +74,21 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
 
   async getUserId(): Promise<number> {
-    let userId = this._authId.userId
-    if (!userId) {
-      if (!this.isAvailable()) await this.makeAvailable()
-      const { user, isNew } = await this.getActive().findOrInsertUser(
-        this._authId.identityKey
-      )
-      if (!user)
-        throw new sdk.WERR_INVALID_PARAMETER('identityKey', 'exist on storage.')
-      userId = user.userId
-      this._authId.userId = userId
-      this._authId.isActive =
-        user.activeStorage === undefined ||
-        user.activeStorage === this.getSettings().storageIdentityKey
-    }
-    return userId
+    if (!this._authId.userId) await this.getAuth()
+    return this._authId.userId!
   }
 
   async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> {
-    if (!this._authId.userId) this._authId.userId = await this.getUserId()
+    if (!this.isAvailable()) await this.makeAvailable()
+    const { user, isNew } = await this.getActive().findOrInsertUser(
+      this._authId.identityKey
+    )
+    if (!user)
+      throw new sdk.WERR_INVALID_PARAMETER('identityKey', 'exist on storage.')
+    this._authId.userId = user.userId
+    this._authId.isActive =
+      user.activeStorage === undefined ||
+      user.activeStorage === this.getSettings().storageIdentityKey
     if (mustBeActive && !this._authId.isActive) throw new sdk.WERR_NOT_ACTIVE()
     return this._authId
   }
@@ -526,7 +522,11 @@ export class WalletStorageManager implements sdk.WalletStorage {
       const oldActive = this.stores[0]
       this.stores[0] = this.stores[newActiveIndex]
       this.stores[newActiveIndex] = oldActive
-      this._authId = { ...this._authId, userId: undefined }
+      this._authId = {
+        ...this._authId,
+        userId: undefined,
+        isActive: undefined
+      }
     })
   }
 }

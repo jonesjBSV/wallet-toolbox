@@ -2,8 +2,7 @@
 import * as bsv from '@bsv/sdk'
 import { sdk, StorageKnex, table, Wallet } from '../../../src/index.all'
 
-import { _tu, expectToThrowWERR, logTransaction, TestKeyPair, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
-import { cleanUnsentTransactionsUsingAbort, cleanUnsignedTransactionsUsingAbort, cleanUnprocessedTransactionsUsingAbort, log } from '../../utils/TestUtilsMethodTests'
+import { _tu, expectToThrowWERR, logTransaction, TestKeyPair, TestWalletNoSetup, cleanUnsentTransactionsUsingAbort, cleanUnsignedTransactionsUsingAbort, cleanUnprocessedTransactionsUsingAbort } from '../../utils/TestUtilsWalletStorage'
 
 describe('createActionToGenerateBeefs test', () => {
   jest.setTimeout(99999999)

@@ -1024,7 +1024,9 @@ export class StorageKnex
 
   override async dropAllData(): Promise<void> {
     // Only using migrations to migrate down, don't need valid properties for settings table.
-    const config = { migrationSource: new KnexMigrations('test', '', '', 1024) }
+    const config = {
+      migrationSource: new KnexMigrations('test', '', '', 1024)
+    }
     const count = Object.keys(config.migrationSource.migrations).length
     for (let i = 0; i < count; i++) {
       try {
