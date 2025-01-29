@@ -1153,37 +1153,105 @@ export abstract class TestUtilsWalletStorage {
     }
 
     const now = new Date()
+    const inputTxMap: Record<string, any> = {}
+    const outputMap: Record<string, any> = {}
 
-    // loop through original mock data and generate correct table rows to comply with contraints(unique/foreign)
-    // WIP working for simple case
+    // only one user
+    const user = await _tu.insertTestUser(storage, u1IdentityKey)
+
+    // First create your output that represent your inputs
     for (const action of mockData.actions) {
-      const user = await _tu.insertTestUser(storage, u1IdentityKey)
+      for (const input of action.inputs || []) {
+        let prevOutput = outputMap[input.sourceOutpoint]
+
+        if (!prevOutput) {
+          const { tx: transaction } = await _tu.insertTestTransaction(
+            storage,
+            user,
+            false,
+            {
+              txid: input.sourceOutpoint.split('.')[0],
+              satoshis: input.sourceSatoshis,
+              status: 'confirmed' as TransactionStatus,
+              description: 'Generated transaction for input',
+              lockTime: 0,
+              version: 1,
+              inputBEEF: [1, 2, 3, 4],
+              rawTx: [4, 3, 2, 1]
+            }
+          )
+
+          const basket = await _tu.insertTestOutputBasket(storage, user, {
+            name: randomBytesHex(6)
+          })
+
+          // Need to convert
+          const lockingScriptValue = input.sourceLockingScript
+            ? hexStringToNumberArray(input.sourceLockingScript)
+            : undefined
+
+          prevOutput = await _tu.insertTestOutput(
+            storage,
+            transaction,
+            0,
+            input.sourceSatoshis,
+            basket,
+            true, // Needs to be spendable
+            {
+              outputDescription: input.inputDescription,
+              spendable: true,
+              vout: Number(input.sourceOutpoint.split('.')[1]),
+              lockingScript: lockingScriptValue,
+              txid: transaction.txid
+            }
+          )
+
+          // Store in maps for later use
+          inputTxMap[input.sourceOutpoint] = transaction
+          outputMap[input.sourceOutpoint] = prevOutput
+        }
+      }
+    }
+
+    // Process transactions that spend those previous outputs
+    for (const action of mockData.actions) {
       const { tx: transaction } = await _tu.insertTestTransaction(
         storage,
         user,
         false,
         {
-          txid: action.txid,
+          txid: `${action.txid}` || `tx_${action.satoshis}_${Date.now()}`,
           satoshis: action.satoshis,
           status: action.status as TransactionStatus,
           description: action.description,
           lockTime: action.lockTime,
-          version: action.version
+          version: action.version,
+          inputBEEF: [1, 2, 3, 4],
+          rawTx: [4, 3, 2, 1]
         }
       )
-      if (action.labels) {
-        for (const label of action.labels) {
-          const l = await _tu.insertTestTxLabel(storage, user, {
-            label,
-            isDeleted: false,
-            created_at: now,
-            updated_at: now,
-            txLabelId: 0,
-            userId: user.userId
-          })
-          await _tu.insertTestTxLabelMap(storage, transaction, l)
+
+      // Loop through action inputs and update chosen outputs
+      for (const input of action.inputs || []) {
+        // Output must exist before updating
+        const prevOutput = outputMap[input.sourceOutpoint]
+
+        if (!prevOutput) {
+          throw new Error(
+            `UTXO not found in outputMap for sourceOutpoint: ${input.sourceOutpoint}`
+          )
         }
+
+        // Set correct output fields as per input fields
+        await storage.updateOutput(prevOutput.outputId, {
+          spendable: false, // Mark output as spent
+          spentBy: transaction.transactionId, // Reference the new transaction
+          spendingDescription: input.inputDescription, // Store description
+          sequenceNumber: input.sequenceNumber // Store sequence number
+        })
       }
+
+      // Insert any new outputs for the transaction
       if (action.outputs) {
         for (const output of action.outputs) {
           const basket = await _tu.insertTestOutputBasket(storage, user, {
@@ -1198,18 +1266,61 @@ export abstract class TestUtilsWalletStorage {
             false,
             {
               outputDescription: output.outputDescription,
-              spendable: output.spendable
+              spendable: output.spendable,
+              txid: transaction.txid
             }
           )
+
+          // Store this output in the map for future transactions to reference
+          outputMap[`${action.txid}.${output.outputIndex}`] = insertedOutput
+        }
+      }
+
+      // Labels inserted
+      if (action.labels) {
+        for (const label of action.labels) {
+          const l = await _tu.insertTestTxLabel(storage, user, {
+            label,
+            isDeleted: false,
+            created_at: now,
+            updated_at: now,
+            txLabelId: 0,
+            userId: user.userId
+          })
+          await _tu.insertTestTxLabelMap(storage, transaction, l)
+        }
+      }
+
+      // Tags inserted for outputs
+      if (action.outputs) {
+        for (const output of action.outputs) {
           if (output.tags) {
+            // Ensure we fetch the correct inserted output for the current transaction
+            const insertedOutput =
+              outputMap[`${action.txid}.${output.outputIndex}`]
+
+            if (!insertedOutput) {
+              throw new Error(
+                `Output not found for txid: ${action.txid}, vout: ${output.outputIndex}`
+              )
+            }
+
             for (const tag of output.tags) {
-              const outputTag = await _tu.insertTestOutputTag(storage, user, {
-                tag
+              // Insert the output tag into the database
+              const insertedTag = await _tu.insertTestOutputTag(storage, user, {
+                tag: tag,
+                isDeleted: false,
+                created_at: now,
+                updated_at: now,
+                outputTagId: 0, // Will be auto-incremented by the DB
+                userId: user.userId
               })
+
+              // Map the inserted tag to the correct output
               await _tu.insertTestOutputTagMap(
                 storage,
                 insertedOutput,
-                outputTag
+                insertedTag
               )
             }
           }
@@ -1920,4 +2031,26 @@ export function logBasket(
 ): string {
   let log = `${basket.name}\n`
   return log
+}
+
+export function hexStringToNumberArray(hexString: string): number[] {
+  const sanitizedHex = hexString.replace(/[^a-fA-F0-9]/g, '')
+  const result: number[] = []
+  for (let i = 0; i < sanitizedHex.length; i += 2) {
+    result.push(parseInt(sanitizedHex.substr(i, 2), 16))
+  }
+  return result
+}
+
+async function getOutputByTxIdAndVout(
+  storage: StorageProvider,
+  txid: string,
+  vout: number
+): Promise<table.Output | null> {
+  const results = await storage.findOutputs({
+    partial: { txid }
+  })
+
+  // Return the first matching result or null if no match is found
+  return results.length > 0 ? results[0] : null
 }
