@@ -223,7 +223,9 @@ export async function postTxsToTaalArcMiner(
     const rrs = (await arc.broadcastMany(txs)) as ArcMinerPostTxsData[] | string
 
     if (typeof rrs === 'string') {
-      const rawTxs = txs.map(tx => { return { rawTx: tx.toHexEF() }; });
+      const rawTxs = txs.map(tx => {
+        return { rawTx: tx.toHexEF() }
+      })
       console.log(`const rawTxs = '${JSON.stringify(rawTxs)}`)
       throw new sdk.WERR_BAD_REQUEST(`broadcastMany error: ${rrs}`)
     }

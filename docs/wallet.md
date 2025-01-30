@@ -653,7 +653,7 @@ See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [Generate
 #### Property changeFirstSatoshis
 
 Lowest amount value to assign to a change output.
-Drop the output if unable to satisfy. 
+Drop the output if unable to satisfy.
 default 285
 
 ```ts
@@ -3327,7 +3327,7 @@ IMPORTANT: While these measures raise the bar for attackers, JavaScript environm
 do not provide perfect in-memory secrecy.
 
 ```ts
-export class PrivilegedKeyManager {
+export class PrivilegedKeyManager implements ProtoWallet {
     constructor(keyGetter: (reason: string) => Promise<PrivateKey>, retentionPeriod = 120000) 
     destroyKey(): void 
     async getPublicKey(args: GetPublicKeyArgs): Promise<{
@@ -3978,7 +3978,7 @@ If req is invalid, set status 'invalid'
 Verify the requests are valid, lookup proofs or updated transaction status using the array of getProofServices,
 
 When proofs are found, create new ProvenTxApi records and transition the requests' status to 'unconfirmed' or 'notifying',
-depending on chaintracks succeeding on proof verification. 
+depending on chaintracks succeeding on proof verification.
 
 Increments attempts if proofs where requested.
 
@@ -4170,7 +4170,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 #### Method processUnsent
 
-Process an array of 'unsent' status table.ProvenTxReq 
+Process an array of 'unsent' status table.ProvenTxReq
 
 Send rawTx to transaction processor(s), requesting proof callbacks when possible.
 
@@ -4426,7 +4426,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ### Class: Wallet
 
 ```ts
-export class Wallet implements WalletInterface {
+export class Wallet implements WalletInterface, ProtoWallet {
     chain: sdk.Chain;
     keyDeriver: KeyDeriver;
     storage: WalletStorageManager;
@@ -6388,7 +6388,7 @@ Returns the byte size required to encode number as Bitcoin VarUint
 export function varUintSize(val: number): 1 | 3 | 5 | 9 {
     if (val < 0)
         throw new sdk.WERR_INVALID_PARAMETER("varUint", "non-negative");
-    return (val <= 252 ? 1 : val <= 65535 ? 3 : val <= 4294967295 ? 5 : 9);
+    return val <= 252 ? 1 : val <= 65535 ? 3 : val <= 4294967295 ? 5 : 9;
 }
 ```
 

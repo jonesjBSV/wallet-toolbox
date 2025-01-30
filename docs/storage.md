@@ -110,7 +110,7 @@ See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [Generate
 #### Property changeFirstSatoshis
 
 Lowest amount value to assign to a change output.
-Drop the output if unable to satisfy. 
+Drop the output if unable to satisfy.
 default 285
 
 ```ts
@@ -1842,7 +1842,7 @@ Returns the byte size required to encode number as Bitcoin VarUint
 export function varUintSize(val: number): 1 | 3 | 5 | 9 {
     if (val < 0)
         throw new sdk.WERR_INVALID_PARAMETER("varUint", "non-negative");
-    return (val <= 252 ? 1 : val <= 65535 ? 3 : val <= 4294967295 ? 5 : 9);
+    return val <= 252 ? 1 : val <= 65535 ? 3 : val <= 4294967295 ? 5 : 9;
 }
 ```
 

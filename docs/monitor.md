@@ -327,7 +327,7 @@ If req is invalid, set status 'invalid'
 Verify the requests are valid, lookup proofs or updated transaction status using the array of getProofServices,
 
 When proofs are found, create new ProvenTxApi records and transition the requests' status to 'unconfirmed' or 'notifying',
-depending on chaintracks succeeding on proof verification. 
+depending on chaintracks succeeding on proof verification.
 
 Increments attempts if proofs where requested.
 
@@ -520,7 +520,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 #### Method processUnsent
 
-Process an array of 'unsent' status table.ProvenTxReq 
+Process an array of 'unsent' status table.ProvenTxReq
 
 Send rawTx to transaction processor(s), requesting proof callbacks when possible.
 
