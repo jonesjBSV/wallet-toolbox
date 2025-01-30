@@ -10,6 +10,8 @@ import {
   TestWalletNoSetup
 } from '../../utils/TestUtilsWalletStorage'
 
+const testName = 'listActions'
+
 describe('listActions single action tests', () => {
   jest.setTimeout(99999999)
 
@@ -17,7 +19,6 @@ describe('listActions single action tests', () => {
   let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
 
   const env = _tu.getEnv('test')
-  const testName = () => expect.getState().currentTestName || 'test'
 
   beforeEach(async () => {
     setups = []
@@ -30,10 +31,10 @@ describe('listActions single action tests', () => {
     )
     ctxs = []
 
-    if (!env.noMySQL) {
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName()))
+    if (env.runMySQL) {
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
     }
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName()))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
 
     const mockData: MockData = {
       actions: [
@@ -1194,7 +1195,6 @@ describe('listActions two action tests', () => {
   let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
 
   const env = _tu.getEnv('test')
-  const testName = () => expect.getState().currentTestName || 'test'
 
   beforeEach(async () => {
     setups = []
@@ -1207,10 +1207,10 @@ describe('listActions two action tests', () => {
     )
     ctxs = []
 
-    if (!env.noMySQL) {
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName()))
+    if (env.runMySQL) {
+      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
     }
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName()))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
 
     const mockData: MockData = {
       actions: [

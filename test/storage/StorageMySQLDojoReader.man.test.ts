@@ -27,7 +27,7 @@ describe('StorageMySQLDojoReader tests', () => {
       knex: readerKnex
     })
 
-    const writerKnex = !env.noMySQL
+    const writerKnex = env.runMySQL
       ? _tu.createLocalMySQL('stagingdojotone')
       : _tu.createLocalSQLite(
           await _tu.newTmpFile('stagingdojotone', false, false, true)

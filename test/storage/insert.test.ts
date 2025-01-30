@@ -31,7 +31,7 @@ describe('insert tests', () => {
       })
     )
 
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       const knexMySQL = _tu.createLocalMySQL('inserttest')
       storages.push(
         new StorageKnex({

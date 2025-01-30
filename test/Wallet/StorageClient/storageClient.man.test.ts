@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { sdk, StorageClient } from '../../../src/index.all'
-import {
-  _tu,
-  expectToThrowWERR,
-  TestWalletNoSetup,
-  TestWalletOnly
-} from '../../utils/TestUtilsWalletStorage'
+import { StorageClient } from '../../../src/index.all'
+import { _tu, TestWalletOnly } from '../../utils/TestUtilsWalletStorage'
 
-const noLog = false
+/**
+ * WARNING: This test hangs the commit to master automated test run cycle if included in regular tests...
+ */
 
 describe('walletStorageClient test', () => {
   jest.setTimeout(99999999)

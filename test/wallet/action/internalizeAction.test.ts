@@ -21,7 +21,7 @@ describe('internalizeAction tests', () => {
   const useSharedCtxs = true
 
   beforeAll(async () => {
-    if (!env.noMySQL)
+    if (env.runMySQL)
       gctxs.push(
         await _tu.createLegacyWalletMySQLCopy('actionInternalizeActionTests')
       )
@@ -62,7 +62,7 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (!env.noMySQL)
+      if (env.runMySQL)
         ctxs.push(
           await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction1Tests')
         )
@@ -167,7 +167,7 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (!env.noMySQL)
+      if (env.runMySQL)
         ctxs.push(
           await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction2Tests')
         )
@@ -311,7 +311,7 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (!env.noMySQL)
+      if (env.runMySQL)
         ctxs.push(
           await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction3Tests')
         )
@@ -407,7 +407,7 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (!env.noMySQL)
+      if (env.runMySQL)
         ctxs.push(
           await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction4Tests')
         )
@@ -529,7 +529,7 @@ describe('internalizeAction tests', () => {
 
   test('5_internalize 2 wallet payments and 2 basket insertions in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (!env.noMySQL)
+    if (env.runMySQL)
       ctxs.push(
         await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction5Tests')
       )

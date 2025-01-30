@@ -13,7 +13,7 @@ describe('User class method tests', () => {
 
   beforeAll(async () => {
     // Set up MySQL and SQLite databases for testing
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('userTests_db1'))
       ctxs2.push(await _tu.createLegacyWalletMySQLCopy('userTests_db2'))
     }

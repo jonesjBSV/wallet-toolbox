@@ -26,7 +26,7 @@ describe('find tests', () => {
       })
     )
 
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       const knexMySQL = _tu.createLocalMySQL('storagefindtest')
       storages.push(
         new StorageKnex({

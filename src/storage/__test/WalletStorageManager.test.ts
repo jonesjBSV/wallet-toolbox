@@ -15,7 +15,7 @@ describe('WalletStorageManager tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (!env.noMySQL)
+    if (env.runMySQL)
       ctxs.push(
         await _tu.createLegacyWalletMySQLCopy('walletStorageManagerTestSource')
       )

@@ -26,7 +26,7 @@ describe('count tests', () => {
       })
     )
 
-    if (!env.noMySQL) {
+    if (env.runMySQL) {
       const knexMySQL = _tu.createLocalMySQL('storagecounttest')
       storages.push(
         new StorageKnex({
