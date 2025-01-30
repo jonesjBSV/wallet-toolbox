@@ -220,7 +220,11 @@ export async function postTxsToTaalArcMiner(
         )
     }
 
-    const rrs = (await arc.broadcastMany(txs)) as ArcMinerPostTxsData[]
+    const rrs = (await arc.broadcastMany(txs)) as ArcMinerPostTxsData[] | string
+
+    if (typeof rrs === 'string') {
+      throw new sdk.WERR_BAD_REQUEST(`broadcastMany error: ${rrs}`)
+    }
 
     r.status = 'success'
     for (const txid of txids) {
