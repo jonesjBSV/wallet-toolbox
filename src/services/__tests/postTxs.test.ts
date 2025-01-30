@@ -22,6 +22,7 @@ ${beef.toLogString()}
 ${beef.toHex()}
               `)
     }
-    expect(r[0].status).toBe('success')
+    if (r[0].error?.message != 'broadcastMany error: error code: 502')
+      expect(r[0].status).toBe('success')
   })
 })
