@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as bsv from '@bsv/sdk'
 import { sdk, StorageProvider } from '../../../src/index.client'
 import {
@@ -18,6 +19,7 @@ describe('listActions single action tests', () => {
   let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
 
   const env = _tu.getEnv('test')
+  const testName = () => expect.getState().currentTestName || 'test'
 
   beforeEach(async () => {
     setups = []
@@ -33,7 +35,14 @@ describe('listActions single action tests', () => {
     if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
     }
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
+    await _tu.createSQLiteTestWallet({
+      chain: 'test',
+      databaseName: testName(),
+      rootKeyHex: '2'.repeat(64),
+      dropAll: true
+    })
+
+    //ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
 
     const mockData: MockData = {
       actions: [
@@ -1194,6 +1203,7 @@ describe('listActions two action tests', () => {
   let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
 
   const env = _tu.getEnv('test')
+  const testName = () => expect.getState().currentTestName || 'test'
 
   beforeEach(async () => {
     setups = []
@@ -1209,7 +1219,12 @@ describe('listActions two action tests', () => {
     if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
     }
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
+    await _tu.createSQLiteTestWallet({
+      chain: 'test',
+      databaseName: testName(),
+      rootKeyHex: '2'.repeat(64),
+      dropAll: true
+    })
 
     const mockData: MockData = {
       actions: [

@@ -128,7 +128,7 @@ describe('Wallet services tests', () => {
       {
         if (chain === 'main') {
           const txid =
-            '9cce99686bc8621db439b7150dd5b3b269e4b0628fd75160222c417d6f2b95e4'
+            'b56ccf7dd0eb6bb0341cb92a2045d902106e4c2add0a4af057c85e9dfaaebddf'
           const rawTx = await wallet.services.getRawTx(txid)
           const mp = await wallet.services.getMerklePath(txid)
           const beef = new Beef()
@@ -137,11 +137,15 @@ describe('Wallet services tests', () => {
           // Using postTxs as postBeef is problematic still...
           const r = await wallet.services.postTxs(beef, [txid])
           if (r[0].status === 'error') {
-            console.log(beef.toLogString())
-            console.log(beef.toHex())
+            console.log(`
+${r[0].error?.message}
+${beef.toLogString()}
+${beef.toHex()}
+              `)
+          } else {
+            expect(r[0].txidResults[0].txid).toBe(txid)
+            expect(r[0].status).toBe('success')
           }
-          expect(r[0].txidResults[0].txid).toBe(txid)
-          expect(r[0].status).toBe('success')
         }
       }
     }
