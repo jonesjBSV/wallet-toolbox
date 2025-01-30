@@ -9,12 +9,19 @@ describe('postTxs service tests', () => {
     const services = new Services(options)
 
     const txid =
-      '1e3a4e2a952414081ec8576480b00dc2c1eeb04655480a09f167f7d82ac6e74a'
+      'b56ccf7dd0eb6bb0341cb92a2045d902106e4c2add0a4af057c85e9dfaaebddf'
     const rawTx = await services.getRawTx(txid)
     const rawTxHex = Utils.toHex(rawTx.rawTx!)
     const beef = new Beef()
     beef.mergeRawTx(rawTx.rawTx!)
     const r = await services.postTxs(beef, [txid])
+    if (r[0].status === 'error') {
+      console.log(`
+${r[0].error?.message}
+${beef.toLogString()}
+${beef.toHex()}
+              `)
+    }
     expect(r[0].status).toBe('success')
   })
 })
