@@ -35,7 +35,7 @@ import {
  * IMPORTANT: While these measures raise the bar for attackers, JavaScript environments
  * do not provide perfect in-memory secrecy.
  */
-export class PrivilegedKeyManager {
+export class PrivilegedKeyManager implements ProtoWallet {
   /**
    * Function that will retrieve the PrivateKey from a secure environment,
    * e.g., an HSM or secure enclave. The reason for key usage is passed in

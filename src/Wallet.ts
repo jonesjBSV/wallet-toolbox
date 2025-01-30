@@ -91,7 +91,7 @@ function isWalletSigner(args: WalletArgs | WalletSigner): args is WalletSigner {
   return args['isWalletSigner']
 }
 
-export class Wallet implements WalletInterface {
+export class Wallet implements WalletInterface, ProtoWallet {
   chain: sdk.Chain
   keyDeriver: KeyDeriver
   storage: WalletStorageManager

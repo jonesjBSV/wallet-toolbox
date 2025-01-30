@@ -1,4 +1,4 @@
-import { CompletedProtoWallet, ProveCertificateResult } from '@bsv/sdk'
+import { ProveCertificateResult } from '@bsv/sdk'
 import { sdk, Wallet } from '../../index.client'
 import { CertOpsWallet } from '../../sdk'
 
