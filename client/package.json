@@ -21,7 +21,7 @@
   "homepage": "https://github.com/bitcoin-sv/wallet-toolbox#readme",
   "dependencies": {
     "@bsv/sdk": "^1.3.12",
-    "axios": "^0.28.0",
+    "axios": "^0.29.0",
     "whatsonchain": "^0.2.0"
   }
 }
