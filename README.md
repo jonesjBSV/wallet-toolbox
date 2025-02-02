@@ -9,13 +9,13 @@ The BSV Wallet Toolbox builds on the [SDK](https://bitcoin-sv.github.io/ts-sdk) 
 
 # Table of Contents
 
-  - [Objective](#objective)
-  - [Getting Started](#getting-started)
-  - [Features \& Deliverables](#features--deliverables)
-  - [Documentation](#documentation)
-  - [Contribution Guidelines](#contribution-guidelines)
-  - [Support \& Contacts](#support--contacts)
-  - [License](#license)
+- [Objective](#objective)
+- [Getting Started](#getting-started)
+- [Features \& Deliverables](#features--deliverables)
+- [Documentation](#documentation)
+- [Contribution Guidelines](#contribution-guidelines)
+- [Support \& Contacts](#support--contacts)
+- [License](#license)
 
 ## Objective
 
@@ -37,14 +37,14 @@ npm install @bsv/wallet-toolbox
 
 Here's a simple example of using the toolbox to create and fund a testnet wallet using SQLite for persistent storage:
 
-```javascript
+```ts
 import { InternalizeActionArgs, PrivateKey, Utils } from '@bsv/sdk'
-import { test } from '@bsv/wallet-toolbox'
+import { Setup } from '@bsv/wallet-toolbox'
 
 const rootKeyHex = PrivateKey.fromRandom().toString()
 console.log(`MAKE A SECURE COPY OF YOUR WALLET PRIVATE ROOT KEY: ${rootKeyHex}`)
 
-const { wallet } = await test._tu.createSQLiteTestWallet({
+const { wallet } = await Setup.createSQLiteWallet({
     filePath: './myTestWallet.sqlite',
     databaseName: 'myTestWallet',
     chain: 'test',
@@ -121,4 +121,3 @@ For questions, bug reports, or feature requests, please open an issue on GitHub 
 The license for the code in this repository is the Open BSV License. Refer to [LICENSE.txt](./LICENSE.txt) for the license text.
 
 Thank you for being a part of the BSV Blockchain Libraries Project. Let's build the future of BSV Blockchain together!
-

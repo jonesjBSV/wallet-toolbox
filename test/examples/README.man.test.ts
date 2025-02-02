@@ -1,5 +1,5 @@
 import { InternalizeActionArgs, PrivateKey, Utils } from '@bsv/sdk'
-import { test } from '../../src'
+import { Setup } from '../../src'
 
 describe.skip('examples README tests', () => {
   jest.setTimeout(99999999)
@@ -10,7 +10,7 @@ describe.skip('examples README tests', () => {
       `MAKE A SECURE COPY OF YOUR WALLET PRIVATE ROOT KEY: ${rootKeyHex}`
     )
 
-    const { wallet } = await test._tu.createSQLiteTestWallet({
+    const { wallet } = await Setup.createSQLiteWallet({
       filePath: './myTestWallet.sqlite',
       databaseName: 'myTestWallet',
       chain: 'test',
