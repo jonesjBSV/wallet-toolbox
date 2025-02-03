@@ -3,6 +3,7 @@
 The documentation is split into various pages, each covering a set of related functionality. The pages are as follows:
 
 - [Getting Started](#getting-started) -
+- [Setup](./setup.md) —
 - [Wallet](./wallet.md) —
 - [Client](./client.md) —
 - [Storage](./storage.md) —
