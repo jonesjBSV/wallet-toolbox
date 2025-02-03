@@ -13,7 +13,18 @@ import { SetupWalletOnly, StorageKnex } from "./index.all"
  */
 export abstract class Setup extends SetupClient {
 
+    /**
+     * Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
+     * 
+     * @param args 
+     * @returns 
+     */
   static async createKnexWallet(args: {
+    /**
+     * `Knex` object configured for either MySQL or SQLite database access.
+     * Schema will be created and migrated as needed.
+     * For MySQL, a schema corresponding to databaseName must exist with full access permissions.
+     */
     knex: Knex<any, any[]>
     databaseName: string
     chain?: sdk.Chain
