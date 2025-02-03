@@ -303,7 +303,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask), [log](#variable-log)
+See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
 
 <details>
 
@@ -338,7 +338,6 @@ async getProofs(reqs: table.ProvenTxReq[], indent = 0, countsAsAttempt = false, 
     log: string;
 }> 
 ```
-See also: [log](#variable-log)
 
 Returns
 
