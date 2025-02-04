@@ -180,10 +180,13 @@ export abstract class SetupClient {
     return r
   }
 
+  /**
+   * @publicBody
+   */
   static async createWalletWithStorageClient(
     args: SetupWalletClientArgs
   ): Promise<SetupWalletClient> {
-    const wo = await Setup.createWallet(args)
+    const wo = await SetupClient.createWallet(args)
     if (wo.chain === 'main')
       throw new sdk.WERR_INVALID_PARAMETER(
         'chain',
@@ -201,6 +204,9 @@ export abstract class SetupClient {
     }
   }
 
+  /**
+   * @publicBody
+   */
   static getKeyPair(priv?: string | PrivateKey): KeyPairAddress {
     if (priv === undefined) priv = PrivateKey.fromRandom()
     else if (typeof priv === 'string') priv = new PrivateKey(priv, 'hex')
@@ -210,18 +216,24 @@ export abstract class SetupClient {
     return { privateKey: priv, publicKey: pub, address }
   }
 
+  /**
+   * @publicBody
+   */
   static getLockP2PKH(address: string) {
     const p2pkh = new P2PKH()
     const lock = p2pkh.lock(address)
     return lock
   }
 
+  /**
+   * @publicBody
+   */
   static getUnlockP2PKH(
     priv: PrivateKey,
     satoshis: number
   ): sdk.ScriptTemplateUnlock {
     const p2pkh = new P2PKH()
-    const lock = Setup.getLockP2PKH(Setup.getKeyPair(priv).address)
+    const lock = SetupClient.getLockP2PKH(SetupClient.getKeyPair(priv).address)
     // Prepare to pay with SIGHASH_ALL and without ANYONE_CAN_PAY.
     // In otherwords:
     // - all outputs must remain in the current order, amount and locking scripts.
@@ -231,6 +243,9 @@ export abstract class SetupClient {
     return unlock
   }
 
+  /**
+   * @publicBody
+   */
   static createP2PKHOutputs(
     outputs: {
       address: string
@@ -248,13 +263,16 @@ export abstract class SetupClient {
         basket: o.basket,
         tags: o.tags,
         satoshis: o.satoshis,
-        lockingScript: Setup.getLockP2PKH(o.address).toHex(),
+        lockingScript: SetupClient.getLockP2PKH(o.address).toHex(),
         outputDescription: o.outputDescription || `p2pkh ${i}`
       })
     }
     return os
   }
 
+  /**
+   * @publicBody
+   */
   static async createP2PKHOutputsAction(
     wallet: WalletInterface,
     outputs: {
@@ -269,7 +287,7 @@ export abstract class SetupClient {
     cr: CreateActionResult
     outpoints: string[] | undefined
   }> {
-    const os = Setup.createP2PKHOutputs(outputs)
+    const os = SetupClient.createP2PKHOutputs(outputs)
 
     const createArgs: CreateActionArgs = {
       description: `createP2PKHOutputs`,
@@ -292,6 +310,9 @@ export abstract class SetupClient {
     return { cr, outpoints }
   }
 
+  /**
+   * @publicBody
+   */
   static async fundWalletFromP2PKHOutpoints(
     wallet: WalletInterface,
     outpoints: string[],
@@ -303,16 +324,17 @@ export abstract class SetupClient {
 }
 
 /**
- * Enables code that imports only from `SetupClient` to still reference everything as just `Setup`
+ * 
  */
-export class Setup extends SetupClient {}
-
 export type KeyPairAddress = {
   privateKey: PrivateKey
   publicKey: PublicKey
   address: string
 }
 
+/**
+ * 
+ */
 export interface SetupEnv {
   chain: sdk.Chain
   identityKey: string

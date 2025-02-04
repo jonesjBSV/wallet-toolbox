@@ -57,6 +57,9 @@ export abstract class Setup extends SetupClient {
     return r
   }
 
+  /**
+   * @publicbody
+   */
   static createSQLiteKnex(filename: string): Knex {
     const config: Knex.Config = {
       client: 'sqlite3',
@@ -67,6 +70,9 @@ export abstract class Setup extends SetupClient {
     return knex
   }
 
+  /**
+   * @publicbody
+   */
   static createMySQLKnex(connection: string, database?: string): Knex {
     const c: Knex.MySql2ConnectionConfig = JSON.parse(connection)
     if (database) {
@@ -82,6 +88,9 @@ export abstract class Setup extends SetupClient {
     return knex
   }
 
+  /**
+   * @publicbody
+   */
   static async createMySQLWallet(
     args: SetupWalletMySQLArgs
   ): Promise<SetupWalletKnex> {
@@ -91,6 +100,9 @@ export abstract class Setup extends SetupClient {
     })
   }
 
+  /**
+   * @publicbody
+   */
   static async createSQLiteWallet(
     args: SetupWalletSQLiteArgs
   ): Promise<SetupWalletKnex> {
@@ -101,20 +113,32 @@ export abstract class Setup extends SetupClient {
   }
 }
 
+/**
+ * 
+ */
 export interface SetupWalletKnexArgs extends SetupWalletArgs {
   knex: Knex<any, any[]>
   databaseName: string
 }
 
+/**
+ * 
+ */
 export interface SetupWalletMySQLArgs extends SetupWalletArgs {
   databaseName: string
 }
 
+/**
+ * 
+ */
 export interface SetupWalletSQLiteArgs extends SetupWalletArgs {
   filePath: string
   databaseName: string
 }
 
+/**
+ * 
+ */
 export interface SetupWalletKnex extends SetupWallet {
   activeStorage: StorageKnex
   userId: number
