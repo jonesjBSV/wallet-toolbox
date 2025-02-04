@@ -81,7 +81,31 @@ export abstract class Setup extends SetupClient {
         chain?: sdk.Chain;
         rootKeyHex?: string;
         privKeyHex?: string;
-    }): Promise<SetupWallet> 
+    }): Promise<SetupWallet> {
+        const wo = await Setup.createWalletOnly({
+            chain: args.chain,
+            rootKeyHex: args.rootKeyHex,
+            privKeyHex: args.privKeyHex
+        });
+        const activeStorage = new StorageKnex({
+            chain: wo.chain,
+            knex: args.knex,
+            commissionSatoshis: 0,
+            commissionPubKeyHex: undefined,
+            feeModel: { model: "sat/kb", value: 1 }
+        });
+        await activeStorage.migrate(args.databaseName, wo.identityKey);
+        await activeStorage.makeAvailable();
+        await wo.storage.addWalletStorageProvider(activeStorage);
+        const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
+        const userId = user.userId;
+        const r: SetupWallet = {
+            ...wo,
+            activeStorage,
+            userId
+        };
+        return r;
+    }
     static createSQLiteKnex(filename: string): Knex 
     static createMySQLKnex(connection: string, database?: string): Knex 
     static async createMySQLWallet(args: {
@@ -100,7 +124,7 @@ export abstract class Setup extends SetupClient {
 }
 ```
 
-See also: [Chain](#type-chain), [SetupClient](#class-setupclient), [SetupWallet](#interface-setupwallet)
+See also: [Chain](#type-chain), [SetupClient](#class-setupclient), [SetupWallet](#interface-setupwallet), [StorageKnex](#class-storageknex)
 
 <details>
 
@@ -117,9 +141,44 @@ static async createKnexWallet(args: {
     chain?: sdk.Chain;
     rootKeyHex?: string;
     privKeyHex?: string;
-}): Promise<SetupWallet> 
+}): Promise<SetupWallet> {
+    const wo = await Setup.createWalletOnly({
+        chain: args.chain,
+        rootKeyHex: args.rootKeyHex,
+        privKeyHex: args.privKeyHex
+    });
+    const activeStorage = new StorageKnex({
+        chain: wo.chain,
+        knex: args.knex,
+        commissionSatoshis: 0,
+        commissionPubKeyHex: undefined,
+        feeModel: { model: "sat/kb", value: 1 }
+    });
+    await activeStorage.migrate(args.databaseName, wo.identityKey);
+    await activeStorage.makeAvailable();
+    await wo.storage.addWalletStorageProvider(activeStorage);
+    const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
+    const userId = user.userId;
+    const r: SetupWallet = {
+        ...wo,
+        activeStorage,
+        userId
+    };
+    return r;
+}
 ```
-See also: [Chain](#type-chain), [SetupWallet](#interface-setupwallet)
+See also: [Chain](#type-chain), [Setup](#class-setup), [SetupWallet](#interface-setupwallet), [StorageKnex](#class-storageknex)
+
+Argument Details
+
++ **args.knex**
+  + `Knex` object configured for either MySQL or SQLite database access.
+Schema will be created and migrated as needed.
+For MySQL, a schema corresponding to databaseName must exist with full access permissions.
++ **args.databaseName**
+  + Name for this storage. For MySQL, the schema name within the MySQL instance.
++ **args.chain**
+  + Which chain this wallet is on: 'main' or 'test'. Defaults to 'test'.
 
 </details>
 
@@ -135,7 +194,7 @@ It serves as a starting point for experimentation and customization.
 
 ```ts
 export abstract class SetupClient {
-    static makeEnv(chain: sdk.Chain): void {
+    static makeEnv(): void {
         const testPrivKey1 = PrivateKey.fromRandom();
         const testIdentityKey1 = testPrivKey1.toPublicKey().toString();
         const testPrivKey2 = PrivateKey.fromRandom();
@@ -194,6 +253,24 @@ export abstract class SetupClient {
 ```
 
 See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [SetupWalletOnly](#interface-setupwalletonly), [WalletStorageProvider](#interface-walletstorageprovider)
+
+<details>
+
+<summary>Class SetupClient Details</summary>
+
+#### Method makeEnv
+
+Create content for .env file with some private keys, identity keys, sample API keys, and sample MySQL connection string.
+
+Private keys should never be included directly in you source code.
+
+Loading them from a .env file is intended only for experimentation and getting started.
+
+```ts
+static makeEnv(): void 
+```
+
+</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

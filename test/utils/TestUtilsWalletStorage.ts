@@ -542,7 +542,9 @@ export abstract class TestUtilsWalletStorage {
   }): Promise<TestWallet<TestSetup2>> {
     return await _tu.createKnexTestWalletWithSetup({
       ...args,
-      insertSetup: async (storage: StorageKnex, identityKey: string) => { return _tu.createTestSetup2(storage, identityKey, args.mockData) }
+      insertSetup: async (storage: StorageKnex, identityKey: string) => {
+        return _tu.createTestSetup2(storage, identityKey, args.mockData)
+      }
     })
   }
 

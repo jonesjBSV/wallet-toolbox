@@ -1,30 +1,54 @@
-import { Beef, CreateActionArgs, CreateActionOutput, CreateActionResult, KeyDeriver, P2PKH, PrivateKey, PublicKey, SignActionArgs, SignActionResult, WalletInterface } from "@bsv/sdk"
-import { Monitor, sdk, Services, SetupClient, StorageClient, verifyTruthy, Wallet, WalletStorageManager } from "./index.client"
-import { PrivilegedKeyManager } from "./sdk"
+import {
+  Beef,
+  CreateActionArgs,
+  CreateActionOutput,
+  CreateActionResult,
+  KeyDeriver,
+  P2PKH,
+  PrivateKey,
+  PublicKey,
+  SignActionArgs,
+  SignActionResult,
+  WalletInterface
+} from '@bsv/sdk'
+import {
+  Monitor,
+  sdk,
+  Services,
+  SetupClient,
+  StorageClient,
+  verifyTruthy,
+  Wallet,
+  WalletStorageManager
+} from './index.client'
+import { PrivilegedKeyManager } from './sdk'
 import { Knex, knex as makeKnex } from 'knex'
-import { SetupWalletOnly, StorageKnex } from "./index.all"
+import { SetupWallet, StorageKnex } from './index.all'
 
 /**
- * This class provides static setup functions to construct BRC-100 compatible
+ * The 'Setup` class provides static setup functions to construct BRC-100 compatible
  * wallets in a variety of configurations.
- * 
+ *
  * It serves as a starting point for experimentation and customization.
- * 
+ *
+ * `SetupClient` references only browser compatible code including storage via `StorageClient`.
+ * `Setup` extends `SetupClient` adding database storage via `Knex` and `StorageKnex`.
+ *
  */
 export abstract class Setup extends SetupClient {
-
-    /**
-     * Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
-     * 
-     * @param args 
-     * @returns 
-     */
+  /**
+   * Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
+   *
+   * @param args.knex `Knex` object configured for either MySQL or SQLite database access.
+   * Schema will be created and migrated as needed.
+   * For MySQL, a schema corresponding to databaseName must exist with full access permissions.
+   * @param args.databaseName Name for this storage. For MySQL, the schema name within the MySQL instance.
+   * @param args.chain Which chain this wallet is on: 'main' or 'test'. Defaults to 'test'.
+   * @param args.rootKeyHex
+   *
+   * @publicbody
+   */
   static async createKnexWallet(args: {
-    /**
-     * `Knex` object configured for either MySQL or SQLite database access.
-     * Schema will be created and migrated as needed.
-     * For MySQL, a schema corresponding to databaseName must exist with full access permissions.
-     */
     knex: Knex<any, any[]>
     databaseName: string
     chain?: sdk.Chain
@@ -69,7 +93,7 @@ export abstract class Setup extends SetupClient {
   static createMySQLKnex(connection: string, database?: string): Knex {
     const c: Knex.MySql2ConnectionConfig = JSON.parse(connection)
     if (database) {
-        c.database = database
+      c.database = database
     }
     const config: Knex.Config = {
       client: 'mysql2',
@@ -106,10 +130,9 @@ export abstract class Setup extends SetupClient {
       knex: Setup.createSQLiteKnex(args.filePath)
     })
   }
-
 }
 
-export interface SetupWallet extends SetupWalletOnly {
+export interface SetupWalletKnex extends SetupWallet {
   activeStorage: StorageKnex
   userId: number
 

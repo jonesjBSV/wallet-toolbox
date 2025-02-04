@@ -28,4 +28,3 @@ async function testChaintracksChaintracker(chain: sdk.Chain) {
   )
   expect(okTest).toBe(chain === 'test')
 }
-
