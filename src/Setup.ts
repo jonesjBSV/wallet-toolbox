@@ -1,7 +1,4 @@
-import {
-  KeyDeriver,
-  PrivateKey,
-} from '@bsv/sdk'
+import { KeyDeriver, PrivateKey } from '@bsv/sdk'
 import {
   Monitor,
   sdk,

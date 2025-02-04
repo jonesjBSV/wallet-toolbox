@@ -6,39 +6,42 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | |
 | --- |
+| [SetupEnv](#interface-setupenv) |
 | [SetupWallet](#interface-setupwallet) |
-| [SetupWalletOnly](#interface-setupwalletonly) |
+| [SetupWalletArgs](#interface-setupwalletargs) |
+| [SetupWalletClient](#interface-setupwalletclient) |
+| [SetupWalletClientArgs](#interface-setupwalletclientargs) |
+| [SetupWalletKnex](#interface-setupwalletknex) |
+| [SetupWalletKnexArgs](#interface-setupwalletknexargs) |
+| [SetupWalletMySQLArgs](#interface-setupwalletmysqlargs) |
+| [SetupWalletSQLiteArgs](#interface-setupwalletsqliteargs) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
 
-### Interface: SetupWallet
+### Interface: SetupEnv
 
 ```ts
-export interface SetupWallet extends SetupWalletOnly {
-    activeStorage: StorageKnex;
-    userId: number;
-    rootKey: PrivateKey;
-    identityKey: string;
-    keyDeriver: KeyDeriver;
+export interface SetupEnv {
     chain: sdk.Chain;
-    storage: WalletStorageManager;
-    services: Services;
-    monitor: Monitor;
-    wallet: Wallet;
+    identityKey: string;
+    identityKey2: string;
+    taalApiKey: string;
+    devKeys: Record<string, string>;
+    mySQLConnection: string;
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [SetupWalletOnly](#interface-setupwalletonly), [StorageKnex](#class-storageknex), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: SetupWalletOnly
+### Interface: SetupWallet
 
 ```ts
-export interface SetupWalletOnly {
+export interface SetupWallet {
     rootKey: PrivateKey;
     identityKey: string;
     keyDeriver: KeyDeriver;
@@ -55,10 +58,120 @@ See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-ser
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+### Interface: SetupWalletArgs
+
+Arguments used to construct a `Wallet`
+
+```ts
+export interface SetupWalletArgs {
+    env: SetupEnv;
+    chain?: sdk.Chain;
+    rootKeyHex?: string;
+    privKeyHex?: string;
+    active?: sdk.WalletStorageProvider;
+    backups?: sdk.WalletStorageProvider[];
+}
+```
+
+See also: [Chain](#type-chain), [SetupEnv](#interface-setupenv), [WalletStorageProvider](#interface-walletstorageprovider)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Interface: SetupWalletClient
+
+```ts
+export interface SetupWalletClient extends SetupWallet {
+    endpointUrl: string;
+}
+```
+
+See also: [SetupWallet](#interface-setupwallet)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Interface: SetupWalletClientArgs
+
+```ts
+export interface SetupWalletClientArgs extends SetupWalletArgs {
+    endpointUrl?: string;
+}
+```
+
+See also: [SetupWalletArgs](#interface-setupwalletargs)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Interface: SetupWalletKnex
+
+```ts
+export interface SetupWalletKnex extends SetupWallet {
+    activeStorage: StorageKnex;
+    userId: number;
+    rootKey: PrivateKey;
+    identityKey: string;
+    keyDeriver: KeyDeriver;
+    chain: sdk.Chain;
+    storage: WalletStorageManager;
+    services: Services;
+    monitor: Monitor;
+    wallet: Wallet;
+}
+```
+
+See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [SetupWallet](#interface-setupwallet), [StorageKnex](#class-storageknex), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Interface: SetupWalletKnexArgs
+
+```ts
+export interface SetupWalletKnexArgs extends SetupWalletArgs {
+    knex: Knex<any, any[]>;
+    databaseName: string;
+}
+```
+
+See also: [SetupWalletArgs](#interface-setupwalletargs)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Interface: SetupWalletMySQLArgs
+
+```ts
+export interface SetupWalletMySQLArgs extends SetupWalletArgs {
+    databaseName: string;
+}
+```
+
+See also: [SetupWalletArgs](#interface-setupwalletargs)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Interface: SetupWalletSQLiteArgs
+
+```ts
+export interface SetupWalletSQLiteArgs extends SetupWalletArgs {
+    filePath: string;
+    databaseName: string;
+}
+```
+
+See also: [SetupWalletArgs](#interface-setupwalletargs)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ## Classes
 
 | |
 | --- |
+| [Setup](#class-setup) |
 | [Setup](#class-setup) |
 | [SetupClient](#class-setupclient) |
 
@@ -68,25 +181,32 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ### Class: Setup
 
-This class provides static setup functions to construct BRC-100 compatible
+Enables code that imports only from `SetupClient` to still reference everything as just `Setup`
+
+```ts
+export class Setup extends SetupClient {
+}
+```
+
+See also: [SetupClient](#class-setupclient)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+### Class: Setup
+
+The 'Setup` class provides static setup functions to construct BRC-100 compatible
 wallets in a variety of configurations.
 
 It serves as a starting point for experimentation and customization.
 
+`SetupClient` references only browser compatible code including storage via `StorageClient`.
+`Setup` extends `SetupClient` adding database storage via `Knex` and `StorageKnex`.
+
 ```ts
 export abstract class Setup extends SetupClient {
-    static async createKnexWallet(args: {
-        knex: Knex<any, any[]>;
-        databaseName: string;
-        chain?: sdk.Chain;
-        rootKeyHex?: string;
-        privKeyHex?: string;
-    }): Promise<SetupWallet> {
-        const wo = await Setup.createWalletOnly({
-            chain: args.chain,
-            rootKeyHex: args.rootKeyHex,
-            privKeyHex: args.privKeyHex
-        });
+    static async createKnexWallet(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
+        const wo = await Setup.createWallet(args);
         const activeStorage = new StorageKnex({
             chain: wo.chain,
             knex: args.knex,
@@ -99,7 +219,7 @@ export abstract class Setup extends SetupClient {
         await wo.storage.addWalletStorageProvider(activeStorage);
         const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
         const userId = user.userId;
-        const r: SetupWallet = {
+        const r: SetupWalletKnex = {
             ...wo,
             activeStorage,
             userId
@@ -108,23 +228,12 @@ export abstract class Setup extends SetupClient {
     }
     static createSQLiteKnex(filename: string): Knex 
     static createMySQLKnex(connection: string, database?: string): Knex 
-    static async createMySQLWallet(args: {
-        databaseName: string;
-        chain?: sdk.Chain;
-        rootKeyHex?: string;
-        privKeyHex?: string;
-    }): Promise<SetupWallet> 
-    static async createSQLiteWallet(args: {
-        filePath: string;
-        databaseName: string;
-        chain?: sdk.Chain;
-        rootKeyHex?: string;
-        privKeyHex?: string;
-    }): Promise<SetupWallet> 
+    static async createMySQLWallet(args: SetupWalletMySQLArgs): Promise<SetupWalletKnex> 
+    static async createSQLiteWallet(args: SetupWalletSQLiteArgs): Promise<SetupWalletKnex> 
 }
 ```
 
-See also: [Chain](#type-chain), [SetupClient](#class-setupclient), [SetupWallet](#interface-setupwallet), [StorageKnex](#class-storageknex)
+See also: [SetupClient](#class-setupclient), [SetupWalletKnex](#interface-setupwalletknex), [SetupWalletKnexArgs](#interface-setupwalletknexargs), [SetupWalletMySQLArgs](#interface-setupwalletmysqlargs), [SetupWalletSQLiteArgs](#interface-setupwalletsqliteargs), [StorageKnex](#class-storageknex)
 
 <details>
 
@@ -135,18 +244,8 @@ See also: [Chain](#type-chain), [SetupClient](#class-setupclient), [SetupWallet]
 Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
 
 ```ts
-static async createKnexWallet(args: {
-    knex: Knex<any, any[]>;
-    databaseName: string;
-    chain?: sdk.Chain;
-    rootKeyHex?: string;
-    privKeyHex?: string;
-}): Promise<SetupWallet> {
-    const wo = await Setup.createWalletOnly({
-        chain: args.chain,
-        rootKeyHex: args.rootKeyHex,
-        privKeyHex: args.privKeyHex
-    });
+static async createKnexWallet(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
+    const wo = await Setup.createWallet(args);
     const activeStorage = new StorageKnex({
         chain: wo.chain,
         knex: args.knex,
@@ -159,7 +258,7 @@ static async createKnexWallet(args: {
     await wo.storage.addWalletStorageProvider(activeStorage);
     const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
     const userId = user.userId;
-    const r: SetupWallet = {
+    const r: SetupWalletKnex = {
         ...wo,
         activeStorage,
         userId
@@ -167,7 +266,7 @@ static async createKnexWallet(args: {
     return r;
 }
 ```
-See also: [Chain](#type-chain), [Setup](#class-setup), [SetupWallet](#interface-setupwallet), [StorageKnex](#class-storageknex)
+See also: [Setup](#class-setup), [SetupWalletKnex](#interface-setupwalletknex), [SetupWalletKnexArgs](#interface-setupwalletknexargs), [StorageKnex](#class-storageknex)
 
 Argument Details
 
@@ -187,14 +286,17 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ### Class: SetupClient
 
-This class provides static setup functions to construct BRC-100 compatible
+The `SetupClient` class provides static setup functions to construct BRC-100 compatible
 wallets in a variety of configurations.
 
 It serves as a starting point for experimentation and customization.
 
+`SetupClient` references only browser compatible code including storage via `StorageClient`.
+`Setup` extends `SetupClient` adding database storage via `Knex` and `StorageKnex`.
+
 ```ts
 export abstract class SetupClient {
-    static makeEnv(): void {
+    static makeEnv(): string {
         const testPrivKey1 = PrivateKey.fromRandom();
         const testIdentityKey1 = testPrivKey1.toPublicKey().toString();
         const testPrivKey2 = PrivateKey.fromRandom();
@@ -220,54 +322,166 @@ export abstract class SetupClient {
     MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
     `;
         console.log(log);
+        return log;
     }
-    static getEnv(chain: sdk.Chain) 
-    static async createNoSendP2PKHOutpoint(basket: string, address: string, satoshis: number, noSendChange: string[] | undefined, wallet: WalletInterface): Promise<{
-        noSendChange: string[];
-        txid: string;
-        cr: CreateActionResult;
-        sr: SignActionResult;
-    }> 
-    static async createNoSendP2PKHOutpoints(count: number, basket: string, address: string, satoshis: number, noSendChange: string[] | undefined, wallet: WalletInterface): Promise<{
-        noSendChange: string[];
-        txid: string;
-        cr: CreateActionResult;
-        sr: SignActionResult;
-    }> 
+    static getEnv(chain: sdk.Chain): SetupEnv 
+    static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
+        args.chain ||= args.env.chain;
+        args.rootKeyHex ||= args.env.devKeys[args.env.identityKey];
+        const rootKey = PrivateKey.fromHex(args.rootKeyHex);
+        const identityKey = rootKey.toPublicKey().toString();
+        const keyDeriver = new KeyDeriver(rootKey);
+        const chain = args.chain;
+        const storage = new WalletStorageManager(identityKey, args.active, args.backups);
+        if (storage.stores.length > 0)
+            await storage.makeAvailable();
+        const serviceOptions = Services.createDefaultOptions(chain);
+        serviceOptions.taalApiKey = args.env.taalApiKey;
+        const services = new Services(args.chain);
+        const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services);
+        const monitor = new Monitor(monopts);
+        monitor.addDefaultTasks();
+        let privilegedKeyManager: sdk.PrivilegedKeyManager | undefined = undefined;
+        if (args.privKeyHex) {
+            const privKey = PrivateKey.fromString(args.privKeyHex);
+            privilegedKeyManager = new sdk.PrivilegedKeyManager(async () => privKey);
+        }
+        const wallet = new Wallet({
+            chain,
+            keyDeriver,
+            storage,
+            services,
+            monitor,
+            privilegedKeyManager
+        });
+        const r: SetupWallet = {
+            rootKey,
+            identityKey,
+            keyDeriver,
+            chain,
+            storage,
+            services,
+            monitor,
+            wallet
+        };
+        return r;
+    }
+    static async createWalletWithStorageClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> 
     static getKeyPair(priv?: string | PrivateKey): KeyPairAddress 
     static getLockP2PKH(address: string) 
-    static getUnlockP2PKH(priv: PrivateKey, satoshis: number) 
-    static async createWalletOnly(args: {
-        chain?: sdk.Chain;
-        rootKeyHex?: string;
-        active?: sdk.WalletStorageProvider;
-        backups?: sdk.WalletStorageProvider[];
-        privKeyHex?: string;
-    }): Promise<SetupWalletOnly> 
-    static async createWalletWithStorageClient(args: {
-        rootKeyHex?: string;
-        endpointUrl?: string;
-        chain?: sdk.Chain;
-    }): Promise<SetupWalletOnly> 
+    static getUnlockP2PKH(priv: PrivateKey, satoshis: number): sdk.ScriptTemplateUnlock 
+    static createP2PKHOutputs(outputs: {
+        address: string;
+        satoshis: number;
+        outputDescription?: string;
+        basket?: string;
+        tags?: string[];
+    }[]): CreateActionOutput[] 
+    static async createP2PKHOutputsAction(wallet: WalletInterface, outputs: {
+        address: string;
+        satoshis: number;
+        outputDescription?: string;
+        basket?: string;
+        tags?: string[];
+    }[], options?: CreateActionOptions): Promise<{
+        cr: CreateActionResult;
+        outpoints: string[] | undefined;
+    }> 
+    static async fundWalletFromP2PKHOutpoints(wallet: WalletInterface, outpoints: string[], p2pkhKey: KeyPairAddress, inputBEEF?: BEEF) 
 }
 ```
 
-See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [SetupWalletOnly](#interface-setupwalletonly), [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [ScriptTemplateUnlock](#interface-scripttemplateunlock), [Services](#class-services), [SetupEnv](#interface-setupenv), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [SetupWalletClient](#interface-setupwalletclient), [SetupWalletClientArgs](#interface-setupwalletclientargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
 
 <details>
 
 <summary>Class SetupClient Details</summary>
 
-#### Method makeEnv
+#### Method createWallet
 
-Create content for .env file with some private keys, identity keys, sample API keys, and sample MySQL connection string.
+Create a `Wallet`. Storage can optionally be provided or configured later.
 
-Private keys should never be included directly in you source code.
-
-Loading them from a .env file is intended only for experimentation and getting started.
+The following components are configured: KeyDeriver, WalletStorageManager, WalletService, WalletStorage.
+Optionally, PrivilegedKeyManager is also configured.
 
 ```ts
-static makeEnv(): void 
+static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
+    args.chain ||= args.env.chain;
+    args.rootKeyHex ||= args.env.devKeys[args.env.identityKey];
+    const rootKey = PrivateKey.fromHex(args.rootKeyHex);
+    const identityKey = rootKey.toPublicKey().toString();
+    const keyDeriver = new KeyDeriver(rootKey);
+    const chain = args.chain;
+    const storage = new WalletStorageManager(identityKey, args.active, args.backups);
+    if (storage.stores.length > 0)
+        await storage.makeAvailable();
+    const serviceOptions = Services.createDefaultOptions(chain);
+    serviceOptions.taalApiKey = args.env.taalApiKey;
+    const services = new Services(args.chain);
+    const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services);
+    const monitor = new Monitor(monopts);
+    monitor.addDefaultTasks();
+    let privilegedKeyManager: sdk.PrivilegedKeyManager | undefined = undefined;
+    if (args.privKeyHex) {
+        const privKey = PrivateKey.fromString(args.privKeyHex);
+        privilegedKeyManager = new sdk.PrivilegedKeyManager(async () => privKey);
+    }
+    const wallet = new Wallet({
+        chain,
+        keyDeriver,
+        storage,
+        services,
+        monitor,
+        privilegedKeyManager
+    });
+    const r: SetupWallet = {
+        rootKey,
+        identityKey,
+        keyDeriver,
+        chain,
+        storage,
+        services,
+        monitor,
+        wallet
+    };
+    return r;
+}
+```
+See also: [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [Services](#class-services), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+
+#### Method getEnv
+
+Reads a .env file of the format created by `makeEnv`.
+
+Returns values for designated `chain`.
+
+Access private keys through the `devKeys` object: `devKeys[identityKey]`
+
+```ts
+static getEnv(chain: sdk.Chain): SetupEnv 
+```
+See also: [Chain](#type-chain), [SetupEnv](#interface-setupenv)
+
+Returns
+
+with configuration environment secrets used by `Setup` functions.
+
+Argument Details
+
++ **chain**
+  + Which chain to use: 'test' or 'main'
+
+#### Method makeEnv
+
+Creates content for .env file with some private keys, identity keys, sample API keys, and sample MySQL connection string.
+
+Two new, random private keys are generated each time, with their associated public identity keys.
+
+Loading secrets from a .env file is intended only for experimentation and getting started.
+Private keys should never be included directly in your source code.
+
+```ts
+static makeEnv(): string 
 ```
 
 </details>

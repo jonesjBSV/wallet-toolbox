@@ -101,8 +101,8 @@ export abstract class SetupClient {
         : process.env.MY_TEST_IDENTITY2
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const mySQLConnection = process.env.MYSQL_CONNECTION || '{}'
-    const taalApiKey =
-      verifyTruthy(chain === 'main'
+    const taalApiKey = verifyTruthy(
+      chain === 'main'
         ? process.env.MAIN_TAAL_API_KEY
         : process.env.TEST_TAAL_API_KEY,
       `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`
@@ -143,7 +143,7 @@ export abstract class SetupClient {
       args.active,
       args.backups
     )
-    if (storage.stores.length > 0) await storage.makeAvailable();
+    if (storage.stores.length > 0) await storage.makeAvailable()
     const serviceOptions = Services.createDefaultOptions(chain)
     serviceOptions.taalApiKey = args.env.taalApiKey
     const services = new Services(args.chain)
