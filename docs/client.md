@@ -3179,19 +3179,18 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [CertOps](#class-certops) | [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
-| [Monitor](#class-monitor) | [TaskClock](#class-taskclock) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
-| [PrivilegedKeyManager](#class-privilegedkeymanager) | [TaskFailAbandoned](#class-taskfailabandoned) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
-| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskNewHeader](#class-tasknewheader) | [WERR_NOT_ACTIVE](#class-werr_not_active) |
-| [ServiceCollection](#class-servicecollection) | [TaskPurge](#class-taskpurge) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
-| [Services](#class-services) | [TaskReviewStatus](#class-taskreviewstatus) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
-| [Setup](#class-setup) | [TaskSendWaiting](#class-tasksendwaiting) | [Wallet](#class-wallet) |
-| [SetupClient](#class-setupclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [WalletError](#class-walleterror) |
-| [StorageClient](#class-storageclient) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletMonitorTask](#class-walletmonitortask) |
-| [StorageProvider](#class-storageprovider) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [WalletSigner](#class-walletsigner) |
-| [StorageReader](#class-storagereader) | [WERR_INTERNAL](#class-werr_internal) | [WalletStorageManager](#class-walletstoragemanager) |
-| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |  |
-| [StorageSyncReader](#class-storagesyncreader) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |  |
+| [CertOps](#class-certops) | [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |
+| [Monitor](#class-monitor) | [TaskClock](#class-taskclock) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
+| [PrivilegedKeyManager](#class-privilegedkeymanager) | [TaskFailAbandoned](#class-taskfailabandoned) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
+| [ScriptTemplateSABPPP](#class-scripttemplatesabppp) | [TaskNewHeader](#class-tasknewheader) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
+| [ServiceCollection](#class-servicecollection) | [TaskPurge](#class-taskpurge) | [WERR_NOT_ACTIVE](#class-werr_not_active) |
+| [Services](#class-services) | [TaskReviewStatus](#class-taskreviewstatus) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
+| [SetupClient](#class-setupclient) | [TaskSendWaiting](#class-tasksendwaiting) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
+| [StorageClient](#class-storageclient) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [Wallet](#class-wallet) |
+| [StorageProvider](#class-storageprovider) | [WERR_BAD_REQUEST](#class-werr_bad_request) | [WalletError](#class-walleterror) |
+| [StorageReader](#class-storagereader) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) | [WalletMonitorTask](#class-walletmonitortask) |
+| [StorageReaderWriter](#class-storagereaderwriter) | [WERR_INTERNAL](#class-werr_internal) | [WalletSigner](#class-walletsigner) |
+| [StorageSyncReader](#class-storagesyncreader) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) | [WalletStorageManager](#class-walletstoragemanager) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3477,6 +3476,9 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ### Class: ScriptTemplateSABPPP
 
+Simple Authenticated BSV P2PKH Payment Protocol
+https://brc.dev/29
+
 ```ts
 export class ScriptTemplateSABPPP implements ScriptTemplate {
     p2pkh: P2PKH;
@@ -3598,20 +3600,6 @@ async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]>
 See also: [PostTxsResult](#interface-posttxsresult)
 
 </details>
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-### Class: Setup
-
-Enables code that imports only from `SetupClient` to still reference everything as just `Setup`
-
-```ts
-export class Setup extends SetupClient {
-}
-```
-
-See also: [SetupClient](#class-setupclient)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4990,7 +4978,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ### Class: WalletStorageManager
 
-The `SignerStorage` class delivers authentication checking storage access to the wallet.
+The `WalletStorageManager` class delivers authentication checking storage access to the wallet.
 
 If manages multiple `StorageBase` derived storage services: one actice, the rest as backups.
 

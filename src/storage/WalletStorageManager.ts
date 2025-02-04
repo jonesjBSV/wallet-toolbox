@@ -21,7 +21,7 @@ import {
 } from '../index.client'
 
 /**
- * The `SignerStorage` class delivers authentication checking storage access to the wallet.
+ * The `WalletStorageManager` class delivers authentication checking storage access to the wallet.
  *
  * If manages multiple `StorageBase` derived storage services: one actice, the rest as backups.
  *

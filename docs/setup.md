@@ -172,27 +172,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | |
 | --- |
 | [Setup](#class-setup) |
-| [Setup](#class-setup) |
 | [SetupClient](#class-setupclient) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
 
-### Class: Setup
-
-Enables code that imports only from `SetupClient` to still reference everything as just `Setup`
-
-```ts
-export class Setup extends SetupClient {
-}
-```
-
-See also: [SetupClient](#class-setupclient)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ### Class: Setup
 
 The 'Setup` class provides static setup functions to construct BRC-100 compatible
@@ -226,10 +211,41 @@ export abstract class Setup extends SetupClient {
         };
         return r;
     }
-    static createSQLiteKnex(filename: string): Knex 
-    static createMySQLKnex(connection: string, database?: string): Knex 
-    static async createMySQLWallet(args: SetupWalletMySQLArgs): Promise<SetupWalletKnex> 
-    static async createSQLiteWallet(args: SetupWalletSQLiteArgs): Promise<SetupWalletKnex> 
+    static createSQLiteKnex(filename: string): Knex {
+        const config: Knex.Config = {
+            client: "sqlite3",
+            connection: { filename },
+            useNullAsDefault: true
+        };
+        const knex = makeKnex(config);
+        return knex;
+    }
+    static createMySQLKnex(connection: string, database?: string): Knex {
+        const c: Knex.MySql2ConnectionConfig = JSON.parse(connection);
+        if (database) {
+            c.database = database;
+        }
+        const config: Knex.Config = {
+            client: "mysql2",
+            connection: c,
+            useNullAsDefault: true,
+            pool: { min: 0, max: 7, idleTimeoutMillis: 15000 }
+        };
+        const knex = makeKnex(config);
+        return knex;
+    }
+    static async createMySQLWallet(args: SetupWalletMySQLArgs): Promise<SetupWalletKnex> {
+        return await this.createKnexWallet({
+            ...args,
+            knex: Setup.createMySQLKnex(args.env.mySQLConnection, args.databaseName)
+        });
+    }
+    static async createSQLiteWallet(args: SetupWalletSQLiteArgs): Promise<SetupWalletKnex> {
+        return await this.createKnexWallet({
+            ...args,
+            knex: Setup.createSQLiteKnex(args.filePath)
+        });
+    }
 }
 ```
 

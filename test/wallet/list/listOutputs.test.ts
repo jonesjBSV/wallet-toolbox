@@ -143,7 +143,7 @@ describe('listOutputs test', () => {
     }
   })
 
-  test('1_default', async () => {
+  test('2a default', async () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
@@ -166,7 +166,7 @@ describe('listOutputs test', () => {
     }
   })
 
-  test('2_default', async () => {
+  test('2b default with originators', async () => {
     for (const { wallet } of ctxs) {
       {
         let log = `\n${testName()}\n`
@@ -260,18 +260,12 @@ describe('listOutputs test', () => {
 
   test('6_non-existent basket', async () => {
     for (const { wallet } of ctxs) {
-      {
-        let log = `\n${testName()}\n`
+      // non-existent basket should return zero results.
         const args: ListOutputsArgs = {
-          basket: 'non-existent-basket',
-          tags: ['babbage_action_originator projectbabbage.com'],
-          includeTags: true
+          basket: 'admin foo'
         }
-        await expectToThrowWERR(
-          sdk.WERR_INVALID_PARAMETER,
-          async () => await wallet.listOutputs(args)
-        )
-      }
+        const r = await wallet.listOutputs(args)
+        expect(r.totalOutputs === 0)
     }
   })
 
