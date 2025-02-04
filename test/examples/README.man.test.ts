@@ -1,20 +1,21 @@
 import { InternalizeActionArgs, PrivateKey, Utils } from '@bsv/sdk'
 import { Setup } from '../../src'
 
-describe.skip('examples README tests', () => {
+describe('examples README tests', () => {
   jest.setTimeout(99999999)
 
-  it('0', async () => {
-    const rootKeyHex = PrivateKey.fromRandom().toString()
-    console.log(
-      `MAKE A SECURE COPY OF YOUR WALLET PRIVATE ROOT KEY: ${rootKeyHex}`
-    )
+  it('0 makeEnv', async () => {
+    const envString = Setup.makeEnv()
+  })
+
+  it('1 internalize wallet payment', async () => {
+
+    const env = Setup.getEnv('test')
 
     const { wallet } = await Setup.createSQLiteWallet({
+      env,
       filePath: './myTestWallet.sqlite',
       databaseName: 'myTestWallet',
-      chain: 'test',
-      rootKeyHex
     })
 
     // Obtain a Wallet Payment for your new wallet from a testnet funding faucet.

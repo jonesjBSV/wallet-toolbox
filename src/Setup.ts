@@ -1,29 +1,17 @@
 import {
-  Beef,
-  CreateActionArgs,
-  CreateActionOutput,
-  CreateActionResult,
   KeyDeriver,
-  P2PKH,
   PrivateKey,
-  PublicKey,
-  SignActionArgs,
-  SignActionResult,
-  WalletInterface
 } from '@bsv/sdk'
 import {
   Monitor,
   sdk,
   Services,
   SetupClient,
-  StorageClient,
-  verifyTruthy,
   Wallet,
   WalletStorageManager
 } from './index.client'
-import { PrivilegedKeyManager } from './sdk'
 import { Knex, knex as makeKnex } from 'knex'
-import { SetupWallet, StorageKnex } from './index.all'
+import { SetupWallet, SetupWalletArgs, StorageKnex } from './index.all'
 
 /**
  * The 'Setup` class provides static setup functions to construct BRC-100 compatible
@@ -48,18 +36,10 @@ export abstract class Setup extends SetupClient {
    *
    * @publicbody
    */
-  static async createKnexWallet(args: {
-    knex: Knex<any, any[]>
-    databaseName: string
-    chain?: sdk.Chain
-    rootKeyHex?: string
-    privKeyHex?: string
-  }): Promise<SetupWallet> {
-    const wo = await Setup.createWalletOnly({
-      chain: args.chain,
-      rootKeyHex: args.rootKeyHex,
-      privKeyHex: args.privKeyHex
-    })
+  static async createKnexWallet(
+    args: SetupWalletKnexArgs
+  ): Promise<SetupWalletKnex> {
+    const wo = await Setup.createWallet(args)
     const activeStorage = new StorageKnex({
       chain: wo.chain,
       knex: args.knex,
@@ -72,7 +52,7 @@ export abstract class Setup extends SetupClient {
     await wo.storage.addWalletStorageProvider(activeStorage)
     const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey)
     const userId = user.userId
-    const r: SetupWallet = {
+    const r: SetupWalletKnex = {
       ...wo,
       activeStorage,
       userId
@@ -105,31 +85,37 @@ export abstract class Setup extends SetupClient {
     return knex
   }
 
-  static async createMySQLWallet(args: {
-    databaseName: string
-    chain?: sdk.Chain
-    rootKeyHex?: string
-    privKeyHex?: string
-  }): Promise<SetupWallet> {
-    const env = Setup.getEnv(args.chain || 'test')
+  static async createMySQLWallet(
+    args: SetupWalletMySQLArgs
+  ): Promise<SetupWalletKnex> {
     return await this.createKnexWallet({
       ...args,
-      knex: Setup.createMySQLKnex(env.mySQLConnection, args.databaseName)
+      knex: Setup.createMySQLKnex(args.env.mySQLConnection, args.databaseName)
     })
   }
 
-  static async createSQLiteWallet(args: {
-    filePath: string
-    databaseName: string
-    chain?: sdk.Chain
-    rootKeyHex?: string
-    privKeyHex?: string
-  }): Promise<SetupWallet> {
+  static async createSQLiteWallet(
+    args: SetupWalletSQLiteArgs
+  ): Promise<SetupWalletKnex> {
     return await this.createKnexWallet({
       ...args,
       knex: Setup.createSQLiteKnex(args.filePath)
     })
   }
+}
+
+export interface SetupWalletKnexArgs extends SetupWalletArgs {
+  knex: Knex<any, any[]>
+  databaseName: string
+}
+
+export interface SetupWalletMySQLArgs extends SetupWalletArgs {
+  databaseName: string
+}
+
+export interface SetupWalletSQLiteArgs extends SetupWalletArgs {
+  filePath: string
+  databaseName: string
 }
 
 export interface SetupWalletKnex extends SetupWallet {

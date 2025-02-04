@@ -1,4 +1,5 @@
 import {
+  BEEF,
   Beef,
   CreateActionArgs,
   CreateActionOptions,
@@ -10,6 +11,8 @@ import {
   PublicKey,
   SignActionArgs,
   SignActionResult,
+  Transaction,
+  UnlockingScript,
   WalletInterface
 } from '@bsv/sdk'
 import {
@@ -88,14 +91,6 @@ export abstract class SetupClient {
    */
   static getEnv(chain: sdk.Chain): SetupEnv {
     // Identity keys of the lead maintainer of this repo...
-    const mainTaalApiKey = verifyTruthy(
-      process.env.MAIN_TAAL_API_KEY || '',
-      `.env value for 'mainTaalApiKey' is required.`
-    )
-    const testTaalApiKey = verifyTruthy(
-      process.env.TEST_TAAL_API_KEY || '',
-      `.env value for 'testTaalApiKey' is required.`
-    )
     const identityKey =
       chain === 'main'
         ? process.env.MY_MAIN_IDENTITY
@@ -106,6 +101,12 @@ export abstract class SetupClient {
         : process.env.MY_TEST_IDENTITY2
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const mySQLConnection = process.env.MYSQL_CONNECTION || '{}'
+    const taalApiKey =
+      verifyTruthy(chain === 'main'
+        ? process.env.MAIN_TAAL_API_KEY
+        : process.env.TEST_TAAL_API_KEY,
+      `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`
+    )
 
     if (!identityKey || !identityKey2)
       throw new sdk.WERR_INVALID_OPERATION(
@@ -116,8 +117,7 @@ export abstract class SetupClient {
       chain,
       identityKey,
       identityKey2,
-      mainTaalApiKey,
-      testTaalApiKey,
+      taalApiKey,
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
       mySQLConnection
     }
@@ -143,7 +143,9 @@ export abstract class SetupClient {
       args.active,
       args.backups
     )
-    if (storage.stores.length > 0) await storage.makeAvailable()
+    if (storage.stores.length > 0) await storage.makeAvailable();
+    const serviceOptions = Services.createDefaultOptions(chain)
+    serviceOptions.taalApiKey = args.env.taalApiKey
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(
       chain,
@@ -178,20 +180,55 @@ export abstract class SetupClient {
     return r
   }
 
-  static async createWalletWithStorageClient(args: SetupWalletClientArgs)
-  : Promise<SetupWalletClient>
-  {
-      const wo = await Setup.createWallet(args)
-      if (wo.chain === 'main') throw new sdk.WERR_INVALID_PARAMETER('chain', `'test' for now, 'main' is not yet supported.`);
+  static async createWalletWithStorageClient(
+    args: SetupWalletClientArgs
+  ): Promise<SetupWalletClient> {
+    const wo = await Setup.createWallet(args)
+    if (wo.chain === 'main')
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'chain',
+        `'test' for now, 'main' is not yet supported.`
+      )
 
-      const endpointUrl = args.endpointUrl || 'https://staging-dojo.babbage.systems'
-      const client = new StorageClient(wo.wallet, endpointUrl)
-      await wo.storage.addWalletStorageProvider(client)
-      await wo.storage.makeAvailable()
-      return {
-          ...wo,
-          endpointUrl
-      }
+    const endpointUrl =
+      args.endpointUrl || 'https://staging-dojo.babbage.systems'
+    const client = new StorageClient(wo.wallet, endpointUrl)
+    await wo.storage.addWalletStorageProvider(client)
+    await wo.storage.makeAvailable()
+    return {
+      ...wo,
+      endpointUrl
+    }
+  }
+
+  static getKeyPair(priv?: string | PrivateKey): KeyPairAddress {
+    if (priv === undefined) priv = PrivateKey.fromRandom()
+    else if (typeof priv === 'string') priv = new PrivateKey(priv, 'hex')
+
+    const pub = PublicKey.fromPrivateKey(priv)
+    const address = pub.toAddress()
+    return { privateKey: priv, publicKey: pub, address }
+  }
+
+  static getLockP2PKH(address: string) {
+    const p2pkh = new P2PKH()
+    const lock = p2pkh.lock(address)
+    return lock
+  }
+
+  static getUnlockP2PKH(
+    priv: PrivateKey,
+    satoshis: number
+  ): sdk.ScriptTemplateUnlock {
+    const p2pkh = new P2PKH()
+    const lock = Setup.getLockP2PKH(Setup.getKeyPair(priv).address)
+    // Prepare to pay with SIGHASH_ALL and without ANYONE_CAN_PAY.
+    // In otherwords:
+    // - all outputs must remain in the current order, amount and locking scripts.
+    // - all inputs must remain from the current outpoints and sequence numbers.
+    // (unlock scripts are never signed)
+    const unlock = p2pkh.unlock(priv, 'all', false, satoshis, lock)
+    return unlock
   }
 
   static createP2PKHOutputs(
@@ -255,36 +292,13 @@ export abstract class SetupClient {
     return { cr, outpoints }
   }
 
-  /**
-   * TODO...
-   */
-  static async internalizeP2PKHOutpoints() {}
-
-  static getKeyPair(priv?: string | PrivateKey): KeyPairAddress {
-    if (priv === undefined) priv = PrivateKey.fromRandom()
-    else if (typeof priv === 'string') priv = new PrivateKey(priv, 'hex')
-
-    const pub = PublicKey.fromPrivateKey(priv)
-    const address = pub.toAddress()
-    return { privateKey: priv, publicKey: pub, address }
-  }
-
-  static getLockP2PKH(address: string) {
-    const p2pkh = new P2PKH()
-    const lock = p2pkh.lock(address)
-    return lock
-  }
-
-  static getUnlockP2PKH(priv: PrivateKey, satoshis: number) {
-    const p2pkh = new P2PKH()
-    const lock = Setup.getLockP2PKH(Setup.getKeyPair(priv).address)
-    // Prepare to pay with SIGHASH_ALL and without ANYONE_CAN_PAY.
-    // In otherwords:
-    // - all outputs must remain in the current order, amount and locking scripts.
-    // - all inputs must remain from the current outpoints and sequence numbers.
-    // (unlock scripts are never signed)
-    const unlock = p2pkh.unlock(priv, 'all', false, satoshis, lock)
-    return unlock
+  static async fundWalletFromP2PKHOutpoints(
+    wallet: WalletInterface,
+    outpoints: string[],
+    p2pkhKey: KeyPairAddress,
+    inputBEEF?: BEEF
+  ) {
+    // TODO
   }
 }
 
@@ -303,15 +317,14 @@ export interface SetupEnv {
   chain: sdk.Chain
   identityKey: string
   identityKey2: string
-  mainTaalApiKey: string
-  testTaalApiKey: string
+  taalApiKey: string
   devKeys: Record<string, string>
   mySQLConnection: string
 }
 
 /**
  * Arguments used to construct a `Wallet`
- * 
+ *
  * @param env Configuration "secrets" typically obtained by `Setup.makeEnv` and `Setup.getEnv` functions.
  * @param chain Optional. Which chain this wallet is on: 'main' or 'test'.
  * Defaults to `env.chain`.
@@ -343,9 +356,9 @@ export interface SetupWallet {
 }
 
 export interface SetupWalletClientArgs extends SetupWalletArgs {
-    endpointUrl?: string
+  endpointUrl?: string
 }
 
 export interface SetupWalletClient extends SetupWallet {
-    endpointUrl: string
+  endpointUrl: string
 }
