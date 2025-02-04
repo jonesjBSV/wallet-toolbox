@@ -261,11 +261,11 @@ describe('listOutputs test', () => {
   test('6_non-existent basket', async () => {
     for (const { wallet } of ctxs) {
       // non-existent basket should return zero results.
-        const args: ListOutputsArgs = {
-          basket: 'admin foo'
-        }
-        const r = await wallet.listOutputs(args)
-        expect(r.totalOutputs === 0)
+      const args: ListOutputsArgs = {
+        basket: 'admin foo'
+      }
+      const r = await wallet.listOutputs(args)
+      expect(r.totalOutputs === 0)
     }
   })
 

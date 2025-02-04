@@ -324,7 +324,7 @@ export abstract class SetupClient {
 }
 
 /**
- * 
+ *
  */
 export type KeyPairAddress = {
   privateKey: PrivateKey
@@ -333,7 +333,7 @@ export type KeyPairAddress = {
 }
 
 /**
- * 
+ *
  */
 export interface SetupEnv {
   chain: sdk.Chain

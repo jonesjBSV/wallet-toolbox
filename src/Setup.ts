@@ -114,7 +114,7 @@ export abstract class Setup extends SetupClient {
 }
 
 /**
- * 
+ *
  */
 export interface SetupWalletKnexArgs extends SetupWalletArgs {
   knex: Knex<any, any[]>
@@ -122,14 +122,14 @@ export interface SetupWalletKnexArgs extends SetupWalletArgs {
 }
 
 /**
- * 
+ *
  */
 export interface SetupWalletMySQLArgs extends SetupWalletArgs {
   databaseName: string
 }
 
 /**
- * 
+ *
  */
 export interface SetupWalletSQLiteArgs extends SetupWalletArgs {
   filePath: string
@@ -137,7 +137,7 @@ export interface SetupWalletSQLiteArgs extends SetupWalletArgs {
 }
 
 /**
- * 
+ *
  */
 export interface SetupWalletKnex extends SetupWallet {
   activeStorage: StorageKnex
