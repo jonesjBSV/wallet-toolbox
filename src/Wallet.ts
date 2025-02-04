@@ -101,6 +101,16 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   identityKey: string
 
+  /**
+   * The wallet creates a `BeefParty` when it is created.
+   * All the Beefs that pass through the wallet are merged into this beef.
+   * Thus what it contains at any time is the union of all transactions and proof data processed.
+   * The class `BeefParty` derives from `Beef`, adding the ability to track the source of merged data.
+   *
+   * This allows it to generate beefs to send to a particular “party” (storage or the user)
+   * that includes “txid only proofs” for transactions they already know about.
+   * Over time, this allows an active wallet to drastically reduce the amount of data transmitted.
+   */
   beef: BeefParty
   trustSelf?: TrustSelf
   userParty: string
