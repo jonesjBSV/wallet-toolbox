@@ -15,9 +15,6 @@ import {
   WalletActionOutput
 } from '@bsv/sdk'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
-import { setRandomValsOverride } from '../../../src/storage/methods/generateChange'
-import { WERR_INTERNAL } from '../../../src/sdk'
-import { raw } from 'express'
 
 const noLog = true
 const logFilePath = path.resolve(__dirname, 'createAction2.man.test.ts')
@@ -51,9 +48,8 @@ describe('createAction nosend transactions', () => {
   })
 
   test('1_transaction with single output checked using toLogString', async () => {
-    setRandomValsOverride([0.5, 0.5])
-
     for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingLabel = 'funding transaction for createAction'
       const fundingArgs: CreateActionArgs = {
         outputs: [
@@ -74,12 +70,10 @@ describe('createAction nosend transactions', () => {
       }
       const fundingResult: CreateActionResult =
         await wallet.createAction(fundingArgs)
+      expect(fundingResult.tx).toBeDefined()
       const beef = Beef.fromBinary(fundingResult.tx!)
-      console.log(beef.toLogString())
-      const mainTxid = beef.txs.slice(-1)[0].txid
-      const rawTx = beef.findTxid(mainTxid)?.rawTx
-      console.log('rawTx=', numberArrayToHexString(rawTx!))
-
+      expect(beef).toBeDefined()
+      log(beef.toLogString())
       const actionsResult = await wallet.listActions({
         labels: [fundingLabel],
         includeInputs: true,
@@ -89,45 +83,31 @@ describe('createAction nosend transactions', () => {
         includeOutputLockingScripts: true,
         includeLabels: true
       })
-
       const rl1 = toLogString(fundingResult.tx!, actionsResult)
-      console.log(rl1.log)
-      //log(rl1.logColor)
-
-      // const rl1 = createActionResultToTxLogString(fundingResult)
-      // log(rl1.log)
-      // log(rl1.logColor)
-
-      expect(fundingResult.tx).toBeDefined()
+      log(rl1.log)
+      log(rl1.logColor)
+      const rl2 = createActionResultToTxLogString(fundingResult)
+      log(rl2.log)
+      log(rl2.logColor)
       log(JSON.stringify(actionsResult))
-      // const beef = Beef.fromBinary(fundingResult.tx!)
-      // expect(beef).toBeDefined()
-      // const beefToLogString = beef.toLogString()
-      // const testName = expect.getState().currentTestName ?? 'Unknown_Test'
-      // const expectedLogData = getExpectedLog(testName, logFilePath)
-      // if (!expectedLogData) {
-      //   console.log(
-      //     `No reference logs found for test "${testName}". Creating one now.`
-      //   )
-      // }
-      // const rl = toLogString(fundingResult.tx!, actionsResult)
-      // const receivedLog = normalizeVariableParts(rl.log)
-      // log(beefToLogString)
-      // log(rl.log)
-      // log(rl.logColor)
-      // if (expectedLogData) {
-      //   const expectedLog = normalizeVariableParts(expectedLogData!.log)
-      //   log(expectedLog)
-      //   expect(receivedLog).toBe(expectedLog)
-      // }
-      // appendLogsAsConst(testName, rl)
+      const testName = expect.getState().currentTestName ?? 'Unknown_Test'
+      const expectedLogData = getExpectedLog(testName, logFilePath)
+      if (!expectedLogData) {
+        logWarn(
+          `No reference logs found for test "${testName}". Creating one at the bottom of this file...\n`
+        )
+        logWarn('Now re-run the test\n')
+        appendLogsAsConst(testName, rl1)
+      }
+      if (expectedLogData) {
+        expect(rl1.log).toBe(expectedLogData.log)
+      }
     }
   })
 
   test('2_transaction with multiple outputs checked using toLogString', async () => {
-    setRandomValsOverride([0.5, 0.5])
-
     for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingLabel = 'funding transaction for createAction'
       const fundingArgs: CreateActionArgs = {
         outputs: [
@@ -153,7 +133,9 @@ describe('createAction nosend transactions', () => {
       const fundingResult: CreateActionResult =
         await wallet.createAction(fundingArgs)
       expect(fundingResult.tx).toBeDefined()
-
+      const beef = Beef.fromBinary(fundingResult.tx!)
+      expect(beef).toBeDefined()
+      log(beef.toLogString())
       const actionsResult = await wallet.listActions({
         labels: [fundingLabel],
         includeInputs: true,
@@ -163,35 +145,31 @@ describe('createAction nosend transactions', () => {
         includeOutputLockingScripts: true,
         includeLabels: true
       })
+      const rl1 = toLogString(fundingResult.tx!, actionsResult)
+      log(rl1.log)
+      log(rl1.logColor)
+      const rl2 = createActionResultToTxLogString(fundingResult)
+      log(rl2.log)
+      log(rl2.logColor)
       log(JSON.stringify(actionsResult))
-      const beef = Beef.fromBinary(fundingResult.tx!)
-      expect(beef).toBeDefined()
-      const beefToLogString = beef.toLogString()
       const testName = expect.getState().currentTestName ?? 'Unknown_Test'
       const expectedLogData = getExpectedLog(testName, logFilePath)
       if (!expectedLogData) {
-        console.log(
-          `No reference logs found for test "${testName}". Creating one now.`
+        logWarn(
+          `No reference logs found for test "${testName}". Creating one at the bottom of this file...\n`
         )
+        logWarn('Now re-run the test\n')
+        appendLogsAsConst(testName, rl1)
       }
-      const rl = toLogString(fundingResult.tx!, actionsResult)
-      const receivedLog = normalizeVariableParts(rl.log)
-      log(beefToLogString)
-      log(rl.log)
-      log(rl.logColor)
       if (expectedLogData) {
-        const expectedLog = normalizeVariableParts(expectedLogData!.log)
-        log(expectedLog)
-        expect(receivedLog).toBe(expectedLog)
+        expect(rl1.log).toBe(expectedLogData.log)
       }
-      appendLogsAsConst(testName, rl)
     }
   })
 
-  test('3_transaction with explicit change check', async () => {
-    setRandomValsOverride([0.5, 0.5])
-
+  test('3_TODOTONE transaction with explicit change check', async () => {
     for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingArgs: CreateActionArgs = {
         outputs: [
           {
@@ -247,7 +225,11 @@ describe('createAction nosend transactions', () => {
       const spendingActionsResult = await wallet.listActions({
         labels: ['spending transaction test'],
         includeInputs: true,
-        includeOutputs: true
+        includeOutputs: true,
+        includeInputSourceLockingScripts: true,
+        includeInputUnlockingScripts: true,
+        includeOutputLockingScripts: true,
+        includeLabels: true
       })
       log(
         `spendingActionsResult:${JSON.stringify(spendingActionsResult, null, 2)}`
@@ -270,13 +252,34 @@ describe('createAction nosend transactions', () => {
       const actualFee = totalInputSatoshis! - outputSatoshis - expectedChange
       expect(actualFee).toBe(estimatedFee)
       log(`Calculated transaction fee: ${actualFee} satoshis`)
+      const beef = Beef.fromBinary(spendingResult.tx!)
+      expect(beef).toBeDefined()
+      log(beef.toLogString())
+      const rl1 = toLogString(spendingResult.tx!, spendingActionsResult)
+      log(rl1.log)
+      log(rl1.logColor)
+      const rl2 = createActionResultToTxLogString(spendingResult)
+      log(rl2.log)
+      log(rl2.logColor)
+      log(JSON.stringify(spendingActionsResult))
+      const testName = expect.getState().currentTestName ?? 'Unknown_Test'
+      const expectedLogData = getExpectedLog(testName, logFilePath)
+      if (!expectedLogData) {
+        logWarn(
+          `No reference logs found for test "${testName}". Creating one at the bottom of this file...\n`
+        )
+        logWarn('Now re-run the test\n')
+        appendLogsAsConst(testName, rl1)
+      }
+      if (expectedLogData) {
+        expect(rl1.log).toBe(expectedLogData.log)
+      }
     }
   })
 
-  test('4_no-send transaction with custom options knownTxids and returnTXIDOnly false', async () => {
-    setRandomValsOverride([0.5, 0.5])
-
+  test('4_TODOTONE transaction with custom options knownTxids and returnTXIDOnly false', async () => {
     for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingOutputSatoshis = 4
       const fundingArgs: CreateActionArgs = {
         outputs: [
@@ -316,13 +319,43 @@ describe('createAction nosend transactions', () => {
         expect.arrayContaining(['tx123', 'tx456'])
       )
       expect(spendingResult.tx).toBeDefined()
+      const beef = Beef.fromBinary(spendingResult.tx!)
+      expect(beef).toBeDefined()
+      log(beef.toLogString())
+      const spendingActionsResult = await wallet.listActions({
+        labels: ['custom options test'],
+        includeInputs: true,
+        includeOutputs: true,
+        includeInputSourceLockingScripts: true,
+        includeInputUnlockingScripts: true,
+        includeOutputLockingScripts: true,
+        includeLabels: true
+      })
+      const rl1 = toLogString(spendingResult.tx!, spendingActionsResult)
+      log(rl1.log)
+      log(rl1.logColor)
+      const rl2 = createActionResultToTxLogString(spendingResult)
+      log(rl2.log)
+      log(rl2.logColor)
+      log(JSON.stringify(spendingActionsResult))
+      const testName = expect.getState().currentTestName ?? 'Unknown_Test'
+      const expectedLogData = getExpectedLog(testName, logFilePath)
+      if (!expectedLogData) {
+        logWarn(
+          `No reference logs found for test "${testName}". Creating one at the bottom of this file...\n`
+        )
+        logWarn('Now re-run the test\n')
+        appendLogsAsConst(testName, rl1)
+      }
+      if (expectedLogData) {
+        expect(rl1.log).toBe(expectedLogData.log)
+      }
     }
   })
 
   test('5_no-send transaction with custom options knownTxids and returnTXIDOnly true', async () => {
-    setRandomValsOverride([0.5, 0.5])
-
     for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingOutputSatoshis = 4
       const fundingArgs: CreateActionArgs = {
         outputs: [
@@ -366,9 +399,8 @@ describe('createAction nosend transactions', () => {
   })
 
   test('6_no-send transaction with custom options knownTxids check returned txids', async () => {
-    setRandomValsOverride([0.5, 0.5])
-
     for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingOutputSatoshis = 4
       const fundingArgs: CreateActionArgs = {
         outputs: [
@@ -420,9 +452,8 @@ describe('createAction nosend transactions', () => {
   })
 
   test('7_no-send transaction with custom options knownTxids check returned txids with additional spend', async () => {
-    setRandomValsOverride([0.5, 0.5])
-
     for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
       const fundingOutputSatoshis = 4
       const fundingArgs: CreateActionArgs = {
         outputs: [
@@ -673,7 +704,7 @@ function getExpectedLog(
 
   // Use regex to extract the correct log constant
   const logRegex = new RegExp(
-    `const\\s+${sanitizedTestName}\\s*=\\s*\\{\\s*log:\\s*\`([\\s\\S]*?)\`\\s*,\\s*logColor:\\s*\`([\\s\\S]*?)\`\\s*\\}`,
+    `const\\s+${sanitizedTestName}\\s*=\\s*\\{\\s*log:\\s*['\`]([\\s\\S]*?)['\`]\\s*,\\s*logColor:\\s*['\`]([\\s\\S]*?)['\`]\\s*\\}`,
     'm'
   )
   const match = fileContent.match(logRegex)
@@ -1196,8 +1227,6 @@ export function txToLogString(
     }
     const beef = Beef.fromBinary(tx.toBEEF())
     const mainTxid = beef.txs.slice(-1)[0].txid
-    console.log('mainTxid=', mainTxid)
-    console.log('tx=', tx.id('hex'))
     const metadataString = formatMetadata(tx.metadata)
     const merklePathString = formatMerklePath(tx.merklePath)
     let log = formatIndentedLine(
@@ -1275,6 +1304,145 @@ function log(s: string) {
   //if (!noLog) process.stdout.write(s)
 }
 
+function logWarn(s: string) {
+  process.stdout.write(chalk.yellowBright(s))
+}
+
 export function numberArrayToHexString(numbers: number[]): string {
   return numbers.map(num => num.toString(16).padStart(2, '0')).join('')
 }
+
+// Auto-generated test log - 2025-02-05T13:04:29.906Z
+const LOG_createAction_nosend_transactions_1_transaction_with_single_output_checked_using_toLogString = {
+  log: `transactions:3
+  txid:30bdac0f5c6491f130820517802ff57e20e5a50c08b5c65e6976627fb82ae930 version:1 lockTime:0 sats:-4 status:nosend 
+     outgoing:true desc:'Funding transaction' labels:['funding transaction for createaction','this is an extra long test 
+     label that should be truncated at 80 chars when it is...']
+  inputs: 1
+    0: sourceTXID:a3a8fe7f541c1383ff7b975af49b27284ae720af5f2705d8409baaf519190d26.2 sats:913 
+       lock:(50)76a914f7238871139f4926cbd592a03a737981e558245d88ac 
+       unlock:(214)483045022100cfef1f6d781af99a1de14efd6f24f2a14234a26097012f27121eb36f4e330c1d0220... seq:4294967295
+  outputs: 2
+    0: sats:3 lock:(48)76a914abcdef0123456789abcdef0123456789abcdef88ac index:0 spendable:true basket:'funding basket' 
+       desc:'Funding Output' tags:['funding transaction output','test tag']
+    1: sats:909 lock:(50)76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac index:1 spendable:true basket:'default'`,
+  logColor: `[90mtransactions:3[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
+  [34m30bdac0f5c6491f130820517802ff57e20e5a50c08b5c65e6976627fb82ae930[39m [90mversion:[39m1 [90mlockTime:[39m0 
+     [32m-4 sats[39m [90mstatus:[39m[37mnosend[39m [90moutgoing:[39m[37mtrue[39m [90mdesc:[39m[37mFunding 
+     transaction[39m [90mlabels:[39m[37m['funding transaction for createaction','this is an extra long test label that 
+     should be truncated at 80 chars when it is...'][39m
+  [90minputs: 1[39m
+    [90m0:[39m [34ma3a8fe7f541c1383ff7b975af49b27284ae720af5f2705d8409baaf519190d26.2[39m [32m913 sats[39m 
+       [90mlock:[39m(50)[36m76a914f7238871139f4926cbd592a03a737981e558245d88ac[39m 
+       [90munlock:[39m(214)[36m483045022100cfef1f6d781af99a1de14efd6f24f2a14234a26097012f27121eb36f4e330c1d0220...[39m 
+       [90mseq:[39m4294967295
+  [90moutputs: 2[39m
+    [90m0:[39m [32m3 sats[39m [90mlock:[39m(48)[36m76a914abcdef0123456789abcdef0123456789abcdef88ac[39m 
+       [90mindex:[39m[37m0[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mfunding basket[39m 
+       [90mdesc:[39m[37mFunding Output[39m [90mtags:[39m[37m['funding transaction output','test tag'][39m
+    [90m1:[39m [32m909 sats[39m [90mlock:[39m(50)[36m76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac[39m 
+       [90mindex:[39m[37m1[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mdefault[39m`
+};
+
+// Auto-generated test log - 2025-02-05T13:04:31.372Z
+const LOG_createAction_nosend_transactions_2_transaction_with_multiple_outputs_checked_using_toLogString = {
+  log: `transactions:3
+  txid:b3848f2cabf5887ec679ca60347a29f6ecad425fda738700265c2f9d22c18ab5 version:1 lockTime:0 sats:-12 status:nosend 
+     outgoing:true desc:'Funding transaction with multiple outputs' labels:['funding transaction for createaction','this 
+     is the extra label']
+  inputs: 1
+    0: sourceTXID:a3a8fe7f541c1383ff7b975af49b27284ae720af5f2705d8409baaf519190d26.2 sats:913 
+       lock:(50)76a914f7238871139f4926cbd592a03a737981e558245d88ac 
+       unlock:(212)473044022079020cc8ea5ee6b3610806286e41567147d4b4b07d16bc1341311e00ce7647b0022034... seq:4294967295
+  outputs: 3
+    0: sats:5 lock:(48)76a914abcdef0123456789abcdef0123456789abcdef88ac index:0 spendable:true basket:'funding basket' 
+       desc:'Funding output' tags:['funding transaction for createaction','test tag']
+    1: sats:6 lock:(48)76a914fedcba9876543210fedcba9876543210fedcba88ac index:1 spendable:true basket:'extra basket' 
+       desc:'Extra Output' tags:['extra transaction output','extra test tag']
+    2: sats:901 lock:(50)76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac index:2 spendable:true basket:'default'`,
+  logColor: `[90mtransactions:3[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
+  [34mb3848f2cabf5887ec679ca60347a29f6ecad425fda738700265c2f9d22c18ab5[39m [90mversion:[39m1 [90mlockTime:[39m0 
+     [32m-12 sats[39m [90mstatus:[39m[37mnosend[39m [90moutgoing:[39m[37mtrue[39m [90mdesc:[39m[37mFunding 
+     transaction with multiple outputs[39m [90mlabels:[39m[37m['funding transaction for createaction','this is the 
+     extra label'][39m
+  [90minputs: 1[39m
+    [90m0:[39m [34ma3a8fe7f541c1383ff7b975af49b27284ae720af5f2705d8409baaf519190d26.2[39m [32m913 sats[39m 
+       [90mlock:[39m(50)[36m76a914f7238871139f4926cbd592a03a737981e558245d88ac[39m 
+       [90munlock:[39m(212)[36m473044022079020cc8ea5ee6b3610806286e41567147d4b4b07d16bc1341311e00ce7647b0022034...[39m 
+       [90mseq:[39m4294967295
+  [90moutputs: 3[39m
+    [90m0:[39m [32m5 sats[39m [90mlock:[39m(48)[36m76a914abcdef0123456789abcdef0123456789abcdef88ac[39m 
+       [90mindex:[39m[37m0[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mfunding basket[39m 
+       [90mdesc:[39m[37mFunding output[39m [90mtags:[39m[37m['funding transaction for createaction','test 
+       tag'][39m
+    [90m1:[39m [32m6 sats[39m [90mlock:[39m(48)[36m76a914fedcba9876543210fedcba9876543210fedcba88ac[39m 
+       [90mindex:[39m[37m1[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mextra basket[39m 
+       [90mdesc:[39m[37mExtra Output[39m [90mtags:[39m[37m['extra transaction output','extra test tag'][39m
+    [90m2:[39m [32m901 sats[39m [90mlock:[39m(50)[36m76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac[39m 
+       [90mindex:[39m[37m2[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mdefault[39m`
+};
+
+// Auto-generated test log - 2025-02-05T13:04:33.887Z
+const LOG_createAction_nosend_transactions_3_TODOTONE_transaction_with_explicit_change_check = {
+  log: `transactions:5
+  txid:afa6713aab0957cf5bb00dee532ad7b895e919a99564ec2016b51cb3d472d87f version:1 lockTime:0 sats:1 status:nosend 
+     outgoing:true desc:'Explicit check on returned change' labels:['spending transaction test']
+  inputs: 2
+    0: sourceTXID:527ffe88f70d5b7de2b8b5ba9966b9c755e7da4de749d4fcd27140a03145a11d.0 sats:995 
+       lock:(50)76a914ab2b66432503a3681fc5af1502207ca458c8752d88ac 
+       unlock:(214)483045022100973a84555fa864e08313bda5c88e1991094db7b8d82586c899276155dabcbc9a0220... seq:4294967295
+    1: sourceTXID:70afdc54187a1cdb8e35f7d00e5e111cbf5c43c4dc3f1da2cc44479133c75f9e.0 sats:4 desc:'Funding output' 
+       lock:(48)76a914abcdef0123456789abcdef0123456789abcdef88ac unlock:(16)47304402207f2e9a seq:4294967295
+  outputs: 2
+    0: sats:2 lock:(48)76a914abcdef0123456789abcdef0123456789abcdef88ac index:0 spendable:true desc:'First spending 
+       Output for check on change '
+    1: sats:996 lock:(50)76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac index:1 spendable:true basket:'default'`,
+  logColor: `[90mtransactions:5[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
+  [34mafa6713aab0957cf5bb00dee532ad7b895e919a99564ec2016b51cb3d472d87f[39m [90mversion:[39m1 [90mlockTime:[39m0 
+     [32m1 sats[39m [90mstatus:[39m[37mnosend[39m [90moutgoing:[39m[37mtrue[39m [90mdesc:[39m[37mExplicit 
+     check on returned change[39m [90mlabels:[39m[37m['spending transaction test'][39m
+  [90minputs: 2[39m
+    [90m0:[39m [34m527ffe88f70d5b7de2b8b5ba9966b9c755e7da4de749d4fcd27140a03145a11d.0[39m [32m995 sats[39m 
+       [90mlock:[39m(50)[36m76a914ab2b66432503a3681fc5af1502207ca458c8752d88ac[39m 
+       [90munlock:[39m(214)[36m483045022100973a84555fa864e08313bda5c88e1991094db7b8d82586c899276155dabcbc9a0220...[39m 
+       [90mseq:[39m4294967295
+    [90m1:[39m [34m70afdc54187a1cdb8e35f7d00e5e111cbf5c43c4dc3f1da2cc44479133c75f9e.0[39m [32m4 sats[39m 
+       [90mdesc:[39m[37mFunding output[39m 
+       [90mlock:[39m(48)[36m76a914abcdef0123456789abcdef0123456789abcdef88ac[39m 
+       [90munlock:[39m(16)[36m47304402207f2e9a[39m [90mseq:[39m4294967295
+  [90moutputs: 2[39m
+    [90m0:[39m [32m2 sats[39m [90mlock:[39m(48)[36m76a914abcdef0123456789abcdef0123456789abcdef88ac[39m 
+       [90mindex:[39m[37m0[39m [90mspendable:[39m[37mtrue[39m [90mdesc:[39m[37mFirst spending Output for check 
+       on change [39m
+    [90m1:[39m [32m996 sats[39m [90mlock:[39m(50)[36m76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac[39m 
+       [90mindex:[39m[37m1[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mdefault[39m`
+};
+
+// Auto-generated test log - 2025-02-05T13:04:35.381Z
+const LOG_createAction_nosend_transactions_4_TODOTONE_transaction_with_custom_options_knownTxids_and_returnTXIDOnly_false = {
+  log: `transactions:2
+  txid:8122d1fe026da98508d93e14c61f587f71ffd2d53f0222c0d8a483cad292c8fb version:1 lockTime:0 sats:-5 status:nosend 
+     outgoing:true desc:'Check knownTxids and returnTXIDOnly' labels:['custom options test']
+  inputs: 1
+    0: sourceTXID:527ffe88f70d5b7de2b8b5ba9966b9c755e7da4de749d4fcd27140a03145a11d.0 sats:995 
+       lock:(50)76a914ab2b66432503a3681fc5af1502207ca458c8752d88ac 
+       unlock:(212)47304402201ab1cb148479a87bbbfe10d5fc37b714f99a264c11708f77e0c926bf7b06f00a022024... seq:4294967295
+  outputs: 2
+    0: sats:4 lock:(48)76a914abcdef0123456789abcdef0123456789abcdef88ac index:1 spendable:true desc:'returnTXIDOnly 
+       test'
+    1: sats:990 lock:(50)76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac index:0 spendable:true basket:'default'`,
+  logColor: `[90mtransactions:2[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
+  [34m8122d1fe026da98508d93e14c61f587f71ffd2d53f0222c0d8a483cad292c8fb[39m [90mversion:[39m1 [90mlockTime:[39m0 
+     [32m-5 sats[39m [90mstatus:[39m[37mnosend[39m [90moutgoing:[39m[37mtrue[39m [90mdesc:[39m[37mCheck 
+     knownTxids and returnTXIDOnly[39m [90mlabels:[39m[37m['custom options test'][39m
+  [90minputs: 1[39m
+    [90m0:[39m [34m527ffe88f70d5b7de2b8b5ba9966b9c755e7da4de749d4fcd27140a03145a11d.0[39m [32m995 sats[39m 
+       [90mlock:[39m(50)[36m76a914ab2b66432503a3681fc5af1502207ca458c8752d88ac[39m 
+       [90munlock:[39m(212)[36m47304402201ab1cb148479a87bbbfe10d5fc37b714f99a264c11708f77e0c926bf7b06f00a022024...[39m 
+       [90mseq:[39m4294967295
+  [90moutputs: 2[39m
+    [90m0:[39m [32m4 sats[39m [90mlock:[39m(48)[36m76a914abcdef0123456789abcdef0123456789abcdef88ac[39m 
+       [90mindex:[39m[37m1[39m [90mspendable:[39m[37mtrue[39m [90mdesc:[39m[37mreturnTXIDOnly test[39m
+    [90m1:[39m [32m990 sats[39m [90mlock:[39m(50)[36m76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac[39m 
+       [90mindex:[39m[37m0[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mdefault[39m`
+};
