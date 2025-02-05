@@ -438,6 +438,19 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
+  static async createMySQLTestSetup2Wallet(args: {
+    databaseName: string
+    mockData: MockData
+    chain?: sdk.Chain
+    rootKeyHex?: string
+  }): Promise<TestWallet<TestSetup2>> {
+    return await this.createKnexTestSetup2Wallet({
+      ...args,
+      dropAll: true,
+      knex: _tu.createLocalMySQL(args.databaseName)
+    })
+  }
+
   static async createSQLiteTestWallet(args: {
     filePath?: string
     databaseName: string
@@ -475,6 +488,7 @@ export abstract class TestUtilsWalletStorage {
 
   static async createSQLiteTestSetup2Wallet(args: {
     databaseName: string
+    mockData: MockData
     chain?: sdk.Chain
     rootKeyHex?: string
   }): Promise<TestWallet<TestSetup2>> {
@@ -521,13 +535,16 @@ export abstract class TestUtilsWalletStorage {
   static async createKnexTestSetup2Wallet(args: {
     knex: Knex<any, any[]>
     databaseName: string
+    mockData: MockData
     chain?: sdk.Chain
     rootKeyHex?: string
     dropAll?: boolean
   }): Promise<TestWallet<TestSetup2>> {
     return await _tu.createKnexTestWalletWithSetup({
       ...args,
-      insertSetup: _tu.createTestSetup2
+      insertSetup: async (storage: StorageKnex, identityKey: string) => {
+        return _tu.createTestSetup2(storage, identityKey, args.mockData)
+      }
     })
   }
 
@@ -1145,7 +1162,7 @@ export abstract class TestUtilsWalletStorage {
 
   static async createTestSetup2(
     storage: StorageProvider,
-    u1IdentityKey: string,
+    identityKey: string,
     mockData: MockData = { actions: [] }
   ): Promise<TestSetup2> {
     if (!mockData || !mockData.actions) {
@@ -1157,7 +1174,7 @@ export abstract class TestUtilsWalletStorage {
     const outputMap: Record<string, any> = {}
 
     // only one user
-    const user = await _tu.insertTestUser(storage, u1IdentityKey)
+    const user = await _tu.insertTestUser(storage, identityKey)
 
     // First create your output that represent your inputs
     for (const action of mockData.actions) {
@@ -1328,7 +1345,7 @@ export abstract class TestUtilsWalletStorage {
       }
     }
 
-    return {}
+    return mockData
   }
 
   static mockPostServicesAsSuccess(ctxs: TestWalletOnly[]): void {
@@ -1411,7 +1428,7 @@ export interface MockData {
   actions: WalletAction[]
 }
 
-export interface TestSetup2 {}
+export interface TestSetup2 extends MockData {}
 
 export interface TestWallet<T> extends TestWalletOnly {
   activeStorage: StorageKnex
@@ -1446,6 +1463,7 @@ async function insertEmptySetup(
   return {}
 }
 
+export type TestSetup2Wallet = TestWallet<TestSetup2>
 export type TestSetup1Wallet = TestWallet<TestSetup1>
 export type TestWalletNoSetup = TestWallet<{}>
 

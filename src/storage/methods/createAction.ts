@@ -7,7 +7,9 @@ import {
   PrivateKey,
   PubKeyHex,
   PublicKey,
-  Script
+  Random,
+  Script,
+  Utils
 } from '@bsv/sdk'
 import {
   asArray,
@@ -711,7 +713,7 @@ async function validateRequiredInputs(
 }
 
 async function validateNoSendChange(
-  dojo: StorageProvider,
+  storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   changeBasket: table.OutputBasket
@@ -725,7 +727,7 @@ async function validateNoSendChange(
   if (noSendChange && noSendChange.length > 0) {
     for (const op of noSendChange) {
       const output = verifyOneOrNone(
-        await dojo.findOutputs({
+        await storage.findOutputs({
           partial: { userId, txid: op.txid, vout: op.vout }
         })
       )
@@ -754,7 +756,7 @@ async function validateNoSendChange(
 }
 
 async function fundNewTransactionSdk(
-  dojo: StorageProvider,
+  storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   ctx: CreateTransactionSdkContext
@@ -781,7 +783,8 @@ async function fundNewTransactionSdk(
     changeLockingScriptLength: 25,
     changeUnlockingScriptLength: 107,
     targetNetCount:
-      ctx.changeBasket.numberOfDesiredUTXOs - ctx.availableChangeCount
+      ctx.changeBasket.numberOfDesiredUTXOs - ctx.availableChangeCount,
+    randomVals: vargs.randomVals
   }
 
   const noSendChange = [...ctx.noSendChangeIn]
@@ -796,7 +799,7 @@ async function fundNewTransactionSdk(
       const o = noSendChange.pop()!
       outputs[o.outputId!] = o
       // allocate the output in storage, noSendChange is by definition spendable false and part of noSpend transaction batch.
-      await dojo.updateOutput(o.outputId!, {
+      await storage.updateOutput(o.outputId!, {
         spendable: false,
         spentBy: ctx.transactionId
       })
@@ -810,7 +813,7 @@ async function fundNewTransactionSdk(
     }
 
     const basketId = ctx.changeBasket.basketId!
-    const o = await dojo.allocateChangeInput(
+    const o = await storage.allocateChangeInput(
       userId,
       basketId,
       targetSatoshis,
@@ -833,7 +836,7 @@ async function fundNewTransactionSdk(
       noSendChange.push(nsco)
       return
     }
-    await dojo.updateOutput(outputId, {
+    await storage.updateOutput(outputId, {
       spendable: true,
       spentBy: undefined
     })
@@ -845,8 +848,42 @@ async function fundNewTransactionSdk(
     releaseChangeInput
   )
 
+  const nextRandomVal = (): number => {
+    let val = 0
+    if (!vargs.randomVals || vargs.randomVals.length === 0) {
+      val = Math.random()
+    } else {
+      val = vargs.randomVals.shift() || 0
+      vargs.randomVals.push(val)
+    }
+    return val
+  }
+
+  /**
+   * @returns a random integer betweenn min and max, inclussive.
+   */
+  const rand = (min: number, max: number): number => {
+    if (max < min)
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'max',
+        `less than min (${min}). max is (${max})`
+      )
+    return Math.floor(nextRandomVal() * (max - min + 1) + min)
+  }
+
+  const randomDerivation = (count: number) : string => {
+    let val: number[] = []
+    if (!vargs.randomVals || vargs.randomVals.length === 0) {
+      val = Random(count)
+    } else {
+      for (let i = 0; i < count; i++)
+        val.push(rand(0, 255))
+    }
+    return Utils.toBase64(val)
+  }
+
   // Generate a derivation prefix for the payment
-  const derivationPrefix = randomBytesBase64(16)
+  const derivationPrefix = randomDerivation(16)
 
   const r: {
     allocatedChange: table.Output[]
@@ -870,7 +907,7 @@ async function fundNewTransactionSdk(
           change: true,
           type: 'P2PKH',
           derivationPrefix,
-          derivationSuffix: randomBytesBase64(16),
+          derivationSuffix: randomDerivation(16),
           providedBy: 'storage',
           purpose: 'change',
           customInstructions: undefined,
@@ -910,7 +947,7 @@ function trimInputBeef(
 }
 
 async function mergeAllocatedChangeBeefs(
-  dojo: StorageProvider,
+  storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   allocatedChange: table.Output[],
@@ -931,7 +968,7 @@ async function mergeAllocatedChangeBeefs(
       !beef.findTxid(o.txid!) &&
       !vargs.options.knownTxids.find(txid => txid === o.txid)
     ) {
-      await dojo.getBeefForTransaction(o.txid!, options)
+      await storage.getBeefForTransaction(o.txid!, options)
     }
   }
   return trimInputBeef(beef, vargs)

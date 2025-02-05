@@ -45,8 +45,10 @@ export async function listOutputs(
       partial: { userId, name: vargs.basket },
       trx
     })
-    if (baskets.length !== 1)
-      throw new sdk.WERR_INVALID_PARAMETER('basket', 'valid basket name.')
+    if (baskets.length !== 1) {
+      // If basket does not exist, result is no outputs.
+      return r
+    }
     const basket = baskets[0]
     basketId = basket.basketId!
     basketsById[basketId!] = basket

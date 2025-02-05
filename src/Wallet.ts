@@ -91,7 +91,7 @@ function isWalletSigner(args: WalletArgs | WalletSigner): args is WalletSigner {
   return args['isWalletSigner']
 }
 
-export class Wallet implements WalletInterface {
+export class Wallet implements WalletInterface, ProtoWallet {
   chain: sdk.Chain
   keyDeriver: KeyDeriver
   storage: WalletStorageManager
@@ -101,6 +101,16 @@ export class Wallet implements WalletInterface {
 
   identityKey: string
 
+  /**
+   * The wallet creates a `BeefParty` when it is created.
+   * All the Beefs that pass through the wallet are merged into this beef.
+   * Thus what it contains at any time is the union of all transactions and proof data processed.
+   * The class `BeefParty` derives from `Beef`, adding the ability to track the source of merged data.
+   *
+   * This allows it to generate beefs to send to a particular “party” (storage or the user)
+   * that includes “txid only proofs” for transactions they already know about.
+   * Over time, this allows an active wallet to drastically reduce the amount of data transmitted.
+   */
   beef: BeefParty
   trustSelf?: TrustSelf
   userParty: string
@@ -108,6 +118,11 @@ export class Wallet implements WalletInterface {
   privilegedKeyManager?: sdk.PrivilegedKeyManager
 
   pendingSignActions: Record<string, PendingSignAction>
+
+  /**
+   * For repeatability testing, set to an array of random numbers from [0..1).
+   */
+  randomVals?: number[] = undefined
 
   constructor(
     argsOrSigner: WalletArgs | WalletSigner,
@@ -622,6 +637,10 @@ export class Wallet implements WalletInterface {
       args,
       sdk.validateCreateActionArgs
     )
+    if (this.randomVals && this.randomVals.length > 1) {
+      vargs.randomVals = [...this.randomVals]
+    }
+
     const r = await createAction(this, auth, vargs)
 
     if (r.signableTransaction) {

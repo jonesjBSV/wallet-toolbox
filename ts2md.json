@@ -2,6 +2,12 @@
   "options": [
     {
       "inputFilename": "src/index.ts",
+      "outputFilename": "docs/setup.md",
+      "firstHeadingLevel": 1,
+      "filenameSubString": "Setup"
+    },
+    {
+      "inputFilename": "src/index.ts",
       "outputFilename": "docs/monitor.md",
       "firstHeadingLevel": 1,
       "filenameSubString": "monitor"

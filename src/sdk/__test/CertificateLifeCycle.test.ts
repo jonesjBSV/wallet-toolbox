@@ -1,9 +1,9 @@
 import {
   Certificate as BsvCertificate,
-  CompletedProtoWallet,
   KeyDeriver,
   MasterCertificate,
   PrivateKey,
+  ProtoWallet,
   Utils,
   WalletCertificate
 } from '@bsv/sdk'
@@ -13,7 +13,9 @@ describe('CertificateLifeCycle tests', () => {
   jest.setTimeout(99999999)
 
   test('0 encrypt decrypt sign verify', async () => {
-    const subjectWallet = new CompletedProtoWallet(PrivateKey.fromRandom())
+    const subjectWallet = new ProtoWallet(PrivateKey.fromRandom())
+    if (!subjectWallet.keyDeriver)
+      throw new sdk.WERR_INVALID_OPERATION('keyDeriver must be valid')
     const { cert, certifier, subject } = makeSampleCert(
       subjectWallet.keyDeriver.rootKey.toString()
     )
@@ -27,7 +29,7 @@ describe('CertificateLifeCycle tests', () => {
       cert.fields
     )
 
-    const certifierWallet = new CompletedProtoWallet(certifier)
+    const certifierWallet = new ProtoWallet(certifier)
 
     const imc = await MasterCertificate.issueCertificateForSubject(
       certifierWallet,
@@ -67,14 +69,14 @@ describe('CertificateLifeCycle tests', () => {
     await expect(co.verify()).rejects.toThrow(
       'Signature DER must start with 0x30'
     )
-    await co.sign(new CompletedProtoWallet(new KeyDeriver(certifier)))
+    await co.sign(new ProtoWallet(new KeyDeriver(certifier)))
     expect(await co.verify()).toBe(true)
 
     {
       await co.encryptFields(subject.toPublicKey().toString())
       await expect(co.verify()).rejects.toThrow('Signature is not valid')
       co.signature = undefined
-      await co.sign(new CompletedProtoWallet(new KeyDeriver(certifier)))
+      await co.sign(new ProtoWallet(new KeyDeriver(certifier)))
       expect(await co.verify()).toBe(true)
     }
 
@@ -85,7 +87,7 @@ describe('CertificateLifeCycle tests', () => {
 
     {
       await co.encryptFields()
-      const crypto2 = new CompletedProtoWallet(
+      const crypto2 = new ProtoWallet(
         new KeyDeriver(PrivateKey.fromHex('2'.repeat(64)))
       )
       const co2 = new sdk.CertOps(crypto2, co.toWalletCertificate())
@@ -98,7 +100,7 @@ describe('CertificateLifeCycle tests', () => {
   test('1 createKeyringForVerifier', async () => {
     const { cert, certifier, subject } = makeSampleCert()
 
-    const crypto = new CompletedProtoWallet(subject)
+    const crypto = new ProtoWallet(subject)
     const co = new sdk.CertOps(crypto, cert)
   })
 
@@ -112,7 +114,7 @@ describe('CertificateLifeCycle tests', () => {
     // such that the values it contains can be attributed to the certifier through its public key.
     // Encryption is done with random symmetric keys and the keys are then encrypted by the certifier
     // such that each key can also be decrypted by the subject:
-    const certifierWallet = new CompletedProtoWallet(certifier)
+    const certifierWallet = new ProtoWallet(certifier)
     const co = new sdk.CertOps(certifierWallet, cert)
 
     await co.encryptAndSignNewCertificate()
@@ -121,7 +123,7 @@ describe('CertificateLifeCycle tests', () => {
     const exportForSubject = co.exportForSubject()
 
     // The subject imports their copy of the new certificate:
-    const subjectWallet = new CompletedProtoWallet(subject)
+    const subjectWallet = new ProtoWallet(subject)
     const cs = await sdk.CertOps.fromCertifier(subjectWallet, exportForSubject)
 
     // The subject's imported certificate should verify
@@ -147,7 +149,7 @@ describe('CertificateLifeCycle tests', () => {
     )
 
     // The verifier uses their own wallet to import the certificate, verify it, and decrypt their designated fields.
-    const verifierWallet = new CompletedProtoWallet(verifier)
+    const verifierWallet = new ProtoWallet(verifier)
     const cv = await sdk.CertOps.fromCounterparty(
       verifierWallet,
       exportForVerifier

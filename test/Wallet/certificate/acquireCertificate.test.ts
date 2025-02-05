@@ -1,6 +1,6 @@
 import {
   AcquireCertificateArgs,
-  CompletedProtoWallet,
+  ProtoWallet,
   ProveCertificateArgs
 } from '@bsv/sdk'
 import { _tu, expectToThrowWERR } from '../../utils/TestUtilsWalletStorage'
@@ -50,7 +50,7 @@ describe('acquireCertificate tests', () => {
     const { cert, certifier } = _tu.makeSampleCert(subject)
 
     // Act as the certifier: create a wallet for them...
-    const certifierWallet = new CompletedProtoWallet(certifier)
+    const certifierWallet = new ProtoWallet(certifier)
     // load the plaintext certificate into a CertOps object
     const co = new sdk.CertOps(certifierWallet, cert)
     // encrypt and sign the certificate
@@ -131,7 +131,7 @@ describe('acquireCertificate tests', () => {
     const { cert, certifier } = _tu.makeSampleCert(subject)
 
     // Act as the certifier: create a wallet for them...
-    const certifierWallet = new CompletedProtoWallet(certifier)
+    const certifierWallet = new ProtoWallet(certifier)
     // load the plaintext certificate into a CertOps object
     const co = new sdk.CertOps(certifierWallet, cert)
     // encrypt and sign the certificate

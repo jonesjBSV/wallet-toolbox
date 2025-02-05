@@ -1,3 +1,5 @@
+import { Transaction, UnlockingScript } from '@bsv/sdk'
+
 /**
  * Identifies a unique transaction output by its `txid` and index `vout`
  */
@@ -112,4 +114,9 @@ export interface StorageIdentity {
 export interface EntityTimeStamp {
   created_at: Date
   updated_at: Date
+}
+
+export interface ScriptTemplateUnlock {
+  sign: (tx: Transaction, inputIndex: number) => Promise<UnlockingScript>
+  estimateLength: (tx: Transaction, inputIndex: number) => Promise<number>
 }

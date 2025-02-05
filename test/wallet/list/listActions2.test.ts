@@ -10,95 +10,67 @@ import {
   TestWalletNoSetup
 } from '../../utils/TestUtilsWalletStorage'
 
-const testName = 'listActions'
+const env = _tu.getEnv('test')
+const testName = () => expect.getState().currentTestName || 'test'
 
-describe('listActions single action tests', () => {
+describe('listActions2 single action tests', () => {
   jest.setTimeout(99999999)
 
-  let ctxs: TestWalletNoSetup[] = []
-  let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
+  let ctxs: TestWalletNoSetup[]
 
-  const env = _tu.getEnv('test')
-  const testName = () => expect.getState().currentTestName || 'test'
+  const mockData: MockData = {
+    actions: [
+      {
+        txid: 'tx',
+        satoshis: 1,
+        status: 'completed',
+        isOutgoing: true,
+        description: 'Transaction',
+        version: 1,
+        lockTime: 0,
+        labels: ['label', 'label2'],
+        inputs: [
+          {
+            sourceOutpoint: 'tx.0',
+            sourceSatoshis: 1,
+            sourceLockingScript: '0123456789abcdef',
+            unlockingScript: '0123456789abcdef',
+            inputDescription: 'description',
+            sequenceNumber: 0
+          }
+        ],
+        outputs: [
+          {
+            satoshis: 1,
+            spendable: false,
+            tags: ['tag', 'tag2'],
+            outputIndex: 2,
+            outputDescription: 'description',
+            basket: 'basket',
+            lockingScript: '0123456789abcdef'
+          }
+        ]
+      }
+    ]
+  }
 
   beforeEach(async () => {
-    setups = []
     ctxs = []
-
-    await Promise.all(
-      ctxs.map(async ctx => {
-        await ctx.storage.destroy()
-      })
-    )
-    ctxs = []
-
-    if (env.runMySQL) {
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
-    }
-    await _tu.createSQLiteTestWallet({
+    const args = {
       chain: 'test',
+      mockData,
       databaseName: testName(),
       rootKeyHex: '2'.repeat(64),
       dropAll: true
-    })
-
-    //ctxs.push(await _tu.createLegacyWalletSQLiteCopy(testName))
-
-    const mockData: MockData = {
-      actions: [
-        {
-          txid: 'tx',
-          satoshis: 1,
-          status: 'completed',
-          isOutgoing: true,
-          description: 'Transaction',
-          version: 1,
-          lockTime: 0,
-          labels: ['label', 'label2'],
-          inputs: [
-            {
-              sourceOutpoint: 'tx.0',
-              sourceSatoshis: 1,
-              sourceLockingScript: '0123456789abcdef',
-              unlockingScript: '0123456789abcdef',
-              inputDescription: 'description',
-              sequenceNumber: 0
-            }
-          ],
-          outputs: [
-            {
-              satoshis: 1,
-              spendable: false,
-              tags: ['tag', 'tag2'],
-              outputIndex: 2,
-              outputDescription: 'description',
-              basket: 'basket',
-              lockingScript: '0123456789abcdef'
-            }
-          ]
-        }
-      ]
     }
-
-    for (const ctx of ctxs) {
-      const { activeStorage } = ctx
-      await activeStorage.dropAllData()
-      await activeStorage.migrate('insert tests', '3'.repeat(64))
+    if (env.runMySQL) {
+      ctxs.push(await _tu.createMySQLTestSetup2Wallet(args))
     }
-    expect(setups).toBeTruthy()
-
-    for (const { activeStorage: storage, identityKey } of ctxs) {
-      await _tu.createTestSetup2(storage, identityKey, mockData)
-    }
+    ctxs.push(await _tu.createSQLiteTestSetup2Wallet(args))
   })
 
   afterEach(async () => {
-    await Promise.all(
-      ctxs.map(async ctx => {
-        await ctx.storage.destroy()
-      })
-    )
-    ctxs = []
+    for (const { wallet } of ctxs) await wallet.destroy()
   })
 
   test('12_no labels default any', async () => {
@@ -1196,121 +1168,95 @@ describe('listActions single action tests', () => {
   // })
 })
 
-describe('listActions two action tests', () => {
+describe('listActions2 two action tests', () => {
   jest.setTimeout(99999999)
 
-  let ctxs: TestWalletNoSetup[] = []
-  let setups: { setup: TestSetup2; storage: StorageProvider }[] = []
+  let ctxs: TestWalletNoSetup[]
 
-  const env = _tu.getEnv('test')
-  const testName = () => expect.getState().currentTestName || 'test'
+  const mockData: MockData = {
+    actions: [
+      {
+        txid: 'tx1',
+        satoshis: 1,
+        status: 'completed',
+        isOutgoing: true,
+        description: 'Transaction 1',
+        version: 1,
+        lockTime: 0,
+        labels: ['label 1', 'label a'],
+        inputs: [
+          {
+            sourceOutpoint: 'tx1.1',
+            sourceSatoshis: 1,
+            //sourceLockingScript: '0123456789abcdef',
+            //unlockingScript: '0123456789abcdef',
+            inputDescription: 'description 1',
+            sequenceNumber: 1
+          }
+        ],
+        outputs: [
+          {
+            satoshis: 1,
+            spendable: false,
+            tags: ['tag1'],
+            outputIndex: 1,
+            outputDescription: 'description 1',
+            basket: 'basket'
+            //lockingScript: '0123456789abcdef'
+          }
+        ]
+      },
+      {
+        txid: 'tx2',
+        satoshis: 2,
+        status: 'completed',
+        isOutgoing: true,
+        description: 'Transaction 2',
+        version: 1,
+        lockTime: 0,
+        labels: ['label2', 'label b'],
+        inputs: [
+          {
+            sourceOutpoint: 'tx2.2',
+            sourceSatoshis: 2,
+            //sourceLockingScript: '0123456789abcdef',
+            //unlockingScript: '0123456789abcdef',
+            inputDescription: 'description 2',
+            sequenceNumber: 2
+          }
+        ],
+        outputs: [
+          {
+            satoshis: 2,
+            spendable: false,
+            tags: ['tag2'],
+            outputIndex: 2,
+            outputDescription: 'description 2',
+            basket: 'basket 2'
+            //lockingScript: '0123456789abcdef'
+          }
+        ]
+      }
+    ]
+  }
 
   beforeEach(async () => {
-    setups = []
     ctxs = []
-
-    await Promise.all(
-      ctxs.map(async ctx => {
-        await ctx.storage.destroy()
-      })
-    )
-    ctxs = []
-
-    if (env.runMySQL) {
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy(testName))
-    }
-    await _tu.createSQLiteTestWallet({
+    const args = {
       chain: 'test',
+      mockData,
       databaseName: testName(),
       rootKeyHex: '2'.repeat(64),
       dropAll: true
-    })
-
-    const mockData: MockData = {
-      actions: [
-        {
-          txid: 'tx1',
-          satoshis: 1,
-          status: 'completed',
-          isOutgoing: true,
-          description: 'Transaction 1',
-          version: 1,
-          lockTime: 0,
-          labels: ['label 1', 'label a'],
-          inputs: [
-            {
-              sourceOutpoint: 'tx1.1',
-              sourceSatoshis: 1,
-              //sourceLockingScript: '0123456789abcdef',
-              //unlockingScript: '0123456789abcdef',
-              inputDescription: 'description 1',
-              sequenceNumber: 1
-            }
-          ],
-          outputs: [
-            {
-              satoshis: 1,
-              spendable: false,
-              tags: ['tag1'],
-              outputIndex: 1,
-              outputDescription: 'description 1',
-              basket: 'basket'
-              //lockingScript: '0123456789abcdef'
-            }
-          ]
-        },
-        {
-          txid: 'tx2',
-          satoshis: 2,
-          status: 'completed',
-          isOutgoing: true,
-          description: 'Transaction 2',
-          version: 1,
-          lockTime: 0,
-          labels: ['label2', 'label b'],
-          inputs: [
-            {
-              sourceOutpoint: 'tx2.2',
-              sourceSatoshis: 2,
-              //sourceLockingScript: '0123456789abcdef',
-              //unlockingScript: '0123456789abcdef',
-              inputDescription: 'description 2',
-              sequenceNumber: 2
-            }
-          ],
-          outputs: [
-            {
-              satoshis: 2,
-              spendable: false,
-              tags: ['tag2'],
-              outputIndex: 2,
-              outputDescription: 'description 2',
-              basket: 'basket 2'
-              //lockingScript: '0123456789abcdef'
-            }
-          ]
-        }
-      ]
     }
-    for (const ctx of ctxs) {
-      const { activeStorage } = ctx
-      await activeStorage.dropAllData()
-      await activeStorage.migrate('insert tests', '3'.repeat(64))
+    if (env.runMySQL) {
+      ctxs.push(await _tu.createMySQLTestSetup2Wallet(args))
     }
-    expect(setups).toBeTruthy()
-
-    for (const { activeStorage: storage, identityKey } of ctxs) {
-      await _tu.createTestSetup2(storage, identityKey, mockData)
-    }
+    ctxs.push(await _tu.createSQLiteTestSetup2Wallet(args))
   })
 
   afterEach(async () => {
-    await Promise.all(
-      ctxs.map(async ctx => {
-        await ctx.storage.destroy()
-      })
-    )
-    ctxs = []
+    for (const { wallet } of ctxs) await wallet.destroy()
   })
 
   test('100_no labels (default) matched default any', async () => {

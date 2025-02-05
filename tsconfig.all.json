@@ -20,7 +20,7 @@
   "include": [
     "src/**/*",
     "test/**/*"
-  ], // Include test files
+  ],
   "exclude": [
     "node_modules",
     "out",
