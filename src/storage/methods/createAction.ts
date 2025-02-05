@@ -7,7 +7,9 @@ import {
   PrivateKey,
   PubKeyHex,
   PublicKey,
-  Script
+  Random,
+  Script,
+  Utils
 } from '@bsv/sdk'
 import {
   asArray,
@@ -781,7 +783,8 @@ async function fundNewTransactionSdk(
     changeLockingScriptLength: 25,
     changeUnlockingScriptLength: 107,
     targetNetCount:
-      ctx.changeBasket.numberOfDesiredUTXOs - ctx.availableChangeCount
+      ctx.changeBasket.numberOfDesiredUTXOs - ctx.availableChangeCount,
+    randomVals: vargs.randomVals
   }
 
   const noSendChange = [...ctx.noSendChangeIn]
@@ -845,8 +848,42 @@ async function fundNewTransactionSdk(
     releaseChangeInput
   )
 
+  const nextRandomVal = (): number => {
+    let val = 0
+    if (!vargs.randomVals || vargs.randomVals.length === 0) {
+      val = Math.random()
+    } else {
+      val = vargs.randomVals.shift() || 0
+      vargs.randomVals.push(val)
+    }
+    return val
+  }
+
+  /**
+   * @returns a random integer betweenn min and max, inclussive.
+   */
+  const rand = (min: number, max: number): number => {
+    if (max < min)
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'max',
+        `less than min (${min}). max is (${max})`
+      )
+    return Math.floor(nextRandomVal() * (max - min + 1) + min)
+  }
+
+  const randomDerivation = (count: number) : string => {
+    let val: number[] = []
+    if (!vargs.randomVals || vargs.randomVals.length === 0) {
+      val = Random(count)
+    } else {
+      for (let i = 0; i < count; i++)
+        val.push(rand(0, 255))
+    }
+    return Utils.toBase64(val)
+  }
+
   // Generate a derivation prefix for the payment
-  const derivationPrefix = randomBytesBase64(16)
+  const derivationPrefix = randomDerivation(16)
 
   const r: {
     allocatedChange: table.Output[]
@@ -870,7 +907,7 @@ async function fundNewTransactionSdk(
           change: true,
           type: 'P2PKH',
           derivationPrefix,
-          derivationSuffix: randomBytesBase64(16),
+          derivationSuffix: randomDerivation(16),
           providedBy: 'storage',
           purpose: 'change',
           customInstructions: undefined,

@@ -119,6 +119,11 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   pendingSignActions: Record<string, PendingSignAction>
 
+  /**
+   * For repeatability testing, set to an array of random numbers from [0..1).
+   */
+  randomVals?: number[] = undefined
+
   constructor(
     argsOrSigner: WalletArgs | WalletSigner,
     services?: sdk.WalletServices,
@@ -632,6 +637,10 @@ export class Wallet implements WalletInterface, ProtoWallet {
       args,
       sdk.validateCreateActionArgs
     )
+    if (this.randomVals && this.randomVals.length > 1) {
+      vargs.randomVals = [...this.randomVals]
+    }
+
     const r = await createAction(this, auth, vargs)
 
     if (r.signableTransaction) {
