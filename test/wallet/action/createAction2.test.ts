@@ -26,7 +26,7 @@ function sanitizeTestName(testName: string): string {
     : `LOG_${cleanTestName}`
 }
 
-describe('createAction nosend transactions', () => {
+describe('createAction2 nosend transactions', () => {
   jest.setTimeout(99999999)
 
   let ctxs: TestWalletNoSetup[] = []
