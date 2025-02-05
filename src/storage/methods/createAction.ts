@@ -711,7 +711,7 @@ async function validateRequiredInputs(
 }
 
 async function validateNoSendChange(
-  dojo: StorageProvider,
+  storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   changeBasket: table.OutputBasket
@@ -725,7 +725,7 @@ async function validateNoSendChange(
   if (noSendChange && noSendChange.length > 0) {
     for (const op of noSendChange) {
       const output = verifyOneOrNone(
-        await dojo.findOutputs({
+        await storage.findOutputs({
           partial: { userId, txid: op.txid, vout: op.vout }
         })
       )
@@ -754,7 +754,7 @@ async function validateNoSendChange(
 }
 
 async function fundNewTransactionSdk(
-  dojo: StorageProvider,
+  storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   ctx: CreateTransactionSdkContext
@@ -796,7 +796,7 @@ async function fundNewTransactionSdk(
       const o = noSendChange.pop()!
       outputs[o.outputId!] = o
       // allocate the output in storage, noSendChange is by definition spendable false and part of noSpend transaction batch.
-      await dojo.updateOutput(o.outputId!, {
+      await storage.updateOutput(o.outputId!, {
         spendable: false,
         spentBy: ctx.transactionId
       })
@@ -810,7 +810,7 @@ async function fundNewTransactionSdk(
     }
 
     const basketId = ctx.changeBasket.basketId!
-    const o = await dojo.allocateChangeInput(
+    const o = await storage.allocateChangeInput(
       userId,
       basketId,
       targetSatoshis,
@@ -833,7 +833,7 @@ async function fundNewTransactionSdk(
       noSendChange.push(nsco)
       return
     }
-    await dojo.updateOutput(outputId, {
+    await storage.updateOutput(outputId, {
       spendable: true,
       spentBy: undefined
     })
@@ -910,7 +910,7 @@ function trimInputBeef(
 }
 
 async function mergeAllocatedChangeBeefs(
-  dojo: StorageProvider,
+  storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   allocatedChange: table.Output[],
@@ -931,7 +931,7 @@ async function mergeAllocatedChangeBeefs(
       !beef.findTxid(o.txid!) &&
       !vargs.options.knownTxids.find(txid => txid === o.txid)
     ) {
-      await dojo.getBeefForTransaction(o.txid!, options)
+      await storage.getBeefForTransaction(o.txid!, options)
     }
   }
   return trimInputBeef(beef, vargs)

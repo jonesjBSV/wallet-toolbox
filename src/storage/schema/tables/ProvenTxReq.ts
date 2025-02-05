@@ -21,12 +21,12 @@ export interface ProvenTxReq extends ProvenTxReqDynamics {
   batch?: string
   /**
    * JSON string of processing history.
-   * Parses to `DojoProvenTxReqHistoryApi`.
+   * Parses to `ProvenTxReqHistoryApi`.
    */
   history: string
   /**
    * JSON string of data to drive notifications when this request completes.
-   * Parses to `DojoProvenTxReqNotifyApi`.
+   * Parses to `ProvenTxReqNotifyApi`.
    */
   notify: string
   rawTx: number[]
@@ -54,12 +54,12 @@ export interface ProvenTxReqDynamics extends sdk.EntityTimeStamp {
   batch?: string
   /**
    * JSON string of processing history.
-   * Parses to `DojoProvenTxReqHistoryApi`.
+   * Parses to `ProvenTxReqHistoryApi`.
    */
   history: string
   /**
    * JSON string of data to drive notifications when this request completes.
-   * Parses to `DojoProvenTxReqNotifyApi`.
+   * Parses to `ProvenTxReqNotifyApi`.
    */
   notify: string
 }

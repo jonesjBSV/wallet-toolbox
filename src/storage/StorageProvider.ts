@@ -217,7 +217,7 @@ export abstract class StorageProvider
 
   /**
    * Given an array of transaction txids with current ProvenTxReq ready-to-share status,
-   * lookup their DojoProvenTxReqApi req records.
+   * lookup their ProvenTxReqApi req records.
    * For the txids with reqs and status still ready to send construct a single merged beef.
    *
    * @param txids
@@ -407,9 +407,6 @@ export abstract class StorageProvider
    * For all `status` values besides 'failed', just updates the transaction records status property.
    *
    * For 'status' of 'failed', attempts to make outputs previously allocated as inputs to this transaction usable again.
-   *
-   * @throws ERR_DOJO_COMPLETED_TX if current status is 'completed' and new status is not 'completed.
-   * @throws ERR_DOJO_PROVEN_TX if transaction has proof or provenTxId and new status is not 'completed'.
    *
    * @param status
    * @param transactionId

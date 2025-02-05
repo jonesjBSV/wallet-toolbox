@@ -331,7 +331,7 @@ export async function generateChangeSdk(
     return r
   } catch (eu: unknown) {
     const e = sdk.WalletError.fromUnknown(eu)
-    if (e.code === 'ERR_DOJO_NOT_SUFFICIENT_FUNDS') throw eu
+    if (e.code === 'WERR_INSUFFICIENT_FUNDS') throw eu
 
     // Capture the params in cloud run log which has a 100k text length limit per line.
     // logGenerateChangeSdkParams(params, eu)

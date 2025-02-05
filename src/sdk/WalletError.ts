@@ -56,7 +56,6 @@ export class WalletError extends Error implements WalletErrorObject {
   /**
    * Recovers all public fields from WalletError derived error classes and relevant Error derived errors.
    *
-   * Critical client data fields are preserved across HTTP DojoExpress / DojoExpressClient encoding.
    */
   static fromUnknown(err: unknown): WalletError {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
