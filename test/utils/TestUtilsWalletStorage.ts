@@ -2008,20 +2008,54 @@ export async function logTransaction(
   txid: HexString
 ): Promise<string> {
   let amount: SatoshiValue = 0
-  let log = `txid: ${txid}\n`
-  const rt = await storage.findTransactions({ partial: { txid } })
-  for (const t of rt) {
-    log += `status: ${t.status}\n`
-    log += `description: ${t.description}\n`
-    const ro = await storage.findOutputs({
-      partial: { transactionId: t.transactionId }
+  let log = `\n==== Transaction Log ====\ntxid: ${txid}\n`
+
+  const transactions = await storage.findTransactions({ partial: { txid } })
+  for (const tx of transactions) {
+    log += `Status: ${tx.status}\n`
+    log += `Description: ${tx.description}\n`
+
+    const txLabelMaps = await storage.findTxLabelMaps({
+      partial: { transactionId: tx.transactionId }
     })
-    for (const o of ro) {
-      log += `${await logOutput(storage, o)}`
-      amount += o.spendable ? o.satoshis : 0
+    if (txLabelMaps.length > 0) {
+      log += `Labels:\n`
+      for (const txLabelMap of txLabelMaps) {
+        const labels = await storage.findTxLabels({
+          partial: { txLabelId: txLabelMap.txLabelId }
+        })
+        if (labels.length > 0) {
+          log += `  - ${labels[0].label}\n`
+        }
+      }
+    } else {
+      log += `Labels: N/A\n`
+    }
+
+    const inputs = await storage.findOutputs({
+      partial: { transactionId: tx.transactionId }
+    })
+    for (const input of inputs) {
+      log += await logInput(storage, input.txid!, input.vout)
+    }
+
+    const outputs = await storage.findOutputs({
+      partial: { transactionId: tx.transactionId }
+    })
+    for (const output of outputs) {
+      log += await logOutput(storage, output)
+      amount += output.spendable ? output.satoshis : 0
+    }
+
+    const beef = await storage.getBeefForTransaction(txid, {})
+    if (beef) {
+      log += `Beef Data:\n${beef.toLogString()}\n${beef.toHex()}\n`
+    } else {
+      log += `Beef Data: N/A\n`
     }
   }
-  log += `------------------\namount: ${amount}\n`
+
+  log += `-------------\nTotal Amount: ${amount} satoshis\n=============\n`
   return log
 }
 
@@ -2029,26 +2063,101 @@ export async function logOutput(
   storage: StorageKnex,
   output: table.Output
 ): Promise<string> {
-  let log = `satoshis: ${output.satoshis}\n`
-  log += `spendable: ${output.spendable}\n`
-  log += `change: ${output.change}\n`
-  log += `providedBy: ${output.providedBy}\n`
-  log += `spentBy: ${output.providedBy}\n`
+  let log = `\n-- Output --\n`
+  log += `Outpoint: ${output.txid}:${output.vout}\n`
+  log += `Satoshis: ${output.satoshis}\n`
+  log += `Spendable: ${output.spendable}\n`
+  log += `Change: ${output.change}\n`
+  log += `Provided By: ${output.providedBy}\n`
+  log += `Spent By: ${output.spentBy ?? 'Unspent'}\n`
+
   if (output.basketId) {
-    const rb = await storage.findOutputBaskets({
+    const baskets = await storage.findOutputBaskets({
       partial: { basketId: output.basketId }
     })
-    log += `basket:${await logBasket(storage, rb[0])}\n`
+    if (baskets.length === 1) {
+      log += `Basket: ${logBasket(baskets[0])}\n`
+    } else {
+      log += '*** PROBLEM WITH BASKET ***'
+    }
   }
+
+  const outputTags = await storage.findOutputTagMaps({
+    partial: { outputId: output.outputId }
+  })
+  if (outputTags.length > 0) {
+    log += `Tags:\n`
+    for (const outputTag of outputTags) {
+      const tags = await storage.findOutputTags({
+        partial: { outputTagId: outputTag.outputTagId }
+      })
+      if (tags.length > 0) {
+        log += `  - ${tags[0].tag}\n`
+      }
+    }
+  } else {
+    log += `Tags: N/A\n`
+  }
+
   return log
 }
 
-export function logBasket(
+export async function logInput(
   storage: StorageKnex,
-  basket: table.OutputBasket
-): string {
-  let log = `${basket.name}\n`
+  prevOutputTxid: HexString,
+  prevOutputVout: number,
+  indentLevel = 1
+): Promise<string> {
+  const indent = '  '.repeat(indentLevel)
+  let log = `\n${indent}-- Input (Previous Output) --\n`
+
+  const prevOutputs = await storage.findOutputs({
+    partial: { txid: prevOutputTxid, vout: prevOutputVout }
+  })
+
+  if (prevOutputs.length === 0) {
+    log += `${indent}Previous Output Not Found (Outpoint: ${prevOutputTxid}:${prevOutputVout})\n`
+    return log
+  }
+
+  for (const prevOutput of prevOutputs) {
+    const outpoint = `${prevOutputTxid}:${prevOutput.vout}`
+
+    log += `${indent}Source Outpoint: ${outpoint}\n`
+    log += `${indent}Satoshis: ${prevOutput.satoshis}\n`
+    log += `${indent}Spendable: ${prevOutput.spendable}\n`
+    log += `${indent}Change: ${prevOutput.change}\n`
+    log += `${indent}Provided By: ${prevOutput.providedBy}\n`
+    log += `${indent}Spent By: ${prevOutput.spentBy ?? 'Unspent'}\n`
+    log += `${indent}Locking Script: ${prevOutput.lockingScript}\n`
+
+    // If this output was spent, recursively log its inputs
+    if (prevOutput.spentBy) {
+      const spendingTx = await storage.findTransactions({
+        partial: { transactionId: prevOutput.spentBy }
+      })
+
+      if (spendingTx.length > 0) {
+        const spentByTxid = spendingTx[0].txid
+
+        log += `${indent}  ↳ Spent By TXID: ${spentByTxid}\n`
+        log += await logInput(
+          storage,
+          spentByTxid!,
+          prevOutput.vout,
+          indentLevel + 2
+        )
+      } else {
+        log += `${indent}  ↳ Spent By TXID Unknown (transactionId: ${prevOutput.spentBy})\n`
+      }
+    }
+  }
+
   return log
+}
+
+export function logBasket(basket: table.OutputBasket): string {
+  return `\n-- Basket --\nName: ${basket.name}\n`
 }
 
 export function hexStringToNumberArray(hexString: string): number[] {
@@ -2058,17 +2167,4 @@ export function hexStringToNumberArray(hexString: string): number[] {
     result.push(parseInt(sanitizedHex.substr(i, 2), 16))
   }
   return result
-}
-
-async function getOutputByTxIdAndVout(
-  storage: StorageProvider,
-  txid: string,
-  vout: number
-): Promise<table.Output | null> {
-  const results = await storage.findOutputs({
-    partial: { txid }
-  })
-
-  // Return the first matching result or null if no match is found
-  return results.length > 0 ? results[0] : null
 }
