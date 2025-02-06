@@ -1,8 +1,15 @@
-# API
+# WALLET: BSV Wallet Toolbox API Documentation
+
+The documentation is split into various pages, this page focuses on the [Wallet](#class-wallet) class and top level structure of a functioning BRC-100 wallet.
+
+[Return To Top](./README.md)
+
+<!--#region ts2md-api-merged-here-->
+### API
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
-## Interfaces
+#### Interfaces
 
 | | | |
 | --- | --- | --- |
@@ -53,7 +60,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Interface: ArcMinerGetTxData
+##### Interface: ArcMinerGetTxData
 
 ```ts
 export interface ArcMinerGetTxData {
@@ -73,7 +80,7 @@ export interface ArcMinerGetTxData {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ArcMinerPostBeefDataApi
+##### Interface: ArcMinerPostBeefDataApi
 
 ```ts
 export interface ArcMinerPostBeefDataApi {
@@ -96,7 +103,7 @@ export interface ArcMinerPostBeefDataApi {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ArcMinerPostTxsData
+##### Interface: ArcMinerPostTxsData
 
 ```ts
 export interface ArcMinerPostTxsData {
@@ -116,7 +123,7 @@ export interface ArcMinerPostTxsData {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ArcServiceConfig
+##### Interface: ArcServiceConfig
 
 ```ts
 export interface ArcServiceConfig {
@@ -129,7 +136,7 @@ export interface ArcServiceConfig {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: AuthId
+##### Interface: AuthId
 
 ```ts
 export interface AuthId {
@@ -142,7 +149,7 @@ export interface AuthId {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: BaseBlockHeader
+##### Interface: BaseBlockHeader
 
 These are fields of 80 byte serialized header in order whose double sha256 hash is a block's hash value
 and the next block's previousHash value.
@@ -164,7 +171,7 @@ export interface BaseBlockHeader {
 
 <summary>Interface BaseBlockHeader Details</summary>
 
-#### Property bits
+###### Property bits
 
 Block header bits value. Serialized length is 4 bytes.
 
@@ -172,7 +179,7 @@ Block header bits value. Serialized length is 4 bytes.
 bits: number
 ```
 
-#### Property merkleRoot
+###### Property merkleRoot
 
 Root hash of the merkle tree of all transactions in this block. Serialized length is 32 bytes.
 
@@ -180,7 +187,7 @@ Root hash of the merkle tree of all transactions in this block. Serialized lengt
 merkleRoot: string
 ```
 
-#### Property nonce
+###### Property nonce
 
 Block header nonce value. Serialized length is 4 bytes.
 
@@ -188,7 +195,7 @@ Block header nonce value. Serialized length is 4 bytes.
 nonce: number
 ```
 
-#### Property previousHash
+###### Property previousHash
 
 Hash of previous block's block header. Serialized length is 32 bytes.
 
@@ -196,7 +203,7 @@ Hash of previous block's block header. Serialized length is 32 bytes.
 previousHash: string
 ```
 
-#### Property time
+###### Property time
 
 Block header time value. Serialized length is 4 bytes.
 
@@ -204,7 +211,7 @@ Block header time value. Serialized length is 4 bytes.
 time: number
 ```
 
-#### Property version
+###### Property version
 
 Block header version value. Serialized length is 4 bytes.
 
@@ -217,7 +224,7 @@ version: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: BlockHeader
+##### Interface: BlockHeader
 
 A `BaseBlockHeader` extended with its computed hash and height in its chain.
 
@@ -234,7 +241,7 @@ See also: [BaseBlockHeader](#interface-baseblockheader)
 
 <summary>Interface BlockHeader Details</summary>
 
-#### Property hash
+###### Property hash
 
 The double sha256 hash of the serialized `BaseBlockHeader` fields.
 
@@ -242,7 +249,7 @@ The double sha256 hash of the serialized `BaseBlockHeader` fields.
 hash: string
 ```
 
-#### Property height
+###### Property height
 
 Height of the header, starting from zero.
 
@@ -255,7 +262,7 @@ height: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: BsvExchangeRate
+##### Interface: BsvExchangeRate
 
 ```ts
 export interface BsvExchangeRate {
@@ -268,7 +275,7 @@ export interface BsvExchangeRate {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: CertOpsWallet
+##### Interface: CertOpsWallet
 
 ```ts
 export interface CertOpsWallet {
@@ -281,7 +288,7 @@ export interface CertOpsWallet {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: CommitNewTxResults
+##### Interface: CommitNewTxResults
 
 ```ts
 export interface CommitNewTxResults {
@@ -293,7 +300,7 @@ export interface CommitNewTxResults {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: EntityTimeStamp
+##### Interface: EntityTimeStamp
 
 ```ts
 export interface EntityTimeStamp {
@@ -305,7 +312,7 @@ export interface EntityTimeStamp {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ExchangeRatesIoApi
+##### Interface: ExchangeRatesIoApi
 
 ```ts
 export interface ExchangeRatesIoApi {
@@ -320,7 +327,7 @@ export interface ExchangeRatesIoApi {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FiatExchangeRates
+##### Interface: FiatExchangeRates
 
 ```ts
 export interface FiatExchangeRates {
@@ -333,7 +340,7 @@ export interface FiatExchangeRates {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindCertificateFieldsArgs
+##### Interface: FindCertificateFieldsArgs
 
 ```ts
 export interface FindCertificateFieldsArgs extends sdk.FindSincePagedArgs {
@@ -346,7 +353,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindCertificatesArgs
+##### Interface: FindCertificatesArgs
 
 ```ts
 export interface FindCertificatesArgs extends FindSincePagedArgs {
@@ -362,7 +369,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindCommissionsArgs
+##### Interface: FindCommissionsArgs
 
 ```ts
 export interface FindCommissionsArgs extends sdk.FindSincePagedArgs {
@@ -375,7 +382,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindForUserSincePagedArgs
+##### Interface: FindForUserSincePagedArgs
 
 ```ts
 export interface FindForUserSincePagedArgs extends FindSincePagedArgs {
@@ -388,7 +395,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindMonitorEventsArgs
+##### Interface: FindMonitorEventsArgs
 
 ```ts
 export interface FindMonitorEventsArgs extends sdk.FindSincePagedArgs {
@@ -401,7 +408,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindOutputBasketsArgs
+##### Interface: FindOutputBasketsArgs
 
 ```ts
 export interface FindOutputBasketsArgs extends FindSincePagedArgs {
@@ -414,7 +421,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindOutputTagMapsArgs
+##### Interface: FindOutputTagMapsArgs
 
 ```ts
 export interface FindOutputTagMapsArgs extends sdk.FindSincePagedArgs {
@@ -428,7 +435,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindOutputTagsArgs
+##### Interface: FindOutputTagsArgs
 
 ```ts
 export interface FindOutputTagsArgs extends sdk.FindSincePagedArgs {
@@ -441,7 +448,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindOutputsArgs
+##### Interface: FindOutputsArgs
 
 ```ts
 export interface FindOutputsArgs extends FindSincePagedArgs {
@@ -456,7 +463,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs), [TransactionStatu
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindPartialSincePagedArgs
+##### Interface: FindPartialSincePagedArgs
 
 ```ts
 export interface FindPartialSincePagedArgs<T extends object> extends FindSincePagedArgs {
@@ -469,7 +476,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindProvenTxReqsArgs
+##### Interface: FindProvenTxReqsArgs
 
 ```ts
 export interface FindProvenTxReqsArgs extends sdk.FindSincePagedArgs {
@@ -484,7 +491,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs), [ProvenTxReqStatu
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindProvenTxsArgs
+##### Interface: FindProvenTxsArgs
 
 ```ts
 export interface FindProvenTxsArgs extends sdk.FindSincePagedArgs {
@@ -497,7 +504,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindSincePagedArgs
+##### Interface: FindSincePagedArgs
 
 ```ts
 export interface FindSincePagedArgs {
@@ -512,7 +519,7 @@ See also: [Paged](#interface-paged), [TrxToken](#interface-trxtoken)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindSyncStatesArgs
+##### Interface: FindSyncStatesArgs
 
 ```ts
 export interface FindSyncStatesArgs extends sdk.FindSincePagedArgs {
@@ -525,7 +532,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindTransactionsArgs
+##### Interface: FindTransactionsArgs
 
 ```ts
 export interface FindTransactionsArgs extends sdk.FindSincePagedArgs {
@@ -540,7 +547,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs), [TransactionStatu
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindTxLabelMapsArgs
+##### Interface: FindTxLabelMapsArgs
 
 ```ts
 export interface FindTxLabelMapsArgs extends sdk.FindSincePagedArgs {
@@ -554,7 +561,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindTxLabelsArgs
+##### Interface: FindTxLabelsArgs
 
 ```ts
 export interface FindTxLabelsArgs extends sdk.FindSincePagedArgs {
@@ -567,7 +574,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: FindUsersArgs
+##### Interface: FindUsersArgs
 
 ```ts
 export interface FindUsersArgs extends sdk.FindSincePagedArgs {
@@ -580,7 +587,7 @@ See also: [FindSincePagedArgs](#interface-findsincepagedargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkChangeInput
+##### Interface: GenerateChangeSdkChangeInput
 
 ```ts
 export interface GenerateChangeSdkChangeInput {
@@ -592,7 +599,7 @@ export interface GenerateChangeSdkChangeInput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkChangeOutput
+##### Interface: GenerateChangeSdkChangeOutput
 
 ```ts
 export interface GenerateChangeSdkChangeOutput {
@@ -604,7 +611,7 @@ export interface GenerateChangeSdkChangeOutput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkInput
+##### Interface: GenerateChangeSdkInput
 
 ```ts
 export interface GenerateChangeSdkInput {
@@ -616,7 +623,7 @@ export interface GenerateChangeSdkInput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkOutput
+##### Interface: GenerateChangeSdkOutput
 
 ```ts
 export interface GenerateChangeSdkOutput {
@@ -628,7 +635,7 @@ export interface GenerateChangeSdkOutput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkParams
+##### Interface: GenerateChangeSdkParams
 
 ```ts
 export interface GenerateChangeSdkParams {
@@ -652,7 +659,7 @@ See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [Generate
 
 <summary>Interface GenerateChangeSdkParams Details</summary>
 
-#### Property changeFirstSatoshis
+###### Property changeFirstSatoshis
 
 Lowest amount value to assign to a change output.
 Drop the output if unable to satisfy.
@@ -662,7 +669,7 @@ default 285
 changeFirstSatoshis: number
 ```
 
-#### Property changeInitialSatoshis
+###### Property changeInitialSatoshis
 
 Satoshi amount to initialize optional new change outputs.
 
@@ -670,7 +677,7 @@ Satoshi amount to initialize optional new change outputs.
 changeInitialSatoshis: number
 ```
 
-#### Property changeLockingScriptLength
+###### Property changeLockingScriptLength
 
 Fixed change locking script length.
 
@@ -680,7 +687,7 @@ For P2PKH template, 25 bytes
 changeLockingScriptLength: number
 ```
 
-#### Property changeUnlockingScriptLength
+###### Property changeUnlockingScriptLength
 
 Fixed change unlocking script length.
 
@@ -690,7 +697,7 @@ For P2PKH template, 107 bytes
 changeUnlockingScriptLength: number
 ```
 
-#### Property targetNetCount
+###### Property targetNetCount
 
 Target for number of new change outputs added minus number of funding change outputs consumed.
 If undefined, only a single change output will be added if excess fees must be recaptured.
@@ -704,7 +711,7 @@ targetNetCount?: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkResult
+##### Interface: GenerateChangeSdkResult
 
 ```ts
 export interface GenerateChangeSdkResult {
@@ -721,7 +728,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkStorageChange
+##### Interface: GenerateChangeSdkStorageChange
 
 ```ts
 export interface GenerateChangeSdkStorageChange extends GenerateChangeSdkChangeInput {
@@ -734,7 +741,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetMerklePathResult
+##### Interface: GetMerklePathResult
 
 Properties on result returned from `WalletServices` function `getMerkleProof`.
 
@@ -753,7 +760,7 @@ See also: [BlockHeader](#interface-blockheader), [WalletError](#class-walleterro
 
 <summary>Interface GetMerklePathResult Details</summary>
 
-#### Property error
+###### Property error
 
 The first exception error that occurred during processing, if any.
 
@@ -762,7 +769,7 @@ error?: sdk.WalletError
 ```
 See also: [WalletError](#class-walleterror)
 
-#### Property merklePath
+###### Property merklePath
 
 Multiple proofs may be returned when a transaction also appears in
 one or more orphaned blocks
@@ -771,7 +778,7 @@ one or more orphaned blocks
 merklePath?: MerklePath
 ```
 
-#### Property name
+###### Property name
 
 The name of the service returning the proof, or undefined if no proof
 
@@ -784,7 +791,7 @@ name?: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetRawTxResult
+##### Interface: GetRawTxResult
 
 Properties on result returned from `WalletServices` function `getRawTx`.
 
@@ -803,7 +810,7 @@ See also: [WalletError](#class-walleterror)
 
 <summary>Interface GetRawTxResult Details</summary>
 
-#### Property error
+###### Property error
 
 The first exception error that occurred during processing, if any.
 
@@ -812,7 +819,7 @@ error?: sdk.WalletError
 ```
 See also: [WalletError](#class-walleterror)
 
-#### Property name
+###### Property name
 
 The name of the service returning the rawTx, or undefined if no rawTx
 
@@ -820,7 +827,7 @@ The name of the service returning the rawTx, or undefined if no rawTx
 name?: string
 ```
 
-#### Property rawTx
+###### Property rawTx
 
 Multiple proofs may be returned when a transaction also appears in
 one or more orphaned blocks
@@ -829,7 +836,7 @@ one or more orphaned blocks
 rawTx?: number[]
 ```
 
-#### Property txid
+###### Property txid
 
 Transaction hash or rawTx (and of initial request)
 
@@ -842,7 +849,7 @@ txid: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetReqsAndBeefDetail
+##### Interface: GetReqsAndBeefDetail
 
 ```ts
 export interface GetReqsAndBeefDetail {
@@ -857,7 +864,7 @@ export interface GetReqsAndBeefDetail {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetReqsAndBeefResult
+##### Interface: GetReqsAndBeefResult
 
 ```ts
 export interface GetReqsAndBeefResult {
@@ -871,7 +878,7 @@ See also: [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetUtxoStatusDetails
+##### Interface: GetUtxoStatusDetails
 
 ```ts
 export interface GetUtxoStatusDetails {
@@ -886,7 +893,7 @@ export interface GetUtxoStatusDetails {
 
 <summary>Interface GetUtxoStatusDetails Details</summary>
 
-#### Property height
+###### Property height
 
 if isUtxo, the block height containing the matching unspent transaction output
 
@@ -896,7 +903,7 @@ typically there will be only one, but future orphans can result in multiple valu
 height?: number
 ```
 
-#### Property index
+###### Property index
 
 if isUtxo, the output index in the transaction containing of the matching unspent transaction output
 
@@ -906,7 +913,7 @@ typically there will be only one, but future orphans can result in multiple valu
 index?: number
 ```
 
-#### Property satoshis
+###### Property satoshis
 
 if isUtxo, the amount of the matching unspent transaction output
 
@@ -916,7 +923,7 @@ typically there will be only one, but future orphans can result in multiple valu
 satoshis?: number
 ```
 
-#### Property txid
+###### Property txid
 
 if isUtxo, the transaction hash (txid) of the transaction containing the matching unspent transaction output
 
@@ -931,7 +938,7 @@ txid?: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetUtxoStatusResult
+##### Interface: GetUtxoStatusResult
 
 ```ts
 export interface GetUtxoStatusResult {
@@ -949,7 +956,7 @@ See also: [GetUtxoStatusDetails](#interface-getutxostatusdetails), [WalletError]
 
 <summary>Interface GetUtxoStatusResult Details</summary>
 
-#### Property details
+###### Property details
 
 Additional details about occurances of this output script as a utxo.
 
@@ -961,7 +968,7 @@ details: GetUtxoStatusDetails[]
 ```
 See also: [GetUtxoStatusDetails](#interface-getutxostatusdetails)
 
-#### Property error
+###### Property error
 
 When status is 'error', provides code and description
 
@@ -970,7 +977,7 @@ error?: sdk.WalletError
 ```
 See also: [WalletError](#class-walleterror)
 
-#### Property isUtxo
+###### Property isUtxo
 
 true if the output is associated with at least one unspent transaction output
 
@@ -978,7 +985,7 @@ true if the output is associated with at least one unspent transaction output
 isUtxo?: boolean
 ```
 
-#### Property name
+###### Property name
 
 The name of the service to which the transaction was submitted for processing
 
@@ -986,7 +993,7 @@ The name of the service to which the transaction was submitted for processing
 name: string
 ```
 
-#### Property status
+###### Property status
 
 'success' - the operation was successful, non-error results are valid.
 'error' - the operation failed, error may have relevant information.
@@ -1000,7 +1007,7 @@ status: "success" | "error"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: KeyPair
+##### Interface: KeyPair
 
 ```ts
 export interface KeyPair {
@@ -1012,7 +1019,7 @@ export interface KeyPair {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: MonitorOptions
+##### Interface: MonitorOptions
 
 ```ts
 export interface MonitorOptions {
@@ -1034,7 +1041,7 @@ See also: [Chain](#type-chain), [MonitorStorage](#type-monitorstorage), [Service
 
 <summary>Interface MonitorOptions Details</summary>
 
-#### Property msecsWaitPerMerkleProofServiceReq
+###### Property msecsWaitPerMerkleProofServiceReq
 
 How many msecs to wait after each getMerkleProof service request.
 
@@ -1047,7 +1054,7 @@ msecsWaitPerMerkleProofServiceReq: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: OutPoint
+##### Interface: OutPoint
 
 Identifies a unique transaction output by its `txid` and index `vout`
 
@@ -1062,7 +1069,7 @@ export interface OutPoint {
 
 <summary>Interface OutPoint Details</summary>
 
-#### Property txid
+###### Property txid
 
 Transaction double sha256 hash as big endian hex string
 
@@ -1070,7 +1077,7 @@ Transaction double sha256 hash as big endian hex string
 txid: string
 ```
 
-#### Property vout
+###### Property vout
 
 zero based output index within the transaction
 
@@ -1083,7 +1090,7 @@ vout: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: Paged
+##### Interface: Paged
 
 ```ts
 export interface Paged {
@@ -1095,7 +1102,7 @@ export interface Paged {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PendingSignAction
+##### Interface: PendingSignAction
 
 ```ts
 export interface PendingSignAction {
@@ -1113,7 +1120,7 @@ See also: [PendingStorageInput](#interface-pendingstorageinput), [StorageCreateA
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PendingStorageInput
+##### Interface: PendingStorageInput
 
 ```ts
 export interface PendingStorageInput {
@@ -1129,7 +1136,7 @@ export interface PendingStorageInput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostBeefResult
+##### Interface: PostBeefResult
 
 ```ts
 export interface PostBeefResult extends PostTxsResult {
@@ -1141,7 +1148,7 @@ See also: [PostTxsResult](#interface-posttxsresult)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostBeefResultForTxidApi
+##### Interface: PostBeefResultForTxidApi
 
 ```ts
 export interface PostBeefResultForTxidApi {
@@ -1158,7 +1165,7 @@ export interface PostBeefResultForTxidApi {
 
 <summary>Interface PostBeefResultForTxidApi Details</summary>
 
-#### Property alreadyKnown
+###### Property alreadyKnown
 
 if true, the transaction was already known to this service. Usually treat as a success.
 
@@ -1168,7 +1175,7 @@ Potentially stop posting to additional transaction processors.
 alreadyKnown?: boolean
 ```
 
-#### Property status
+###### Property status
 
 'success' - The transaction was accepted for processing
 
@@ -1181,7 +1188,7 @@ status: "success" | "error"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostReqsToNetworkDetails
+##### Interface: PostReqsToNetworkDetails
 
 ```ts
 export interface PostReqsToNetworkDetails {
@@ -1199,7 +1206,7 @@ See also: [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostReqsToNetworkResult
+##### Interface: PostReqsToNetworkResult
 
 ```ts
 export interface PostReqsToNetworkResult {
@@ -1216,7 +1223,7 @@ See also: [PostBeefResult](#interface-postbeefresult), [PostReqsToNetworkDetails
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostTxResultForTxid
+##### Interface: PostTxResultForTxid
 
 ```ts
 export interface PostTxResultForTxid {
@@ -1234,7 +1241,7 @@ export interface PostTxResultForTxid {
 
 <summary>Interface PostTxResultForTxid Details</summary>
 
-#### Property alreadyKnown
+###### Property alreadyKnown
 
 if true, the transaction was already known to this service. Usually treat as a success.
 
@@ -1244,7 +1251,7 @@ Potentially stop posting to additional transaction processors.
 alreadyKnown?: boolean
 ```
 
-#### Property status
+###### Property status
 
 'success' - The transaction was accepted for processing
 
@@ -1257,7 +1264,7 @@ status: "success" | "error"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostTxsResult
+##### Interface: PostTxsResult
 
 Properties on array items of result returned from `WalletServices` function `postBeef`.
 
@@ -1277,7 +1284,7 @@ See also: [PostTxResultForTxid](#interface-posttxresultfortxid), [WalletError](#
 
 <summary>Interface PostTxsResult Details</summary>
 
-#### Property data
+###### Property data
 
 Service response object. Use service name and status to infer type of object.
 
@@ -1285,7 +1292,7 @@ Service response object. Use service name and status to infer type of object.
 data?: object
 ```
 
-#### Property name
+###### Property name
 
 The name of the service to which the transaction was submitted for processing
 
@@ -1293,7 +1300,7 @@ The name of the service to which the transaction was submitted for processing
 name: string
 ```
 
-#### Property status
+###### Property status
 
 'success' all txids returned status of 'success'
 'error' one or more txids returned status of 'error'. See txidResults for details.
@@ -1307,7 +1314,7 @@ status: "success" | "error"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ProcessSyncChunkResult
+##### Interface: ProcessSyncChunkResult
 
 ```ts
 export interface ProcessSyncChunkResult {
@@ -1324,7 +1331,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ProvenOrRawTx
+##### Interface: ProvenOrRawTx
 
 ```ts
 export interface ProvenOrRawTx {
@@ -1337,7 +1344,7 @@ export interface ProvenOrRawTx {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PurgeParams
+##### Interface: PurgeParams
 
 ```ts
 export interface PurgeParams {
@@ -1354,7 +1361,7 @@ export interface PurgeParams {
 
 <summary>Interface PurgeParams Details</summary>
 
-#### Property purgeCompletedAge
+###### Property purgeCompletedAge
 
 Minimum age in msecs for transient completed transaction data purge.
 Default is 14 days.
@@ -1363,7 +1370,7 @@ Default is 14 days.
 purgeCompletedAge?: number
 ```
 
-#### Property purgeFailedAge
+###### Property purgeFailedAge
 
 Minimum age in msecs for failed transaction data purge.
 Default is 14 days.
@@ -1372,7 +1379,7 @@ Default is 14 days.
 purgeFailedAge?: number
 ```
 
-#### Property purgeSpentAge
+###### Property purgeSpentAge
 
 Minimum age in msecs for failed transaction data purge.
 Default is 14 days.
@@ -1386,7 +1393,7 @@ purgeSpentAge?: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PurgeResults
+##### Interface: PurgeResults
 
 ```ts
 export interface PurgeResults {
@@ -1398,7 +1405,7 @@ export interface PurgeResults {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: RequestSyncChunkArgs
+##### Interface: RequestSyncChunkArgs
 
 ```ts
 export interface RequestSyncChunkArgs {
@@ -1419,7 +1426,7 @@ export interface RequestSyncChunkArgs {
 
 <summary>Interface RequestSyncChunkArgs Details</summary>
 
-#### Property fromStorageIdentityKey
+###### Property fromStorageIdentityKey
 
 The storageIdentityKey of the storage supplying the update SyncChunk data.
 
@@ -1427,7 +1434,7 @@ The storageIdentityKey of the storage supplying the update SyncChunk data.
 fromStorageIdentityKey: string
 ```
 
-#### Property identityKey
+###### Property identityKey
 
 The identity of whose data is being requested
 
@@ -1435,7 +1442,7 @@ The identity of whose data is being requested
 identityKey: string
 ```
 
-#### Property maxItems
+###### Property maxItems
 
 The maximum number of items (records) to be returned.
 
@@ -1443,7 +1450,7 @@ The maximum number of items (records) to be returned.
 maxItems: number
 ```
 
-#### Property maxRoughSize
+###### Property maxRoughSize
 
 A rough limit on how large the response should be.
 The item that exceeds the limit is included and ends adding more items.
@@ -1452,7 +1459,7 @@ The item that exceeds the limit is included and ends adding more items.
 maxRoughSize: number
 ```
 
-#### Property offsets
+###### Property offsets
 
 For each entity in dependency order, the offset at which to start returning items
 from `since`.
@@ -1478,7 +1485,7 @@ offsets: {
 }[]
 ```
 
-#### Property since
+###### Property since
 
 The max updated_at time received from the storage service receiving the request.
 Will be undefiend if this is the first request or if no data was previously sync'ed.
@@ -1489,7 +1496,7 @@ Will be undefiend if this is the first request or if no data was previously sync
 since?: Date
 ```
 
-#### Property toStorageIdentityKey
+###### Property toStorageIdentityKey
 
 The storageIdentityKey of the storage consuming the update SyncChunk data.
 
@@ -1502,7 +1509,7 @@ toStorageIdentityKey: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ScriptTemplateParamsSABPPP
+##### Interface: ScriptTemplateParamsSABPPP
 
 ```ts
 export interface ScriptTemplateParamsSABPPP {
@@ -1515,7 +1522,7 @@ export interface ScriptTemplateParamsSABPPP {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ScriptTemplateUnlock
+##### Interface: ScriptTemplateUnlock
 
 ```ts
 export interface ScriptTemplateUnlock {
@@ -1527,7 +1534,13 @@ export interface ScriptTemplateUnlock {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: SetupEnv
+##### Interface: SetupEnv
+
+`SetupEnv` provides a starting point for managing secrets that
+must not appear in source code.
+
+The `makeEnv` and `getEnv` functions of the `Setup` and `SetupClient` classes
+provide an easy way to create and import these secrets and related properties.
 
 ```ts
 export interface SetupEnv {
@@ -1542,10 +1555,72 @@ export interface SetupEnv {
 
 See also: [Chain](#type-chain)
 
+<details>
+
+<summary>Interface SetupEnv Details</summary>
+
+###### Property chain
+
+The chan being accessed: 'main' for mainnet, 'test' for 'testnet'.
+
+```ts
+chain: sdk.Chain
+```
+See also: [Chain](#type-chain)
+
+###### Property devKeys
+
+A map of public keys (identity keys, hex strings) to private keys (hex strings).
+
+```ts
+devKeys: Record<string, string>
+```
+
+###### Property identityKey
+
+The user's primary identity key (public key).
+
+```ts
+identityKey: string
+```
+
+###### Property identityKey2
+
+A secondary identity key (public key), used to test exchanges with other users.
+
+```ts
+identityKey2: string
+```
+
+###### Property mySQLConnection
+
+A MySQL connection string including user and password properties.
+Must be valid to make use of MySQL `Setup` class support.
+
+```ts
+mySQLConnection: string
+```
+
+###### Property taalApiKey
+
+A vaild TAAL API key for use by `Services`
+
+```ts
+taalApiKey: string
+```
+
+</details>
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: SetupWallet
+##### Interface: SetupWallet
+
+When creating a BRC-100 compatible `Wallet`, many components come into play.
+
+All of the `createWallet` functions in the `Setup` and `SetupClient` classes return
+an object with direct access to each component to facilitate experimentation, testing
+and customization.
 
 ```ts
 export interface SetupWallet {
@@ -1562,17 +1637,107 @@ export interface SetupWallet {
 
 See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
 
+<details>
+
+<summary>Interface SetupWallet Details</summary>
+
+###### Property chain
+
+The chain ('main' or 'test') which the wallet accesses.
+
+```ts
+chain: sdk.Chain
+```
+See also: [Chain](#type-chain)
+
+###### Property identityKey
+
+The pubilc key associated with the `rootKey` which also serves as the wallet's identity.
+
+```ts
+identityKey: string
+```
+
+###### Property keyDeriver
+
+The `KeyDeriver` component used by the wallet for key derivation and cryptographic functions.
+
+```ts
+keyDeriver: KeyDeriver
+```
+
+###### Property monitor
+
+The background task `Monitor` component available to the wallet to offload tasks
+that speed up wallet operations and maintain data integrity.
+
+```ts
+monitor: Monitor
+```
+See also: [Monitor](#class-monitor)
+
+###### Property rootKey
+
+The rootKey of the `KeyDeriver`. The private key from which other keys are derived.
+
+```ts
+rootKey: PrivateKey
+```
+
+###### Property services
+
+The network `Services` component which provides the wallet with access to external services hosted
+on the public network.
+
+```ts
+services: Services
+```
+See also: [Services](#class-services)
+
+###### Property storage
+
+The `WalletStorageManager` that manages all the configured storage providers (active and backups)
+accessed by the wallet.
+
+```ts
+storage: WalletStorageManager
+```
+See also: [WalletStorageManager](#class-walletstoragemanager)
+
+###### Property wallet
+
+The actual BRC-100 `Wallet` to which all the other properties and components contribute.
+
+Note that internally, the wallet is itself linked to all these properties and components.
+They are included in this interface to facilitate access after wallet construction for
+experimentation, testing and customization. Any changes made to the configuration of these
+components after construction may disrupt the normal operation of the wallet.
+
+```ts
+wallet: Wallet
+```
+See also: [Wallet](#class-wallet)
+
+</details>
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: SetupWalletArgs
+##### Interface: SetupWalletArgs
 
-Arguments used to construct a `Wallet`
+Arguments used by `createWallet` to construct a `SetupWallet`.
+
+Extension `SetupWalletClientArgs` used by `createWalletClient` to construct a `SetupWalletClient`.
+
+Extension `SetupWalletKnexArgs` used by `createWalletKnex` to construct a `SetupWalletKnex`.
+
+Extension `SetupWalletMySQLArgs` used by `createWalletMySQL` to construct a `SetupWalletKnex`.
+
+Extension `SetupWalletSQLiteArgs` used by `createWalletSQLite` to construct a `SetupWalletKnex`.
 
 ```ts
 export interface SetupWalletArgs {
     env: SetupEnv;
-    chain?: sdk.Chain;
     rootKeyHex?: string;
     privKeyHex?: string;
     active?: sdk.WalletStorageProvider;
@@ -1580,12 +1745,65 @@ export interface SetupWalletArgs {
 }
 ```
 
-See also: [Chain](#type-chain), [SetupEnv](#interface-setupenv), [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [SetupEnv](#interface-setupenv), [WalletStorageProvider](#interface-walletstorageprovider)
+
+<details>
+
+<summary>Interface SetupWalletArgs Details</summary>
+
+###### Property active
+
+Optional. Active wallet storage. Can be added later.
+
+```ts
+active?: sdk.WalletStorageProvider
+```
+See also: [WalletStorageProvider](#interface-walletstorageprovider)
+
+###### Property backups
+
+Optional. One or more storage providers managed as backup destinations. Can be added later.
+
+```ts
+backups?: sdk.WalletStorageProvider[]
+```
+See also: [WalletStorageProvider](#interface-walletstorageprovider)
+
+###### Property env
+
+Configuration "secrets" typically obtained by `Setup.makeEnv` and `Setup.getEnv` functions.
+
+```ts
+env: SetupEnv
+```
+See also: [SetupEnv](#interface-setupenv)
+
+###### Property privKeyHex
+
+Optional. The privileged private key used to initialize the `PrivilegedKeyManager`.
+Defaults to undefined.
+
+```ts
+privKeyHex?: string
+```
+
+###### Property rootKeyHex
+
+Optional. The non-privileged private key used to initialize the `KeyDeriver` and determine the `identityKey`.
+Defaults to `env.devKeys[env.identityKey]
+
+```ts
+rootKeyHex?: string
+```
+
+</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: SetupWalletClient
+##### Interface: SetupWalletClient
+
+Extension `SetupWalletClient` of `SetupWallet` is returned by `createWalletClient`
 
 ```ts
 export interface SetupWalletClient extends SetupWallet {
@@ -1595,10 +1813,29 @@ export interface SetupWalletClient extends SetupWallet {
 
 See also: [SetupWallet](#interface-setupwallet)
 
+<details>
+
+<summary>Interface SetupWalletClient Details</summary>
+
+###### Property endpointUrl
+
+The endpoint URL of the service hosting the `StorageServer` JSON-RPC service to
+which a `StorageClient` instance is connected to function as
+the active storage provider of the wallet.
+
+```ts
+endpointUrl: string
+```
+
+</details>
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: SetupWalletClientArgs
+##### Interface: SetupWalletClientArgs
+
+Extension `SetupWalletClientArgs` of `SetupWalletArgs` is used by `createWalletClient`
+to construct a `SetupWalletClient`.
 
 ```ts
 export interface SetupWalletClientArgs extends SetupWalletArgs {
@@ -1608,10 +1845,26 @@ export interface SetupWalletClientArgs extends SetupWalletArgs {
 
 See also: [SetupWalletArgs](#interface-setupwalletargs)
 
+<details>
+
+<summary>Interface SetupWalletClientArgs Details</summary>
+
+###### Property endpointUrl
+
+The endpoint URL of a service hosting the `StorageServer` JSON-RPC service to
+which a `StorageClient` instance should connect to function as
+the active storage provider of the newly created wallet.
+
+```ts
+endpointUrl?: string
+```
+
+</details>
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageCreateActionResult
+##### Interface: StorageCreateActionResult
 
 ```ts
 export interface StorageCreateActionResult {
@@ -1631,7 +1884,7 @@ See also: [StorageCreateTransactionSdkInput](#interface-storagecreatetransaction
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageCreateTransactionSdkInput
+##### Interface: StorageCreateTransactionSdkInput
 
 ```ts
 export interface StorageCreateTransactionSdkInput {
@@ -1655,7 +1908,7 @@ See also: [StorageProvidedBy](#type-storageprovidedby)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageCreateTransactionSdkOutput
+##### Interface: StorageCreateTransactionSdkOutput
 
 ```ts
 export interface StorageCreateTransactionSdkOutput extends sdk.ValidCreateActionOutput {
@@ -1671,7 +1924,7 @@ See also: [StorageProvidedBy](#type-storageprovidedby), [ValidCreateActionOutput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageFeeModel
+##### Interface: StorageFeeModel
 
 Specifies the available options for computing transaction fees.
 
@@ -1686,7 +1939,7 @@ export interface StorageFeeModel {
 
 <summary>Interface StorageFeeModel Details</summary>
 
-#### Property model
+###### Property model
 
 Available models. Currently only "sat/kb" is supported.
 
@@ -1694,7 +1947,7 @@ Available models. Currently only "sat/kb" is supported.
 model: "sat/kb"
 ```
 
-#### Property value
+###### Property value
 
 When "fee.model" is "sat/kb", this is an integer representing the number of satoshis per kb of block space
 the transaction will pay in fees.
@@ -1710,7 +1963,7 @@ value?: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageGetBeefOptions
+##### Interface: StorageGetBeefOptions
 
 ```ts
 export interface StorageGetBeefOptions {
@@ -1728,7 +1981,7 @@ export interface StorageGetBeefOptions {
 
 <summary>Interface StorageGetBeefOptions Details</summary>
 
-#### Property ignoreNewProven
+###### Property ignoreNewProven
 
 optional. Default is false. If true, raw transactions with proofs missing from `storage` and obtained from `getServices` are not inserted to `storage`.
 
@@ -1736,7 +1989,7 @@ optional. Default is false. If true, raw transactions with proofs missing from `
 ignoreNewProven?: boolean
 ```
 
-#### Property ignoreServices
+###### Property ignoreServices
 
 optional. Default is false. `getServices` is used for raw transaction and merkle proof lookup
 
@@ -1744,7 +1997,7 @@ optional. Default is false. `getServices` is used for raw transaction and merkle
 ignoreServices?: boolean
 ```
 
-#### Property ignoreStorage
+###### Property ignoreStorage
 
 optional. Default is false. `storage` is used for raw transaction and merkle proof lookup
 
@@ -1752,7 +2005,7 @@ optional. Default is false. `storage` is used for raw transaction and merkle pro
 ignoreStorage?: boolean
 ```
 
-#### Property knownTxids
+###### Property knownTxids
 
 list of txids to be included as txidOnly if referenced. Validity is known to caller.
 
@@ -1760,7 +2013,7 @@ list of txids to be included as txidOnly if referenced. Validity is known to cal
 knownTxids?: string[]
 ```
 
-#### Property mergeToBeef
+###### Property mergeToBeef
 
 optional. If defined, raw transactions and merkle paths required by txid are merged to this instance and returned. Otherwise a new Beef is constructed and returned.
 
@@ -1768,7 +2021,7 @@ optional. If defined, raw transactions and merkle paths required by txid are mer
 mergeToBeef?: Beef | number[]
 ```
 
-#### Property minProofLevel
+###### Property minProofLevel
 
 optional. Default is zero. Ignores available merkle paths until recursion detpth equals or exceeds value
 
@@ -1776,7 +2029,7 @@ optional. Default is zero. Ignores available merkle paths until recursion detpth
 minProofLevel?: number
 ```
 
-#### Property trustSelf
+###### Property trustSelf
 
 if 'known', txids known to local storage as valid are included as txidOnly
 
@@ -1789,7 +2042,7 @@ trustSelf?: "known"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageIdentity
+##### Interface: StorageIdentity
 
 ```ts
 export interface StorageIdentity {
@@ -1802,7 +2055,7 @@ export interface StorageIdentity {
 
 <summary>Interface StorageIdentity Details</summary>
 
-#### Property storageIdentityKey
+###### Property storageIdentityKey
 
 The identity key (public key) assigned to this storage
 
@@ -1810,7 +2063,7 @@ The identity key (public key) assigned to this storage
 storageIdentityKey: string
 ```
 
-#### Property storageName
+###### Property storageName
 
 The human readable name assigned to this storage.
 
@@ -1823,7 +2076,7 @@ storageName: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageInternalizeActionResult
+##### Interface: StorageInternalizeActionResult
 
 ```ts
 export interface StorageInternalizeActionResult extends InternalizeActionResult {
@@ -1837,7 +2090,7 @@ export interface StorageInternalizeActionResult extends InternalizeActionResult 
 
 <summary>Interface StorageInternalizeActionResult Details</summary>
 
-#### Property isMerge
+###### Property isMerge
 
 true if internalizing outputs on an existing storage transaction
 
@@ -1845,7 +2098,7 @@ true if internalizing outputs on an existing storage transaction
 isMerge: boolean
 ```
 
-#### Property satoshis
+###### Property satoshis
 
 net change in change balance for user due to this internalization
 
@@ -1853,7 +2106,7 @@ net change in change balance for user due to this internalization
 satoshis: number
 ```
 
-#### Property txid
+###### Property txid
 
 txid of transaction being internalized
 
@@ -1866,7 +2119,7 @@ txid: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageProcessActionArgs
+##### Interface: StorageProcessActionArgs
 
 ```ts
 export interface StorageProcessActionArgs {
@@ -1885,7 +2138,7 @@ export interface StorageProcessActionArgs {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageProcessActionResults
+##### Interface: StorageProcessActionResults
 
 ```ts
 export interface StorageProcessActionResults {
@@ -1897,7 +2150,7 @@ export interface StorageProcessActionResults {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageProvenOrReq
+##### Interface: StorageProvenOrReq
 
 ```ts
 export interface StorageProvenOrReq {
@@ -1909,7 +2162,7 @@ export interface StorageProvenOrReq {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageProviderOptions
+##### Interface: StorageProviderOptions
 
 ```ts
 export interface StorageProviderOptions extends StorageReaderWriterOptions {
@@ -1926,7 +2179,7 @@ See also: [Chain](#type-chain), [StorageFeeModel](#interface-storagefeemodel), [
 
 <summary>Interface StorageProviderOptions Details</summary>
 
-#### Property commissionPubKeyHex
+###### Property commissionPubKeyHex
 
 If commissionSatoshis is greater than zero, must be a valid public key hex string.
 The actual locking script for each commission will use a public key derived
@@ -1936,7 +2189,7 @@ from this key by information stored in the commissions table.
 commissionPubKeyHex?: PubKeyHex
 ```
 
-#### Property commissionSatoshis
+###### Property commissionSatoshis
 
 Transactions created by this Storage can charge a fee per transaction.
 A value of zero disables commission fees.
@@ -1950,7 +2203,7 @@ commissionSatoshis: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageReaderOptions
+##### Interface: StorageReaderOptions
 
 ```ts
 export interface StorageReaderOptions {
@@ -1963,7 +2216,7 @@ See also: [Chain](#type-chain)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageReaderWriterOptions
+##### Interface: StorageReaderWriterOptions
 
 ```ts
 export interface StorageReaderWriterOptions extends StorageReaderOptions {
@@ -1975,7 +2228,7 @@ See also: [StorageReaderOptions](#interface-storagereaderoptions)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageSyncReader
+##### Interface: StorageSyncReader
 
 This is the minimal interface required for a WalletStorageProvider to export data to another provider.
 
@@ -2008,7 +2261,7 @@ See also: [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [Fi
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageSyncReaderOptions
+##### Interface: StorageSyncReaderOptions
 
 ```ts
 export interface StorageSyncReaderOptions {
@@ -2021,7 +2274,7 @@ See also: [Chain](#type-chain)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageSyncReaderWriter
+##### Interface: StorageSyncReaderWriter
 
 This is the minimal interface required for a WalletStorageProvider to import and export data to another provider.
 
@@ -2117,7 +2370,7 @@ See also: [AuthId](#interface-authid), [FindOutputTagMapsArgs](#interface-findou
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: SyncChunk
+##### Interface: SyncChunk
 
 Result received from remote `WalletStorage` in response to a `RequestSyncChunkArgs` request.
 
@@ -2149,7 +2402,7 @@ export interface SyncChunk {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: TaskPurgeParams
+##### Interface: TaskPurgeParams
 
 The database stores a variety of data that may be considered transient.
 
@@ -2185,7 +2438,7 @@ See also: [PurgeParams](#interface-purgeparams)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: TrxToken
+##### Interface: TrxToken
 
 Place holder for the transaction control object used by actual storage provider implementation.
 
@@ -2197,7 +2450,7 @@ export interface TrxToken {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: TscMerkleProofApi
+##### Interface: TscMerkleProofApi
 
 ```ts
 export interface TscMerkleProofApi {
@@ -2210,7 +2463,7 @@ export interface TscMerkleProofApi {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: TxScriptOffsets
+##### Interface: TxScriptOffsets
 
 ```ts
 export interface TxScriptOffsets {
@@ -2230,7 +2483,7 @@ export interface TxScriptOffsets {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: UpdateProvenTxReqWithNewProvenTxArgs
+##### Interface: UpdateProvenTxReqWithNewProvenTxArgs
 
 ```ts
 export interface UpdateProvenTxReqWithNewProvenTxArgs {
@@ -2252,7 +2505,7 @@ See also: [ProvenTxReqStatus](#type-proventxreqstatus)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: UpdateProvenTxReqWithNewProvenTxResult
+##### Interface: UpdateProvenTxReqWithNewProvenTxResult
 
 ```ts
 export interface UpdateProvenTxReqWithNewProvenTxResult {
@@ -2268,7 +2521,7 @@ See also: [ProvenTxReqStatus](#type-proventxreqstatus)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidAbortActionArgs
+##### Interface: ValidAbortActionArgs
 
 ```ts
 export interface ValidAbortActionArgs extends ValidWalletSignerArgs {
@@ -2281,7 +2534,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidAcquireCertificateArgs
+##### Interface: ValidAcquireCertificateArgs
 
 ```ts
 export interface ValidAcquireCertificateArgs extends ValidWalletSignerArgs {
@@ -2305,7 +2558,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidAcquireDirectCertificateArgs
+##### Interface: ValidAcquireDirectCertificateArgs
 
 ```ts
 export interface ValidAcquireDirectCertificateArgs extends ValidWalletSignerArgs {
@@ -2329,7 +2582,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 <summary>Interface ValidAcquireDirectCertificateArgs Details</summary>
 
-#### Property subject
+###### Property subject
 
 validated to an empty string, must be provided by wallet and must
 match expectations of keyringForSubject
@@ -2343,7 +2596,7 @@ subject: PubKeyHex
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidAcquireIssuanceCertificateArgs
+##### Interface: ValidAcquireIssuanceCertificateArgs
 
 ```ts
 export interface ValidAcquireIssuanceCertificateArgs extends ValidWalletSignerArgs {
@@ -2363,7 +2616,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
 <summary>Interface ValidAcquireIssuanceCertificateArgs Details</summary>
 
-#### Property subject
+###### Property subject
 
 validated to an empty string, must be provided by wallet and must
 match expectations of keyringForSubject
@@ -2377,7 +2630,7 @@ subject: PubKeyHex
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidBasketInsertion
+##### Interface: ValidBasketInsertion
 
 ```ts
 export interface ValidBasketInsertion {
@@ -2390,7 +2643,7 @@ export interface ValidBasketInsertion {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidCreateActionArgs
+##### Interface: ValidCreateActionArgs
 
 ```ts
 export interface ValidCreateActionArgs extends ValidProcessActionArgs {
@@ -2403,6 +2656,7 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
     labels: string[];
     options: ValidCreateActionOptions;
     isSignAction: boolean;
+    randomVals?: number[];
 }
 ```
 
@@ -2411,7 +2665,7 @@ See also: [ValidCreateActionInput](#interface-validcreateactioninput), [ValidCre
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidCreateActionInput
+##### Interface: ValidCreateActionInput
 
 ```ts
 export interface ValidCreateActionInput {
@@ -2428,7 +2682,7 @@ See also: [OutPoint](#interface-outpoint)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidCreateActionOptions
+##### Interface: ValidCreateActionOptions
 
 ```ts
 export interface ValidCreateActionOptions extends ValidProcessActionOptions {
@@ -2445,7 +2699,7 @@ See also: [OutPoint](#interface-outpoint), [ValidProcessActionOptions](#interfac
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidCreateActionOutput
+##### Interface: ValidCreateActionOutput
 
 ```ts
 export interface ValidCreateActionOutput {
@@ -2461,7 +2715,7 @@ export interface ValidCreateActionOutput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidDiscoverByAttributesArgs
+##### Interface: ValidDiscoverByAttributesArgs
 
 ```ts
 export interface ValidDiscoverByAttributesArgs extends ValidWalletSignerArgs {
@@ -2477,7 +2731,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidDiscoverByIdentityKeyArgs
+##### Interface: ValidDiscoverByIdentityKeyArgs
 
 ```ts
 export interface ValidDiscoverByIdentityKeyArgs extends ValidWalletSignerArgs {
@@ -2493,7 +2747,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidInternalizeActionArgs
+##### Interface: ValidInternalizeActionArgs
 
 ```ts
 export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
@@ -2510,7 +2764,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidInternalizeOutput
+##### Interface: ValidInternalizeOutput
 
 ```ts
 export interface ValidInternalizeOutput {
@@ -2526,7 +2780,7 @@ See also: [ValidBasketInsertion](#interface-validbasketinsertion), [ValidWalletP
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidListActionsArgs
+##### Interface: ValidListActionsArgs
 
 ```ts
 export interface ValidListActionsArgs extends ValidWalletSignerArgs {
@@ -2549,7 +2803,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidListCertificatesArgs
+##### Interface: ValidListCertificatesArgs
 
 ```ts
 export interface ValidListCertificatesArgs extends ValidWalletSignerArgs {
@@ -2575,7 +2829,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidListOutputsArgs
+##### Interface: ValidListOutputsArgs
 
 ```ts
 export interface ValidListOutputsArgs extends ValidWalletSignerArgs {
@@ -2599,7 +2853,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidProcessActionArgs
+##### Interface: ValidProcessActionArgs
 
 ```ts
 export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
@@ -2616,7 +2870,7 @@ See also: [ValidProcessActionOptions](#interface-validprocessactionoptions), [Va
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidProcessActionOptions
+##### Interface: ValidProcessActionOptions
 
 ```ts
 export interface ValidProcessActionOptions {
@@ -2630,7 +2884,7 @@ export interface ValidProcessActionOptions {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidProveCertificateArgs
+##### Interface: ValidProveCertificateArgs
 
 ```ts
 export interface ValidProveCertificateArgs extends ValidWalletSignerArgs {
@@ -2652,7 +2906,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidRelinquishCertificateArgs
+##### Interface: ValidRelinquishCertificateArgs
 
 ```ts
 export interface ValidRelinquishCertificateArgs extends ValidWalletSignerArgs {
@@ -2667,7 +2921,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidRelinquishOutputArgs
+##### Interface: ValidRelinquishOutputArgs
 
 ```ts
 export interface ValidRelinquishOutputArgs extends ValidWalletSignerArgs {
@@ -2681,7 +2935,7 @@ See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidSignActionArgs
+##### Interface: ValidSignActionArgs
 
 ```ts
 export interface ValidSignActionArgs extends ValidProcessActionArgs {
@@ -2696,7 +2950,7 @@ See also: [ValidProcessActionArgs](#interface-validprocessactionargs), [ValidSig
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidSignActionOptions
+##### Interface: ValidSignActionOptions
 
 ```ts
 export interface ValidSignActionOptions extends ValidProcessActionOptions {
@@ -2712,7 +2966,7 @@ See also: [ValidProcessActionOptions](#interface-validprocessactionoptions)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidWalletPayment
+##### Interface: ValidWalletPayment
 
 ```ts
 export interface ValidWalletPayment {
@@ -2725,7 +2979,7 @@ export interface ValidWalletPayment {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ValidWalletSignerArgs
+##### Interface: ValidWalletSignerArgs
 
 ```ts
 export interface ValidWalletSignerArgs {
@@ -2735,7 +2989,7 @@ export interface ValidWalletSignerArgs {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletArgs
+##### Interface: WalletArgs
 
 ```ts
 export interface WalletArgs {
@@ -2753,7 +3007,7 @@ See also: [Chain](#type-chain), [Monitor](#class-monitor), [PrivilegedKeyManager
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletServices
+##### Interface: WalletServices
 
 Defines standard interfaces to access functionality implemented by external transaction processing services.
 
@@ -2781,7 +3035,7 @@ See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [GetMerkl
 
 <summary>Interface WalletServices Details</summary>
 
-#### Property chain
+###### Property chain
 
 The chain being serviced.
 
@@ -2790,7 +3044,7 @@ chain: sdk.Chain
 ```
 See also: [Chain](#type-chain)
 
-#### Method getBsvExchangeRate
+###### Method getBsvExchangeRate
 
 Approximate exchange rate US Dollar / BSV, USD / BSV
 
@@ -2800,7 +3054,7 @@ This is the US Dollar price of one BSV
 getBsvExchangeRate(): Promise<number>
 ```
 
-#### Method getChainTracker
+###### Method getChainTracker
 
 ```ts
 getChainTracker(): Promise<ChainTracker>
@@ -2810,7 +3064,7 @@ Returns
 
 standard `ChainTracker` service which requires `options.chaintracks` be valid.
 
-#### Method getFiatExchangeRate
+###### Method getFiatExchangeRate
 
 Approximate exchange rate currency per base.
 
@@ -2818,7 +3072,7 @@ Approximate exchange rate currency per base.
 getFiatExchangeRate(currency: "USD" | "GBP" | "EUR", base?: "USD" | "GBP" | "EUR"): Promise<number>
 ```
 
-#### Method getHeaderForHeight
+###### Method getHeaderForHeight
 
 ```ts
 getHeaderForHeight(height: number): Promise<number[]>
@@ -2828,7 +3082,7 @@ Returns
 
 serialized block header for height on active chain
 
-#### Method getHeight
+###### Method getHeight
 
 ```ts
 getHeight(): Promise<number>
@@ -2838,7 +3092,7 @@ Returns
 
 the height of the active chain
 
-#### Method getMerklePath
+###### Method getMerklePath
 
 Attempts to obtain the merkle proof associated with a 32 byte transaction hash (txid).
 
@@ -2868,7 +3122,7 @@ Argument Details
 + **useNext**
   + optional, forces skip to next service before starting service requests cycle.
 
-#### Method getRawTx
+###### Method getRawTx
 
 Attempts to obtain the raw transaction bytes associated with a 32 byte transaction hash (txid).
 
@@ -2898,7 +3152,7 @@ Argument Details
 + **useNext**
   + optional, forces skip to next service before starting service requests cycle.
 
-#### Method getUtxoStatus
+###### Method getUtxoStatus
 
 Attempts to determine the UTXO status of a transaction output.
 
@@ -2924,7 +3178,7 @@ undefined if length of `output` is 32 then 'hashBE`, otherwise 'script'.
 + **useNext**
   + optional, forces skip to next service before starting service requests cycle.
 
-#### Method hashToHeader
+###### Method hashToHeader
 
 ```ts
 hashToHeader(hash: string): Promise<sdk.BlockHeader>
@@ -2940,7 +3194,7 @@ Argument Details
 + **hash**
   + block hash
 
-#### Method nLockTimeIsFinal
+###### Method nLockTimeIsFinal
 
 ```ts
 nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>
@@ -2960,7 +3214,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletServicesOptions
+##### Interface: WalletServicesOptions
 
 ```ts
 export interface WalletServicesOptions {
@@ -2982,7 +3236,7 @@ See also: [BsvExchangeRate](#interface-bsvexchangerate), [Chain](#type-chain), [
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletSigner
+##### Interface: WalletSigner
 
 ```ts
 export interface WalletSigner {
@@ -2997,7 +3251,7 @@ See also: [Chain](#type-chain)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletStorage
+##### Interface: WalletStorage
 
 This is the `WalletStorage` interface implemented by a class such as `WalletStorageManager`,
 which manges an active and set of backup storage providers.
@@ -3043,7 +3297,7 @@ See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcer
 
 <summary>Interface WalletStorage Details</summary>
 
-#### Method isStorageProvider
+###### Method isStorageProvider
 
 ```ts
 isStorageProvider(): boolean
@@ -3058,7 +3312,7 @@ false
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletStorageProvider
+##### Interface: WalletStorageProvider
 
 This is the `WalletStorage` interface implemented with authentication checking and
 is the actual minimal interface implemented by storage and remoted storage providers.
@@ -3076,7 +3330,7 @@ See also: [WalletServices](#interface-walletservices), [WalletStorageSync](#inte
 
 <summary>Interface WalletStorageProvider Details</summary>
 
-#### Method isStorageProvider
+###### Method isStorageProvider
 
 ```ts
 isStorageProvider(): boolean
@@ -3091,7 +3345,7 @@ true if this object's interface can be extended to the full `StorageProvider` in
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletStorageReader
+##### Interface: WalletStorageReader
 
 ```ts
 export interface WalletStorageReader {
@@ -3113,7 +3367,7 @@ See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcer
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletStorageSync
+##### Interface: WalletStorageSync
 
 ```ts
 export interface WalletStorageSync extends WalletStorageWriter {
@@ -3132,7 +3386,7 @@ See also: [AuthId](#interface-authid), [ProcessSyncChunkResult](#interface-proce
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletStorageWriter
+##### Interface: WalletStorageWriter
 
 ```ts
 export interface WalletStorageWriter extends WalletStorageReader {
@@ -3158,7 +3412,7 @@ See also: [AuthId](#interface-authid), [StorageCreateActionResult](#interface-st
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: XValidCreateActionOutput
+##### Interface: XValidCreateActionOutput
 
 ```ts
 export interface XValidCreateActionOutput extends sdk.ValidCreateActionOutput {
@@ -3175,7 +3429,7 @@ See also: [StorageProvidedBy](#type-storageprovidedby), [ValidCreateActionOutput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Classes
+#### Classes
 
 | | | |
 | --- | --- | --- |
@@ -3196,7 +3450,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Class: CertOps
+##### Class: CertOps
 
 ```ts
 export class CertOps extends BsvCertificate {
@@ -3246,7 +3500,7 @@ See also: [CertOpsWallet](#interface-certopswallet)
 
 <summary>Class CertOps Details</summary>
 
-#### Method createKeyringForVerifier
+###### Method createKeyringForVerifier
 
 Creates a verifiable certificate structure for a specific verifier, allowing them access to specified fields.
 This method decrypts the master field keys for each field specified in `fieldsToReveal` and re-encrypts them
@@ -3274,7 +3528,7 @@ Throws an error if:
 - fieldsToReveal is empty or a field in `fieldsToReveal` does not exist in the certificate.
 - The decrypted master field key fails to decrypt the corresponding field (indicating an invalid key).
 
-#### Method encryptAndSignNewCertificate
+###### Method encryptAndSignNewCertificate
 
 encrypt plaintext field values for the subject
 update the signature using the certifier's private key.
@@ -3288,7 +3542,7 @@ async encryptAndSignNewCertificate(): Promise<void>
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: Monitor
+##### Class: Monitor
 
 Background task to make sure transactions are processed, transaction proofs are received and propagated,
 and potentially that reorgs update proofs that were already received.
@@ -3343,7 +3597,7 @@ See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [MonitorO
 
 <summary>Class Monitor Details</summary>
 
-#### Property _otherTasks
+###### Property _otherTasks
 
 _otherTasks can be run by runTask but not by scheduler.
 
@@ -3352,7 +3606,7 @@ _otherTasks: WalletMonitorTask[] = []
 ```
 See also: [WalletMonitorTask](#class-walletmonitortask)
 
-#### Property _tasks
+###### Property _tasks
 
 _tasks are typically run by the scheduler but may also be run by runTask.
 
@@ -3361,7 +3615,7 @@ _tasks: WalletMonitorTask[] = []
 ```
 See also: [WalletMonitorTask](#class-walletmonitortask)
 
-#### Method addDefaultTasks
+###### Method addDefaultTasks
 
 Default tasks with settings appropriate for a single user storage
 possibly with sync'ing enabled
@@ -3370,7 +3624,7 @@ possibly with sync'ing enabled
 addDefaultTasks(): void 
 ```
 
-#### Method addMultiUserTasks
+###### Method addMultiUserTasks
 
 Tasks appropriate for multi-user storage
 without sync'ing enabled.
@@ -3379,7 +3633,7 @@ without sync'ing enabled.
 addMultiUserTasks(): void 
 ```
 
-#### Method processNewBlockHeader
+###### Method processNewBlockHeader
 
 Process new chain header event received from Chaintracks
 
@@ -3390,7 +3644,7 @@ processNewBlockHeader(header: BlockHeader): void
 ```
 See also: [BlockHeader](#interface-blockheader)
 
-#### Method processReorg
+###### Method processReorg
 
 Process reorg event received from Chaintracks
 
@@ -3411,7 +3665,7 @@ See also: [BlockHeader](#interface-blockheader)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: PrivilegedKeyManager
+##### Class: PrivilegedKeyManager
 
 PrivilegedKeyManager
 
@@ -3446,7 +3700,7 @@ export class PrivilegedKeyManager implements ProtoWallet {
 
 <summary>Class PrivilegedKeyManager Details</summary>
 
-#### Constructor
+###### Constructor
 
 ```ts
 constructor(keyGetter: (reason: string) => Promise<PrivateKey>, retentionPeriod = 120000) 
@@ -3459,7 +3713,7 @@ Argument Details
 + **retentionPeriod**
   + Time in milliseconds to retain the obfuscated key in memory before zeroizing.
 
-#### Method destroyKey
+###### Method destroyKey
 
 Safely destroys the in-memory obfuscated key material by zeroizing
 and deleting related fields. Also destroys some (but not all) decoy
@@ -3474,7 +3728,7 @@ destroyKey(): void
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: ScriptTemplateSABPPP
+##### Class: ScriptTemplateSABPPP
 
 Simple Authenticated BSV P2PKH Payment Protocol
 https://brc.dev/29
@@ -3500,7 +3754,7 @@ See also: [ScriptTemplateParamsSABPPP](#interface-scripttemplateparamssabppp)
 
 <summary>Class ScriptTemplateSABPPP Details</summary>
 
-#### Property unlockLength
+###### Property unlockLength
 
 P2PKH unlock estimateLength is a constant
 
@@ -3513,7 +3767,7 @@ unlockLength = 108
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: ServiceCollection
+##### Class: ServiceCollection
 
 ```ts
 export class ServiceCollection<T> {
@@ -3545,7 +3799,7 @@ export class ServiceCollection<T> {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: Services
+##### Class: Services
 
 ```ts
 export class Services implements sdk.WalletServices {
@@ -3588,7 +3842,7 @@ See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [FiatExch
 
 <summary>Class Services Details</summary>
 
-#### Method postTxs
+###### Method postTxs
 
 The beef must contain at least each rawTx for each txid.
 Some services may require input transactions as well.
@@ -3604,7 +3858,7 @@ See also: [PostTxsResult](#interface-posttxsresult)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: SetupClient
+##### Class: SetupClient
 
 The `SetupClient` class provides static setup functions to construct BRC-100 compatible
 wallets in a variety of configurations.
@@ -3646,18 +3900,17 @@ export abstract class SetupClient {
     }
     static getEnv(chain: sdk.Chain): SetupEnv 
     static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
-        args.chain ||= args.env.chain;
+        const chain = args.env.chain;
         args.rootKeyHex ||= args.env.devKeys[args.env.identityKey];
         const rootKey = PrivateKey.fromHex(args.rootKeyHex);
         const identityKey = rootKey.toPublicKey().toString();
         const keyDeriver = new KeyDeriver(rootKey);
-        const chain = args.chain;
         const storage = new WalletStorageManager(identityKey, args.active, args.backups);
         if (storage.stores.length > 0)
             await storage.makeAvailable();
         const serviceOptions = Services.createDefaultOptions(chain);
         serviceOptions.taalApiKey = args.env.taalApiKey;
-        const services = new Services(args.chain);
+        const services = new Services(chain);
         const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services);
         const monitor = new Monitor(monopts);
         monitor.addDefaultTasks();
@@ -3686,7 +3939,7 @@ export abstract class SetupClient {
         };
         return r;
     }
-    static async createWalletWithStorageClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> 
+    static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> 
     static getKeyPair(priv?: string | PrivateKey): KeyPairAddress 
     static getLockP2PKH(address: string) 
     static getUnlockP2PKH(priv: PrivateKey, satoshis: number): sdk.ScriptTemplateUnlock 
@@ -3717,7 +3970,7 @@ See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [Monitor
 
 <summary>Class SetupClient Details</summary>
 
-#### Method createWallet
+###### Method createWallet
 
 Create a `Wallet`. Storage can optionally be provided or configured later.
 
@@ -3726,18 +3979,17 @@ Optionally, PrivilegedKeyManager is also configured.
 
 ```ts
 static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
-    args.chain ||= args.env.chain;
+    const chain = args.env.chain;
     args.rootKeyHex ||= args.env.devKeys[args.env.identityKey];
     const rootKey = PrivateKey.fromHex(args.rootKeyHex);
     const identityKey = rootKey.toPublicKey().toString();
     const keyDeriver = new KeyDeriver(rootKey);
-    const chain = args.chain;
     const storage = new WalletStorageManager(identityKey, args.active, args.backups);
     if (storage.stores.length > 0)
         await storage.makeAvailable();
     const serviceOptions = Services.createDefaultOptions(chain);
     serviceOptions.taalApiKey = args.env.taalApiKey;
-    const services = new Services(args.chain);
+    const services = new Services(chain);
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services);
     const monitor = new Monitor(monopts);
     monitor.addDefaultTasks();
@@ -3769,7 +4021,7 @@ static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
 ```
 See also: [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [Services](#class-services), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
 
-#### Method getEnv
+###### Method getEnv
 
 Reads a .env file of the format created by `makeEnv`.
 
@@ -3791,7 +4043,7 @@ Argument Details
 + **chain**
   + Which chain to use: 'test' or 'main'
 
-#### Method makeEnv
+###### Method makeEnv
 
 Creates content for .env file with some private keys, identity keys, sample API keys, and sample MySQL connection string.
 
@@ -3809,7 +4061,7 @@ static makeEnv(): string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageClient
+##### Class: StorageClient
 
 ```ts
 export class StorageClient implements sdk.WalletStorageProvider {
@@ -3857,7 +4109,7 @@ See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcer
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageProvider
+##### Class: StorageProvider
 
 ```ts
 export abstract class StorageProvider extends StorageReaderWriter implements sdk.WalletStorageProvider {
@@ -3925,7 +4177,7 @@ See also: [AuthId](#interface-authid), [Chain](#type-chain), [FindCertificatesAr
 
 <summary>Class StorageProvider Details</summary>
 
-#### Method confirmSpendableOutputs
+###### Method confirmSpendableOutputs
 
 For each spendable output in the 'default' basket of the authenticated user,
 verify that the output script, satoshis, vout and txid match that of an output
@@ -3941,7 +4193,7 @@ Returns
 
 object with invalidSpendableOutputs array. A good result is an empty array.
 
-#### Method getProvenOrReq
+###### Method getProvenOrReq
 
 Checks if txid is a known valid ProvenTx and returns it if found.
 Next checks if txid is a current ProvenTxReq and returns that if found.
@@ -3956,10 +4208,10 @@ async getProvenOrReq(txid: string, newReq?: table.ProvenTxReq, trx?: sdk.TrxToke
 ```
 See also: [StorageProvenOrReq](#interface-storageprovenorreq), [TrxToken](#interface-trxtoken)
 
-#### Method getReqsAndBeefToShareWithWorld
+###### Method getReqsAndBeefToShareWithWorld
 
 Given an array of transaction txids with current ProvenTxReq ready-to-share status,
-lookup their DojoProvenTxReqApi req records.
+lookup their ProvenTxReqApi req records.
 For the txids with reqs and status still ready to send construct a single merged beef.
 
 ```ts
@@ -3967,7 +4219,7 @@ async getReqsAndBeefToShareWithWorld(txids: string[], knownTxids: string[], trx?
 ```
 See also: [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [TrxToken](#interface-trxtoken)
 
-#### Method updateProvenTxReqWithNewProvenTx
+###### Method updateProvenTxReqWithNewProvenTx
 
 Handles storage changes when a valid MerklePath and mined block header are found for a ProvenTxReq txid.
 
@@ -3986,7 +4238,7 @@ async updateProvenTxReqWithNewProvenTx(args: sdk.UpdateProvenTxReqWithNewProvenT
 ```
 See also: [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult)
 
-#### Method updateTransactionStatus
+###### Method updateTransactionStatus
 
 For all `status` values besides 'failed', just updates the transaction records status property.
 
@@ -3997,18 +4249,12 @@ async updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: num
 ```
 See also: [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken)
 
-Throws
-
-ERR_DOJO_COMPLETED_TX if current status is 'completed' and new status is not 'completed.
-
-ERR_DOJO_PROVEN_TX if transaction has proof or provenTxId and new status is not 'completed'.
-
 </details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageReader
+##### Class: StorageReader
 
 The `StorageReader` abstract class is the base of the concrete wallet storage provider classes.
 
@@ -4077,7 +4323,7 @@ See also: [Chain](#type-chain), [DBType](#type-dbtype), [FindCertificateFieldsAr
 
 <summary>Class StorageReader Details</summary>
 
-#### Method validateEntityDate
+###### Method validateEntityDate
 
 Force dates to strings on SQLite and Date objects on MySQL
 
@@ -4085,7 +4331,7 @@ Force dates to strings on SQLite and Date objects on MySQL
 validateEntityDate(date: Date | string | number): Date | string 
 ```
 
-#### Method validateOptionalEntityDate
+###### Method validateOptionalEntityDate
 
 ```ts
 validateOptionalEntityDate(date: Date | string | number | null | undefined, useNowAsDefault?: boolean): Date | string | undefined 
@@ -4101,7 +4347,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageReaderWriter
+##### Class: StorageReaderWriter
 
 ```ts
 export abstract class StorageReaderWriter extends StorageReader {
@@ -4193,7 +4439,7 @@ See also: [AuthId](#interface-authid), [FindOutputTagMapsArgs](#interface-findou
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageSyncReader
+##### Class: StorageSyncReader
 
 The `StorageSyncReader` non-abstract class must be used when authentication checking access to the methods of a `StorageBaseReader` is required.
 
@@ -4230,7 +4476,7 @@ See also: [AuthId](#interface-authid), [FindCertificateFieldsArgs](#interface-fi
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskCheckForProofs
+##### Class: TaskCheckForProofs
 
 `TaskCheckForProofs` is a WalletMonitor task that retreives merkle proofs for
 transactions.
@@ -4266,7 +4512,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 <summary>Class TaskCheckForProofs Details</summary>
 
-#### Property checkNow
+###### Property checkNow
 
 An external service such as the chaintracks new block header
 listener can set this true to cause
@@ -4275,7 +4521,7 @@ listener can set this true to cause
 static checkNow = false
 ```
 
-#### Method getProofs
+###### Method getProofs
 
 Process an array of table.ProvenTxReq (typically with status 'unmined' or 'unknown')
 
@@ -4300,7 +4546,7 @@ Returns
 
 reqs partitioned by status
 
-#### Method trigger
+###### Method trigger
 
 Normally triggered by checkNow getting set by new block header found event from chaintracks
 
@@ -4315,7 +4561,7 @@ trigger(nowMsecsSinceEpoch: number): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskClock
+##### Class: TaskClock
 
 ```ts
 export class TaskClock extends WalletMonitorTask {
@@ -4335,7 +4581,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskFailAbandoned
+##### Class: TaskFailAbandoned
 
 Handles transactions which do not have terminal status and have not been
 updated for an extended time period.
@@ -4360,7 +4606,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskNewHeader
+##### Class: TaskNewHeader
 
 ```ts
 export class TaskNewHeader extends WalletMonitorTask {
@@ -4380,7 +4626,7 @@ See also: [BlockHeader](#interface-blockheader), [Monitor](#class-monitor), [Wal
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskPurge
+##### Class: TaskPurge
 
 ```ts
 export class TaskPurge extends WalletMonitorTask {
@@ -4400,7 +4646,7 @@ See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparam
 
 <summary>Class TaskPurge Details</summary>
 
-#### Property checkNow
+###### Property checkNow
 
 Set to true to trigger running this task
 
@@ -4413,7 +4659,7 @@ static checkNow = false
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskReviewStatus
+##### Class: TaskReviewStatus
 
 Notify Transaction records of changes in ProvenTxReq records they may have missed.
 
@@ -4441,7 +4687,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 <summary>Class TaskReviewStatus Details</summary>
 
-#### Property checkNow
+###### Property checkNow
 
 Set to true to trigger running this task
 
@@ -4454,7 +4700,7 @@ static checkNow = false
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskSendWaiting
+##### Class: TaskSendWaiting
 
 ```ts
 export class TaskSendWaiting extends WalletMonitorTask {
@@ -4474,7 +4720,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 <summary>Class TaskSendWaiting Details</summary>
 
-#### Method processUnsent
+###### Method processUnsent
 
 Process an array of 'unsent' status table.ProvenTxReq
 
@@ -4499,7 +4745,7 @@ async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string>
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskSyncWhenIdle
+##### Class: TaskSyncWhenIdle
 
 ```ts
 export class TaskSyncWhenIdle extends WalletMonitorTask {
@@ -4517,7 +4763,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_BAD_REQUEST
+##### Class: WERR_BAD_REQUEST
 
 The request is invalid.
 
@@ -4532,7 +4778,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_INSUFFICIENT_FUNDS
+##### Class: WERR_INSUFFICIENT_FUNDS
 
 Insufficient funds in the available inputs to cover the cost of the required outputs
 and the transaction fee (${moreSatoshisNeeded} more satoshis are needed,
@@ -4551,7 +4797,7 @@ See also: [WalletError](#class-walleterror)
 
 <summary>Class WERR_INSUFFICIENT_FUNDS Details</summary>
 
-#### Constructor
+###### Constructor
 
 ```ts
 constructor(public totalSatoshisNeeded: number, public moreSatoshisNeeded: number) 
@@ -4569,7 +4815,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_INTERNAL
+##### Class: WERR_INTERNAL
 
 An internal error has occurred.
 
@@ -4586,7 +4832,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_INVALID_OPERATION
+##### Class: WERR_INVALID_OPERATION
 
 The ${parameter} parameter is invalid.
 
@@ -4603,7 +4849,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_INVALID_PARAMETER
+##### Class: WERR_INVALID_PARAMETER
 
 The ${parameter} parameter is invalid.
 
@@ -4620,7 +4866,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_INVALID_PUBLIC_KEY
+##### Class: WERR_INVALID_PUBLIC_KEY
 
 ```ts
 export class WERR_INVALID_PUBLIC_KEY extends WalletError {
@@ -4634,7 +4880,7 @@ See also: [WalletError](#class-walleterror)
 
 <summary>Class WERR_INVALID_PUBLIC_KEY Details</summary>
 
-#### Constructor
+###### Constructor
 
 ```ts
 constructor(public key: string, network: WalletNetwork = "mainnet") 
@@ -4652,7 +4898,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_MISSING_PARAMETER
+##### Class: WERR_MISSING_PARAMETER
 
 The required ${parameter} parameter is missing.
 
@@ -4669,7 +4915,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_NETWORK_CHAIN
+##### Class: WERR_NETWORK_CHAIN
 
 Configured network chain is invalid or does not match across services.
 
@@ -4684,7 +4930,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_NOT_ACTIVE
+##### Class: WERR_NOT_ACTIVE
 
 WalletStorageManager is not accessing user's active storage.
 
@@ -4699,7 +4945,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_NOT_IMPLEMENTED
+##### Class: WERR_NOT_IMPLEMENTED
 
 Not implemented.
 
@@ -4714,7 +4960,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WERR_UNAUTHORIZED
+##### Class: WERR_UNAUTHORIZED
 
 Access is denied due to an authorization error.
 
@@ -4729,7 +4975,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: Wallet
+##### Class: Wallet
 
 ```ts
 export class Wallet implements WalletInterface, ProtoWallet {
@@ -4745,6 +4991,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     proto: ProtoWallet;
     privilegedKeyManager?: sdk.PrivilegedKeyManager;
     pendingSignActions: Record<string, PendingSignAction>;
+    randomVals?: number[] = undefined;
     constructor(argsOrSigner: WalletArgs | WalletSigner, services?: sdk.WalletServices, monitor?: Monitor, privilegedKeyManager?: sdk.PrivilegedKeyManager) 
     async destroy(): Promise<void> 
     getClientChangeKeyPair(): sdk.KeyPair 
@@ -4790,7 +5037,7 @@ See also: [Chain](#type-chain), [KeyPair](#interface-keypair), [Monitor](#class-
 
 <summary>Class Wallet Details</summary>
 
-#### Property beef
+###### Property beef
 
 The wallet creates a `BeefParty` when it is created.
 All the Beefs that pass through the wallet are merged into this beef.
@@ -4805,7 +5052,15 @@ Over time, this allows an active wallet to drastically reduce the amount of data
 beef: BeefParty
 ```
 
-#### Method getKnownTxids
+###### Property randomVals
+
+For repeatability testing, set to an array of random numbers from [0..1).
+
+```ts
+randomVals?: number[] = undefined
+```
+
+###### Method getKnownTxids
 
 ```ts
 getKnownTxids(newKnownTxids?: string[]): string[] 
@@ -4825,7 +5080,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WalletError
+##### Class: WalletError
 
 Derived class constructors should use the derived class name as the value for `name`,
 and an internationalizable constant string for `message`.
@@ -4861,7 +5116,7 @@ export class WalletError extends Error implements WalletErrorObject {
 
 <summary>Class WalletError Details</summary>
 
-#### Method asStatus
+###### Method asStatus
 
 ```ts
 asStatus(): {
@@ -4875,11 +5130,9 @@ Returns
 
 standard HTTP error status object with status property set to 'error'.
 
-#### Method fromUnknown
+###### Method fromUnknown
 
 Recovers all public fields from WalletError derived error classes and relevant Error derived errors.
-
-Critical client data fields are preserved across HTTP DojoExpress / DojoExpressClient encoding.
 
 ```ts
 static fromUnknown(err: unknown): WalletError 
@@ -4891,7 +5144,7 @@ See also: [WalletError](#class-walleterror)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WalletMonitorTask
+##### Class: WalletMonitorTask
 
 A monitor task performs some periodic or state triggered maintenance function
 on the data managed by a wallet (Bitcoin UTXO manager, aka wallet)
@@ -4926,7 +5179,7 @@ See also: [Monitor](#class-monitor), [MonitorStorage](#type-monitorstorage)
 
 <summary>Class WalletMonitorTask Details</summary>
 
-#### Property lastRunMsecsSinceEpoch
+###### Property lastRunMsecsSinceEpoch
 
 Set by monitor each time runTask completes
 
@@ -4934,7 +5187,7 @@ Set by monitor each time runTask completes
 lastRunMsecsSinceEpoch = 0
 ```
 
-#### Method asyncSetup
+###### Method asyncSetup
 
 Override to handle async task setup configuration.
 
@@ -4944,7 +5197,7 @@ Called before first call to `trigger`
 async asyncSetup(): Promise<void> 
 ```
 
-#### Method trigger
+###### Method trigger
 
 Return true if `runTask` needs to be called now.
 
@@ -4959,7 +5212,7 @@ abstract trigger(nowMsecsSinceEpoch: number): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WalletSigner
+##### Class: WalletSigner
 
 ```ts
 export class WalletSigner {
@@ -4976,7 +5229,7 @@ See also: [Chain](#type-chain), [WalletStorageManager](#class-walletstoragemanag
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WalletStorageManager
+##### Class: WalletStorageManager
 
 The `WalletStorageManager` class delivers authentication checking storage access to the wallet.
 
@@ -5059,7 +5312,7 @@ See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcer
 
 <summary>Class WalletStorageManager Details</summary>
 
-#### Property _isSingleWriter
+###### Property _isSingleWriter
 
 if true, allow only a single writer to proceed at a time.
 queue the blocked requests so they get executed in order when released.
@@ -5068,7 +5321,7 @@ queue the blocked requests so they get executed in order when released.
 _isSingleWriter: boolean = true
 ```
 
-#### Property _storageProviderLocked
+###### Property _storageProviderLocked
 
 if true, allow no new reader or writers or sync to proceed.
 queue the blocked requests so they get executed in order when released.
@@ -5077,7 +5330,7 @@ queue the blocked requests so they get executed in order when released.
 _storageProviderLocked: boolean = false
 ```
 
-#### Property _syncLocked
+###### Property _syncLocked
 
 if true, allow no new reader or writers to proceed.
 queue the blocked requests so they get executed in order when released.
@@ -5086,7 +5339,7 @@ queue the blocked requests so they get executed in order when released.
 _syncLocked: boolean = false
 ```
 
-#### Method isActiveStorageProvider
+###### Method isActiveStorageProvider
 
 ```ts
 isActiveStorageProvider(): boolean 
@@ -5096,7 +5349,7 @@ Returns
 
 true if the active `WalletStorageProvider` also implements `StorageProvider`
 
-#### Method runAsSync
+###### Method runAsSync
 
 ```ts
 async runAsSync<R>(sync: (active: sdk.WalletStorageSync) => Promise<R>, activeSync?: sdk.WalletStorageSync): Promise<R> 
@@ -5110,7 +5363,7 @@ Argument Details
 + **activeSync**
   + from chained sync functions, active storage already held under sync access lock.
 
-#### Method setActive
+###### Method setActive
 
 Updates backups and switches to new active storage provider from among current backup providers.
 
@@ -5128,7 +5381,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Functions
+#### Functions
 
 | | | |
 | --- | --- | --- |
@@ -5175,7 +5428,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Function: acquireDirectCertificate
+##### Function: acquireDirectCertificate
 
 ```ts
 export async function acquireDirectCertificate(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidAcquireDirectCertificateArgs): Promise<AcquireCertificateResult> 
@@ -5186,7 +5439,7 @@ See also: [AuthId](#interface-authid), [ValidAcquireDirectCertificateArgs](#inte
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: arraysEqual
+##### Function: arraysEqual
 
 Compares lengths and direct equality of values.
 
@@ -5197,7 +5450,7 @@ export function arraysEqual(arr1: Number[], arr2: Number[])
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: asArray
+##### Function: asArray
 
 ```ts
 export function asArray(val: string | number[]): number[] 
@@ -5206,7 +5459,7 @@ export function asArray(val: string | number[]): number[]
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: asBsvSdkPrivateKey
+##### Function: asBsvSdkPrivateKey
 
 ```ts
 export function asBsvSdkPrivateKey(privKey: string): PrivateKey 
@@ -5226,7 +5479,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: asBsvSdkPublickKey
+##### Function: asBsvSdkPublickKey
 
 ```ts
 export function asBsvSdkPublickKey(pubKey: string): PublicKey 
@@ -5246,7 +5499,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: asBsvSdkScript
+##### Function: asBsvSdkScript
 
 Coerce a bsv script encoded as a hex string, serialized array, or Script to Script
 If script is already a Script, just return it.
@@ -5266,7 +5519,7 @@ export function asBsvSdkScript(script: HexString | number[] | Script): Script {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: asBsvSdkTx
+##### Function: asBsvSdkTx
 
 Coerce a bsv transaction encoded as a hex string, serialized array, or Transaction to Transaction
 If tx is already a Transaction, just return it.
@@ -5286,7 +5539,7 @@ export function asBsvSdkTx(tx: HexString | number[] | Transaction): Transaction 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: asString
+##### Function: asString
 
 Coerce a value to a hex encoded string if currently a hex encoded string or number[]
 
@@ -5316,7 +5569,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: attemptToPostReqsToNetwork
+##### Function: attemptToPostReqsToNetwork
 
 Attempt to post one or more `ProvenTxReq` with status 'unsent'
 to the bitcoin network.
@@ -5330,7 +5583,7 @@ See also: [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [Storag
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: completeSignedTransaction
+##### Function: completeSignedTransaction
 
 ```ts
 export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, wallet: Wallet): Promise<Transaction> 
@@ -5341,7 +5594,7 @@ See also: [PendingSignAction](#interface-pendingsignaction), [Wallet](#class-wal
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: completeSignedTransaction
+##### Function: completeSignedTransaction
 
 ```ts
 export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, wallet: Wallet): Promise<BsvTransaction> 
@@ -5352,7 +5605,7 @@ See also: [PendingSignAction](#interface-pendingsignaction), [Wallet](#class-wal
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: convertProofToMerklePath
+##### Function: convertProofToMerklePath
 
 ```ts
 export function convertProofToMerklePath(txid: string, proof: TscMerkleProofApi): MerklePath 
@@ -5363,7 +5616,7 @@ See also: [TscMerkleProofApi](#interface-tscmerkleproofapi)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: createAction
+##### Function: createAction
 
 ```ts
 export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<sdk.StorageCreateActionResult> 
@@ -5374,7 +5627,7 @@ See also: [AuthId](#interface-authid), [StorageCreateActionResult](#interface-st
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: createAction
+##### Function: createAction
 
 ```ts
 export async function createAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs): Promise<CreateActionResult> 
@@ -5385,7 +5638,7 @@ See also: [AuthId](#interface-authid), [ValidCreateActionArgs](#interface-validc
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: createDefaultWalletServicesOptions
+##### Function: createDefaultWalletServicesOptions
 
 ```ts
 export function createDefaultWalletServicesOptions(chain: sdk.Chain): sdk.WalletServicesOptions 
@@ -5396,7 +5649,7 @@ See also: [Chain](#type-chain), [WalletServicesOptions](#interface-walletservice
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: createStorageServiceChargeScript
+##### Function: createStorageServiceChargeScript
 
 ```ts
 export function createStorageServiceChargeScript(pubKeyHex: PubKeyHex): {
@@ -5408,7 +5661,7 @@ export function createStorageServiceChargeScript(pubKeyHex: PubKeyHex): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: doubleSha256BE
+##### Function: doubleSha256BE
 
 Calculate the SHA256 hash of the SHA256 hash of an array of bytes.
 
@@ -5438,7 +5691,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: doubleSha256HashLE
+##### Function: doubleSha256HashLE
 
 Calculate the SHA256 hash of the SHA256 hash of an array of bytes.
 
@@ -5468,7 +5721,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: generateChangeSdk
+##### Function: generateChangeSdk
 
 Simplifications:
  - only support one change type with fixed length scripts.
@@ -5485,7 +5738,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: generateChangeSdkMakeStorage
+##### Function: generateChangeSdkMakeStorage
 
 ```ts
 export function generateChangeSdkMakeStorage(availableChange: GenerateChangeSdkChangeInput[]): {
@@ -5500,7 +5753,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getBeefForTransaction
+##### Function: getBeefForTransaction
 
 Creates a `Beef` to support the validity of a transaction identified by its `txid`.
 
@@ -5537,7 +5790,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getExchangeRatesIo
+##### Function: getExchangeRatesIo
 
 ```ts
 export async function getExchangeRatesIo(key: string): Promise<ExchangeRatesIoApi> 
@@ -5548,7 +5801,7 @@ See also: [ExchangeRatesIoApi](#interface-exchangeratesioapi)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getIdentityKey
+##### Function: getIdentityKey
 
 ```ts
 export async function getIdentityKey(wallet: CertOpsWallet): Promise<PubKeyHex> 
@@ -5559,7 +5812,7 @@ See also: [CertOpsWallet](#interface-certopswallet)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getMerklePathFromTaalARC
+##### Function: getMerklePathFromTaalARC
 
 ```ts
 export async function getMerklePathFromTaalARC(txid: string, config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
@@ -5570,7 +5823,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [GetMerklePathResult]
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getMerklePathFromWhatsOnChainTsc
+##### Function: getMerklePathFromWhatsOnChainTsc
 
 WhatOnChain.com has their own "hash/pos/R/L" proof format and a more TSC compliant proof format.
 
@@ -5587,7 +5840,7 @@ See also: [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathre
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getRawTxFromWhatsOnChain
+##### Function: getRawTxFromWhatsOnChain
 
 ```ts
 export async function getRawTxFromWhatsOnChain(txid: string, chain: sdk.Chain): Promise<sdk.GetRawTxResult> 
@@ -5598,7 +5851,7 @@ See also: [Chain](#type-chain), [GetRawTxResult](#interface-getrawtxresult)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getSyncChunk
+##### Function: getSyncChunk
 
 Gets the next sync chunk of updated data from un-remoted storage (could be using a remote DB connection).
 
@@ -5611,7 +5864,7 @@ See also: [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReade
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getTaalArcServiceConfig
+##### Function: getTaalArcServiceConfig
 
 ```ts
 export function getTaalArcServiceConfig(chain: sdk.Chain, apiKey: string): ArcServiceConfig 
@@ -5622,7 +5875,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [Chain](#type-chain)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getUtxoStatusFromWhatsOnChain
+##### Function: getUtxoStatusFromWhatsOnChain
 
 ```ts
 export async function getUtxoStatusFromWhatsOnChain(output: string, chain: sdk.Chain, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> 
@@ -5633,7 +5886,7 @@ See also: [Chain](#type-chain), [GetUtxoStatusOutputFormat](#type-getutxostatuso
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: internalizeAction
+##### Function: internalizeAction
 
 Internalize Action allows a wallet to take ownership of outputs in a pre-existing transaction.
 The transaction may, or may not already be known to both the storage and user.
@@ -5669,7 +5922,7 @@ See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: internalizeAction
+##### Function: internalizeAction
 
 Internalize Action allows a wallet to take ownership of outputs in a pre-existing transaction.
 The transaction may, or may not already be known to both the storage and user.
@@ -5705,7 +5958,7 @@ See also: [AuthId](#interface-authid), [Wallet](#class-wallet)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: isHexString
+##### Function: isHexString
 
 ```ts
 export function isHexString(s: string): boolean 
@@ -5714,7 +5967,7 @@ export function isHexString(s: string): boolean
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: listCertificates
+##### Function: listCertificates
 
 ```ts
 export async function listCertificates(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> 
@@ -5725,7 +5978,7 @@ See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: lockScriptWithKeyOffsetFromPubKey
+##### Function: lockScriptWithKeyOffsetFromPubKey
 
 ```ts
 export function lockScriptWithKeyOffsetFromPubKey(pubKey: string, keyOffset?: string): {
@@ -5737,7 +5990,7 @@ export function lockScriptWithKeyOffsetFromPubKey(pubKey: string, keyOffset?: st
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makeAtomicBeef
+##### Function: makeAtomicBeef
 
 ```ts
 export function makeAtomicBeef(tx: Transaction, beef: number[] | Beef): number[] 
@@ -5746,7 +5999,7 @@ export function makeAtomicBeef(tx: Transaction, beef: number[] | Beef): number[]
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makeAtomicBeef
+##### Function: makeAtomicBeef
 
 ```ts
 export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef): number[] 
@@ -5755,7 +6008,7 @@ export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef): numbe
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makeErrorResult
+##### Function: makeErrorResult
 
 ```ts
 export function makeErrorResult(error: sdk.WalletError, miner: ArcServiceConfig, beef: number[], txids: string[], dd?: ArcMinerPostBeefDataApi): sdk.PostBeefResult 
@@ -5766,7 +6019,7 @@ See also: [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi), [ArcSer
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makeGetMerklePathFromTaalARC
+##### Function: makeGetMerklePathFromTaalARC
 
 ```ts
 export function makeGetMerklePathFromTaalARC(config: ArcServiceConfig): sdk.GetMerklePathService 
@@ -5777,7 +6030,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [GetMerklePathService
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makePostBeefResult
+##### Function: makePostBeefResult
 
 ```ts
 export function makePostBeefResult(dd: ArcMinerPostBeefDataApi, miner: ArcServiceConfig, beef: number[], txids: string[]): sdk.PostBeefResult 
@@ -5788,7 +6041,7 @@ See also: [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi), [ArcSer
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makePostBeefToTaalARC
+##### Function: makePostBeefToTaalARC
 
 ```ts
 export function makePostBeefToTaalARC(config: ArcServiceConfig): sdk.PostBeefService 
@@ -5799,7 +6052,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefService](#ty
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makePostTxsToTaalARC
+##### Function: makePostTxsToTaalARC
 
 ```ts
 export function makePostTxsToTaalARC(config: ArcServiceConfig): sdk.PostTxsService 
@@ -5810,7 +6063,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsService](#typ
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: maxDate
+##### Function: maxDate
 
 ```ts
 export function maxDate(d1?: Date, d2?: Date): Date | undefined 
@@ -5819,7 +6072,7 @@ export function maxDate(d1?: Date, d2?: Date): Date | undefined
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: offsetPubKey
+##### Function: offsetPubKey
 
 ```ts
 export function offsetPubKey(pubKey: string, keyOffset?: string): {
@@ -5831,7 +6084,7 @@ export function offsetPubKey(pubKey: string, keyOffset?: string): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: optionalArraysEqual
+##### Function: optionalArraysEqual
 
 ```ts
 export function optionalArraysEqual(arr1?: Number[], arr2?: Number[]) 
@@ -5840,7 +6093,7 @@ export function optionalArraysEqual(arr1?: Number[], arr2?: Number[])
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: parseTxScriptOffsets
+##### Function: parseTxScriptOffsets
 
 ```ts
 export function parseTxScriptOffsets(rawTx: number[]): TxScriptOffsets 
@@ -5851,7 +6104,7 @@ See also: [TxScriptOffsets](#interface-txscriptoffsets)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: parseWalletOutpoint
+##### Function: parseWalletOutpoint
 
 ```ts
 export function parseWalletOutpoint(outpoint: string): {
@@ -5863,7 +6116,7 @@ export function parseWalletOutpoint(outpoint: string): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: postBeefToArcMiner
+##### Function: postBeefToArcMiner
 
 ```ts
 export async function postBeefToArcMiner(beef: Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
@@ -5874,7 +6127,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#int
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: postBeefToTaalArcMiner
+##### Function: postBeefToTaalArcMiner
 
 ```ts
 export async function postBeefToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
@@ -5885,7 +6138,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#int
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: postTxsToTaalArcMiner
+##### Function: postTxsToTaalArcMiner
 
 ```ts
 export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
@@ -5907,7 +6160,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: processAction
+##### Function: processAction
 
 ```ts
 export async function processAction(storage: StorageProvider, auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> 
@@ -5918,7 +6171,7 @@ See also: [AuthId](#interface-authid), [StorageProcessActionArgs](#interface-sto
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: processAction
+##### Function: processAction
 
 ```ts
 export async function processAction(prior: PendingSignAction | undefined, wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs): Promise<SendWithResult[] | undefined> 
@@ -5929,7 +6182,7 @@ See also: [AuthId](#interface-authid), [PendingSignAction](#interface-pendingsig
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: proveCertificate
+##### Function: proveCertificate
 
 ```ts
 export async function proveCertificate(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidProveCertificateArgs): Promise<ProveCertificateResult> 
@@ -5940,7 +6193,7 @@ See also: [AuthId](#interface-authid), [ValidProveCertificateArgs](#interface-va
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: randomBytes
+##### Function: randomBytes
 
 ```ts
 export function randomBytes(count: number): number[] 
@@ -5959,7 +6212,7 @@ count cryptographically secure random bytes as array of bytes
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: randomBytesBase64
+##### Function: randomBytesBase64
 
 ```ts
 export function randomBytesBase64(count: number): string 
@@ -5978,7 +6231,7 @@ count cryptographically secure random bytes as base64 encoded string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: randomBytesHex
+##### Function: randomBytesHex
 
 ```ts
 export function randomBytesHex(count: number): string 
@@ -5997,7 +6250,7 @@ count cryptographically secure random bytes as hex encoded string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: sha256Hash
+##### Function: sha256Hash
 
 Calculate the SHA256 hash of an array of bytes
 
@@ -6021,7 +6274,7 @@ sha256 hash of buffer contents.
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: signAction
+##### Function: signAction
 
 ```ts
 export async function signAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs): Promise<SignActionResult> 
@@ -6032,7 +6285,7 @@ See also: [AuthId](#interface-authid), [ValidSignActionArgs](#interface-validsig
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: stampLog
+##### Function: stampLog
 
 If a log is being kept, add a time stamped line.
 
@@ -6062,7 +6315,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: stampLogFormat
+##### Function: stampLogFormat
 
 Replaces individual timestamps with delta msecs.
 Looks for two network crossings and adjusts clock for clock skew if found.
@@ -6090,7 +6343,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: toBinaryBaseBlockHeader
+##### Function: toBinaryBaseBlockHeader
 
 Serializes a block header as an 80 byte array.
 The exact serialized format is defined in the Bitcoin White Paper
@@ -6126,7 +6379,7 @@ Returns
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: toWalletNetwork
+##### Function: toWalletNetwork
 
 ```ts
 export function toWalletNetwork(chain: Chain): WalletNetwork 
@@ -6137,7 +6390,7 @@ See also: [Chain](#type-chain)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: transactionInputSize
+##### Function: transactionInputSize
 
 ```ts
 export function transactionInputSize(scriptSize: number): number 
@@ -6161,7 +6414,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: transactionOutputSize
+##### Function: transactionOutputSize
 
 ```ts
 export function transactionOutputSize(scriptSize: number): number 
@@ -6185,7 +6438,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: transactionSize
+##### Function: transactionSize
 
 Compute the serialized binary transaction size in bytes
 given the number of inputs and outputs,
@@ -6215,7 +6468,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: updateBsvExchangeRate
+##### Function: updateBsvExchangeRate
 
 ```ts
 export async function updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
@@ -6226,7 +6479,7 @@ See also: [BsvExchangeRate](#interface-bsvexchangerate)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: updateChaintracksFiatExchangeRates
+##### Function: updateChaintracksFiatExchangeRates
 
 ```ts
 export async function updateChaintracksFiatExchangeRates(targetCurrencies: string[], options: sdk.WalletServicesOptions): Promise<sdk.FiatExchangeRates> 
@@ -6237,7 +6490,7 @@ See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOpti
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: updateExchangeratesapi
+##### Function: updateExchangeratesapi
 
 ```ts
 export async function updateExchangeratesapi(targetCurrencies: string[], options: sdk.WalletServicesOptions): Promise<sdk.FiatExchangeRates> 
@@ -6248,7 +6501,7 @@ See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOpti
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateAbortActionArgs
+##### Function: validateAbortActionArgs
 
 ```ts
 export function validateAbortActionArgs(args: AbortActionArgs): ValidAbortActionArgs 
@@ -6259,7 +6512,7 @@ See also: [ValidAbortActionArgs](#interface-validabortactionargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateAcquireCertificateArgs
+##### Function: validateAcquireCertificateArgs
 
 ```ts
 export async function validateAcquireCertificateArgs(args: AcquireCertificateArgs): Promise<ValidAcquireCertificateArgs> 
@@ -6281,7 +6534,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateAcquireDirectCertificateArgs
+##### Function: validateAcquireDirectCertificateArgs
 
 ```ts
 export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArgs): ValidAcquireDirectCertificateArgs 
@@ -6292,7 +6545,7 @@ See also: [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcerti
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateAcquireIssuanceCertificateArgs
+##### Function: validateAcquireIssuanceCertificateArgs
 
 ```ts
 export function validateAcquireIssuanceCertificateArgs(args: AcquireCertificateArgs): ValidAcquireIssuanceCertificateArgs 
@@ -6303,7 +6556,7 @@ See also: [ValidAcquireIssuanceCertificateArgs](#interface-validacquireissuancec
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateBasketInsertion
+##### Function: validateBasketInsertion
 
 ```ts
 export function validateBasketInsertion(args?: BasketInsertion): ValidBasketInsertion | undefined 
@@ -6314,7 +6567,7 @@ See also: [ValidBasketInsertion](#interface-validbasketinsertion)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateCreateActionArgs
+##### Function: validateCreateActionArgs
 
 ```ts
 export function validateCreateActionArgs(args: CreateActionArgs): ValidCreateActionArgs 
@@ -6325,7 +6578,7 @@ See also: [ValidCreateActionArgs](#interface-validcreateactionargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateCreateActionInput
+##### Function: validateCreateActionInput
 
 ```ts
 export function validateCreateActionInput(i: CreateActionInput): ValidCreateActionInput 
@@ -6336,7 +6589,7 @@ See also: [ValidCreateActionInput](#interface-validcreateactioninput)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateCreateActionOptions
+##### Function: validateCreateActionOptions
 
 Set all default true/false booleans to true or false if undefined.
 Set all possibly undefined numbers to their default values.
@@ -6352,7 +6605,7 @@ See also: [ValidCreateActionOptions](#interface-validcreateactionoptions)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateCreateActionOutput
+##### Function: validateCreateActionOutput
 
 ```ts
 export function validateCreateActionOutput(o: CreateActionOutput): ValidCreateActionOutput 
@@ -6363,7 +6616,7 @@ See also: [ValidCreateActionOutput](#interface-validcreateactionoutput)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateDiscoverByAttributesArgs
+##### Function: validateDiscoverByAttributesArgs
 
 ```ts
 export function validateDiscoverByAttributesArgs(args: DiscoverByAttributesArgs): ValidDiscoverByAttributesArgs 
@@ -6374,7 +6627,7 @@ See also: [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesar
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateDiscoverByIdentityKeyArgs
+##### Function: validateDiscoverByIdentityKeyArgs
 
 ```ts
 export function validateDiscoverByIdentityKeyArgs(args: DiscoverByIdentityKeyArgs): ValidDiscoverByIdentityKeyArgs 
@@ -6385,7 +6638,7 @@ See also: [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykey
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateGenerateChangeSdkParams
+##### Function: validateGenerateChangeSdkParams
 
 ```ts
 export function validateGenerateChangeSdkParams(params: GenerateChangeSdkParams) 
@@ -6396,7 +6649,7 @@ See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateGenerateChangeSdkResult
+##### Function: validateGenerateChangeSdkResult
 
 ```ts
 export function validateGenerateChangeSdkResult(params: GenerateChangeSdkParams, r: GenerateChangeSdkResult): {
@@ -6410,7 +6663,7 @@ See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams), [Genera
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateInteger
+##### Function: validateInteger
 
 ```ts
 export function validateInteger(v: number | undefined, name: string, defaultValue?: number, min?: number, max?: number): number 
@@ -6419,7 +6672,7 @@ export function validateInteger(v: number | undefined, name: string, defaultValu
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateInternalizeActionArgs
+##### Function: validateInternalizeActionArgs
 
 ```ts
 export function validateInternalizeActionArgs(args: InternalizeActionArgs): ValidInternalizeActionArgs 
@@ -6430,7 +6683,7 @@ See also: [ValidInternalizeActionArgs](#interface-validinternalizeactionargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateInternalizeOutput
+##### Function: validateInternalizeOutput
 
 ```ts
 export function validateInternalizeOutput(args: InternalizeOutput): ValidInternalizeOutput 
@@ -6441,7 +6694,7 @@ See also: [ValidInternalizeOutput](#interface-validinternalizeoutput)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateListActionsArgs
+##### Function: validateListActionsArgs
 
 ```ts
 export function validateListActionsArgs(args: ListActionsArgs): ValidListActionsArgs 
@@ -6483,7 +6736,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateListCertificatesArgs
+##### Function: validateListCertificatesArgs
 
 ```ts
 export function validateListCertificatesArgs(args: ListCertificatesArgs): ValidListCertificatesArgs 
@@ -6494,7 +6747,7 @@ See also: [ValidListCertificatesArgs](#interface-validlistcertificatesargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateListOutputsArgs
+##### Function: validateListOutputsArgs
 
 ```ts
 export function validateListOutputsArgs(args: ListOutputsArgs): ValidListOutputsArgs 
@@ -6536,7 +6789,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateOptionalInteger
+##### Function: validateOptionalInteger
 
 ```ts
 export function validateOptionalInteger(v: number | undefined, name: string, min?: number, max?: number): number | undefined 
@@ -6545,7 +6798,7 @@ export function validateOptionalInteger(v: number | undefined, name: string, min
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateOptionalOutpointString
+##### Function: validateOptionalOutpointString
 
 ```ts
 export function validateOptionalOutpointString(outpoint: string | undefined, name: string): string | undefined 
@@ -6554,7 +6807,7 @@ export function validateOptionalOutpointString(outpoint: string | undefined, nam
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateOriginator
+##### Function: validateOriginator
 
 ```ts
 export function validateOriginator(s?: string): string | undefined 
@@ -6563,7 +6816,7 @@ export function validateOriginator(s?: string): string | undefined
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateOutpointString
+##### Function: validateOutpointString
 
 ```ts
 export function validateOutpointString(outpoint: string, name: string): string 
@@ -6572,7 +6825,7 @@ export function validateOutpointString(outpoint: string, name: string): string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validatePositiveIntegerOrZero
+##### Function: validatePositiveIntegerOrZero
 
 ```ts
 export function validatePositiveIntegerOrZero(v: number, name: string): number 
@@ -6581,7 +6834,7 @@ export function validatePositiveIntegerOrZero(v: number, name: string): number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateProveCertificateArgs
+##### Function: validateProveCertificateArgs
 
 ```ts
 export function validateProveCertificateArgs(args: ProveCertificateArgs): ValidProveCertificateArgs 
@@ -6592,7 +6845,7 @@ See also: [ValidProveCertificateArgs](#interface-validprovecertificateargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateRelinquishCertificateArgs
+##### Function: validateRelinquishCertificateArgs
 
 ```ts
 export function validateRelinquishCertificateArgs(args: RelinquishCertificateArgs): ValidRelinquishCertificateArgs 
@@ -6603,7 +6856,7 @@ See also: [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificate
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateRelinquishOutputArgs
+##### Function: validateRelinquishOutputArgs
 
 ```ts
 export function validateRelinquishOutputArgs(args: RelinquishOutputArgs): ValidRelinquishOutputArgs 
@@ -6614,7 +6867,7 @@ See also: [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateSatoshis
+##### Function: validateSatoshis
 
 ```ts
 export function validateSatoshis(v: number | undefined, name: string, min?: number): number 
@@ -6623,7 +6876,7 @@ export function validateSatoshis(v: number | undefined, name: string, min?: numb
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateScriptHash
+##### Function: validateScriptHash
 
 ```ts
 export function validateScriptHash(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): string 
@@ -6634,7 +6887,7 @@ See also: [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateSecondsSinceEpoch
+##### Function: validateSecondsSinceEpoch
 
 ```ts
 export function validateSecondsSinceEpoch(time: number): Date 
@@ -6643,7 +6896,7 @@ export function validateSecondsSinceEpoch(time: number): Date
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateSignActionArgs
+##### Function: validateSignActionArgs
 
 ```ts
 export function validateSignActionArgs(args: SignActionArgs): ValidSignActionArgs 
@@ -6654,7 +6907,7 @@ See also: [ValidSignActionArgs](#interface-validsignactionargs)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateSignActionOptions
+##### Function: validateSignActionOptions
 
 Set all default true/false booleans to true or false if undefined.
 Set all possibly undefined numbers to their default values.
@@ -6670,7 +6923,7 @@ See also: [ValidSignActionOptions](#interface-validsignactionoptions)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateStorageFeeModel
+##### Function: validateStorageFeeModel
 
 ```ts
 export function validateStorageFeeModel(v?: sdk.StorageFeeModel): sdk.StorageFeeModel 
@@ -6681,7 +6934,7 @@ See also: [StorageFeeModel](#interface-storagefeemodel)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateStringLength
+##### Function: validateStringLength
 
 ```ts
 export function validateStringLength(s: string, name: string, min?: number, max?: number): string 
@@ -6690,7 +6943,7 @@ export function validateStringLength(s: string, name: string, min?: number, max?
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateWalletPayment
+##### Function: validateWalletPayment
 
 ```ts
 export function validateWalletPayment(args?: WalletPayment): ValidWalletPayment | undefined 
@@ -6701,7 +6954,7 @@ See also: [ValidWalletPayment](#interface-validwalletpayment)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: varUintSize
+##### Function: varUintSize
 
 Returns the byte size required to encode number as Bitcoin VarUint
 
@@ -6718,7 +6971,7 @@ See also: [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyHexString
+##### Function: verifyHexString
 
 Helper function.
 
@@ -6731,7 +6984,7 @@ export function verifyHexString(v: string): string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyId
+##### Function: verifyId
 
 Helper function.
 
@@ -6744,7 +6997,7 @@ export function verifyId(id: number | undefined | null): number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyInteger
+##### Function: verifyInteger
 
 Helper function.
 
@@ -6757,7 +7010,7 @@ export function verifyInteger(v: number | null | undefined): number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyNumber
+##### Function: verifyNumber
 
 Helper function.
 
@@ -6770,7 +7023,7 @@ export function verifyNumber(v: number | null | undefined): number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyOne
+##### Function: verifyOne
 
 Helper function.
 
@@ -6795,7 +7048,7 @@ WERR_BAD_REQUEST if results has length other than one.
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyOneOrNone
+##### Function: verifyOneOrNone
 
 Helper function.
 
@@ -6820,7 +7073,7 @@ WERR_BAD_REQUEST if results has length greater than one.
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyOptionalHexString
+##### Function: verifyOptionalHexString
 
 Helper function.
 
@@ -6833,7 +7086,7 @@ export function verifyOptionalHexString(v?: string | null): string | undefined
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: verifyTruthy
+##### Function: verifyTruthy
 
 Helper function.
 
@@ -6846,7 +7099,7 @@ export function verifyTruthy<T>(v: T | null | undefined, description?: string): 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: wait
+##### Function: wait
 
 Returns an await'able Promise that resolves in the given number of msecs.
 
@@ -6859,7 +7112,7 @@ export function wait(msecs: number): Promise<void> {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Types
+#### Types
 
 | | |
 | --- | --- |
@@ -6877,7 +7130,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Type: Chain
+##### Type: Chain
 
 ```ts
 export type Chain = "main" | "test"
@@ -6886,7 +7139,7 @@ export type Chain = "main" | "test"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: DBType
+##### Type: DBType
 
 ```ts
 export type DBType = "SQLite" | "MySQL"
@@ -6895,7 +7148,7 @@ export type DBType = "SQLite" | "MySQL"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: GetMerklePathService
+##### Type: GetMerklePathService
 
 ```ts
 export type GetMerklePathService = (txid: string, chain: sdk.Chain, services: WalletServices) => Promise<GetMerklePathResult>
@@ -6906,7 +7159,7 @@ See also: [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathre
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: GetRawTxService
+##### Type: GetRawTxService
 
 ```ts
 export type GetRawTxService = (txid: string, chain: sdk.Chain) => Promise<GetRawTxResult>
@@ -6917,7 +7170,7 @@ See also: [Chain](#type-chain), [GetRawTxResult](#interface-getrawtxresult)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: GetUtxoStatusOutputFormat
+##### Type: GetUtxoStatusOutputFormat
 
 ```ts
 export type GetUtxoStatusOutputFormat = "hashLE" | "hashBE" | "script"
@@ -6926,7 +7179,7 @@ export type GetUtxoStatusOutputFormat = "hashLE" | "hashBE" | "script"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: GetUtxoStatusService
+##### Type: GetUtxoStatusService
 
 ```ts
 export type GetUtxoStatusService = (output: string, chain: sdk.Chain, outputFormat?: GetUtxoStatusOutputFormat) => Promise<GetUtxoStatusResult>
@@ -6937,7 +7190,7 @@ See also: [Chain](#type-chain), [GetUtxoStatusOutputFormat](#type-getutxostatuso
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: KeyPairAddress
+##### Type: KeyPairAddress
 
 ```ts
 export type KeyPairAddress = {
@@ -6950,7 +7203,7 @@ export type KeyPairAddress = {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: MonitorStorage
+##### Type: MonitorStorage
 
 ```ts
 export type MonitorStorage = WalletStorageManager
@@ -6961,7 +7214,7 @@ See also: [WalletStorageManager](#class-walletstoragemanager)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: PostBeefService
+##### Type: PostBeefService
 
 ```ts
 export type PostBeefService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostBeefResult>
@@ -6972,7 +7225,7 @@ See also: [PostBeefResult](#interface-postbeefresult), [WalletServices](#interfa
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: PostReqsToNetworkDetailsStatus
+##### Type: PostReqsToNetworkDetailsStatus
 
 ```ts
 export type PostReqsToNetworkDetailsStatus = "success" | "doubleSpend" | "unknown"
@@ -6981,7 +7234,7 @@ export type PostReqsToNetworkDetailsStatus = "success" | "doubleSpend" | "unknow
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: PostTxsService
+##### Type: PostTxsService
 
 ```ts
 export type PostTxsService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
@@ -6992,7 +7245,7 @@ See also: [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: ProvenTxReqStatus
+##### Type: ProvenTxReqStatus
 
 Initial status (attempts === 0):
 
@@ -7033,7 +7286,7 @@ export type ProvenTxReqStatus = "sending" | "unsent" | "nosend" | "unknown" | "n
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: StorageProvidedBy
+##### Type: StorageProvidedBy
 
 ```ts
 export type StorageProvidedBy = "you" | "storage" | "you-and-storage"
@@ -7042,7 +7295,7 @@ export type StorageProvidedBy = "you" | "storage" | "you-and-storage"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: SyncProtocolVersion
+##### Type: SyncProtocolVersion
 
 ```ts
 export type SyncProtocolVersion = "0.1.0"
@@ -7051,7 +7304,7 @@ export type SyncProtocolVersion = "0.1.0"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: SyncStatus
+##### Type: SyncStatus
 
 success: Last sync of this user from this storage was successful.
 
@@ -7068,7 +7321,7 @@ export type SyncStatus = "success" | "error" | "identified" | "updated" | "unkno
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: TransactionStatus
+##### Type: TransactionStatus
 
 ```ts
 export type TransactionStatus = "completed" | "failed" | "unprocessed" | "sending" | "unproven" | "unsigned" | "nosend"
@@ -7077,7 +7330,7 @@ export type TransactionStatus = "completed" | "failed" | "unprocessed" | "sendin
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: UpdateFiatExchangeRateService
+##### Type: UpdateFiatExchangeRateService
 
 ```ts
 export type UpdateFiatExchangeRateService = (targetCurrencies: string[], options: WalletServicesOptions) => Promise<FiatExchangeRates>
@@ -7088,7 +7341,7 @@ See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOpti
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Variables
+#### Variables
 
 | |
 | --- |
@@ -7100,7 +7353,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Variable: ProvenTxReqNonTerminalStatus
+##### Variable: ProvenTxReqNonTerminalStatus
 
 ```ts
 ProvenTxReqNonTerminalStatus: ProvenTxReqStatus[] = [
@@ -7121,7 +7374,7 @@ See also: [ProvenTxReqStatus](#type-proventxreqstatus)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Variable: ProvenTxReqTerminalStatus
+##### Variable: ProvenTxReqTerminalStatus
 
 ```ts
 ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = [
@@ -7136,7 +7389,7 @@ See also: [ProvenTxReqStatus](#type-proventxreqstatus)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Variable: brc29ProtocolID
+##### Variable: brc29ProtocolID
 
 ```ts
 brc29ProtocolID: WalletProtocol = [2, "3241645161d8"]
@@ -7145,3 +7398,5 @@ brc29ProtocolID: WalletProtocol = [2, "3241645161d8"]
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+
+<!--#endregion ts2md-api-merged-here-->

@@ -1,8 +1,23 @@
-# API
+# MONITOR: BSV Wallet Toolbox API Documentation
+
+The documentation is split into various pages, this page covers the [Monitor](#class-monitor) and related API.
+
+To function properly, a wallet must be able to perform a number of house keeping tasks:
+
+1. Ensure transactions are sent to the network without slowing application flow or when created while offline.
+1. Obtain and merge proofs when transactions are mined.
+1. Detect and propagate transactions that fail due to double-spend, reorgs, or other reasons.
+
+These tasks are the responssibility of the [Monitor](#class-monitor) class.
+
+[Return To Top](./README.md)
+
+<!--#region ts2md-api-merged-here-->
+### API
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
-## Interfaces
+#### Interfaces
 
 | |
 | --- |
@@ -14,7 +29,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Interface: MonitorDaemonSetup
+##### Interface: MonitorDaemonSetup
 
 ```ts
 export interface MonitorDaemonSetup {
@@ -37,7 +52,7 @@ See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-ser
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: MonitorOptions
+##### Interface: MonitorOptions
 
 ```ts
 export interface MonitorOptions {
@@ -59,7 +74,7 @@ See also: [Chain](#type-chain), [MonitorStorage](#type-monitorstorage), [Service
 
 <summary>Interface MonitorOptions Details</summary>
 
-#### Property msecsWaitPerMerkleProofServiceReq
+###### Property msecsWaitPerMerkleProofServiceReq
 
 How many msecs to wait after each getMerkleProof service request.
 
@@ -72,7 +87,7 @@ msecsWaitPerMerkleProofServiceReq: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: TaskPurgeParams
+##### Interface: TaskPurgeParams
 
 The database stores a variety of data that may be considered transient.
 
@@ -108,7 +123,7 @@ See also: [PurgeParams](#interface-purgeparams)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Classes
+#### Classes
 
 | |
 | --- |
@@ -128,7 +143,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Class: Monitor
+##### Class: Monitor
 
 Background task to make sure transactions are processed, transaction proofs are received and propagated,
 and potentially that reorgs update proofs that were already received.
@@ -183,7 +198,7 @@ See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [MonitorO
 
 <summary>Class Monitor Details</summary>
 
-#### Property _otherTasks
+###### Property _otherTasks
 
 _otherTasks can be run by runTask but not by scheduler.
 
@@ -192,7 +207,7 @@ _otherTasks: WalletMonitorTask[] = []
 ```
 See also: [WalletMonitorTask](#class-walletmonitortask)
 
-#### Property _tasks
+###### Property _tasks
 
 _tasks are typically run by the scheduler but may also be run by runTask.
 
@@ -201,7 +216,7 @@ _tasks: WalletMonitorTask[] = []
 ```
 See also: [WalletMonitorTask](#class-walletmonitortask)
 
-#### Method addDefaultTasks
+###### Method addDefaultTasks
 
 Default tasks with settings appropriate for a single user storage
 possibly with sync'ing enabled
@@ -210,7 +225,7 @@ possibly with sync'ing enabled
 addDefaultTasks(): void 
 ```
 
-#### Method addMultiUserTasks
+###### Method addMultiUserTasks
 
 Tasks appropriate for multi-user storage
 without sync'ing enabled.
@@ -219,7 +234,7 @@ without sync'ing enabled.
 addMultiUserTasks(): void 
 ```
 
-#### Method processNewBlockHeader
+###### Method processNewBlockHeader
 
 Process new chain header event received from Chaintracks
 
@@ -230,7 +245,7 @@ processNewBlockHeader(header: BlockHeader): void
 ```
 See also: [BlockHeader](#interface-blockheader)
 
-#### Method processReorg
+###### Method processReorg
 
 Process reorg event received from Chaintracks
 
@@ -251,7 +266,7 @@ See also: [BlockHeader](#interface-blockheader)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: MonitorDaemon
+##### Class: MonitorDaemon
 
 ```ts
 export class MonitorDaemon {
@@ -273,7 +288,7 @@ See also: [MonitorDaemonSetup](#interface-monitordaemonsetup)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskCheckForProofs
+##### Class: TaskCheckForProofs
 
 `TaskCheckForProofs` is a WalletMonitor task that retreives merkle proofs for
 transactions.
@@ -309,7 +324,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 <summary>Class TaskCheckForProofs Details</summary>
 
-#### Property checkNow
+###### Property checkNow
 
 An external service such as the chaintracks new block header
 listener can set this true to cause
@@ -318,7 +333,7 @@ listener can set this true to cause
 static checkNow = false
 ```
 
-#### Method getProofs
+###### Method getProofs
 
 Process an array of table.ProvenTxReq (typically with status 'unmined' or 'unknown')
 
@@ -343,7 +358,7 @@ Returns
 
 reqs partitioned by status
 
-#### Method trigger
+###### Method trigger
 
 Normally triggered by checkNow getting set by new block header found event from chaintracks
 
@@ -358,7 +373,7 @@ trigger(nowMsecsSinceEpoch: number): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskClock
+##### Class: TaskClock
 
 ```ts
 export class TaskClock extends WalletMonitorTask {
@@ -378,7 +393,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskFailAbandoned
+##### Class: TaskFailAbandoned
 
 Handles transactions which do not have terminal status and have not been
 updated for an extended time period.
@@ -403,7 +418,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskNewHeader
+##### Class: TaskNewHeader
 
 ```ts
 export class TaskNewHeader extends WalletMonitorTask {
@@ -423,7 +438,7 @@ See also: [BlockHeader](#interface-blockheader), [Monitor](#class-monitor), [Wal
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskPurge
+##### Class: TaskPurge
 
 ```ts
 export class TaskPurge extends WalletMonitorTask {
@@ -443,7 +458,7 @@ See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparam
 
 <summary>Class TaskPurge Details</summary>
 
-#### Property checkNow
+###### Property checkNow
 
 Set to true to trigger running this task
 
@@ -456,7 +471,7 @@ static checkNow = false
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskReviewStatus
+##### Class: TaskReviewStatus
 
 Notify Transaction records of changes in ProvenTxReq records they may have missed.
 
@@ -484,7 +499,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 <summary>Class TaskReviewStatus Details</summary>
 
-#### Property checkNow
+###### Property checkNow
 
 Set to true to trigger running this task
 
@@ -497,7 +512,7 @@ static checkNow = false
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskSendWaiting
+##### Class: TaskSendWaiting
 
 ```ts
 export class TaskSendWaiting extends WalletMonitorTask {
@@ -517,7 +532,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 
 <summary>Class TaskSendWaiting Details</summary>
 
-#### Method processUnsent
+###### Method processUnsent
 
 Process an array of 'unsent' status table.ProvenTxReq
 
@@ -542,7 +557,7 @@ async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string>
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: TaskSyncWhenIdle
+##### Class: TaskSyncWhenIdle
 
 ```ts
 export class TaskSyncWhenIdle extends WalletMonitorTask {
@@ -560,7 +575,7 @@ See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortas
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WalletMonitorTask
+##### Class: WalletMonitorTask
 
 A monitor task performs some periodic or state triggered maintenance function
 on the data managed by a wallet (Bitcoin UTXO manager, aka wallet)
@@ -595,7 +610,7 @@ See also: [Monitor](#class-monitor), [MonitorStorage](#type-monitorstorage)
 
 <summary>Class WalletMonitorTask Details</summary>
 
-#### Property lastRunMsecsSinceEpoch
+###### Property lastRunMsecsSinceEpoch
 
 Set by monitor each time runTask completes
 
@@ -603,7 +618,7 @@ Set by monitor each time runTask completes
 lastRunMsecsSinceEpoch = 0
 ```
 
-#### Method asyncSetup
+###### Method asyncSetup
 
 Override to handle async task setup configuration.
 
@@ -613,7 +628,7 @@ Called before first call to `trigger`
 async asyncSetup(): Promise<void> 
 ```
 
-#### Method trigger
+###### Method trigger
 
 Return true if `runTask` needs to be called now.
 
@@ -628,11 +643,11 @@ abstract trigger(nowMsecsSinceEpoch: number): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Functions
+#### Functions
 
-## Types
+#### Types
 
-### Type: MonitorStorage
+##### Type: MonitorStorage
 
 ```ts
 export type MonitorStorage = WalletStorageManager
@@ -643,5 +658,7 @@ See also: [WalletStorageManager](#class-walletstoragemanager)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Variables
+#### Variables
 
+
+<!--#endregion ts2md-api-merged-here-->

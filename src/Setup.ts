@@ -33,7 +33,7 @@ export abstract class Setup extends SetupClient {
    *
    * @publicbody
    */
-  static async createKnexWallet(
+  static async createWalletKnex(
     args: SetupWalletKnexArgs
   ): Promise<SetupWalletKnex> {
     const wo = await Setup.createWallet(args)
@@ -91,10 +91,10 @@ export abstract class Setup extends SetupClient {
   /**
    * @publicbody
    */
-  static async createMySQLWallet(
+  static async createWalletMySQL(
     args: SetupWalletMySQLArgs
   ): Promise<SetupWalletKnex> {
-    return await this.createKnexWallet({
+    return await this.createWalletKnex({
       ...args,
       knex: Setup.createMySQLKnex(args.env.mySQLConnection, args.databaseName)
     })
@@ -103,10 +103,10 @@ export abstract class Setup extends SetupClient {
   /**
    * @publicbody
    */
-  static async createSQLiteWallet(
+  static async createWalletSQLite(
     args: SetupWalletSQLiteArgs
   ): Promise<SetupWalletKnex> {
-    return await this.createKnexWallet({
+    return await this.createWalletKnex({
       ...args,
       knex: Setup.createSQLiteKnex(args.filePath)
     })

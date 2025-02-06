@@ -1,8 +1,24 @@
-# API
+# STORAGE: BSV Wallet Toolbox API Documentation
+
+The documentation is split into various pages, this page covers the persistent storage of wallet data: transactions, outputs and metadata.
+
+The [WalletStorageManager](#class-walletstoragemanager) class manages a collection of storage providers of which one is the "active" storage
+at any one time, and the rest are backups. It manages access to wallet data, pushing incremental updates to backups, and switching the active
+to what was previously a backup.
+
+The [StorageClient](#class-storageclient) implements a cloud based storage provider via JSON-RPC. The [StorageServer](#class-storageserver) class
+and `@bsv/wallet-infra` package can be used to host such a JSON-RPC server.
+
+The [StorageKnex](#class-storageknex) class implements `Knex` based database storage with explicit support for both MySQL and SQLite.
+
+[Return To Top](./README.md)
+
+<!--#region ts2md-api-merged-here-->
+### API
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
-## Interfaces
+#### Interfaces
 
 | | |
 | --- | --- |
@@ -21,7 +37,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Interface: CommitNewTxResults
+##### Interface: CommitNewTxResults
 
 ```ts
 export interface CommitNewTxResults {
@@ -33,7 +49,7 @@ export interface CommitNewTxResults {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkChangeInput
+##### Interface: GenerateChangeSdkChangeInput
 
 ```ts
 export interface GenerateChangeSdkChangeInput {
@@ -45,7 +61,7 @@ export interface GenerateChangeSdkChangeInput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkChangeOutput
+##### Interface: GenerateChangeSdkChangeOutput
 
 ```ts
 export interface GenerateChangeSdkChangeOutput {
@@ -57,7 +73,7 @@ export interface GenerateChangeSdkChangeOutput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkInput
+##### Interface: GenerateChangeSdkInput
 
 ```ts
 export interface GenerateChangeSdkInput {
@@ -69,7 +85,7 @@ export interface GenerateChangeSdkInput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkOutput
+##### Interface: GenerateChangeSdkOutput
 
 ```ts
 export interface GenerateChangeSdkOutput {
@@ -81,7 +97,7 @@ export interface GenerateChangeSdkOutput {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkParams
+##### Interface: GenerateChangeSdkParams
 
 ```ts
 export interface GenerateChangeSdkParams {
@@ -105,7 +121,7 @@ See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [Generate
 
 <summary>Interface GenerateChangeSdkParams Details</summary>
 
-#### Property changeFirstSatoshis
+###### Property changeFirstSatoshis
 
 Lowest amount value to assign to a change output.
 Drop the output if unable to satisfy.
@@ -115,7 +131,7 @@ default 285
 changeFirstSatoshis: number
 ```
 
-#### Property changeInitialSatoshis
+###### Property changeInitialSatoshis
 
 Satoshi amount to initialize optional new change outputs.
 
@@ -123,7 +139,7 @@ Satoshi amount to initialize optional new change outputs.
 changeInitialSatoshis: number
 ```
 
-#### Property changeLockingScriptLength
+###### Property changeLockingScriptLength
 
 Fixed change locking script length.
 
@@ -133,7 +149,7 @@ For P2PKH template, 25 bytes
 changeLockingScriptLength: number
 ```
 
-#### Property changeUnlockingScriptLength
+###### Property changeUnlockingScriptLength
 
 Fixed change unlocking script length.
 
@@ -143,7 +159,7 @@ For P2PKH template, 107 bytes
 changeUnlockingScriptLength: number
 ```
 
-#### Property targetNetCount
+###### Property targetNetCount
 
 Target for number of new change outputs added minus number of funding change outputs consumed.
 If undefined, only a single change output will be added if excess fees must be recaptured.
@@ -157,7 +173,7 @@ targetNetCount?: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkResult
+##### Interface: GenerateChangeSdkResult
 
 ```ts
 export interface GenerateChangeSdkResult {
@@ -174,7 +190,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GenerateChangeSdkStorageChange
+##### Interface: GenerateChangeSdkStorageChange
 
 ```ts
 export interface GenerateChangeSdkStorageChange extends GenerateChangeSdkChangeInput {
@@ -187,7 +203,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetReqsAndBeefDetail
+##### Interface: GetReqsAndBeefDetail
 
 ```ts
 export interface GetReqsAndBeefDetail {
@@ -202,7 +218,7 @@ export interface GetReqsAndBeefDetail {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: GetReqsAndBeefResult
+##### Interface: GetReqsAndBeefResult
 
 ```ts
 export interface GetReqsAndBeefResult {
@@ -216,7 +232,7 @@ See also: [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostBeefResultForTxidApi
+##### Interface: PostBeefResultForTxidApi
 
 ```ts
 export interface PostBeefResultForTxidApi {
@@ -233,7 +249,7 @@ export interface PostBeefResultForTxidApi {
 
 <summary>Interface PostBeefResultForTxidApi Details</summary>
 
-#### Property alreadyKnown
+###### Property alreadyKnown
 
 if true, the transaction was already known to this service. Usually treat as a success.
 
@@ -243,7 +259,7 @@ Potentially stop posting to additional transaction processors.
 alreadyKnown?: boolean
 ```
 
-#### Property status
+###### Property status
 
 'success' - The transaction was accepted for processing
 
@@ -256,7 +272,7 @@ status: "success" | "error"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostReqsToNetworkDetails
+##### Interface: PostReqsToNetworkDetails
 
 ```ts
 export interface PostReqsToNetworkDetails {
@@ -274,7 +290,7 @@ See also: [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: PostReqsToNetworkResult
+##### Interface: PostReqsToNetworkResult
 
 ```ts
 export interface PostReqsToNetworkResult {
@@ -291,7 +307,7 @@ See also: [PostBeefResult](#interface-postbeefresult), [PostReqsToNetworkDetails
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageInternalizeActionResult
+##### Interface: StorageInternalizeActionResult
 
 ```ts
 export interface StorageInternalizeActionResult extends InternalizeActionResult {
@@ -305,7 +321,7 @@ export interface StorageInternalizeActionResult extends InternalizeActionResult 
 
 <summary>Interface StorageInternalizeActionResult Details</summary>
 
-#### Property isMerge
+###### Property isMerge
 
 true if internalizing outputs on an existing storage transaction
 
@@ -313,7 +329,7 @@ true if internalizing outputs on an existing storage transaction
 isMerge: boolean
 ```
 
-#### Property satoshis
+###### Property satoshis
 
 net change in change balance for user due to this internalization
 
@@ -321,7 +337,7 @@ net change in change balance for user due to this internalization
 satoshis: number
 ```
 
-#### Property txid
+###### Property txid
 
 txid of transaction being internalized
 
@@ -334,7 +350,7 @@ txid: string
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageKnexOptions
+##### Interface: StorageKnexOptions
 
 ```ts
 export interface StorageKnexOptions extends StorageProviderOptions {
@@ -348,7 +364,7 @@ See also: [StorageProviderOptions](#interface-storageprovideroptions)
 
 <summary>Interface StorageKnexOptions Details</summary>
 
-#### Property knex
+###### Property knex
 
 Knex database interface initialized with valid connection configuration.
 
@@ -361,7 +377,7 @@ knex: Knex
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageProviderOptions
+##### Interface: StorageProviderOptions
 
 ```ts
 export interface StorageProviderOptions extends StorageReaderWriterOptions {
@@ -378,7 +394,7 @@ See also: [Chain](#type-chain), [StorageFeeModel](#interface-storagefeemodel), [
 
 <summary>Interface StorageProviderOptions Details</summary>
 
-#### Property commissionPubKeyHex
+###### Property commissionPubKeyHex
 
 If commissionSatoshis is greater than zero, must be a valid public key hex string.
 The actual locking script for each commission will use a public key derived
@@ -388,7 +404,7 @@ from this key by information stored in the commissions table.
 commissionPubKeyHex?: PubKeyHex
 ```
 
-#### Property commissionSatoshis
+###### Property commissionSatoshis
 
 Transactions created by this Storage can charge a fee per transaction.
 A value of zero disables commission fees.
@@ -402,7 +418,7 @@ commissionSatoshis: number
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageReaderOptions
+##### Interface: StorageReaderOptions
 
 ```ts
 export interface StorageReaderOptions {
@@ -415,7 +431,7 @@ See also: [Chain](#type-chain)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: StorageReaderWriterOptions
+##### Interface: StorageReaderWriterOptions
 
 ```ts
 export interface StorageReaderWriterOptions extends StorageReaderOptions {
@@ -427,7 +443,7 @@ See also: [StorageReaderOptions](#interface-storagereaderoptions)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: WalletStorageServerOptions
+##### Interface: WalletStorageServerOptions
 
 ```ts
 export interface WalletStorageServerOptions {
@@ -443,7 +459,7 @@ See also: [Wallet](#class-wallet)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: XValidCreateActionOutput
+##### Interface: XValidCreateActionOutput
 
 ```ts
 export interface XValidCreateActionOutput extends sdk.ValidCreateActionOutput {
@@ -460,7 +476,7 @@ See also: [StorageProvidedBy](#type-storageprovidedby), [ValidCreateActionOutput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Classes
+#### Classes
 
 | |
 | --- |
@@ -478,7 +494,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Class: KnexMigrations
+##### Class: KnexMigrations
 
 ```ts
 export class KnexMigrations implements MigrationSource<string> {
@@ -524,7 +540,7 @@ See also: [Chain](#type-chain), [DBType](#type-dbtype), [WERR_NOT_IMPLEMENTED](#
 
 <summary>Class KnexMigrations Details</summary>
 
-#### Constructor
+###### Constructor
 
 ```ts
 constructor(public chain: sdk.Chain, public storageName: string, public storageIdentityKey: string, public maxOutputScriptLength: number) 
@@ -538,7 +554,7 @@ Argument Details
 + **maxOutputScriptLength**
   + limit for scripts kept in outputs table, longer scripts will be pulled from rawTx
 
-#### Method dbtype
+###### Method dbtype
 
 ```ts
 static async dbtype(knex: Knex<any, any[]>): Promise<DBType> 
@@ -554,7 +570,7 @@ connected database engine variant
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageClient
+##### Class: StorageClient
 
 ```ts
 export class StorageClient implements sdk.WalletStorageProvider {
@@ -602,7 +618,7 @@ See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcer
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageKnex
+##### Class: StorageKnex
 
 ```ts
 export class StorageKnex extends StorageProvider implements sdk.WalletStorageProvider {
@@ -817,7 +833,7 @@ See also: [AuthId](#interface-authid), [DBType](#type-dbtype), [EntityTimeStamp]
 
 <summary>Class StorageKnex Details</summary>
 
-#### Method allocateChangeInput
+###### Method allocateChangeInput
 
 Finds closest matching available change output to use as input for new transaction.
 
@@ -827,7 +843,7 @@ Transactionally allocate the output such that
 async allocateChangeInput(userId: number, basketId: number, targetSatoshis: number, exactSatoshis: number | undefined, excludeSending: boolean, transactionId: number): Promise<table.Output | undefined> 
 ```
 
-#### Method countChangeInputs
+###### Method countChangeInputs
 
 Finds closest matching available change output to use as input for new transaction.
 
@@ -837,7 +853,7 @@ Transactionally allocate the output such that
 async countChangeInputs(userId: number, basketId: number, excludeSending: boolean): Promise<number> 
 ```
 
-#### Method toDb
+###### Method toDb
 
 Convert the standard optional `TrxToken` parameter into either a direct knex database instance,
 or a Knex.Transaction as appropriate.
@@ -847,7 +863,7 @@ toDb(trx?: sdk.TrxToken)
 ```
 See also: [TrxToken](#interface-trxtoken)
 
-#### Method validateEntities
+###### Method validateEntities
 
 Helper to force uniform behavior across database engines.
 Use to process all arrays of records with time stamps retreived from database.
@@ -861,7 +877,7 @@ Returns
 
 input `entities` array with contained values validated.
 
-#### Method validateEntity
+###### Method validateEntity
 
 Helper to force uniform behavior across database engines.
 Use to process all individual records with time stamps retreived from database.
@@ -871,7 +887,7 @@ validateEntity<T extends sdk.EntityTimeStamp>(entity: T, dateFields?: string[], 
 ```
 See also: [EntityTimeStamp](#interface-entitytimestamp)
 
-#### Method validateEntityForInsert
+###### Method validateEntityForInsert
 
 Helper to force uniform behavior across database engines.
 Use to process new entities being inserted into the database.
@@ -881,7 +897,7 @@ async validateEntityForInsert<T extends sdk.EntityTimeStamp>(entity: T, trx?: sd
 ```
 See also: [EntityTimeStamp](#interface-entitytimestamp), [TrxToken](#interface-trxtoken)
 
-#### Method validatePartialForUpdate
+###### Method validatePartialForUpdate
 
 Helper to force uniform behavior across database engines.
 Use to process the update template for entities being updated.
@@ -891,7 +907,7 @@ validatePartialForUpdate<T extends sdk.EntityTimeStamp>(update: Partial<T>, date
 ```
 See also: [EntityTimeStamp](#interface-entitytimestamp)
 
-#### Method verifyReadyForDatabaseAccess
+###### Method verifyReadyForDatabaseAccess
 
 Make sure database is ready for access:
 
@@ -908,7 +924,7 @@ See also: [DBType](#type-dbtype), [TrxToken](#interface-trxtoken)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageProvider
+##### Class: StorageProvider
 
 ```ts
 export abstract class StorageProvider extends StorageReaderWriter implements sdk.WalletStorageProvider {
@@ -976,7 +992,7 @@ See also: [AuthId](#interface-authid), [Chain](#type-chain), [FindCertificatesAr
 
 <summary>Class StorageProvider Details</summary>
 
-#### Method confirmSpendableOutputs
+###### Method confirmSpendableOutputs
 
 For each spendable output in the 'default' basket of the authenticated user,
 verify that the output script, satoshis, vout and txid match that of an output
@@ -992,7 +1008,7 @@ Returns
 
 object with invalidSpendableOutputs array. A good result is an empty array.
 
-#### Method getProvenOrReq
+###### Method getProvenOrReq
 
 Checks if txid is a known valid ProvenTx and returns it if found.
 Next checks if txid is a current ProvenTxReq and returns that if found.
@@ -1007,10 +1023,10 @@ async getProvenOrReq(txid: string, newReq?: table.ProvenTxReq, trx?: sdk.TrxToke
 ```
 See also: [StorageProvenOrReq](#interface-storageprovenorreq), [TrxToken](#interface-trxtoken)
 
-#### Method getReqsAndBeefToShareWithWorld
+###### Method getReqsAndBeefToShareWithWorld
 
 Given an array of transaction txids with current ProvenTxReq ready-to-share status,
-lookup their DojoProvenTxReqApi req records.
+lookup their ProvenTxReqApi req records.
 For the txids with reqs and status still ready to send construct a single merged beef.
 
 ```ts
@@ -1018,7 +1034,7 @@ async getReqsAndBeefToShareWithWorld(txids: string[], knownTxids: string[], trx?
 ```
 See also: [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [TrxToken](#interface-trxtoken)
 
-#### Method updateProvenTxReqWithNewProvenTx
+###### Method updateProvenTxReqWithNewProvenTx
 
 Handles storage changes when a valid MerklePath and mined block header are found for a ProvenTxReq txid.
 
@@ -1037,7 +1053,7 @@ async updateProvenTxReqWithNewProvenTx(args: sdk.UpdateProvenTxReqWithNewProvenT
 ```
 See also: [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult)
 
-#### Method updateTransactionStatus
+###### Method updateTransactionStatus
 
 For all `status` values besides 'failed', just updates the transaction records status property.
 
@@ -1048,18 +1064,12 @@ async updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: num
 ```
 See also: [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken)
 
-Throws
-
-ERR_DOJO_COMPLETED_TX if current status is 'completed' and new status is not 'completed.
-
-ERR_DOJO_PROVEN_TX if transaction has proof or provenTxId and new status is not 'completed'.
-
 </details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageReader
+##### Class: StorageReader
 
 The `StorageReader` abstract class is the base of the concrete wallet storage provider classes.
 
@@ -1128,7 +1138,7 @@ See also: [Chain](#type-chain), [DBType](#type-dbtype), [FindCertificateFieldsAr
 
 <summary>Class StorageReader Details</summary>
 
-#### Method validateEntityDate
+###### Method validateEntityDate
 
 Force dates to strings on SQLite and Date objects on MySQL
 
@@ -1136,7 +1146,7 @@ Force dates to strings on SQLite and Date objects on MySQL
 validateEntityDate(date: Date | string | number): Date | string 
 ```
 
-#### Method validateOptionalEntityDate
+###### Method validateOptionalEntityDate
 
 ```ts
 validateOptionalEntityDate(date: Date | string | number | null | undefined, useNowAsDefault?: boolean): Date | string | undefined 
@@ -1152,7 +1162,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageReaderWriter
+##### Class: StorageReaderWriter
 
 ```ts
 export abstract class StorageReaderWriter extends StorageReader {
@@ -1244,7 +1254,7 @@ See also: [AuthId](#interface-authid), [FindOutputTagMapsArgs](#interface-findou
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageServer
+##### Class: StorageServer
 
 ```ts
 export class StorageServer {
@@ -1258,7 +1268,7 @@ See also: [StorageProvider](#class-storageprovider), [WalletStorageServerOptions
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: StorageSyncReader
+##### Class: StorageSyncReader
 
 The `StorageSyncReader` non-abstract class must be used when authentication checking access to the methods of a `StorageBaseReader` is required.
 
@@ -1295,7 +1305,7 @@ See also: [AuthId](#interface-authid), [FindCertificateFieldsArgs](#interface-fi
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: WalletStorageManager
+##### Class: WalletStorageManager
 
 The `WalletStorageManager` class delivers authentication checking storage access to the wallet.
 
@@ -1378,7 +1388,7 @@ See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcer
 
 <summary>Class WalletStorageManager Details</summary>
 
-#### Property _isSingleWriter
+###### Property _isSingleWriter
 
 if true, allow only a single writer to proceed at a time.
 queue the blocked requests so they get executed in order when released.
@@ -1387,7 +1397,7 @@ queue the blocked requests so they get executed in order when released.
 _isSingleWriter: boolean = true
 ```
 
-#### Property _storageProviderLocked
+###### Property _storageProviderLocked
 
 if true, allow no new reader or writers or sync to proceed.
 queue the blocked requests so they get executed in order when released.
@@ -1396,7 +1406,7 @@ queue the blocked requests so they get executed in order when released.
 _storageProviderLocked: boolean = false
 ```
 
-#### Property _syncLocked
+###### Property _syncLocked
 
 if true, allow no new reader or writers to proceed.
 queue the blocked requests so they get executed in order when released.
@@ -1405,7 +1415,7 @@ queue the blocked requests so they get executed in order when released.
 _syncLocked: boolean = false
 ```
 
-#### Method isActiveStorageProvider
+###### Method isActiveStorageProvider
 
 ```ts
 isActiveStorageProvider(): boolean 
@@ -1415,7 +1425,7 @@ Returns
 
 true if the active `WalletStorageProvider` also implements `StorageProvider`
 
-#### Method runAsSync
+###### Method runAsSync
 
 ```ts
 async runAsSync<R>(sync: (active: sdk.WalletStorageSync) => Promise<R>, activeSync?: sdk.WalletStorageSync): Promise<R> 
@@ -1429,7 +1439,7 @@ Argument Details
 + **activeSync**
   + from chained sync functions, active storage already held under sync access lock.
 
-#### Method setActive
+###### Method setActive
 
 Updates backups and switches to new active storage provider from among current backup providers.
 
@@ -1447,7 +1457,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Functions
+#### Functions
 
 | | |
 | --- | --- |
@@ -1468,7 +1478,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Function: attemptToPostReqsToNetwork
+##### Function: attemptToPostReqsToNetwork
 
 Attempt to post one or more `ProvenTxReq` with status 'unsent'
 to the bitcoin network.
@@ -1482,7 +1492,7 @@ See also: [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [Storag
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: createAction
+##### Function: createAction
 
 ```ts
 export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<sdk.StorageCreateActionResult> 
@@ -1493,7 +1503,7 @@ See also: [AuthId](#interface-authid), [StorageCreateActionResult](#interface-st
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: createStorageServiceChargeScript
+##### Function: createStorageServiceChargeScript
 
 ```ts
 export function createStorageServiceChargeScript(pubKeyHex: PubKeyHex): {
@@ -1505,7 +1515,7 @@ export function createStorageServiceChargeScript(pubKeyHex: PubKeyHex): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: generateChangeSdk
+##### Function: generateChangeSdk
 
 Simplifications:
  - only support one change type with fixed length scripts.
@@ -1522,7 +1532,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: generateChangeSdkMakeStorage
+##### Function: generateChangeSdkMakeStorage
 
 ```ts
 export function generateChangeSdkMakeStorage(availableChange: GenerateChangeSdkChangeInput[]): {
@@ -1537,7 +1547,7 @@ See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getBeefForTransaction
+##### Function: getBeefForTransaction
 
 Creates a `Beef` to support the validity of a transaction identified by its `txid`.
 
@@ -1574,7 +1584,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getSyncChunk
+##### Function: getSyncChunk
 
 Gets the next sync chunk of updated data from un-remoted storage (could be using a remote DB connection).
 
@@ -1587,7 +1597,7 @@ See also: [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReade
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: internalizeAction
+##### Function: internalizeAction
 
 Internalize Action allows a wallet to take ownership of outputs in a pre-existing transaction.
 The transaction may, or may not already be known to both the storage and user.
@@ -1623,7 +1633,7 @@ See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: listActions
+##### Function: listActions
 
 ```ts
 export async function listActions(storage: StorageKnex, auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult> 
@@ -1634,7 +1644,7 @@ See also: [AuthId](#interface-authid), [StorageKnex](#class-storageknex), [Valid
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: listCertificates
+##### Function: listCertificates
 
 ```ts
 export async function listCertificates(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> 
@@ -1645,7 +1655,7 @@ See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: listOutputs
+##### Function: listOutputs
 
 ```ts
 export async function listOutputs(dsk: StorageKnex, auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListOutputsResult> 
@@ -1656,7 +1666,7 @@ See also: [AuthId](#interface-authid), [StorageKnex](#class-storageknex), [Valid
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: lockScriptWithKeyOffsetFromPubKey
+##### Function: lockScriptWithKeyOffsetFromPubKey
 
 ```ts
 export function lockScriptWithKeyOffsetFromPubKey(pubKey: string, keyOffset?: string): {
@@ -1668,7 +1678,7 @@ export function lockScriptWithKeyOffsetFromPubKey(pubKey: string, keyOffset?: st
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: offsetPubKey
+##### Function: offsetPubKey
 
 ```ts
 export function offsetPubKey(pubKey: string, keyOffset?: string): {
@@ -1680,7 +1690,7 @@ export function offsetPubKey(pubKey: string, keyOffset?: string): {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: processAction
+##### Function: processAction
 
 ```ts
 export async function processAction(storage: StorageProvider, auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> 
@@ -1691,7 +1701,7 @@ See also: [AuthId](#interface-authid), [StorageProcessActionArgs](#interface-sto
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: purgeData
+##### Function: purgeData
 
 ```ts
 export async function purgeData(storage: StorageKnex, params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults> 
@@ -1702,7 +1712,7 @@ See also: [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purge
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: reviewStatus
+##### Function: reviewStatus
 
 ```ts
 export async function reviewStatus(storage: StorageKnex, args: {
@@ -1718,7 +1728,7 @@ See also: [StorageKnex](#class-storageknex), [TrxToken](#interface-trxtoken)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: transactionInputSize
+##### Function: transactionInputSize
 
 ```ts
 export function transactionInputSize(scriptSize: number): number 
@@ -1742,7 +1752,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: transactionOutputSize
+##### Function: transactionOutputSize
 
 ```ts
 export function transactionOutputSize(scriptSize: number): number 
@@ -1766,7 +1776,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: transactionSize
+##### Function: transactionSize
 
 Compute the serialized binary transaction size in bytes
 given the number of inputs and outputs,
@@ -1796,7 +1806,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateGenerateChangeSdkParams
+##### Function: validateGenerateChangeSdkParams
 
 ```ts
 export function validateGenerateChangeSdkParams(params: GenerateChangeSdkParams) 
@@ -1807,7 +1817,7 @@ See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateGenerateChangeSdkResult
+##### Function: validateGenerateChangeSdkResult
 
 ```ts
 export function validateGenerateChangeSdkResult(params: GenerateChangeSdkParams, r: GenerateChangeSdkResult): {
@@ -1821,7 +1831,7 @@ See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams), [Genera
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateStorageFeeModel
+##### Function: validateStorageFeeModel
 
 ```ts
 export function validateStorageFeeModel(v?: sdk.StorageFeeModel): sdk.StorageFeeModel 
@@ -1832,7 +1842,7 @@ See also: [StorageFeeModel](#interface-storagefeemodel)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: varUintSize
+##### Function: varUintSize
 
 Returns the byte size required to encode number as Bitcoin VarUint
 
@@ -1849,7 +1859,7 @@ See also: [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Types
+#### Types
 
 | |
 | --- |
@@ -1860,7 +1870,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Type: DBType
+##### Type: DBType
 
 ```ts
 export type DBType = "SQLite" | "MySQL"
@@ -1869,7 +1879,7 @@ export type DBType = "SQLite" | "MySQL"
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Type: PostReqsToNetworkDetailsStatus
+##### Type: PostReqsToNetworkDetailsStatus
 
 ```ts
 export type PostReqsToNetworkDetailsStatus = "success" | "doubleSpend" | "unknown"
@@ -1878,5 +1888,7 @@ export type PostReqsToNetworkDetailsStatus = "success" | "doubleSpend" | "unknow
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Variables
+#### Variables
 
+
+<!--#endregion ts2md-api-merged-here-->

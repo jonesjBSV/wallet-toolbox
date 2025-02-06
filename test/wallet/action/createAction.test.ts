@@ -16,21 +16,23 @@ describe('createAction test', () => {
   const env = _tu.getEnv('test')
   const testName = () => expect.getState().currentTestName || 'test'
 
-  const ctxs: TestWalletNoSetup[] = []
+  let ctxs: TestWalletNoSetup[]
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    ctxs = []
     if (env.runMySQL)
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('createActionTests'))
-    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('createActionTests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy(`${testName()}`))
     _tu.mockPostServicesAsSuccess(ctxs)
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     for (const ctx of ctxs) {
       await ctx.storage.destroy()
     }
   })
-  test('1_invalid_params', async () => {
+
+  test('0_invalid_params', async () => {
     for (const { wallet } of ctxs) {
       {
         const log = `\n${testName()}\n`
@@ -61,6 +63,35 @@ describe('createAction test', () => {
         )
         if (!noLog) console.log(log)
       }
+    }
+  })
+
+  test('1_repeatable txid', async () => {
+    for (const { wallet } of ctxs) {
+      wallet.randomVals = [0.1, 0.2, 0.3, 0.7, 0.8, 0.9]
+      const root = '02135476'
+      const kp = _tu.getKeyPair(root.repeat(8))
+      const createArgs: CreateActionArgs = {
+        description: `repeatable`,
+        outputs: [
+          {
+            satoshis: 45,
+            lockingScript: _tu.getLockP2PKH(kp.address).toHex(),
+            outputDescription: 'pay echo'
+          }
+        ],
+        options: {
+          randomizeOutputs: false,
+          signAndProcess: true,
+          noSend: true
+        }
+      }
+
+      const cr = await wallet.createAction(createArgs)
+      expect(
+        cr.txid ===
+          '4f428a93c43c2d120204ecdc06f7916be8a5f4542cc8839a0fd79bd1b44582f3'
+      )
     }
   })
 

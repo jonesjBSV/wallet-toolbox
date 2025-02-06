@@ -132,12 +132,11 @@ export abstract class SetupClient {
    * @publicbody
    */
   static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
-    args.chain ||= args.env.chain
+    const chain = args.env.chain
     args.rootKeyHex ||= args.env.devKeys[args.env.identityKey]
     const rootKey = PrivateKey.fromHex(args.rootKeyHex)
     const identityKey = rootKey.toPublicKey().toString()
     const keyDeriver = new KeyDeriver(rootKey)
-    const chain = args.chain
     const storage = new WalletStorageManager(
       identityKey,
       args.active,
@@ -146,7 +145,7 @@ export abstract class SetupClient {
     if (storage.stores.length > 0) await storage.makeAvailable()
     const serviceOptions = Services.createDefaultOptions(chain)
     serviceOptions.taalApiKey = args.env.taalApiKey
-    const services = new Services(args.chain)
+    const services = new Services(chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(
       chain,
       storage,
@@ -183,7 +182,7 @@ export abstract class SetupClient {
   /**
    * @publicBody
    */
-  static async createWalletWithStorageClient(
+  static async createWalletClient(
     args: SetupWalletClientArgs
   ): Promise<SetupWalletClient> {
     const wo = await SetupClient.createWallet(args)
@@ -333,54 +332,147 @@ export type KeyPairAddress = {
 }
 
 /**
+ * `SetupEnv` provides a starting point for managing secrets that
+ * must not appear in source code.
  *
+ * The `makeEnv` and `getEnv` functions of the `Setup` and `SetupClient` classes
+ * provide an easy way to create and import these secrets and related properties.
  */
 export interface SetupEnv {
+  /**
+   * The chan being accessed: 'main' for mainnet, 'test' for 'testnet'.
+   */
   chain: sdk.Chain
+  /**
+   * The user's primary identity key (public key).
+   */
   identityKey: string
+  /**
+   * A secondary identity key (public key), used to test exchanges with other users.
+   */
   identityKey2: string
+  /**
+   * A vaild TAAL API key for use by `Services`
+   */
   taalApiKey: string
+  /**
+   * A map of public keys (identity keys, hex strings) to private keys (hex strings).
+   */
   devKeys: Record<string, string>
+  /**
+   * A MySQL connection string including user and password properties.
+   * Must be valid to make use of MySQL `Setup` class support.
+   */
   mySQLConnection: string
 }
 
 /**
- * Arguments used to construct a `Wallet`
+ * Arguments used by `createWallet` to construct a `SetupWallet`.
  *
- * @param env Configuration "secrets" typically obtained by `Setup.makeEnv` and `Setup.getEnv` functions.
- * @param chain Optional. Which chain this wallet is on: 'main' or 'test'.
- * Defaults to `env.chain`.
- * @param rootKeyHex Optional. The non-privileged private key used to initialize the `KeyDeriver` and determine the `identityKey`.
- * Defaults to `env.devKeys[env.identityKey]
- * @param privKeyHex Optional. The privileged private key used to initialize the `PrivilegedKeyManager`.
- * Defaults to undefined.
- * @param active. Optional. Active wallet storage. Can be added later.
- * @param backups. Optional. One or more storage providers managed as backup destinations. Can be added later.
+ * Extension `SetupWalletClientArgs` used by `createWalletClient` to construct a `SetupWalletClient`.
+ *
+ * Extension `SetupWalletKnexArgs` used by `createWalletKnex` to construct a `SetupWalletKnex`.
+ *
+ * Extension `SetupWalletMySQLArgs` used by `createWalletMySQL` to construct a `SetupWalletKnex`.
+ *
+ * Extension `SetupWalletSQLiteArgs` used by `createWalletSQLite` to construct a `SetupWalletKnex`.
  */
 export interface SetupWalletArgs {
+  /**
+   * Configuration "secrets" typically obtained by `Setup.makeEnv` and `Setup.getEnv` functions.
+   */
   env: SetupEnv
-  chain?: sdk.Chain
+  /**
+   * Optional. The non-privileged private key used to initialize the `KeyDeriver` and determine the `identityKey`.
+   * Defaults to `env.devKeys[env.identityKey]
+   */
   rootKeyHex?: string
+  /**
+   * Optional. The privileged private key used to initialize the `PrivilegedKeyManager`.
+   * Defaults to undefined.
+   */
   privKeyHex?: string
+  /**
+   * Optional. Active wallet storage. Can be added later.
+   */
   active?: sdk.WalletStorageProvider
+  /**
+   * Optional. One or more storage providers managed as backup destinations. Can be added later.
+   */
   backups?: sdk.WalletStorageProvider[]
 }
 
+/**
+ * When creating a BRC-100 compatible `Wallet`, many components come into play.
+ *
+ * All of the `createWallet` functions in the `Setup` and `SetupClient` classes return
+ * an object with direct access to each component to facilitate experimentation, testing
+ * and customization.
+ */
 export interface SetupWallet {
+  /**
+   * The rootKey of the `KeyDeriver`. The private key from which other keys are derived.
+   */
   rootKey: PrivateKey
+  /**
+   * The pubilc key associated with the `rootKey` which also serves as the wallet's identity.
+   */
   identityKey: string
+  /**
+   * The `KeyDeriver` component used by the wallet for key derivation and cryptographic functions.
+   */
   keyDeriver: KeyDeriver
+  /**
+   * The chain ('main' or 'test') which the wallet accesses.
+   */
   chain: sdk.Chain
+  /**
+   * The `WalletStorageManager` that manages all the configured storage providers (active and backups)
+   * accessed by the wallet.
+   */
   storage: WalletStorageManager
+  /**
+   * The network `Services` component which provides the wallet with access to external services hosted
+   * on the public network.
+   */
   services: Services
+  /**
+   * The background task `Monitor` component available to the wallet to offload tasks
+   * that speed up wallet operations and maintain data integrity.
+   */
   monitor: Monitor
+  /**
+   * The actual BRC-100 `Wallet` to which all the other properties and components contribute.
+   *
+   * Note that internally, the wallet is itself linked to all these properties and components.
+   * They are included in this interface to facilitate access after wallet construction for
+   * experimentation, testing and customization. Any changes made to the configuration of these
+   * components after construction may disrupt the normal operation of the wallet.
+   */
   wallet: Wallet
 }
 
+/**
+ * Extension `SetupWalletClientArgs` of `SetupWalletArgs` is used by `createWalletClient`
+ * to construct a `SetupWalletClient`.
+ */
 export interface SetupWalletClientArgs extends SetupWalletArgs {
+  /**
+   * The endpoint URL of a service hosting the `StorageServer` JSON-RPC service to
+   * which a `StorageClient` instance should connect to function as
+   * the active storage provider of the newly created wallet.
+   */
   endpointUrl?: string
 }
 
+/**
+ * Extension `SetupWalletClient` of `SetupWallet` is returned by `createWalletClient`
+ */
 export interface SetupWalletClient extends SetupWallet {
+  /**
+   * The endpoint URL of the service hosting the `StorageServer` JSON-RPC service to
+   * which a `StorageClient` instance is connected to function as
+   * the active storage provider of the wallet.
+   */
   endpointUrl: string
 }

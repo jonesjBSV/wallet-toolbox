@@ -403,6 +403,7 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
   options: ValidCreateActionOptions
   // true if transaction creation completion will require a `signAction` call.
   isSignAction: boolean
+  randomVals?: number[]
 }
 
 export interface ValidSignActionArgs extends ValidProcessActionArgs {
@@ -428,7 +429,8 @@ export function validateCreateActionArgs(
     isDelayed: false,
     isNoSend: false,
     isNewTx: false,
-    isSignAction: false
+    isSignAction: false,
+    randomVals: undefined
   }
   vargs.isSendWith = vargs.options.sendWith.length > 0
   vargs.isNewTx = vargs.inputs.length > 0 || vargs.outputs.length > 0

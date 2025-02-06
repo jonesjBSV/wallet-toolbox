@@ -1,8 +1,25 @@
-# API
+# SERVICES: BSV Wallet Toolbox API Documentation
+
+The documentation is split into various pages, this page covers the [Services](#class-services) and related API.
+
+To function properly, a wallet makes use of a variety of services provided by the network:
+
+1. Broadcast new transactions.
+1. Verify the validity of unspent outputs.
+1. Obtain mined transaction proofs.
+2. Obtain block headers for proof validation.
+3. Obtain exchange rates for UI and fee calculations.
+
+These tasks are the responssibility of the [Services](#class-services) class.
+
+[Return To Top](./README.md)
+
+<!--#region ts2md-api-merged-here-->
+### API
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
-## Interfaces
+#### Interfaces
 
 | |
 | --- |
@@ -16,7 +33,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Interface: ArcMinerGetTxData
+##### Interface: ArcMinerGetTxData
 
 ```ts
 export interface ArcMinerGetTxData {
@@ -36,7 +53,7 @@ export interface ArcMinerGetTxData {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ArcMinerPostBeefDataApi
+##### Interface: ArcMinerPostBeefDataApi
 
 ```ts
 export interface ArcMinerPostBeefDataApi {
@@ -59,7 +76,7 @@ export interface ArcMinerPostBeefDataApi {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ArcMinerPostTxsData
+##### Interface: ArcMinerPostTxsData
 
 ```ts
 export interface ArcMinerPostTxsData {
@@ -79,7 +96,7 @@ export interface ArcMinerPostTxsData {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ArcServiceConfig
+##### Interface: ArcServiceConfig
 
 ```ts
 export interface ArcServiceConfig {
@@ -92,7 +109,7 @@ export interface ArcServiceConfig {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Interface: ExchangeRatesIoApi
+##### Interface: ExchangeRatesIoApi
 
 ```ts
 export interface ExchangeRatesIoApi {
@@ -107,7 +124,7 @@ export interface ExchangeRatesIoApi {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Classes
+#### Classes
 
 | |
 | --- |
@@ -118,7 +135,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Class: ServiceCollection
+##### Class: ServiceCollection
 
 ```ts
 export class ServiceCollection<T> {
@@ -150,7 +167,7 @@ export class ServiceCollection<T> {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Class: Services
+##### Class: Services
 
 ```ts
 export class Services implements sdk.WalletServices {
@@ -193,7 +210,7 @@ See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [FiatExch
 
 <summary>Class Services Details</summary>
 
-#### Method postTxs
+###### Method postTxs
 
 The beef must contain at least each rawTx for each txid.
 Some services may require input transactions as well.
@@ -209,7 +226,7 @@ See also: [PostTxsResult](#interface-posttxsresult)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Functions
+#### Functions
 
 | | |
 | --- | --- |
@@ -228,7 +245,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
-### Function: createDefaultWalletServicesOptions
+##### Function: createDefaultWalletServicesOptions
 
 ```ts
 export function createDefaultWalletServicesOptions(chain: sdk.Chain): sdk.WalletServicesOptions 
@@ -239,7 +256,7 @@ See also: [Chain](#type-chain), [WalletServicesOptions](#interface-walletservice
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getExchangeRatesIo
+##### Function: getExchangeRatesIo
 
 ```ts
 export async function getExchangeRatesIo(key: string): Promise<ExchangeRatesIoApi> 
@@ -250,7 +267,7 @@ See also: [ExchangeRatesIoApi](#interface-exchangeratesioapi)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getMerklePathFromTaalARC
+##### Function: getMerklePathFromTaalARC
 
 ```ts
 export async function getMerklePathFromTaalARC(txid: string, config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
@@ -261,7 +278,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [GetMerklePathResult]
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getMerklePathFromWhatsOnChainTsc
+##### Function: getMerklePathFromWhatsOnChainTsc
 
 WhatOnChain.com has their own "hash/pos/R/L" proof format and a more TSC compliant proof format.
 
@@ -278,7 +295,7 @@ See also: [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathre
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getRawTxFromWhatsOnChain
+##### Function: getRawTxFromWhatsOnChain
 
 ```ts
 export async function getRawTxFromWhatsOnChain(txid: string, chain: sdk.Chain): Promise<sdk.GetRawTxResult> 
@@ -289,7 +306,7 @@ See also: [Chain](#type-chain), [GetRawTxResult](#interface-getrawtxresult)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getTaalArcServiceConfig
+##### Function: getTaalArcServiceConfig
 
 ```ts
 export function getTaalArcServiceConfig(chain: sdk.Chain, apiKey: string): ArcServiceConfig 
@@ -300,7 +317,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [Chain](#type-chain)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: getUtxoStatusFromWhatsOnChain
+##### Function: getUtxoStatusFromWhatsOnChain
 
 ```ts
 export async function getUtxoStatusFromWhatsOnChain(output: string, chain: sdk.Chain, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> 
@@ -311,7 +328,7 @@ See also: [Chain](#type-chain), [GetUtxoStatusOutputFormat](#type-getutxostatuso
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makeErrorResult
+##### Function: makeErrorResult
 
 ```ts
 export function makeErrorResult(error: sdk.WalletError, miner: ArcServiceConfig, beef: number[], txids: string[], dd?: ArcMinerPostBeefDataApi): sdk.PostBeefResult 
@@ -322,7 +339,7 @@ See also: [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi), [ArcSer
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makeGetMerklePathFromTaalARC
+##### Function: makeGetMerklePathFromTaalARC
 
 ```ts
 export function makeGetMerklePathFromTaalARC(config: ArcServiceConfig): sdk.GetMerklePathService 
@@ -333,7 +350,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [GetMerklePathService
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makePostBeefResult
+##### Function: makePostBeefResult
 
 ```ts
 export function makePostBeefResult(dd: ArcMinerPostBeefDataApi, miner: ArcServiceConfig, beef: number[], txids: string[]): sdk.PostBeefResult 
@@ -344,7 +361,7 @@ See also: [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi), [ArcSer
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makePostBeefToTaalARC
+##### Function: makePostBeefToTaalARC
 
 ```ts
 export function makePostBeefToTaalARC(config: ArcServiceConfig): sdk.PostBeefService 
@@ -355,7 +372,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefService](#ty
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: makePostTxsToTaalARC
+##### Function: makePostTxsToTaalARC
 
 ```ts
 export function makePostTxsToTaalARC(config: ArcServiceConfig): sdk.PostTxsService 
@@ -366,7 +383,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsService](#typ
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: postBeefToArcMiner
+##### Function: postBeefToArcMiner
 
 ```ts
 export async function postBeefToArcMiner(beef: Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
@@ -377,7 +394,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#int
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: postBeefToTaalArcMiner
+##### Function: postBeefToTaalArcMiner
 
 ```ts
 export async function postBeefToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
@@ -388,7 +405,7 @@ See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#int
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: postTxsToTaalArcMiner
+##### Function: postTxsToTaalArcMiner
 
 ```ts
 export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
@@ -410,7 +427,7 @@ Argument Details
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: toBinaryBaseBlockHeader
+##### Function: toBinaryBaseBlockHeader
 
 Serializes a block header as an 80 byte array.
 The exact serialized format is defined in the Bitcoin White Paper
@@ -446,7 +463,7 @@ Returns
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: updateBsvExchangeRate
+##### Function: updateBsvExchangeRate
 
 ```ts
 export async function updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
@@ -457,7 +474,7 @@ See also: [BsvExchangeRate](#interface-bsvexchangerate)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: updateChaintracksFiatExchangeRates
+##### Function: updateChaintracksFiatExchangeRates
 
 ```ts
 export async function updateChaintracksFiatExchangeRates(targetCurrencies: string[], options: sdk.WalletServicesOptions): Promise<sdk.FiatExchangeRates> 
@@ -468,7 +485,7 @@ See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOpti
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: updateExchangeratesapi
+##### Function: updateExchangeratesapi
 
 ```ts
 export async function updateExchangeratesapi(targetCurrencies: string[], options: sdk.WalletServicesOptions): Promise<sdk.FiatExchangeRates> 
@@ -479,7 +496,7 @@ See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOpti
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-### Function: validateScriptHash
+##### Function: validateScriptHash
 
 ```ts
 export function validateScriptHash(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): string 
@@ -490,7 +507,9 @@ See also: [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-## Types
+#### Types
 
-## Variables
+#### Variables
 
+
+<!--#endregion ts2md-api-merged-here-->

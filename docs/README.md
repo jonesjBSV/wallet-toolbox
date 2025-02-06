@@ -37,7 +37,7 @@ import { Setup } from '@bsv/wallet-toolbox'
 const rootKeyHex = PrivateKey.fromRandom().toString()
 console.log(`MAKE A SECURE COPY OF YOUR WALLET PRIVATE ROOT KEY: ${rootKeyHex}`)
 
-const { wallet } = await Setup.createSQLiteWallet({
+const { wallet } = await Setup.createWalletSQLite({
     filePath: './myTestWallet.sqlite',
     databaseName: 'myTestWallet',
     chain: 'test',
