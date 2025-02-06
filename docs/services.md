@@ -1,6 +1,6 @@
 # SERVICES: BSV Wallet Toolbox API Documentation
 
-The documentation is split into various pages, this page covers the [WalletServices](#class-walletservices) and related API.
+The documentation is split into various pages, this page covers the [Services](#class-services) and related API.
 
 To function properly, a wallet makes use of a variety of services provided by the network:
 
@@ -10,7 +10,7 @@ To function properly, a wallet makes use of a variety of services provided by th
 2. Obtain block headers for proof validation.
 3. Obtain exchange rates for UI and fee calculations.
 
-These tasks are the responssibility of the [WalletServices](#class-walletservices) class.
+These tasks are the responssibility of the [Services](#class-services) class.
 
 [Return To Top](./README.md)
 

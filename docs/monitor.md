@@ -1,6 +1,6 @@
 # MONITOR: BSV Wallet Toolbox API Documentation
 
-The documentation is split into various pages, this page covers the [WalletMonitor](#class-walletmonitor) and related API.
+The documentation is split into various pages, this page covers the [Monitor](#class-monitor) and related API.
 
 To function properly, a wallet must be able to perform a number of house keeping tasks:
 
@@ -8,7 +8,7 @@ To function properly, a wallet must be able to perform a number of house keeping
 1. Obtain and merge proofs when transactions are mined.
 1. Detect and propagate transactions that fail due to double-spend, reorgs, or other reasons.
 
-These tasks are the responssibility of the [WalletMonitor](#class-walletmonitor) class.
+These tasks are the responssibility of the [Monitor](#class-monitor) class.
 
 [Return To Top](./README.md)
 
