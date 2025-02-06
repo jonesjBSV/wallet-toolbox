@@ -191,6 +191,46 @@ describe('walletLive test', () => {
 `)
   })
 
+  test('5z send a wallet payment from myCtx to second wallet', async () => {
+    const tauriRootKey =
+      '1363ef9b14531a52648e1e7e7f430a10ceda1df8d514a2a75d8404094f14a649'
+    const tauriIdentityKey = PrivateKey.fromHex(tauriRootKey)
+      .toPublicKey()
+      .toString()
+
+    const r = await createWalletPaymentAction({
+      toIdentityKey: tauriIdentityKey,
+      outputSatoshis: 1000 * 1000,
+      keyDeriver: myCtx.keyDeriver,
+      wallet: myCtx.wallet,
+      logResult: true
+    })
+
+    const toCtx = await _tu.createTestWalletWithStorageClient({
+      rootKeyHex: tauriRootKey,
+      chain: env.chain
+    })
+
+    const args: InternalizeActionArgs = {
+      tx: Utils.toArray(r.atomicBEEF, 'hex'),
+      outputs: [
+        {
+          outputIndex: r.vout,
+          protocol: 'wallet payment',
+          paymentRemittance: {
+            derivationPrefix: r.derivationPrefix,
+            derivationSuffix: r.derivationSuffix,
+            senderIdentityKey: r.senderIdentityKey
+          }
+        }
+      ],
+      description: 'from tone wallet'
+    }
+
+    const rw = await toCtx.wallet.internalizeAction(args)
+    expect(rw.accepted).toBe(true)
+  })
+
   test('6 send a wallet payment from myCtx to second wallet', async () => {
     const r = await createWalletPaymentAction({
       toIdentityKey: myIdentityKey2,
