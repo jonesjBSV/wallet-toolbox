@@ -53,7 +53,7 @@ export async function reviewStatus(
         where exists(select 1 from transactions as t where outputs.spentBy = t.transactionId and t.status = 'failed')
         */
     q: k<table.Output>('outputs')
-      .update({ spentBy: undefined, spendable: true })
+      .update({ spentBy: null as unknown as undefined, spendable: true })
       .whereExists(function () {
         this.select(k.raw(1))
           .from('transactions as t')

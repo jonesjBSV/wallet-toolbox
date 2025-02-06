@@ -160,7 +160,9 @@ export async function purgeData(
     let spentTxIds = nptxs.map(tx => tx.transactionId)
 
     if (spentTxIds.length > 0) {
-      const update: Partial<table.Output> = { spentBy: undefined }
+      const update: Partial<table.Output> = {
+        spentBy: null as unknown as undefined
+      }
       qs.push({
         log: 'spent outputs no longer tracked by spentBy',
         q: storage
@@ -246,7 +248,7 @@ export async function purgeData(
           log: 'unspent outputs updated to spendable',
           q: storage
             .toDb(trx)<table.Output>('outputs')
-            .update({ spendable: true, spentBy: undefined })
+            .update({ spendable: true, spentBy: null as unknown as undefined })
             .whereIn('spentBy', transactionIds)
         })
       }
