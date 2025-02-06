@@ -334,7 +334,7 @@ export type KeyPairAddress = {
 /**
  * `SetupEnv` provides a starting point for managing secrets that
  * must not appear in source code.
- * 
+ *
  * The `makeEnv` and `getEnv` functions of the `Setup` and `SetupClient` classes
  * provide an easy way to create and import these secrets and related properties.
  */
@@ -368,13 +368,13 @@ export interface SetupEnv {
 
 /**
  * Arguments used by `createWallet` to construct a `SetupWallet`.
- * 
+ *
  * Extension `SetupWalletClientArgs` used by `createWalletClient` to construct a `SetupWalletClient`.
- * 
+ *
  * Extension `SetupWalletKnexArgs` used by `createWalletKnex` to construct a `SetupWalletKnex`.
- * 
+ *
  * Extension `SetupWalletMySQLArgs` used by `createWalletMySQL` to construct a `SetupWalletKnex`.
- * 
+ *
  * Extension `SetupWalletSQLiteArgs` used by `createWalletSQLite` to construct a `SetupWalletKnex`.
  */
 export interface SetupWalletArgs {
@@ -404,7 +404,7 @@ export interface SetupWalletArgs {
 
 /**
  * When creating a BRC-100 compatible `Wallet`, many components come into play.
- * 
+ *
  * All of the `createWallet` functions in the `Setup` and `SetupClient` classes return
  * an object with direct access to each component to facilitate experimentation, testing
  * and customization.
@@ -443,7 +443,7 @@ export interface SetupWallet {
   monitor: Monitor
   /**
    * The actual BRC-100 `Wallet` to which all the other properties and components contribute.
-   * 
+   *
    * Note that internally, the wallet is itself linked to all these properties and components.
    * They are included in this interface to facilitate access after wallet construction for
    * experimentation, testing and customization. Any changes made to the configuration of these

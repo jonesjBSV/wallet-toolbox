@@ -11,7 +11,7 @@ describe('examples README tests', () => {
   it('1 internalize wallet payment', async () => {
     const env = Setup.getEnv('test')
 
-    const { wallet } = await Setup.createSQLiteWallet({
+    const { wallet } = await Setup.createWalletSQLite({
       env,
       filePath: './myTestWallet.sqlite',
       databaseName: 'myTestWallet'
