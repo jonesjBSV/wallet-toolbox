@@ -117,10 +117,6 @@ export interface GenerateChangeSdkParams {
 
 See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [GenerateChangeSdkOutput](#interface-generatechangesdkoutput), [StorageFeeModel](#interface-storagefeemodel)
 
-<details>
-
-<summary>Interface GenerateChangeSdkParams Details</summary>
-
 ###### Property changeFirstSatoshis
 
 Lowest amount value to assign to a change output.
@@ -167,8 +163,6 @@ If undefined, only a single change output will be added if excess fees must be r
 ```ts
 targetNetCount?: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -245,10 +239,6 @@ export interface PostBeefResultForTxidApi {
 }
 ```
 
-<details>
-
-<summary>Interface PostBeefResultForTxidApi Details</summary>
-
 ###### Property alreadyKnown
 
 if true, the transaction was already known to this service. Usually treat as a success.
@@ -266,8 +256,6 @@ alreadyKnown?: boolean
 ```ts
 status: "success" | "error"
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -317,10 +305,6 @@ export interface StorageInternalizeActionResult extends InternalizeActionResult 
 }
 ```
 
-<details>
-
-<summary>Interface StorageInternalizeActionResult Details</summary>
-
 ###### Property isMerge
 
 true if internalizing outputs on an existing storage transaction
@@ -345,8 +329,6 @@ txid of transaction being internalized
 txid: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -360,10 +342,6 @@ export interface StorageKnexOptions extends StorageProviderOptions {
 
 See also: [StorageProviderOptions](#interface-storageprovideroptions)
 
-<details>
-
-<summary>Interface StorageKnexOptions Details</summary>
-
 ###### Property knex
 
 Knex database interface initialized with valid connection configuration.
@@ -371,8 +349,6 @@ Knex database interface initialized with valid connection configuration.
 ```ts
 knex: Knex
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -389,10 +365,6 @@ export interface StorageProviderOptions extends StorageReaderWriterOptions {
 ```
 
 See also: [Chain](#type-chain), [StorageFeeModel](#interface-storagefeemodel), [StorageReaderWriterOptions](#interface-storagereaderwriteroptions)
-
-<details>
-
-<summary>Interface StorageProviderOptions Details</summary>
 
 ###### Property commissionPubKeyHex
 
@@ -412,8 +384,6 @@ A value of zero disables commission fees.
 ```ts
 commissionSatoshis: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -536,10 +506,6 @@ export class KnexMigrations implements MigrationSource<string> {
 
 See also: [Chain](#type-chain), [DBType](#type-dbtype), [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented), [WalletError](#class-walleterror)
 
-<details>
-
-<summary>Class KnexMigrations Details</summary>
-
 ###### Constructor
 
 ```ts
@@ -564,8 +530,6 @@ See also: [DBType](#type-dbtype)
 Returns
 
 connected database engine variant
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -829,10 +793,6 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
 
 See also: [AuthId](#interface-authid), [DBType](#type-dbtype), [EntityTimeStamp](#interface-entitytimestamp), [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindMonitorEventsArgs](#interface-findmonitoreventsargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [FindProvenTxsArgs](#interface-findproventxsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [FindUsersArgs](#interface-findusersargs), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [StorageKnexOptions](#interface-storageknexoptions), [StorageProvider](#class-storageprovider), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletStorageProvider](#interface-walletstorageprovider), [listActions](#function-listactions), [listOutputs](#function-listoutputs), [purgeData](#function-purgedata), [reviewStatus](#function-reviewstatus), [verifyTruthy](#function-verifytruthy)
 
-<details>
-
-<summary>Class StorageKnex Details</summary>
-
 ###### Method allocateChangeInput
 
 Finds closest matching available change output to use as input for new transaction.
@@ -919,8 +879,6 @@ async verifyReadyForDatabaseAccess(trx?: sdk.TrxToken): Promise<DBType>
 ```
 See also: [DBType](#type-dbtype), [TrxToken](#interface-trxtoken)
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -987,10 +945,6 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
 ```
 
 See also: [AuthId](#interface-authid), [Chain](#type-chain), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageFeeModel](#interface-storagefeemodel), [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvenOrReq](#interface-storageprovenorreq), [StorageProviderOptions](#interface-storageprovideroptions), [StorageReaderWriter](#class-storagereaderwriter), [SyncChunk](#interface-syncchunk), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork), [createAction](#function-createaction), [getBeefForTransaction](#function-getbeeffortransaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction), [purgeData](#function-purgedata), [reviewStatus](#function-reviewstatus)
-
-<details>
-
-<summary>Class StorageProvider Details</summary>
 
 ###### Method confirmSpendableOutputs
 
@@ -1064,8 +1018,6 @@ async updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: num
 ```
 See also: [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken)
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1134,10 +1086,6 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 
 See also: [Chain](#type-chain), [DBType](#type-dbtype), [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindMonitorEventsArgs](#interface-findmonitoreventsargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [FindUsersArgs](#interface-findusersargs), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReaderOptions](#interface-storagereaderoptions), [StorageSyncReader](#class-storagesyncreader), [SyncChunk](#interface-syncchunk), [TrxToken](#interface-trxtoken), [getSyncChunk](#function-getsyncchunk)
 
-<details>
-
-<summary>Class StorageReader Details</summary>
-
 ###### Method validateEntityDate
 
 Force dates to strings on SQLite and Date objects on MySQL
@@ -1156,8 +1104,6 @@ Argument Details
 
 + **useNowAsDefault**
   + if true and date is null or undefiend, set to current time.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1384,10 +1330,6 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
 See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvider](#class-storageprovider), [StorageSyncReader](#class-storagesyncreader), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorage](#interface-walletstorage), [WalletStorageProvider](#interface-walletstorageprovider), [WalletStorageReader](#interface-walletstoragereader), [WalletStorageSync](#interface-walletstoragesync), [WalletStorageWriter](#interface-walletstoragewriter), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listActions](#function-listactions), [listCertificates](#function-listcertificates), [listOutputs](#function-listoutputs), [processAction](#function-processaction)
 
-<details>
-
-<summary>Class WalletStorageManager Details</summary>
-
 ###### Property _isSingleWriter
 
 if true, allow only a single writer to proceed at a time.
@@ -1451,8 +1393,6 @@ Argument Details
 
 + **storageIdentityKey**
   + of current backup storage provider that is to become the new active provider.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1568,18 +1508,12 @@ export async function getBeefForTransaction(storage: StorageProvider, txid: stri
 
 See also: [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProvider](#class-storageprovider)
 
-<details>
-
-<summary>Function getBeefForTransaction Details</summary>
-
 Argument Details
 
 + **storage**
   + the chain on which txid exists.
 + **txid**
   + the transaction hash for which an envelope is requested.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1734,10 +1668,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function transactionInputSize(scriptSize: number): number 
 ```
 
-<details>
-
-<summary>Function transactionInputSize Details</summary>
-
 Returns
 
 serialized byte length a transaction input
@@ -1746,8 +1676,6 @@ Argument Details
 
 + **scriptSize**
   + byte length of input script
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1758,10 +1686,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function transactionOutputSize(scriptSize: number): number 
 ```
 
-<details>
-
-<summary>Function transactionOutputSize Details</summary>
-
 Returns
 
 serialized byte length a transaction output
@@ -1770,8 +1694,6 @@ Argument Details
 
 + **scriptSize**
   + byte length of output script
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1786,10 +1708,6 @@ and the size of each script.
 export function transactionSize(inputs: number[], outputs: number[]): number 
 ```
 
-<details>
-
-<summary>Function transactionSize Details</summary>
-
 Returns
 
 total transaction size in bytes
@@ -1800,8 +1718,6 @@ Argument Details
   + array of input script lengths, in bytes
 + **outputs**
   + array of output script lengths, in bytes
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

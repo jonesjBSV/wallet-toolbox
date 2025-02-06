@@ -167,10 +167,6 @@ export interface BaseBlockHeader {
 }
 ```
 
-<details>
-
-<summary>Interface BaseBlockHeader Details</summary>
-
 ###### Property bits
 
 Block header bits value. Serialized length is 4 bytes.
@@ -219,8 +215,6 @@ Block header version value. Serialized length is 4 bytes.
 version: number
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -237,10 +231,6 @@ export interface BlockHeader extends BaseBlockHeader {
 
 See also: [BaseBlockHeader](#interface-baseblockheader)
 
-<details>
-
-<summary>Interface BlockHeader Details</summary>
-
 ###### Property hash
 
 The double sha256 hash of the serialized `BaseBlockHeader` fields.
@@ -256,8 +246,6 @@ Height of the header, starting from zero.
 ```ts
 height: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -655,10 +643,6 @@ export interface GenerateChangeSdkParams {
 
 See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [GenerateChangeSdkOutput](#interface-generatechangesdkoutput), [StorageFeeModel](#interface-storagefeemodel)
 
-<details>
-
-<summary>Interface GenerateChangeSdkParams Details</summary>
-
 ###### Property changeFirstSatoshis
 
 Lowest amount value to assign to a change output.
@@ -705,8 +689,6 @@ If undefined, only a single change output will be added if excess fees must be r
 ```ts
 targetNetCount?: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -756,10 +738,6 @@ export interface GetMerklePathResult {
 
 See also: [BlockHeader](#interface-blockheader), [WalletError](#class-walleterror)
 
-<details>
-
-<summary>Interface GetMerklePathResult Details</summary>
-
 ###### Property error
 
 The first exception error that occurred during processing, if any.
@@ -786,8 +764,6 @@ The name of the service returning the proof, or undefined if no proof
 name?: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -805,10 +781,6 @@ export interface GetRawTxResult {
 ```
 
 See also: [WalletError](#class-walleterror)
-
-<details>
-
-<summary>Interface GetRawTxResult Details</summary>
 
 ###### Property error
 
@@ -843,8 +815,6 @@ Transaction hash or rawTx (and of initial request)
 ```ts
 txid: string
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -889,10 +859,6 @@ export interface GetUtxoStatusDetails {
 }
 ```
 
-<details>
-
-<summary>Interface GetUtxoStatusDetails Details</summary>
-
 ###### Property height
 
 if isUtxo, the block height containing the matching unspent transaction output
@@ -933,8 +899,6 @@ typically there will be only one, but future orphans can result in multiple valu
 txid?: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -951,10 +915,6 @@ export interface GetUtxoStatusResult {
 ```
 
 See also: [GetUtxoStatusDetails](#interface-getutxostatusdetails), [WalletError](#class-walleterror)
-
-<details>
-
-<summary>Interface GetUtxoStatusResult Details</summary>
 
 ###### Property details
 
@@ -1002,8 +962,6 @@ name: string
 status: "success" | "error"
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1037,10 +995,6 @@ export interface MonitorOptions {
 
 See also: [Chain](#type-chain), [MonitorStorage](#type-monitorstorage), [Services](#class-services)
 
-<details>
-
-<summary>Interface MonitorOptions Details</summary>
-
 ###### Property msecsWaitPerMerkleProofServiceReq
 
 How many msecs to wait after each getMerkleProof service request.
@@ -1048,8 +1002,6 @@ How many msecs to wait after each getMerkleProof service request.
 ```ts
 msecsWaitPerMerkleProofServiceReq: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1064,10 +1016,6 @@ export interface OutPoint {
     vout: number;
 }
 ```
-
-<details>
-
-<summary>Interface OutPoint Details</summary>
 
 ###### Property txid
 
@@ -1084,8 +1032,6 @@ zero based output index within the transaction
 ```ts
 vout: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1161,10 +1107,6 @@ export interface PostBeefResultForTxidApi {
 }
 ```
 
-<details>
-
-<summary>Interface PostBeefResultForTxidApi Details</summary>
-
 ###### Property alreadyKnown
 
 if true, the transaction was already known to this service. Usually treat as a success.
@@ -1182,8 +1124,6 @@ alreadyKnown?: boolean
 ```ts
 status: "success" | "error"
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1237,10 +1177,6 @@ export interface PostTxResultForTxid {
 }
 ```
 
-<details>
-
-<summary>Interface PostTxResultForTxid Details</summary>
-
 ###### Property alreadyKnown
 
 if true, the transaction was already known to this service. Usually treat as a success.
@@ -1258,8 +1194,6 @@ alreadyKnown?: boolean
 ```ts
 status: "success" | "error"
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1279,10 +1213,6 @@ export interface PostTxsResult {
 ```
 
 See also: [PostTxResultForTxid](#interface-posttxresultfortxid), [WalletError](#class-walleterror)
-
-<details>
-
-<summary>Interface PostTxsResult Details</summary>
 
 ###### Property data
 
@@ -1308,8 +1238,6 @@ name: string
 ```ts
 status: "success" | "error"
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1357,10 +1285,6 @@ export interface PurgeParams {
 }
 ```
 
-<details>
-
-<summary>Interface PurgeParams Details</summary>
-
 ###### Property purgeCompletedAge
 
 Minimum age in msecs for transient completed transaction data purge.
@@ -1387,8 +1311,6 @@ Default is 14 days.
 ```ts
 purgeSpentAge?: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1421,10 +1343,6 @@ export interface RequestSyncChunkArgs {
     }[];
 }
 ```
-
-<details>
-
-<summary>Interface RequestSyncChunkArgs Details</summary>
 
 ###### Property fromStorageIdentityKey
 
@@ -1504,8 +1422,6 @@ The storageIdentityKey of the storage consuming the update SyncChunk data.
 toStorageIdentityKey: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1554,10 +1470,6 @@ export interface SetupEnv {
 ```
 
 See also: [Chain](#type-chain)
-
-<details>
-
-<summary>Interface SetupEnv Details</summary>
 
 ###### Property chain
 
@@ -1609,8 +1521,6 @@ A vaild TAAL API key for use by `Services`
 taalApiKey: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1636,10 +1546,6 @@ export interface SetupWallet {
 ```
 
 See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
-
-<details>
-
-<summary>Interface SetupWallet Details</summary>
 
 ###### Property chain
 
@@ -1718,8 +1624,6 @@ wallet: Wallet
 ```
 See also: [Wallet](#class-wallet)
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1746,10 +1650,6 @@ export interface SetupWalletArgs {
 ```
 
 See also: [SetupEnv](#interface-setupenv), [WalletStorageProvider](#interface-walletstorageprovider)
-
-<details>
-
-<summary>Interface SetupWalletArgs Details</summary>
 
 ###### Property active
 
@@ -1796,8 +1696,6 @@ Defaults to `env.devKeys[env.identityKey]
 rootKeyHex?: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1813,10 +1711,6 @@ export interface SetupWalletClient extends SetupWallet {
 
 See also: [SetupWallet](#interface-setupwallet)
 
-<details>
-
-<summary>Interface SetupWalletClient Details</summary>
-
 ###### Property endpointUrl
 
 The endpoint URL of the service hosting the `StorageServer` JSON-RPC service to
@@ -1826,8 +1720,6 @@ the active storage provider of the wallet.
 ```ts
 endpointUrl: string
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1845,10 +1737,6 @@ export interface SetupWalletClientArgs extends SetupWalletArgs {
 
 See also: [SetupWalletArgs](#interface-setupwalletargs)
 
-<details>
-
-<summary>Interface SetupWalletClientArgs Details</summary>
-
 ###### Property endpointUrl
 
 The endpoint URL of a service hosting the `StorageServer` JSON-RPC service to
@@ -1858,8 +1746,6 @@ the active storage provider of the newly created wallet.
 ```ts
 endpointUrl?: string
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1935,10 +1821,6 @@ export interface StorageFeeModel {
 }
 ```
 
-<details>
-
-<summary>Interface StorageFeeModel Details</summary>
-
 ###### Property model
 
 Available models. Currently only "sat/kb" is supported.
@@ -1958,8 +1840,6 @@ If undefined, the default value is used.
 value?: number
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1976,10 +1856,6 @@ export interface StorageGetBeefOptions {
     minProofLevel?: number;
 }
 ```
-
-<details>
-
-<summary>Interface StorageGetBeefOptions Details</summary>
 
 ###### Property ignoreNewProven
 
@@ -2037,8 +1913,6 @@ if 'known', txids known to local storage as valid are included as txidOnly
 trustSelf?: "known"
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -2050,10 +1924,6 @@ export interface StorageIdentity {
     storageName: string;
 }
 ```
-
-<details>
-
-<summary>Interface StorageIdentity Details</summary>
 
 ###### Property storageIdentityKey
 
@@ -2071,8 +1941,6 @@ The human readable name assigned to this storage.
 storageName: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -2085,10 +1953,6 @@ export interface StorageInternalizeActionResult extends InternalizeActionResult 
     satoshis: number;
 }
 ```
-
-<details>
-
-<summary>Interface StorageInternalizeActionResult Details</summary>
 
 ###### Property isMerge
 
@@ -2113,8 +1977,6 @@ txid of transaction being internalized
 ```ts
 txid: string
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2175,10 +2037,6 @@ export interface StorageProviderOptions extends StorageReaderWriterOptions {
 
 See also: [Chain](#type-chain), [StorageFeeModel](#interface-storagefeemodel), [StorageReaderWriterOptions](#interface-storagereaderwriteroptions)
 
-<details>
-
-<summary>Interface StorageProviderOptions Details</summary>
-
 ###### Property commissionPubKeyHex
 
 If commissionSatoshis is greater than zero, must be a valid public key hex string.
@@ -2197,8 +2055,6 @@ A value of zero disables commission fees.
 ```ts
 commissionSatoshis: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2578,10 +2434,6 @@ export interface ValidAcquireDirectCertificateArgs extends ValidWalletSignerArgs
 
 See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
-<details>
-
-<summary>Interface ValidAcquireDirectCertificateArgs Details</summary>
-
 ###### Property subject
 
 validated to an empty string, must be provided by wallet and must
@@ -2590,8 +2442,6 @@ match expectations of keyringForSubject
 ```ts
 subject: PubKeyHex
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2612,10 +2462,6 @@ export interface ValidAcquireIssuanceCertificateArgs extends ValidWalletSignerAr
 
 See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
 
-<details>
-
-<summary>Interface ValidAcquireIssuanceCertificateArgs Details</summary>
-
 ###### Property subject
 
 validated to an empty string, must be provided by wallet and must
@@ -2624,8 +2470,6 @@ match expectations of keyringForSubject
 ```ts
 subject: PubKeyHex
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3031,10 +2875,6 @@ export interface WalletServices {
 
 See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathresult), [GetRawTxResult](#interface-getrawtxresult), [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult), [PostBeefResult](#interface-postbeefresult), [PostTxsResult](#interface-posttxsresult)
 
-<details>
-
-<summary>Interface WalletServices Details</summary>
-
 ###### Property chain
 
 The chain being serviced.
@@ -3209,8 +3049,6 @@ Argument Details
 + **txOrLockTime**
   + either a bitcoin locktime value or hex, binary, un-encoded Transaction
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -3293,10 +3131,6 @@ export interface WalletStorage {
 
 See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [WalletServices](#interface-walletservices), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [processAction](#function-processaction)
 
-<details>
-
-<summary>Interface WalletStorage Details</summary>
-
 ###### Method isStorageProvider
 
 ```ts
@@ -3306,8 +3140,6 @@ isStorageProvider(): boolean
 Returns
 
 false
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3326,10 +3158,6 @@ export interface WalletStorageProvider extends WalletStorageSync {
 
 See also: [WalletServices](#interface-walletservices), [WalletStorageSync](#interface-walletstoragesync)
 
-<details>
-
-<summary>Interface WalletStorageProvider Details</summary>
-
 ###### Method isStorageProvider
 
 ```ts
@@ -3339,8 +3167,6 @@ isStorageProvider(): boolean
 Returns
 
 true if this object's interface can be extended to the full `StorageProvider` interface
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3496,10 +3322,6 @@ export class CertOps extends BsvCertificate {
 
 See also: [CertOpsWallet](#interface-certopswallet)
 
-<details>
-
-<summary>Class CertOps Details</summary>
-
 ###### Method createKeyringForVerifier
 
 Creates a verifiable certificate structure for a specific verifier, allowing them access to specified fields.
@@ -3536,8 +3358,6 @@ update the signature using the certifier's private key.
 ```ts
 async encryptAndSignNewCertificate(): Promise<void> 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3592,10 +3412,6 @@ export class Monitor {
 ```
 
 See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [MonitorOptions](#interface-monitoroptions), [MonitorStorage](#type-monitorstorage), [Services](#class-services), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
-
-<details>
-
-<summary>Class Monitor Details</summary>
 
 ###### Property _otherTasks
 
@@ -3660,8 +3476,6 @@ processReorg(depth: number, oldTip: BlockHeader, newTip: BlockHeader): void
 ```
 See also: [BlockHeader](#interface-blockheader)
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -3696,10 +3510,6 @@ export class PrivilegedKeyManager implements ProtoWallet {
 }
 ```
 
-<details>
-
-<summary>Class PrivilegedKeyManager Details</summary>
-
 ###### Constructor
 
 ```ts
@@ -3722,8 +3532,6 @@ properties to further confuse an attacker.
 ```ts
 destroyKey(): void 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3750,10 +3558,6 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
 
 See also: [ScriptTemplateParamsSABPPP](#interface-scripttemplateparamssabppp)
 
-<details>
-
-<summary>Class ScriptTemplateSABPPP Details</summary>
-
 ###### Property unlockLength
 
 P2PKH unlock estimateLength is a constant
@@ -3761,8 +3565,6 @@ P2PKH unlock estimateLength is a constant
 ```ts
 unlockLength = 108
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3838,10 +3640,6 @@ export class Services implements sdk.WalletServices {
 
 See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [FiatExchangeRates](#interface-fiatexchangerates), [GetMerklePathResult](#interface-getmerklepathresult), [GetMerklePathService](#type-getmerklepathservice), [GetRawTxResult](#interface-getrawtxresult), [GetRawTxService](#type-getrawtxservice), [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult), [GetUtxoStatusService](#type-getutxostatusservice), [PostBeefResult](#interface-postbeefresult), [PostBeefService](#type-postbeefservice), [PostTxsResult](#interface-posttxsresult), [PostTxsService](#type-posttxsservice), [ServiceCollection](#class-servicecollection), [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice), [WalletServices](#interface-walletservices), [WalletServicesOptions](#interface-walletservicesoptions)
 
-<details>
-
-<summary>Class Services Details</summary>
-
 ###### Method postTxs
 
 The beef must contain at least each rawTx for each txid.
@@ -3852,8 +3650,6 @@ These will be fetched if missing, greatly extending the service response time.
 async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
 ```
 See also: [PostTxsResult](#interface-posttxsresult)
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3966,10 +3762,6 @@ export abstract class SetupClient {
 
 See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [ScriptTemplateUnlock](#interface-scripttemplateunlock), [Services](#class-services), [SetupEnv](#interface-setupenv), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [SetupWalletClient](#interface-setupwalletclient), [SetupWalletClientArgs](#interface-setupwalletclientargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
 
-<details>
-
-<summary>Class SetupClient Details</summary>
-
 ###### Method createWallet
 
 Create a `Wallet`. Storage can optionally be provided or configured later.
@@ -4055,8 +3847,6 @@ Private keys should never be included directly in your source code.
 ```ts
 static makeEnv(): string 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4173,10 +3963,6 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
 
 See also: [AuthId](#interface-authid), [Chain](#type-chain), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageFeeModel](#interface-storagefeemodel), [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvenOrReq](#interface-storageprovenorreq), [StorageProviderOptions](#interface-storageprovideroptions), [StorageReaderWriter](#class-storagereaderwriter), [SyncChunk](#interface-syncchunk), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork), [createAction](#function-createaction), [getBeefForTransaction](#function-getbeeffortransaction), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [processAction](#function-processaction)
 
-<details>
-
-<summary>Class StorageProvider Details</summary>
-
 ###### Method confirmSpendableOutputs
 
 For each spendable output in the 'default' basket of the authenticated user,
@@ -4249,8 +4035,6 @@ async updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: num
 ```
 See also: [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken)
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -4319,10 +4103,6 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 
 See also: [Chain](#type-chain), [DBType](#type-dbtype), [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindMonitorEventsArgs](#interface-findmonitoreventsargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [FindUsersArgs](#interface-findusersargs), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReaderOptions](#interface-storagereaderoptions), [StorageSyncReader](#class-storagesyncreader), [SyncChunk](#interface-syncchunk), [TrxToken](#interface-trxtoken), [getSyncChunk](#function-getsyncchunk)
 
-<details>
-
-<summary>Class StorageReader Details</summary>
-
 ###### Method validateEntityDate
 
 Force dates to strings on SQLite and Date objects on MySQL
@@ -4341,8 +4121,6 @@ Argument Details
 
 + **useNowAsDefault**
   + if true and date is null or undefiend, set to current time.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4508,10 +4286,6 @@ export class TaskCheckForProofs extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskCheckForProofs Details</summary>
-
 ###### Property checkNow
 
 An external service such as the chaintracks new block header
@@ -4555,8 +4329,6 @@ trigger(nowMsecsSinceEpoch: number): {
     run: boolean;
 } 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4642,10 +4414,6 @@ export class TaskPurge extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskPurge Details</summary>
-
 ###### Property checkNow
 
 Set to true to trigger running this task
@@ -4653,8 +4421,6 @@ Set to true to trigger running this task
 ```ts
 static checkNow = false
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4683,10 +4449,6 @@ export class TaskReviewStatus extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskReviewStatus Details</summary>
-
 ###### Property checkNow
 
 Set to true to trigger running this task
@@ -4694,8 +4456,6 @@ Set to true to trigger running this task
 ```ts
 static checkNow = false
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4716,10 +4476,6 @@ export class TaskSendWaiting extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskSendWaiting Details</summary>
-
 ###### Method processUnsent
 
 Process an array of 'unsent' status table.ProvenTxReq
@@ -4739,8 +4495,6 @@ Increments attempts if sending was attempted.
 ```ts
 async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string> 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4793,10 +4547,6 @@ export class WERR_INSUFFICIENT_FUNDS extends WalletError {
 
 See also: [WalletError](#class-walleterror)
 
-<details>
-
-<summary>Class WERR_INSUFFICIENT_FUNDS Details</summary>
-
 ###### Constructor
 
 ```ts
@@ -4809,8 +4559,6 @@ Argument Details
   + Total satoshis required to fund transactions after net of required inputs and outputs.
 + **moreSatoshisNeeded**
   + Shortfall on total satoshis required to fund transactions after net of required inputs and outputs.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4876,10 +4624,6 @@ export class WERR_INVALID_PUBLIC_KEY extends WalletError {
 
 See also: [WalletError](#class-walleterror)
 
-<details>
-
-<summary>Class WERR_INVALID_PUBLIC_KEY Details</summary>
-
 ###### Constructor
 
 ```ts
@@ -4892,8 +4636,6 @@ Argument Details
   + The invalid public key that caused the error.
 + **environment**
   + Optional environment flag to control whether the key is included in the message.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5033,10 +4775,6 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
 See also: [Chain](#type-chain), [KeyPair](#interface-keypair), [Monitor](#class-monitor), [PendingSignAction](#interface-pendingsignaction), [PrivilegedKeyManager](#class-privilegedkeymanager), [StorageIdentity](#interface-storageidentity), [WalletArgs](#interface-walletargs), [WalletServices](#interface-walletservices), [WalletSigner](#class-walletsigner), [WalletStorageManager](#class-walletstoragemanager), [createAction](#function-createaction), [getIdentityKey](#function-getidentitykey), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [proveCertificate](#function-provecertificate), [signAction](#function-signaction)
 
-<details>
-
-<summary>Class Wallet Details</summary>
-
 ###### Property beef
 
 The wallet creates a `BeefParty` when it is created.
@@ -5075,8 +4813,6 @@ Argument Details
 + **newKnownTxids**
   + Optional. Additional new txids known to be valid by the caller to be merged.
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -5112,10 +4848,6 @@ export class WalletError extends Error implements WalletErrorObject {
 }
 ```
 
-<details>
-
-<summary>Class WalletError Details</summary>
-
 ###### Method asStatus
 
 ```ts
@@ -5138,8 +4870,6 @@ Recovers all public fields from WalletError derived error classes and relevant E
 static fromUnknown(err: unknown): WalletError 
 ```
 See also: [WalletError](#class-walleterror)
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5175,10 +4905,6 @@ export abstract class WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [MonitorStorage](#type-monitorstorage)
 
-<details>
-
-<summary>Class WalletMonitorTask Details</summary>
-
 ###### Property lastRunMsecsSinceEpoch
 
 Set by monitor each time runTask completes
@@ -5206,8 +4932,6 @@ abstract trigger(nowMsecsSinceEpoch: number): {
     run: boolean;
 }
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5308,10 +5032,6 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
 See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvider](#class-storageprovider), [StorageSyncReader](#class-storagesyncreader), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorage](#interface-walletstorage), [WalletStorageProvider](#interface-walletstorageprovider), [WalletStorageReader](#interface-walletstoragereader), [WalletStorageSync](#interface-walletstoragesync), [WalletStorageWriter](#interface-walletstoragewriter), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [processAction](#function-processaction)
 
-<details>
-
-<summary>Class WalletStorageManager Details</summary>
-
 ###### Property _isSingleWriter
 
 if true, allow only a single writer to proceed at a time.
@@ -5375,8 +5095,6 @@ Argument Details
 
 + **storageIdentityKey**
   + of current backup storage provider that is to become the new active provider.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5465,16 +5183,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function asBsvSdkPrivateKey(privKey: string): PrivateKey 
 ```
 
-<details>
-
-<summary>Function asBsvSdkPrivateKey Details</summary>
-
 Argument Details
 
 + **privKey**
   + bitcoin private key in 32 byte hex string form
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5485,16 +5197,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function asBsvSdkPublickKey(pubKey: string): PublicKey 
 ```
 
-<details>
-
-<summary>Function asBsvSdkPublickKey Details</summary>
-
 Argument Details
 
 + **pubKey**
   + bitcoin public key in standard compressed key hex string form
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5551,10 +5257,6 @@ export function asString(val: string | number[]): string {
 }
 ```
 
-<details>
-
-<summary>Function asString Details</summary>
-
 Returns
 
 input val if it is a string; or if number[], converts byte values to hex
@@ -5563,8 +5265,6 @@ Argument Details
 
 + **val**
   + string or number[]. If string, encoding must be hex. If number[], each value must be 0..255.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5673,10 +5373,6 @@ export function doubleSha256BE(data: number[]): number[] {
 
 See also: [doubleSha256HashLE](#function-doublesha256hashle)
 
-<details>
-
-<summary>Function doubleSha256BE Details</summary>
-
 Returns
 
 reversed (big-endian) double sha256 hash of data, byte 31 of hash first.
@@ -5685,8 +5381,6 @@ Argument Details
 
 + **data**
   + is an array of bytes.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5703,10 +5397,6 @@ export function doubleSha256HashLE(data: number[]): number[] {
 }
 ```
 
-<details>
-
-<summary>Function doubleSha256HashLE Details</summary>
-
 Returns
 
 double sha256 hash of data, byte 0 of hash first.
@@ -5715,8 +5405,6 @@ Argument Details
 
 + **data**
   + an array of bytes
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5774,18 +5462,12 @@ export async function getBeefForTransaction(storage: StorageProvider, txid: stri
 
 See also: [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProvider](#class-storageprovider)
 
-<details>
-
-<summary>Function getBeefForTransaction Details</summary>
-
 Argument Details
 
 + **storage**
   + the chain on which txid exists.
 + **txid**
   + the transaction hash for which an envelope is requested.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6146,16 +5828,10 @@ export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config:
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface-walletservices)
 
-<details>
-
-<summary>Function postTxsToTaalArcMiner Details</summary>
-
 Argument Details
 
 + **txs**
   + All transactions must have source transactions. Will just source locking scripts and satoshis do?? toHexEF() is used.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6199,15 +5875,9 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function randomBytes(count: number): number[] 
 ```
 
-<details>
-
-<summary>Function randomBytes Details</summary>
-
 Returns
 
 count cryptographically secure random bytes as array of bytes
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6218,15 +5888,9 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function randomBytesBase64(count: number): string 
 ```
 
-<details>
-
-<summary>Function randomBytesBase64 Details</summary>
-
 Returns
 
 count cryptographically secure random bytes as base64 encoded string
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6237,15 +5901,9 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function randomBytesHex(count: number): string 
 ```
 
-<details>
-
-<summary>Function randomBytesHex Details</summary>
-
 Returns
 
 count cryptographically secure random bytes as hex encoded string
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6261,15 +5919,9 @@ export function sha256Hash(data: number[]): number[] {
 }
 ```
 
-<details>
-
-<summary>Function sha256Hash Details</summary>
-
 Returns
 
 sha256 hash of buffer contents.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6295,10 +5947,6 @@ export function stampLog(log: string | undefined | {
 }, lineToAdd: string): string | undefined 
 ```
 
-<details>
-
-<summary>Function stampLog Details</summary>
-
 Returns
 
 undefined or log extended by time stamped `lineToAdd` and new line.
@@ -6309,8 +5957,6 @@ Argument Details
   + Optional time stamped log to extend, or an object with a log property to update
 + **lineToAdd**
   + Content to add to line.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6325,10 +5971,6 @@ Assumes log built by repeated calls to `stampLog`
 export function stampLogFormat(log?: string): string 
 ```
 
-<details>
-
-<summary>Function stampLogFormat Details</summary>
-
 Returns
 
 reformated multi-line event log
@@ -6337,8 +5979,6 @@ Argument Details
 
 + **log**
   + Each logged event starts with ISO time stamp, space, rest of line, terminated by `\n`.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6366,15 +6006,9 @@ export function toBinaryBaseBlockHeader(header: sdk.BaseBlockHeader): number[] {
 
 See also: [BaseBlockHeader](#interface-baseblockheader), [asArray](#function-asarray)
 
-<details>
-
-<summary>Function toBinaryBaseBlockHeader Details</summary>
-
 Returns
 
 80 byte array
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6396,10 +6030,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function transactionInputSize(scriptSize: number): number 
 ```
 
-<details>
-
-<summary>Function transactionInputSize Details</summary>
-
 Returns
 
 serialized byte length a transaction input
@@ -6408,8 +6038,6 @@ Argument Details
 
 + **scriptSize**
   + byte length of input script
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6420,10 +6048,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function transactionOutputSize(scriptSize: number): number 
 ```
 
-<details>
-
-<summary>Function transactionOutputSize Details</summary>
-
 Returns
 
 serialized byte length a transaction output
@@ -6432,8 +6056,6 @@ Argument Details
 
 + **scriptSize**
   + byte length of output script
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6448,10 +6070,6 @@ and the size of each script.
 export function transactionSize(inputs: number[], outputs: number[]): number 
 ```
 
-<details>
-
-<summary>Function transactionSize Details</summary>
-
 Returns
 
 total transaction size in bytes
@@ -6462,8 +6080,6 @@ Argument Details
   + array of input script lengths, in bytes
 + **outputs**
   + array of output script lengths, in bytes
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6520,16 +6136,10 @@ export async function validateAcquireCertificateArgs(args: AcquireCertificateArg
 
 See also: [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs)
 
-<details>
-
-<summary>Function validateAcquireCertificateArgs Details</summary>
-
 Argument Details
 
 + **subject**
   + Must be valid for "direct" `acquisitionProtocol`. public key of the certificate subject.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6702,10 +6312,6 @@ export function validateListActionsArgs(args: ListActionsArgs): ValidListActions
 
 See also: [ValidListActionsArgs](#interface-validlistactionsargs)
 
-<details>
-
-<summary>Function validateListActionsArgs Details</summary>
-
 Argument Details
 
 + **args.labels**
@@ -6731,8 +6337,6 @@ Argument Details
 + **args.seekPermission**
   + — Optional. Whether to seek permission from the user for this operation if required. Default true, will return an error rather than proceed if set to false.
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -6754,10 +6358,6 @@ export function validateListOutputsArgs(args: ListOutputsArgs): ValidListOutputs
 ```
 
 See also: [ValidListOutputsArgs](#interface-validlistoutputsargs)
-
-<details>
-
-<summary>Function validateListOutputsArgs Details</summary>
 
 Argument Details
 
@@ -6783,8 +6383,6 @@ Argument Details
   + Optional. Number of outputs to skip before starting to return results.
 + **args.seekPermission**
   + — Optional. Whether to seek permission from the user for this operation if required. Default true, will return an error rather than proceed if set to false.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7031,10 +6629,6 @@ Helper function.
 export function verifyOne<T>(results: T[], errorDescrition?: string): T 
 ```
 
-<details>
-
-<summary>Function verifyOne Details</summary>
-
 Returns
 
 results[0].
@@ -7042,8 +6636,6 @@ results[0].
 Throws
 
 WERR_BAD_REQUEST if results has length other than one.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -7056,10 +6648,6 @@ Helper function.
 export function verifyOneOrNone<T>(results: T[]): T | undefined 
 ```
 
-<details>
-
-<summary>Function verifyOneOrNone Details</summary>
-
 Returns
 
 results[0] or undefined if length is zero.
@@ -7067,8 +6655,6 @@ results[0] or undefined if length is zero.
 Throws
 
 WERR_BAD_REQUEST if results has length greater than one.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

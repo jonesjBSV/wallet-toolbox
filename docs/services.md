@@ -206,10 +206,6 @@ export class Services implements sdk.WalletServices {
 
 See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [FiatExchangeRates](#interface-fiatexchangerates), [GetMerklePathResult](#interface-getmerklepathresult), [GetMerklePathService](#type-getmerklepathservice), [GetRawTxResult](#interface-getrawtxresult), [GetRawTxService](#type-getrawtxservice), [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult), [GetUtxoStatusService](#type-getutxostatusservice), [PostBeefResult](#interface-postbeefresult), [PostBeefService](#type-postbeefservice), [PostTxsResult](#interface-posttxsresult), [PostTxsService](#type-posttxsservice), [ServiceCollection](#class-servicecollection), [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice), [WalletServices](#interface-walletservices), [WalletServicesOptions](#interface-walletservicesoptions)
 
-<details>
-
-<summary>Class Services Details</summary>
-
 ###### Method postTxs
 
 The beef must contain at least each rawTx for each txid.
@@ -220,8 +216,6 @@ These will be fetched if missing, greatly extending the service response time.
 async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
 ```
 See also: [PostTxsResult](#interface-posttxsresult)
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -413,16 +407,10 @@ export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config:
 
 See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface-walletservices)
 
-<details>
-
-<summary>Function postTxsToTaalArcMiner Details</summary>
-
 Argument Details
 
 + **txs**
   + All transactions must have source transactions. Will just source locking scripts and satoshis do?? toHexEF() is used.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -450,15 +438,9 @@ export function toBinaryBaseBlockHeader(header: sdk.BaseBlockHeader): number[] {
 
 See also: [BaseBlockHeader](#interface-baseblockheader), [asArray](#function-asarray)
 
-<details>
-
-<summary>Function toBinaryBaseBlockHeader Details</summary>
-
 Returns
 
 80 byte array
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

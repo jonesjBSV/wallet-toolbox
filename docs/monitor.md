@@ -70,10 +70,6 @@ export interface MonitorOptions {
 
 See also: [Chain](#type-chain), [MonitorStorage](#type-monitorstorage), [Services](#class-services)
 
-<details>
-
-<summary>Interface MonitorOptions Details</summary>
-
 ###### Property msecsWaitPerMerkleProofServiceReq
 
 How many msecs to wait after each getMerkleProof service request.
@@ -81,8 +77,6 @@ How many msecs to wait after each getMerkleProof service request.
 ```ts
 msecsWaitPerMerkleProofServiceReq: number
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -194,10 +188,6 @@ export class Monitor {
 
 See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [MonitorOptions](#interface-monitoroptions), [MonitorStorage](#type-monitorstorage), [Services](#class-services), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class Monitor Details</summary>
-
 ###### Property _otherTasks
 
 _otherTasks can be run by runTask but not by scheduler.
@@ -261,8 +251,6 @@ processReorg(depth: number, oldTip: BlockHeader, newTip: BlockHeader): void
 ```
 See also: [BlockHeader](#interface-blockheader)
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -320,10 +308,6 @@ export class TaskCheckForProofs extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskCheckForProofs Details</summary>
-
 ###### Property checkNow
 
 An external service such as the chaintracks new block header
@@ -367,8 +351,6 @@ trigger(nowMsecsSinceEpoch: number): {
     run: boolean;
 } 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -454,10 +436,6 @@ export class TaskPurge extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskPurge Details</summary>
-
 ###### Property checkNow
 
 Set to true to trigger running this task
@@ -465,8 +443,6 @@ Set to true to trigger running this task
 ```ts
 static checkNow = false
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -495,10 +471,6 @@ export class TaskReviewStatus extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskReviewStatus Details</summary>
-
 ###### Property checkNow
 
 Set to true to trigger running this task
@@ -506,8 +478,6 @@ Set to true to trigger running this task
 ```ts
 static checkNow = false
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -528,10 +498,6 @@ export class TaskSendWaiting extends WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
 
-<details>
-
-<summary>Class TaskSendWaiting Details</summary>
-
 ###### Method processUnsent
 
 Process an array of 'unsent' status table.ProvenTxReq
@@ -551,8 +517,6 @@ Increments attempts if sending was attempted.
 ```ts
 async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string> 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -606,10 +570,6 @@ export abstract class WalletMonitorTask {
 
 See also: [Monitor](#class-monitor), [MonitorStorage](#type-monitorstorage)
 
-<details>
-
-<summary>Class WalletMonitorTask Details</summary>
-
 ###### Property lastRunMsecsSinceEpoch
 
 Set by monitor each time runTask completes
@@ -637,8 +597,6 @@ abstract trigger(nowMsecsSinceEpoch: number): {
     run: boolean;
 }
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

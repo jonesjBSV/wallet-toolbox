@@ -52,10 +52,6 @@ export interface SetupEnv {
 
 See also: [Chain](#type-chain)
 
-<details>
-
-<summary>Interface SetupEnv Details</summary>
-
 ###### Property chain
 
 The chan being accessed: 'main' for mainnet, 'test' for 'testnet'.
@@ -106,8 +102,6 @@ A vaild TAAL API key for use by `Services`
 taalApiKey: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -133,10 +127,6 @@ export interface SetupWallet {
 ```
 
 See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
-
-<details>
-
-<summary>Interface SetupWallet Details</summary>
 
 ###### Property chain
 
@@ -215,8 +205,6 @@ wallet: Wallet
 ```
 See also: [Wallet](#class-wallet)
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -243,10 +231,6 @@ export interface SetupWalletArgs {
 ```
 
 See also: [SetupEnv](#interface-setupenv), [WalletStorageProvider](#interface-walletstorageprovider)
-
-<details>
-
-<summary>Interface SetupWalletArgs Details</summary>
 
 ###### Property active
 
@@ -293,8 +277,6 @@ Defaults to `env.devKeys[env.identityKey]
 rootKeyHex?: string
 ```
 
-</details>
-
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -310,10 +292,6 @@ export interface SetupWalletClient extends SetupWallet {
 
 See also: [SetupWallet](#interface-setupwallet)
 
-<details>
-
-<summary>Interface SetupWalletClient Details</summary>
-
 ###### Property endpointUrl
 
 The endpoint URL of the service hosting the `StorageServer` JSON-RPC service to
@@ -323,8 +301,6 @@ the active storage provider of the wallet.
 ```ts
 endpointUrl: string
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -342,10 +318,6 @@ export interface SetupWalletClientArgs extends SetupWalletArgs {
 
 See also: [SetupWalletArgs](#interface-setupwalletargs)
 
-<details>
-
-<summary>Interface SetupWalletClientArgs Details</summary>
-
 ###### Property endpointUrl
 
 The endpoint URL of a service hosting the `StorageServer` JSON-RPC service to
@@ -355,8 +327,6 @@ the active storage provider of the newly created wallet.
 ```ts
 endpointUrl?: string
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -508,10 +478,6 @@ export abstract class Setup extends SetupClient {
 
 See also: [SetupClient](#class-setupclient), [SetupWalletKnex](#interface-setupwalletknex), [SetupWalletKnexArgs](#interface-setupwalletknexargs), [SetupWalletMySQLArgs](#interface-setupwalletmysqlargs), [SetupWalletSQLiteArgs](#interface-setupwalletsqliteargs), [StorageKnex](#class-storageknex)
 
-<details>
-
-<summary>Class Setup Details</summary>
-
 ###### Method createWalletKnex
 
 Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
@@ -551,8 +517,6 @@ For MySQL, a schema corresponding to databaseName must exist with full access pe
   + Name for this storage. For MySQL, the schema name within the MySQL instance.
 + **args.chain**
   + Which chain this wallet is on: 'main' or 'test'. Defaults to 'test'.
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -665,10 +629,6 @@ export abstract class SetupClient {
 
 See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [ScriptTemplateUnlock](#interface-scripttemplateunlock), [Services](#class-services), [SetupEnv](#interface-setupenv), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [SetupWalletClient](#interface-setupwalletclient), [SetupWalletClientArgs](#interface-setupwalletclientargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
 
-<details>
-
-<summary>Class SetupClient Details</summary>
-
 ###### Method createWallet
 
 Create a `Wallet`. Storage can optionally be provided or configured later.
@@ -754,8 +714,6 @@ Private keys should never be included directly in your source code.
 ```ts
 static makeEnv(): string 
 ```
-
-</details>
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
