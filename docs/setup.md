@@ -17,6 +17,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | |
 | --- |
+| [KeyPairAddress](#interface-keypairaddress) |
 | [SetupEnv](#interface-setupenv) |
 | [SetupWallet](#interface-setupwallet) |
 | [SetupWalletArgs](#interface-setupwalletargs) |
@@ -31,6 +32,21 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
+##### Interface: KeyPairAddress
+
+A private key and associated public key and address.
+
+```ts
+export interface KeyPairAddress {
+    privateKey: PrivateKey;
+    publicKey: PublicKey;
+    address: string;
+}
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: SetupEnv
 
 `SetupEnv` provides a starting point for managing secrets that
@@ -561,7 +577,29 @@ export abstract class SetupClient {
         console.log(log);
         return log;
     }
-    static getEnv(chain: sdk.Chain): SetupEnv 
+    static getEnv(chain: sdk.Chain): SetupEnv {
+        const identityKey = chain === "main"
+            ? process.env.MY_MAIN_IDENTITY
+            : process.env.MY_TEST_IDENTITY;
+        const identityKey2 = chain === "main"
+            ? process.env.MY_MAIN_IDENTITY2
+            : process.env.MY_TEST_IDENTITY2;
+        const DEV_KEYS = process.env.DEV_KEYS || "{}";
+        const mySQLConnection = process.env.MYSQL_CONNECTION || "{}";
+        const taalApiKey = verifyTruthy(chain === "main"
+            ? process.env.MAIN_TAAL_API_KEY
+            : process.env.TEST_TAAL_API_KEY, `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`);
+        if (!identityKey || !identityKey2)
+            throw new sdk.WERR_INVALID_OPERATION(".env is not a valid SetupEnv configuration.");
+        return {
+            chain,
+            identityKey,
+            identityKey2,
+            taalApiKey,
+            devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
+            mySQLConnection
+        };
+    }
     static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
         const chain = args.env.chain;
         args.rootKeyHex ||= args.env.devKeys[args.env.identityKey];
@@ -602,17 +640,60 @@ export abstract class SetupClient {
         };
         return r;
     }
-    static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> 
-    static getKeyPair(priv?: string | PrivateKey): KeyPairAddress 
-    static getLockP2PKH(address: string) 
-    static getUnlockP2PKH(priv: PrivateKey, satoshis: number): sdk.ScriptTemplateUnlock 
+    static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> {
+        const wo = await SetupClient.createWallet(args);
+        if (wo.chain === "main")
+            throw new sdk.WERR_INVALID_PARAMETER("chain", `'test' for now, 'main' is not yet supported.`);
+        const endpointUrl = args.endpointUrl || "https://staging-dojo.babbage.systems";
+        const client = new StorageClient(wo.wallet, endpointUrl);
+        await wo.storage.addWalletStorageProvider(client);
+        await wo.storage.makeAvailable();
+        return {
+            ...wo,
+            endpointUrl
+        };
+    }
+    static getKeyPair(priv?: string | PrivateKey): KeyPairAddress {
+        if (priv === undefined)
+            priv = PrivateKey.fromRandom();
+        else if (typeof priv === "string")
+            priv = new PrivateKey(priv, "hex");
+        const pub = PublicKey.fromPrivateKey(priv);
+        const address = pub.toAddress();
+        return { privateKey: priv, publicKey: pub, address };
+    }
+    static getLockP2PKH(address: string) {
+        const p2pkh = new P2PKH();
+        const lock = p2pkh.lock(address);
+        return lock;
+    }
+    static getUnlockP2PKH(priv: PrivateKey, satoshis: number): sdk.ScriptTemplateUnlock {
+        const p2pkh = new P2PKH();
+        const lock = SetupClient.getLockP2PKH(SetupClient.getKeyPair(priv).address);
+        const unlock = p2pkh.unlock(priv, "all", false, satoshis, lock);
+        return unlock;
+    }
     static createP2PKHOutputs(outputs: {
         address: string;
         satoshis: number;
         outputDescription?: string;
         basket?: string;
         tags?: string[];
-    }[]): CreateActionOutput[] 
+    }[]): CreateActionOutput[] {
+        const os: CreateActionOutput[] = [];
+        const count = outputs.length;
+        for (let i = 0; i < count; i++) {
+            const o = outputs[i];
+            os.push({
+                basket: o.basket,
+                tags: o.tags,
+                satoshis: o.satoshis,
+                lockingScript: SetupClient.getLockP2PKH(o.address).toHex(),
+                outputDescription: o.outputDescription || `p2pkh ${i}`
+            });
+        }
+        return os;
+    }
     static async createP2PKHOutputsAction(wallet: WalletInterface, outputs: {
         address: string;
         satoshis: number;
@@ -622,12 +703,29 @@ export abstract class SetupClient {
     }[], options?: CreateActionOptions): Promise<{
         cr: CreateActionResult;
         outpoints: string[] | undefined;
-    }> 
-    static async fundWalletFromP2PKHOutpoints(wallet: WalletInterface, outpoints: string[], p2pkhKey: KeyPairAddress, inputBEEF?: BEEF) 
+    }> {
+        const os = SetupClient.createP2PKHOutputs(outputs);
+        const createArgs: CreateActionArgs = {
+            description: `createP2PKHOutputs`,
+            outputs: os,
+            options: {
+                ...options,
+                randomizeOutputs: false
+            }
+        };
+        const cr = await wallet.createAction(createArgs);
+        let outpoints: string[] | undefined;
+        if (cr.txid) {
+            outpoints = os.map((o, i) => `${cr.txid}.${i}`);
+        }
+        return { cr, outpoints };
+    }
+    static async fundWalletFromP2PKHOutpoints(wallet: WalletInterface, outpoints: string[], p2pkhKey: KeyPairAddress, inputBEEF?: BEEF) {
+    }
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#type-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [StorageClient](./storage.md#class-storageclient), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [WERR_INVALID_PARAMETER](./client.md#class-werr_invalid_parameter), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
 
 ###### Method createWallet
 
@@ -689,9 +787,31 @@ Returns values for designated `chain`.
 Access private keys through the `devKeys` object: `devKeys[identityKey]`
 
 ```ts
-static getEnv(chain: sdk.Chain): SetupEnv 
+static getEnv(chain: sdk.Chain): SetupEnv {
+    const identityKey = chain === "main"
+        ? process.env.MY_MAIN_IDENTITY
+        : process.env.MY_TEST_IDENTITY;
+    const identityKey2 = chain === "main"
+        ? process.env.MY_MAIN_IDENTITY2
+        : process.env.MY_TEST_IDENTITY2;
+    const DEV_KEYS = process.env.DEV_KEYS || "{}";
+    const mySQLConnection = process.env.MYSQL_CONNECTION || "{}";
+    const taalApiKey = verifyTruthy(chain === "main"
+        ? process.env.MAIN_TAAL_API_KEY
+        : process.env.TEST_TAAL_API_KEY, `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`);
+    if (!identityKey || !identityKey2)
+        throw new sdk.WERR_INVALID_OPERATION(".env is not a valid SetupEnv configuration.");
+    return {
+        chain,
+        identityKey,
+        identityKey2,
+        taalApiKey,
+        devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
+        mySQLConnection
+    };
+}
 ```
-See also: [Chain](./client.md#type-chain), [SetupEnv](./setup.md#interface-setupenv)
+See also: [Chain](./client.md#type-chain), [SetupEnv](./setup.md#interface-setupenv), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [verifyTruthy](./client.md#function-verifytruthy)
 
 Returns
 
@@ -712,7 +832,34 @@ Loading secrets from a .env file is intended only for experimentation and gettin
 Private keys should never be included directly in your source code.
 
 ```ts
-static makeEnv(): string 
+static makeEnv(): string {
+    const testPrivKey1 = PrivateKey.fromRandom();
+    const testIdentityKey1 = testPrivKey1.toPublicKey().toString();
+    const testPrivKey2 = PrivateKey.fromRandom();
+    const testIdentityKey2 = testPrivKey2.toPublicKey().toString();
+    const mainPrivKey1 = PrivateKey.fromRandom();
+    const mainIdentityKey1 = mainPrivKey1.toPublicKey().toString();
+    const mainPrivKey2 = PrivateKey.fromRandom();
+    const mainIdentityKey2 = mainPrivKey2.toPublicKey().toString();
+    const log = `
+    # Add the following to .env file:
+    MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
+    TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
+    MY_TEST_IDENTITY = '${testIdentityKey1}'
+    MY_TEST_IDENTITY2 = '${testIdentityKey2}'
+    MY_MAIN_IDENTITY = '${mainIdentityKey1}'
+    MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
+    DEV_KEYS = '{
+        "${testIdentityKey1}": "${testPrivKey1.toString()}",
+        "${testIdentityKey2}": "${testPrivKey2.toString()}"
+        "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
+        "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
+    }'
+    MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
+    `;
+    console.log(log);
+    return log;
+}
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -722,19 +869,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 #### Types
 
-##### Type: KeyPairAddress
-
-```ts
-export type KeyPairAddress = {
-    privateKey: PrivateKey;
-    publicKey: PublicKey;
-    address: string;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 #### Variables
 
 

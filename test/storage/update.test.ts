@@ -34,13 +34,19 @@ setLogging(false)
 describe('update tests', () => {
   jest.setTimeout(99999999)
 
-  const storages: StorageProvider[] = []
   const chain: sdk.Chain = 'test'
-  const setups: { setup: TestSetup1; storage: StorageProvider }[] = []
   const env = _tu.getEnv(chain)
-  const databaseName = 'updateTest'
+  const testName = () => expect.getState().currentTestName || 'test'
 
-  beforeAll(async () => {
+  let storages: StorageProvider[]
+  let setups: { setup: TestSetup1; storage: StorageProvider }[]
+
+  beforeEach(async () => {
+    
+    setups = []
+    storages = []
+    const databaseName = testName()
+
     const localSQLiteFile = await _tu.newTmpFile(
       `${databaseName}.sqlite`,
       false,
@@ -72,7 +78,7 @@ describe('update tests', () => {
     }
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     for (const storage of storages) {
       await storage.destroy()
     }
