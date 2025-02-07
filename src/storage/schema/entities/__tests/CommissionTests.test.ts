@@ -3,7 +3,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { Commission } from '../../../../../src/storage/schema/entities/Commission'
+import { EntityCommission } from '../../../../../src/storage/schema/entities/Commission'
 
 describe('Commission class method tests', () => {
   jest.setTimeout(99999999)
@@ -37,7 +37,7 @@ describe('Commission class method tests', () => {
 
       // Insert the transaction to satisfy the foreign key constraint
       const now = new Date()
-      const transactionData: table.Transaction = {
+      const transactionData: table.TableTransaction = {
         transactionId,
         created_at: now,
         updated_at: now,
@@ -53,7 +53,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData)
 
       // Insert initial Commission record
-      const initialData: table.Commission = {
+      const initialData: table.TableCommission = {
         commissionId: 801,
         created_at: now,
         updated_at: now,
@@ -68,8 +68,8 @@ describe('Commission class method tests', () => {
       await activeStorage.insertCommission(initialData)
 
       // Create two Commission entities from the same data
-      const entity1 = new Commission(initialData)
-      const entity2 = new Commission(initialData)
+      const entity1 = new EntityCommission(initialData)
+      const entity2 = new EntityCommission(initialData)
 
       // Create a valid SyncMap
       const syncMap: entity.SyncMap = {
@@ -164,7 +164,7 @@ describe('Commission class method tests', () => {
 
       // Insert the first transaction to satisfy the foreign key constraint
       const now = new Date()
-      const transactionData1: table.Transaction = {
+      const transactionData1: table.TableTransaction = {
         transactionId: transactionId1,
         created_at: now,
         updated_at: now,
@@ -179,7 +179,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData1)
 
       // Insert the second transaction to satisfy the foreign key constraint for mismatched data
-      const transactionData2: table.Transaction = {
+      const transactionData2: table.TableTransaction = {
         transactionId: transactionId2,
         created_at: now,
         updated_at: now,
@@ -194,7 +194,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData2)
 
       // Insert initial Commission record
-      const initialData: table.Commission = {
+      const initialData: table.TableCommission = {
         commissionId: 802,
         created_at: now,
         updated_at: now,
@@ -208,10 +208,10 @@ describe('Commission class method tests', () => {
       await activeStorage.insertCommission(initialData)
 
       // Create a Commission entity from the initial data
-      const entity1 = new Commission(initialData)
+      const entity1 = new EntityCommission(initialData)
 
       // Create mismatched entities and test each condition
-      const mismatchedEntities: Partial<table.Commission>[] = [
+      const mismatchedEntities: Partial<table.TableCommission>[] = [
         { isRedeemed: true },
         { transactionId: transactionId2 }, // Requires valid transaction
         { keyOffset: 'offset456' },
@@ -220,7 +220,7 @@ describe('Commission class method tests', () => {
       ]
 
       for (const mismatch of mismatchedEntities) {
-        const mismatchedEntity = new Commission({ ...initialData, ...mismatch })
+        const mismatchedEntity = new EntityCommission({ ...initialData, ...mismatch })
         expect(entity1.equals(mismatchedEntity.toApi())).toBe(false)
 
         // Test with SyncMap, where transactionId is resolved
@@ -314,7 +314,7 @@ describe('Commission class method tests', () => {
 
       // Insert a valid transaction to satisfy foreign key constraints
       const now = new Date()
-      const transactionData: table.Transaction = {
+      const transactionData: table.TableTransaction = {
         transactionId,
         created_at: now,
         updated_at: now,
@@ -329,7 +329,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData)
 
       // Insert the initial Commission record
-      const initialData: table.Commission = {
+      const initialData: table.TableCommission = {
         commissionId: 803,
         created_at: now,
         updated_at: now,
@@ -343,10 +343,10 @@ describe('Commission class method tests', () => {
       await activeStorage.insertCommission(initialData)
 
       // Create a Commission entity from the initial data
-      const entity = new Commission(initialData)
+      const entity = new EntityCommission(initialData)
 
       // Simulate the `ei` argument with a later `updated_at`
-      const updatedData: table.Commission = {
+      const updatedData: table.TableCommission = {
         ...initialData,
         updated_at: new Date(now.getTime() + 1000),
         isRedeemed: true
@@ -460,7 +460,7 @@ describe('Commission class method tests', () => {
 
       // Insert a valid transaction to satisfy foreign key constraints
       const now = new Date()
-      const transactionData: table.Transaction = {
+      const transactionData: table.TableTransaction = {
         transactionId,
         created_at: now,
         updated_at: now,
@@ -475,7 +475,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData)
 
       // Insert the initial Commission record
-      const initialData: table.Commission = {
+      const initialData: table.TableCommission = {
         commissionId: 804,
         created_at: now,
         updated_at: now,
@@ -489,10 +489,10 @@ describe('Commission class method tests', () => {
       await activeStorage.insertCommission(initialData)
 
       // Create a Commission entity from the initial data
-      const entity = new Commission(initialData)
+      const entity = new EntityCommission(initialData)
 
       // Simulate the `ei` argument with an earlier or equal `updated_at`
-      const olderOrEqualData: table.Commission = {
+      const olderOrEqualData: table.TableCommission = {
         ...initialData,
         updated_at: new Date(now.getTime()),
         isRedeemed: true
@@ -603,7 +603,7 @@ describe('Commission class method tests', () => {
     const now = new Date()
 
     // Initial test data
-    const initialData: table.Commission = {
+    const initialData: table.TableCommission = {
       commissionId: 801,
       created_at: now,
       updated_at: now,
@@ -616,7 +616,7 @@ describe('Commission class method tests', () => {
     }
 
     // Create the Commission entity
-    const entity = new Commission(initialData)
+    const entity = new EntityCommission(initialData)
 
     // Validate getters
     expect(entity.commissionId).toBe(initialData.commissionId)

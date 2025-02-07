@@ -10,8 +10,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class TxLabel extends EntityBase<table.TxLabel> {
-  constructor(api?: table.TxLabel) {
+export class EntityTxLabel extends EntityBase<table.TableTxLabel> {
+  constructor(api?: table.TableTxLabel) {
     const now = new Date()
     super(
       api || {
@@ -79,7 +79,7 @@ export class TxLabel extends EntityBase<table.TxLabel> {
     return 'tx_labels'
   }
 
-  override equals(ei: table.TxLabel, syncMap?: entity.SyncMap): boolean {
+  override equals(ei: table.TableTxLabel, syncMap?: entity.SyncMap): boolean {
     const eo = this.toApi()
     if (eo.label != ei.label || eo.isDeleted != ei.isDeleted) return false
     if (!syncMap) {
@@ -91,16 +91,16 @@ export class TxLabel extends EntityBase<table.TxLabel> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.TxLabel,
+    ei: table.TableTxLabel,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.TxLabel; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityTxLabel; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findTxLabels({ partial: { label: ei.label, userId }, trx })
     )
     return {
       found: !!ef,
-      eo: new entity.TxLabel(ef || { ...ei }),
+      eo: new entity.EntityTxLabel(ef || { ...ei }),
       eiId: verifyId(ei.txLabelId)
     }
   }
@@ -119,7 +119,7 @@ export class TxLabel extends EntityBase<table.TxLabel> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.TxLabel,
+    ei: table.TableTxLabel,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

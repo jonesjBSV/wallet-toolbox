@@ -1,7 +1,7 @@
 import { Base64String } from '@bsv/sdk'
 import { sdk } from '../../../index.client'
 
-export interface Transaction extends sdk.EntityTimeStamp {
+export interface TableTransaction extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   transactionId: number

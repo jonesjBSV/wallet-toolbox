@@ -264,7 +264,7 @@ describe('walletLive test', () => {
     const beef = Beef.fromString(r.atomicBEEF)
     const btx = beef.txs.slice(-1)[0]
     const txid = btx.txid
-    const req = await entity.ProvenTxReq.fromStorageTxid(stagingStorage, txid)
+    const req = await entity.EntityProvenTxReq.fromStorageTxid(stagingStorage, txid)
     expect(req?.notify.transactionIds?.length).toBe(2)
   })
 
@@ -384,15 +384,15 @@ ${Utils.toHex(beef.toBinaryAtomic(txid))}
 async function confirmSpendableOutputs(
   storage: StorageKnex,
   services: Services
-): Promise<{ invalidSpendableOutputs: table.Output[] }> {
-  const invalidSpendableOutputs: table.Output[] = []
+): Promise<{ invalidSpendableOutputs: table.TableOutput[] }> {
+  const invalidSpendableOutputs: table.TableOutput[] = []
   const users = await storage.findUsers({ partial: {} })
 
   for (const { userId } of users) {
     const defaultBasket = verifyOne(
       await storage.findOutputBaskets({ partial: { userId, name: 'default' } })
     )
-    const where: Partial<table.Output> = {
+    const where: Partial<table.TableOutput> = {
       userId,
       basketId: defaultBasket.basketId,
       spendable: true

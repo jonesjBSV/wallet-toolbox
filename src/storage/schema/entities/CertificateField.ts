@@ -9,8 +9,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class CertificateField extends EntityBase<table.CertificateField> {
-  constructor(api?: table.CertificateField) {
+export class EntityCertificateField extends EntityBase<table.TableCertificateField> {
+  constructor(api?: table.TableCertificateField) {
     const now = new Date()
     super(
       api || {
@@ -83,7 +83,7 @@ export class CertificateField extends EntityBase<table.CertificateField> {
   }
 
   override equals(
-    ei: table.CertificateField,
+    ei: table.TableCertificateField,
     syncMap?: entity.SyncMap | undefined
   ): boolean {
     if (
@@ -103,10 +103,10 @@ export class CertificateField extends EntityBase<table.CertificateField> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.CertificateField,
+    ei: table.TableCertificateField,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.CertificateField; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityCertificateField; eiId: number }> {
     const certificateId = syncMap.certificate.idMap[ei.certificateId]
     const ef = verifyOneOrNone(
       await storage.findCertificateFields({
@@ -116,7 +116,7 @@ export class CertificateField extends EntityBase<table.CertificateField> {
     )
     return {
       found: !!ef,
-      eo: new entity.CertificateField(ef || { ...ei }),
+      eo: new entity.EntityCertificateField(ef || { ...ei }),
       eiId: -1
     }
   }
@@ -135,7 +135,7 @@ export class CertificateField extends EntityBase<table.CertificateField> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.CertificateField,
+    ei: table.TableCertificateField,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

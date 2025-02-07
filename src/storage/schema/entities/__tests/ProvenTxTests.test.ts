@@ -4,7 +4,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { ProvenTx } from '../../../../../src/storage/schema/entities/ProvenTx'
+import { EntityProvenTx } from '../../../../../src/storage/schema/entities/ProvenTx'
 
 describe('ProvenTx class method tests', () => {
   jest.setTimeout(99999999)
@@ -122,7 +122,7 @@ describe('ProvenTx class method tests', () => {
     }
 
     // Call the method under test
-    const result = await ProvenTx.fromTxid(txid, services)
+    const result = await EntityProvenTx.fromTxid(txid, services)
 
     // Validate the ProvenTx result
     expect(result.proven).toBeDefined()
@@ -145,7 +145,7 @@ describe('ProvenTx class method tests', () => {
     const services: sdk.WalletServices = ctx.services
 
     // Call the method under test
-    const result = await ProvenTx.fromTxid(txid, services)
+    const result = await EntityProvenTx.fromTxid(txid, services)
 
     // Validate that ProvenTx could not be created
     expect(result.proven).toBeUndefined()
@@ -162,7 +162,7 @@ describe('ProvenTx class method tests', () => {
     const merkleProof = await services.getMerklePath(txid)
 
     // Call the method under test
-    const result = await ProvenTx.fromTxid(txid, services)
+    const result = await EntityProvenTx.fromTxid(txid, services)
 
     // Validate the ProvenTx result
     expect(result.proven).toBeUndefined()
@@ -185,7 +185,7 @@ describe('ProvenTx class method tests', () => {
     }
 
     // Initialize the ProvenTx entity with mock data
-    const provenTx = new ProvenTx(mockData)
+    const provenTx = new EntityProvenTx(mockData)
 
     // Validate getters
     expect(provenTx.provenTxId).toBe(mockData.provenTxId)
@@ -242,7 +242,7 @@ describe('ProvenTx class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert a ProvenTx into the first database
-    const provenTx1 = new ProvenTx({
+    const provenTx1 = new EntityProvenTx({
       provenTxId: 401,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -258,7 +258,7 @@ describe('ProvenTx class method tests', () => {
     await ctx1.activeStorage.insertProvenTx(provenTx1.toApi())
 
     // Insert a matching ProvenTx into the second database
-    const provenTx2 = new ProvenTx({
+    const provenTx2 = new EntityProvenTx({
       provenTxId: 401,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -355,7 +355,7 @@ describe('ProvenTx class method tests', () => {
 
   // Test: equals identifies non-matching txid
   test('5_equals: identifies non-matching txid', async () => {
-    const provenTx1 = new ProvenTx({
+    const provenTx1 = new EntityProvenTx({
       provenTxId: 102,
       txid: 'txid1',
       created_at: new Date('2023-01-01'),
@@ -368,7 +368,7 @@ describe('ProvenTx class method tests', () => {
       merkleRoot: 'merkle-root'
     })
 
-    const provenTx2 = new ProvenTx({
+    const provenTx2 = new EntityProvenTx({
       provenTxId: 103,
       txid: 'txid2',
       created_at: new Date('2023-01-01'),
@@ -386,7 +386,7 @@ describe('ProvenTx class method tests', () => {
 
   // Test: equals identifies non-matching height
   test('6_equals: identifies non-matching height', async () => {
-    const provenTx1 = new ProvenTx({
+    const provenTx1 = new EntityProvenTx({
       provenTxId: 104,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -399,7 +399,7 @@ describe('ProvenTx class method tests', () => {
       merkleRoot: 'merkle-root'
     })
 
-    const provenTx2 = new ProvenTx({
+    const provenTx2 = new EntityProvenTx({
       provenTxId: 105,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -417,7 +417,7 @@ describe('ProvenTx class method tests', () => {
 
   // Test: equals identifies non-matching merklePath
   test('7_equals: identifies non-matching merklePath', async () => {
-    const provenTx1 = new ProvenTx({
+    const provenTx1 = new EntityProvenTx({
       provenTxId: 106,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -430,7 +430,7 @@ describe('ProvenTx class method tests', () => {
       merkleRoot: 'merkle-root'
     })
 
-    const provenTx2 = new ProvenTx({
+    const provenTx2 = new EntityProvenTx({
       provenTxId: 107,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -448,7 +448,7 @@ describe('ProvenTx class method tests', () => {
 
   // Test: equals identifies non-matching syncMap
   test('8_equals: identifies non-matching syncMap', async () => {
-    const provenTx1 = new ProvenTx({
+    const provenTx1 = new EntityProvenTx({
       provenTxId: 108,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -461,7 +461,7 @@ describe('ProvenTx class method tests', () => {
       merkleRoot: 'merkle-root'
     })
 
-    const provenTx2 = new ProvenTx({
+    const provenTx2 = new EntityProvenTx({
       provenTxId: 109,
       txid: 'valid-txid',
       created_at: new Date('2023-01-01'),
@@ -557,7 +557,7 @@ describe('ProvenTx class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert a ProvenTx record into the first database
-    const tx1 = new ProvenTx({
+    const tx1 = new EntityProvenTx({
       provenTxId: 405,
       txid: 'txid1',
       created_at: new Date('2023-01-01'),
@@ -572,7 +572,7 @@ describe('ProvenTx class method tests', () => {
     await ctx1.activeStorage.insertProvenTx(tx1.toApi())
 
     // Insert a different ProvenTx record into the second database with a mismatched provenTxId
-    const tx2 = new ProvenTx({
+    const tx2 = new EntityProvenTx({
       provenTxId: 406,
       txid: 'txid1',
       created_at: new Date('2023-01-01'),
@@ -594,7 +594,7 @@ describe('ProvenTx class method tests', () => {
     const ctx = ctxs[0]
 
     // Create a ProvenTx entity
-    const provenTx = new ProvenTx({
+    const provenTx = new EntityProvenTx({
       provenTxId: 101,
       txid: 'txid1',
       created_at: new Date('2023-01-01'),

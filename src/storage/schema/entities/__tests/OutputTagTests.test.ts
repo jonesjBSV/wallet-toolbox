@@ -3,7 +3,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { OutputTag } from '../../../../../src/storage/schema/entities/OutputTag'
+import { EntityOutputTag } from '../../../../../src/storage/schema/entities/OutputTag'
 
 describe('OutputTag class method tests', () => {
   jest.setTimeout(99999999)
@@ -34,7 +34,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTag record with valid userId
-    const initialData: table.OutputTag = {
+    const initialData: table.TableOutputTag = {
       outputTagId: 401,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -45,10 +45,10 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(initialData)
 
     // Create an OutputTag entity from the initial data
-    const entity = new OutputTag(initialData)
+    const entity = new EntityOutputTag(initialData)
 
     // Simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.OutputTag = {
+    const updatedData: table.TableOutputTag = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       isDeleted: true // Simulate a change in `isDeleted`
@@ -157,7 +157,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTag record with valid userId
-    const initialData: table.OutputTag = {
+    const initialData: table.TableOutputTag = {
       outputTagId: 402,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -168,10 +168,10 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(initialData)
 
     // Create an OutputTag entity from the initial data
-    const entity = new OutputTag(initialData)
+    const entity = new EntityOutputTag(initialData)
 
     // Simulate the `ei` argument with an earlier or equal `updated_at`
-    const earlierData: table.OutputTag = {
+    const earlierData: table.TableOutputTag = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       isDeleted: true // Simulate a change in `isDeleted`
@@ -279,7 +279,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert matching OutputTag record into the database
-    const data: table.OutputTag = {
+    const data: table.TableOutputTag = {
       outputTagId: 403,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -290,8 +290,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data)
-    const entity2 = new OutputTag(data)
+    const entity1 = new EntityOutputTag(data)
+    const entity2 = new EntityOutputTag(data)
 
     // Verify that equals returns true for matching entities
     expect(entity1.equals(entity2.toApi())).toBe(true)
@@ -301,7 +301,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert differing OutputTag records into the database
-    const data1: table.OutputTag = {
+    const data1: table.TableOutputTag = {
       outputTagId: 404,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -314,8 +314,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data1)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data1)
-    const entity2 = new OutputTag(data2)
+    const entity1 = new EntityOutputTag(data1)
+    const entity2 = new EntityOutputTag(data2)
 
     // Verify that equals returns false when tags differ
     expect(entity1.equals(entity2.toApi())).toBe(false)
@@ -325,7 +325,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert differing OutputTag records into the database
-    const data1: table.OutputTag = {
+    const data1: table.TableOutputTag = {
       outputTagId: 405,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -338,8 +338,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data1)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data1)
-    const entity2 = new OutputTag(data2)
+    const entity1 = new EntityOutputTag(data1)
+    const entity2 = new EntityOutputTag(data2)
 
     // Verify that equals returns false when isDeleted differs
     expect(entity1.equals(entity2.toApi())).toBe(false)
@@ -349,7 +349,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert matching OutputTag record into the database
-    const data: table.OutputTag = {
+    const data: table.TableOutputTag = {
       outputTagId: 406,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -360,8 +360,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data)
-    const entity2 = new OutputTag(data)
+    const entity1 = new EntityOutputTag(data)
+    const entity2 = new EntityOutputTag(data)
 
     // SyncMap with valid mapping
     const syncMap: entity.SyncMap = {
@@ -447,7 +447,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert differing OutputTag records into the database
-    const data1: table.OutputTag = {
+    const data1: table.TableOutputTag = {
       outputTagId: 407,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -460,8 +460,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data1)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data1)
-    const entity2 = new OutputTag(data2)
+    const entity1 = new EntityOutputTag(data1)
+    const entity2 = new EntityOutputTag(data2)
 
     // Verify that equals returns false when userIds differ and no syncMap is provided
     expect(entity1.equals(entity2.toApi())).toBe(false)
@@ -472,7 +472,7 @@ describe('OutputTag class method tests', () => {
     const later = new Date(now.getTime() + 1000)
 
     // Create an OutputTag instance
-    const outputTag = new OutputTag()
+    const outputTag = new EntityOutputTag()
 
     // Set values using setters
     outputTag.outputTagId = 123

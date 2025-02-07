@@ -3,7 +3,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { OutputBasket } from '../../../../../src/storage/schema/entities/OutputBasket'
+import { EntityOutputBasket } from '../../../../../src/storage/schema/entities/OutputBasket'
 
 describe('OutputBasket class method tests', () => {
   jest.setTimeout(99999999)
@@ -34,7 +34,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputBasket record with valid data
-    const initialData: table.OutputBasket = {
+    const initialData: table.TableOutputBasket = {
       basketId: 100,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -47,10 +47,10 @@ describe('OutputBasket class method tests', () => {
     await ctx.activeStorage.insertOutputBasket(initialData)
 
     // Create an OutputBasket entity from the initial data
-    const entity = new OutputBasket(initialData)
+    const entity = new EntityOutputBasket(initialData)
 
     // Simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.OutputBasket = {
+    const updatedData: table.TableOutputBasket = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       numberOfDesiredUTXOs: 20, // Update this field
@@ -165,7 +165,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputBasket record with valid data
-    const initialData: table.OutputBasket = {
+    const initialData: table.TableOutputBasket = {
       basketId: 200,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -178,10 +178,10 @@ describe('OutputBasket class method tests', () => {
     await ctx.activeStorage.insertOutputBasket(initialData)
 
     // Create an OutputBasket entity from the initial data
-    const entity = new OutputBasket(initialData)
+    const entity = new EntityOutputBasket(initialData)
 
     // Simulate the `ei` argument with an earlier `updated_at`
-    const earlierData: table.OutputBasket = {
+    const earlierData: table.TableOutputBasket = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       numberOfDesiredUTXOs: 20, // Simulate a change
@@ -296,7 +296,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert two identical OutputBasket records in the database
-    const basketData: table.OutputBasket = {
+    const basketData: table.TableOutputBasket = {
       basketId: 401,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -310,8 +310,8 @@ describe('OutputBasket class method tests', () => {
     await ctx.activeStorage.insertOutputBasket(basketData)
 
     // Create two identical entities
-    const entity1 = new OutputBasket(basketData)
-    const entity2 = new OutputBasket(basketData)
+    const entity1 = new EntityOutputBasket(basketData)
+    const entity2 = new EntityOutputBasket(basketData)
 
     // Test: equals returns true for identical entities without SyncMap
     expect(entity1.equals(entity2.toApi())).toBe(true)
@@ -400,7 +400,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert two different OutputBasket records in the database
-    const basketData1: table.OutputBasket = {
+    const basketData1: table.TableOutputBasket = {
       basketId: 402,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -411,7 +411,7 @@ describe('OutputBasket class method tests', () => {
       isDeleted: false
     }
 
-    const basketData2: table.OutputBasket = {
+    const basketData2: table.TableOutputBasket = {
       basketId: 403,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -426,8 +426,8 @@ describe('OutputBasket class method tests', () => {
     await ctx.activeStorage.insertOutputBasket(basketData2)
 
     // Create entities
-    const entity1 = new OutputBasket(basketData1)
-    const entity2 = new OutputBasket(basketData2)
+    const entity1 = new EntityOutputBasket(basketData1)
+    const entity2 = new EntityOutputBasket(basketData2)
 
     // Test: equals returns false for different entities without SyncMap
     expect(entity1.equals(entity2.toApi())).toBe(false)
@@ -514,7 +514,7 @@ describe('OutputBasket class method tests', () => {
 
   test('OutputBasket getters, setters, and updateApi', () => {
     // Create a mock OutputBasket instance
-    const initialData: table.OutputBasket = {
+    const initialData: table.TableOutputBasket = {
       basketId: 123,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -525,7 +525,7 @@ describe('OutputBasket class method tests', () => {
       isDeleted: false
     }
 
-    const entity = new OutputBasket(initialData)
+    const entity = new EntityOutputBasket(initialData)
 
     // Test getters
     expect(entity.basketId).toBe(123)

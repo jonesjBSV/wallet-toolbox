@@ -11,8 +11,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class Output extends EntityBase<table.Output> {
-  constructor(api?: table.Output) {
+export class EntityOutput extends EntityBase<table.TableOutput> {
+  constructor(api?: table.TableOutput) {
     const now = new Date()
     super(
       api || {
@@ -209,7 +209,7 @@ export class Output extends EntityBase<table.Output> {
   }
 
   override equals(
-    ei: table.Output,
+    ei: table.TableOutput,
     syncMap?: entity.SyncMap | undefined
   ): boolean {
     if (
@@ -251,10 +251,10 @@ export class Output extends EntityBase<table.Output> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.Output,
+    ei: table.TableOutput,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.Output; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityOutput; eiId: number }> {
     const transactionId = syncMap.transaction.idMap[ei.transactionId]
     const basketId = ei.basketId
       ? syncMap.outputBasket.idMap[ei.basketId]
@@ -267,7 +267,7 @@ export class Output extends EntityBase<table.Output> {
     )
     return {
       found: !!ef,
-      eo: new entity.Output(ef || { ...ei }),
+      eo: new entity.EntityOutput(ef || { ...ei }),
       eiId: verifyId(ei.outputId)
     }
   }
@@ -293,7 +293,7 @@ export class Output extends EntityBase<table.Output> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.Output,
+    ei: table.TableOutput,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

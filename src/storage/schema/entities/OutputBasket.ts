@@ -9,8 +9,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class OutputBasket extends EntityBase<table.OutputBasket> {
-  constructor(api?: table.OutputBasket) {
+export class EntityOutputBasket extends EntityBase<table.TableOutputBasket> {
+  constructor(api?: table.TableOutputBasket) {
     const now = new Date()
     super(
       api || {
@@ -92,7 +92,7 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
     /* nothing needed yet... */
   }
 
-  override equals(ei: table.OutputBasket, syncMap?: entity.SyncMap): boolean {
+  override equals(ei: table.TableOutputBasket, syncMap?: entity.SyncMap): boolean {
     const eo = this.api
     if (
       eo.name != ei.name ||
@@ -112,10 +112,10 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.OutputBasket,
+    ei: table.TableOutputBasket,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: OutputBasket; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityOutputBasket; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findOutputBaskets({
         partial: { name: ei.name, userId },
@@ -124,7 +124,7 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
     )
     return {
       found: !!ef,
-      eo: new OutputBasket(ef || { ...ei }),
+      eo: new EntityOutputBasket(ef || { ...ei }),
       eiId: verifyId(ei.basketId)
     }
   }
@@ -146,7 +146,7 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.OutputBasket,
+    ei: table.TableOutputBasket,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

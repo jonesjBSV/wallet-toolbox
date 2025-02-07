@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface Commission extends sdk.EntityTimeStamp {
+export interface TableCommission extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   commissionId: number

@@ -1,11 +1,11 @@
-import { TxLabelMap } from '../../../../../src/storage/schema/entities/TxLabelMap'
+import { EntityTxLabelMap } from '../../../../../src/storage/schema/entities/TxLabelMap'
 import { table, sdk, entity } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { Transaction } from '../../../../../src/storage/schema/entities/Transaction'
-import { TxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
+import { EntityTransaction } from '../../../../../src/storage/schema/entities/Transaction'
+import { EntityTxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
 
 describe('TxLabelMap Class Tests', () => {
   jest.setTimeout(99999999) // Extend timeout for database operations
@@ -37,7 +37,7 @@ describe('TxLabelMap Class Tests', () => {
 
   // Test: Constructor with default values
   test('1_creates_instance_with_default_values', () => {
-    const txLabelMap = new TxLabelMap()
+    const txLabelMap = new EntityTxLabelMap()
 
     const now = new Date()
     expect(txLabelMap.transactionId).toBe(0)
@@ -52,14 +52,14 @@ describe('TxLabelMap Class Tests', () => {
   // Test: Constructor with provided API object
   test('2_creates_instance_with_provided_api_object', () => {
     const now = new Date()
-    const apiObject: table.TxLabelMap = {
+    const apiObject: table.TableTxLabelMap = {
       transactionId: 123,
       txLabelId: 456,
       created_at: now,
       updated_at: now,
       isDeleted: true
     }
-    const txLabelMap = new TxLabelMap(apiObject)
+    const txLabelMap = new EntityTxLabelMap(apiObject)
 
     expect(txLabelMap.transactionId).toBe(123)
     expect(txLabelMap.txLabelId).toBe(456)
@@ -70,7 +70,7 @@ describe('TxLabelMap Class Tests', () => {
 
   // Test: Getters and setters
   test('3_getters_and_setters_work_correctly', () => {
-    const txLabelMap = new TxLabelMap()
+    const txLabelMap = new EntityTxLabelMap()
 
     const now = new Date()
     txLabelMap.transactionId = 1001
@@ -88,13 +88,13 @@ describe('TxLabelMap Class Tests', () => {
 
   // Test: `updateApi` does nothing
   test('4_updateApi_does_nothing', () => {
-    const txLabelMap = new TxLabelMap()
+    const txLabelMap = new EntityTxLabelMap()
     expect(() => txLabelMap.updateApi()).not.toThrow() // Method does nothing, so no errors should occur
   })
 
   // Test: `id` getter throws an error
   test('5_get_id_throws_error', () => {
-    const txLabelMap = new TxLabelMap()
+    const txLabelMap = new EntityTxLabelMap()
     expect(() => txLabelMap.id).toThrow(sdk.WERR_INVALID_OPERATION) // Entity has no "id"
   })
 
@@ -105,7 +105,7 @@ describe('TxLabelMap Class Tests', () => {
       txLabel: { idMap: { 456: 456 } }
     }
 
-    const txLabelMap = new TxLabelMap({
+    const txLabelMap = new EntityTxLabelMap({
       transactionId: 123,
       txLabelId: 456,
       isDeleted: false,
@@ -119,7 +119,7 @@ describe('TxLabelMap Class Tests', () => {
       isDeleted: false
     }
 
-    const result = txLabelMap.equals(other as table.TxLabelMap, syncMap)
+    const result = txLabelMap.equals(other as table.TableTxLabelMap, syncMap)
     expect(result).toBe(true)
   })
 
@@ -138,10 +138,10 @@ describe('TxLabelMap Class Tests', () => {
       txLabelId: 456
     }
 
-    const result = await TxLabelMap.mergeFind(
+    const result = await EntityTxLabelMap.mergeFind(
       storage,
       1,
-      ei as table.TxLabelMap,
+      ei as table.TableTxLabelMap,
       syncMap
     )
     expect(result.found).toBe(true)
@@ -159,7 +159,7 @@ describe('TxLabelMap Class Tests', () => {
       txLabel: { idMap: { 456: 888 } }
     }
 
-    const txLabelMap = new TxLabelMap({
+    const txLabelMap = new EntityTxLabelMap({
       transactionId: 123,
       txLabelId: 456,
       created_at: new Date(2022, 1, 1),
@@ -183,7 +183,7 @@ describe('TxLabelMap Class Tests', () => {
       updateTxLabelMap: jest.fn()
     }
 
-    const txLabelMap = new TxLabelMap({
+    const txLabelMap = new EntityTxLabelMap({
       transactionId: 123,
       txLabelId: 456,
       created_at: new Date(2022, 1, 1),
@@ -191,7 +191,7 @@ describe('TxLabelMap Class Tests', () => {
       isDeleted: false
     })
 
-    const ei: table.TxLabelMap = {
+    const ei: table.TableTxLabelMap = {
       transactionId: 123,
       txLabelId: 456,
       isDeleted: true,
@@ -223,13 +223,13 @@ describe('TxLabelMap Class Tests', () => {
 
   // Test: `entityName` getter
   test('10_entityName_returns_correct_value', () => {
-    const txLabelMap = new TxLabelMap()
+    const txLabelMap = new EntityTxLabelMap()
     expect(txLabelMap.entityName).toBe('TxLabelMap') // Ensure entityName returns the correct string
   })
 
   // Test: `entityTable` getter
   test('11_entityTable_returns_correct_value', () => {
-    const txLabelMap = new TxLabelMap()
+    const txLabelMap = new EntityTxLabelMap()
     expect(txLabelMap.entityTable).toBe('tx_labels_map') // Ensure entityTable returns the correct table name
   })
 
@@ -238,7 +238,7 @@ describe('TxLabelMap Class Tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert necessary foreign key references into the first database
-    const tx1 = new Transaction({
+    const tx1 = new EntityTransaction({
       transactionId: 405,
       userId: 1,
       txid: 'txid1',
@@ -258,7 +258,7 @@ describe('TxLabelMap Class Tests', () => {
     await ctx1.activeStorage.insertTransaction(tx1.toApi())
 
     // Insert necessary foreign key references into the second database
-    const tx2 = new Transaction({
+    const tx2 = new EntityTransaction({
       transactionId: 406,
       userId: 1,
       txid: 'txid1',
@@ -278,7 +278,7 @@ describe('TxLabelMap Class Tests', () => {
     await ctx2.activeStorage.insertTransaction(tx2.toApi())
 
     // Insert a TxLabel into the first database
-    const txLabel1 = new TxLabel({
+    const txLabel1 = new EntityTxLabel({
       txLabelId: 306,
       userId: 1,
       label: 'Label B',
@@ -290,7 +290,7 @@ describe('TxLabelMap Class Tests', () => {
     await ctx1.activeStorage.insertTxLabel(txLabel1.toApi())
 
     // Insert a matching TxLabel into the second database
-    const txLabel2 = new TxLabel({
+    const txLabel2 = new EntityTxLabel({
       txLabelId: 307,
       userId: 1,
       label: 'Label B',
@@ -302,7 +302,7 @@ describe('TxLabelMap Class Tests', () => {
     await ctx2.activeStorage.insertTxLabel(txLabel2.toApi())
 
     // Insert a TxLabelMap into the first database
-    const txLabelMap1 = new TxLabelMap({
+    const txLabelMap1 = new EntityTxLabelMap({
       transactionId: 405,
       txLabelId: 306,
       isDeleted: false,
@@ -313,7 +313,7 @@ describe('TxLabelMap Class Tests', () => {
     await ctx1.activeStorage.insertTxLabelMap(txLabelMap1.toApi())
 
     // Insert a matching TxLabelMap into the second database
-    const txLabelMap2 = new TxLabelMap({
+    const txLabelMap2 = new EntityTxLabelMap({
       transactionId: 406, // Different transaction ID mapped in syncMap
       txLabelId: 307, // Different label ID mapped in syncMap
       isDeleted: false,
@@ -409,7 +409,7 @@ describe('TxLabelMap Class Tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert a TxLabelMap into the first database
-    const txLabelMap1 = new TxLabelMap({
+    const txLabelMap1 = new EntityTxLabelMap({
       transactionId: 103,
       txLabelId: 1,
       isDeleted: false,
@@ -420,7 +420,7 @@ describe('TxLabelMap Class Tests', () => {
     await ctx1.activeStorage.insertTxLabelMap(txLabelMap1.toApi())
 
     // Insert a non-matching TxLabelMap into the second database
-    const txLabelMap2 = new TxLabelMap({
+    const txLabelMap2 = new EntityTxLabelMap({
       transactionId: 104, // Different transaction ID not mapped in syncMap
       txLabelId: 1, // Different label ID not mapped in syncMap
       isDeleted: true, // Different isDeleted value

@@ -24,14 +24,14 @@ export abstract class StorageReaderWriter extends StorageReader {
 
   abstract findOutputTagMaps(
     args: sdk.FindOutputTagMapsArgs
-  ): Promise<table.OutputTagMap[]>
+  ): Promise<table.TableOutputTagMap[]>
   abstract findProvenTxReqs(
     args: sdk.FindProvenTxReqsArgs
-  ): Promise<table.ProvenTxReq[]>
-  abstract findProvenTxs(args: sdk.FindProvenTxsArgs): Promise<table.ProvenTx[]>
+  ): Promise<table.TableProvenTxReq[]>
+  abstract findProvenTxs(args: sdk.FindProvenTxsArgs): Promise<table.TableProvenTx[]>
   abstract findTxLabelMaps(
     args: sdk.FindTxLabelMapsArgs
-  ): Promise<table.TxLabelMap[]>
+  ): Promise<table.TableTxLabelMap[]>
 
   abstract countOutputTagMaps(args: sdk.FindOutputTagMapsArgs): Promise<number>
   abstract countProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<number>
@@ -39,139 +39,139 @@ export abstract class StorageReaderWriter extends StorageReader {
   abstract countTxLabelMaps(args: sdk.FindTxLabelMapsArgs): Promise<number>
 
   abstract insertCertificate(
-    certificate: table.Certificate,
+    certificate: table.TableCertificate,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertCertificateField(
-    certificateField: table.CertificateField,
+    certificateField: table.TableCertificateField,
     trx?: sdk.TrxToken
   ): Promise<void>
   abstract insertCommission(
-    commission: table.Commission,
+    commission: table.TableCommission,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertMonitorEvent(
-    event: table.MonitorEvent,
+    event: table.TableMonitorEvent,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertOutput(
-    output: table.Output,
+    output: table.TableOutput,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertOutputBasket(
-    basket: table.OutputBasket,
+    basket: table.TableOutputBasket,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertOutputTag(
-    tag: table.OutputTag,
+    tag: table.TableOutputTag,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertOutputTagMap(
-    tagMap: table.OutputTagMap,
+    tagMap: table.TableOutputTagMap,
     trx?: sdk.TrxToken
   ): Promise<void>
   abstract insertProvenTx(
-    tx: table.ProvenTx,
+    tx: table.TableProvenTx,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertProvenTxReq(
-    tx: table.ProvenTxReq,
+    tx: table.TableProvenTxReq,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertSyncState(
-    syncState: table.SyncState,
+    syncState: table.TableSyncState,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertTransaction(
-    tx: table.Transaction,
+    tx: table.TableTransaction,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertTxLabel(
-    label: table.TxLabel,
+    label: table.TableTxLabel,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract insertTxLabelMap(
-    labelMap: table.TxLabelMap,
+    labelMap: table.TableTxLabelMap,
     trx?: sdk.TrxToken
   ): Promise<void>
-  abstract insertUser(user: table.User, trx?: sdk.TrxToken): Promise<number>
+  abstract insertUser(user: table.TableUser, trx?: sdk.TrxToken): Promise<number>
 
   abstract updateCertificate(
     id: number,
-    update: Partial<table.Certificate>,
+    update: Partial<table.TableCertificate>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateCertificateField(
     certificateId: number,
     fieldName: string,
-    update: Partial<table.CertificateField>,
+    update: Partial<table.TableCertificateField>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateCommission(
     id: number,
-    update: Partial<table.Commission>,
+    update: Partial<table.TableCommission>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateMonitorEvent(
     id: number,
-    update: Partial<table.MonitorEvent>,
+    update: Partial<table.TableMonitorEvent>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateOutput(
     id: number,
-    update: Partial<table.Output>,
+    update: Partial<table.TableOutput>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateOutputBasket(
     id: number,
-    update: Partial<table.OutputBasket>,
+    update: Partial<table.TableOutputBasket>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateOutputTag(
     id: number,
-    update: Partial<table.OutputTag>,
+    update: Partial<table.TableOutputTag>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateOutputTagMap(
     outputId: number,
     tagId: number,
-    update: Partial<table.OutputTagMap>,
+    update: Partial<table.TableOutputTagMap>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateProvenTx(
     id: number,
-    update: Partial<table.ProvenTx>,
+    update: Partial<table.TableProvenTx>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateProvenTxReq(
     id: number | number[],
-    update: Partial<table.ProvenTxReq>,
+    update: Partial<table.TableProvenTxReq>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateSyncState(
     id: number,
-    update: Partial<table.SyncState>,
+    update: Partial<table.TableSyncState>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateTransaction(
     id: number | number[],
-    update: Partial<table.Transaction>,
+    update: Partial<table.TableTransaction>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateTxLabel(
     id: number,
-    update: Partial<table.TxLabel>,
+    update: Partial<table.TableTxLabel>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateTxLabelMap(
     transactionId: number,
     txLabelId: number,
-    update: Partial<table.TxLabelMap>,
+    update: Partial<table.TableTxLabelMap>,
     trx?: sdk.TrxToken
   ): Promise<number>
   abstract updateUser(
     id: number,
-    update: Partial<table.User>,
+    update: Partial<table.TableUser>,
     trx?: sdk.TrxToken
   ): Promise<number>
 
@@ -187,7 +187,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findCertificateById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.Certificate | undefined> {
+  ): Promise<table.TableCertificate | undefined> {
     return verifyOneOrNone(
       await this.findCertificates({ partial: { certificateId: id }, trx })
     )
@@ -195,7 +195,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findCommissionById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.Commission | undefined> {
+  ): Promise<table.TableCommission | undefined> {
     return verifyOneOrNone(
       await this.findCommissions({ partial: { commissionId: id }, trx })
     )
@@ -204,7 +204,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     id: number,
     trx?: sdk.TrxToken,
     noScript?: boolean
-  ): Promise<table.Output | undefined> {
+  ): Promise<table.TableOutput | undefined> {
     return verifyOneOrNone(
       await this.findOutputs({ partial: { outputId: id }, noScript, trx })
     )
@@ -212,7 +212,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findOutputBasketById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputBasket | undefined> {
+  ): Promise<table.TableOutputBasket | undefined> {
     return verifyOneOrNone(
       await this.findOutputBaskets({ partial: { basketId: id }, trx })
     )
@@ -220,7 +220,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findProvenTxById(
     id: number,
     trx?: sdk.TrxToken | undefined
-  ): Promise<table.ProvenTx | undefined> {
+  ): Promise<table.TableProvenTx | undefined> {
     return verifyOneOrNone(
       await this.findProvenTxs({ partial: { provenTxId: id }, trx })
     )
@@ -228,7 +228,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findProvenTxReqById(
     id: number,
     trx?: sdk.TrxToken | undefined
-  ): Promise<table.ProvenTxReq | undefined> {
+  ): Promise<table.TableProvenTxReq | undefined> {
     return verifyOneOrNone(
       await this.findProvenTxReqs({ partial: { provenTxReqId: id }, trx })
     )
@@ -236,7 +236,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findSyncStateById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.SyncState | undefined> {
+  ): Promise<table.TableSyncState | undefined> {
     return verifyOneOrNone(
       await this.findSyncStates({ partial: { syncStateId: id }, trx })
     )
@@ -245,7 +245,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     id: number,
     trx?: sdk.TrxToken,
     noRawTx?: boolean
-  ): Promise<table.Transaction | undefined> {
+  ): Promise<table.TableTransaction | undefined> {
     return verifyOneOrNone(
       await this.findTransactions({
         partial: { transactionId: id },
@@ -257,7 +257,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findTxLabelById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TxLabel | undefined> {
+  ): Promise<table.TableTxLabel | undefined> {
     return verifyOneOrNone(
       await this.findTxLabels({ partial: { txLabelId: id }, trx })
     )
@@ -265,7 +265,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findOutputTagById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputTag | undefined> {
+  ): Promise<table.TableOutputTag | undefined> {
     return verifyOneOrNone(
       await this.findOutputTags({ partial: { outputTagId: id }, trx })
     )
@@ -273,7 +273,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findUserById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.User | undefined> {
+  ): Promise<table.TableUser | undefined> {
     return verifyOneOrNone(
       await this.findUsers({ partial: { userId: id }, trx })
     )
@@ -282,8 +282,8 @@ export abstract class StorageReaderWriter extends StorageReader {
   async findOrInsertUser(
     identityKey: string,
     trx?: sdk.TrxToken
-  ): Promise<{ user: table.User; isNew: boolean }> {
-    let user: table.User | undefined
+  ): Promise<{ user: table.TableUser; isNew: boolean }> {
+    let user: table.TableUser | undefined
     let isNew = false
     for (let retry = 0; ; retry++) {
       try {
@@ -324,10 +324,10 @@ export abstract class StorageReaderWriter extends StorageReader {
   }
 
   async findOrInsertTransaction(
-    newTx: table.Transaction,
+    newTx: table.TableTransaction,
     trx?: sdk.TrxToken
-  ): Promise<{ tx: table.Transaction; isNew: boolean }> {
-    let tx: table.Transaction | undefined
+  ): Promise<{ tx: table.TableTransaction; isNew: boolean }> {
+    let tx: table.TableTransaction | undefined
     let isNew = false
     for (let retry = 0; ; retry++) {
       try {
@@ -353,7 +353,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     userId: number,
     name: string,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputBasket> {
+  ): Promise<table.TableOutputBasket> {
     const partial = { name, userId }
     for (let retry = 0; ; retry++) {
       try {
@@ -389,7 +389,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     userId: number,
     label: string,
     trx?: sdk.TrxToken
-  ): Promise<table.TxLabel> {
+  ): Promise<table.TableTxLabel> {
     const partial = { label, userId }
     for (let retry = 0; ; retry++) {
       try {
@@ -421,7 +421,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     transactionId: number,
     txLabelId: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TxLabelMap> {
+  ): Promise<table.TableTxLabelMap> {
     const partial = { transactionId, txLabelId }
     for (let retry = 0; ; retry++) {
       try {
@@ -454,7 +454,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     userId: number,
     tag: string,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputTag> {
+  ): Promise<table.TableOutputTag> {
     const partial = { tag, userId }
     for (let retry = 0; ; retry++) {
       try {
@@ -488,7 +488,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     outputId: number,
     outputTagId: number,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputTagMap> {
+  ): Promise<table.TableOutputTagMap> {
     const partial = { outputId, outputTagId }
     for (let retry = 0; ; retry++) {
       try {
@@ -521,7 +521,7 @@ export abstract class StorageReaderWriter extends StorageReader {
     auth: sdk.AuthId,
     storageIdentityKey: string,
     storageName: string
-  ): Promise<{ syncState: table.SyncState; isNew: boolean }> {
+  ): Promise<{ syncState: table.TableSyncState; isNew: boolean }> {
     const partial = { userId: auth.userId!, storageIdentityKey, storageName }
     for (let retry = 0; ; retry++) {
       try {
@@ -549,10 +549,10 @@ export abstract class StorageReaderWriter extends StorageReader {
   }
 
   async findOrInsertProvenTxReq(
-    newReq: table.ProvenTxReq,
+    newReq: table.TableProvenTxReq,
     trx?: sdk.TrxToken
-  ): Promise<{ req: table.ProvenTxReq; isNew: boolean }> {
-    let req: table.ProvenTxReq | undefined
+  ): Promise<{ req: table.TableProvenTxReq; isNew: boolean }> {
+    let req: table.TableProvenTxReq | undefined
     let isNew = false
     for (let retry = 0; ; retry++) {
       try {
@@ -572,10 +572,10 @@ export abstract class StorageReaderWriter extends StorageReader {
   }
 
   async findOrInsertProvenTx(
-    newProven: table.ProvenTx,
+    newProven: table.TableProvenTx,
     trx?: sdk.TrxToken
-  ): Promise<{ proven: table.ProvenTx; isNew: boolean }> {
-    let proven: table.ProvenTx | undefined
+  ): Promise<{ proven: table.TableProvenTx; isNew: boolean }> {
+    let proven: table.TableProvenTx | undefined
     let isNew = false
     for (let retry = 0; ; retry++) {
       try {
@@ -600,7 +600,7 @@ export abstract class StorageReaderWriter extends StorageReader {
   ): Promise<sdk.ProcessSyncChunkResult>
 
   async tagOutput(
-    partial: Partial<table.Output>,
+    partial: Partial<table.TableOutput>,
     tag: string,
     trx?: sdk.TrxToken
   ): Promise<void> {

@@ -51,7 +51,7 @@ async function getProvenOrRawTxFromServices(
   options: sdk.StorageGetBeefOptions
 ): Promise<sdk.ProvenOrRawTx> {
   const services = storage.getServices()
-  const por = await entity.ProvenTx.fromTxid(txid, await storage.getServices())
+  const por = await entity.EntityProvenTx.fromTxid(txid, await storage.getServices())
   if (por.proven && !options.ignoreStorage && !options.ignoreNewProven) {
     por.proven.provenTxId = await storage.insertProvenTx(por.proven.toApi())
   }
@@ -111,7 +111,7 @@ async function mergeBeefForTransactionRecurse(
     // storage has proven this txid,
     // merge both the raw transaction and its merkle path
     beef.mergeRawTx(r.proven.rawTx)
-    beef.mergeBump(new entity.ProvenTx(r.proven).getMerklePath())
+    beef.mergeBump(new entity.EntityProvenTx(r.proven).getMerklePath())
     return beef
   }
 

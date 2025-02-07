@@ -41,7 +41,7 @@ export interface WalletStorage {
 
   findOrInsertUser(
     identityKey: string
-  ): Promise<{ user: table.User; isNew: boolean }>
+  ): Promise<{ user: table.TableUser; isNew: boolean }>
 
   abortAction(args: AbortActionArgs): Promise<AbortActionResult>
   createAction(
@@ -54,12 +54,12 @@ export interface WalletStorage {
     args: InternalizeActionArgs
   ): Promise<InternalizeActionResult>
 
-  findCertificates(args: sdk.FindCertificatesArgs): Promise<table.Certificate[]>
+  findCertificates(args: sdk.FindCertificatesArgs): Promise<table.TableCertificate[]>
   findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]>
-  findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]>
-  findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]>
+  ): Promise<table.TableOutputBasket[]>
+  findOutputs(args: sdk.FindOutputsArgs): Promise<table.TableOutput[]>
+  findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.TableProvenTxReq[]>
 
   listActions(args: ListActionsArgs): Promise<ListActionsResult>
   listCertificates(
@@ -90,7 +90,7 @@ export interface WalletStorageSync extends WalletStorageWriter {
     auth: sdk.AuthId,
     storageIdentityKey: string,
     storageName: string
-  ): Promise<{ syncState: table.SyncState; isNew: boolean }>
+  ): Promise<{ syncState: table.TableSyncState; isNew: boolean }>
 
   setActive(
     auth: sdk.AuthId,
@@ -111,7 +111,7 @@ export interface WalletStorageWriter extends WalletStorageReader {
 
   findOrInsertUser(
     identityKey: string
-  ): Promise<{ user: table.User; isNew: boolean }>
+  ): Promise<{ user: table.TableUser; isNew: boolean }>
 
   abortAction(
     auth: sdk.AuthId,
@@ -154,16 +154,16 @@ export interface WalletStorageReader {
   findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]>
+  ): Promise<table.TableCertificate[]>
   findOutputBasketsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]>
+  ): Promise<table.TableOutputBasket[]>
   findOutputsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputsArgs
-  ): Promise<table.Output[]>
-  findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.ProvenTxReq[]>
+  ): Promise<table.TableOutput[]>
+  findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.TableProvenTxReq[]>
 
   listActions(
     auth: sdk.AuthId,
@@ -201,18 +201,18 @@ export interface FindPartialSincePagedArgs<T extends object>
 }
 
 export interface FindCertificatesArgs extends FindSincePagedArgs {
-  partial: Partial<table.Certificate>
+  partial: Partial<table.TableCertificate>
   certifiers?: string[]
   types?: string[]
   includeFields?: boolean
 }
 
 export interface FindOutputBasketsArgs extends FindSincePagedArgs {
-  partial: Partial<table.OutputBasket>
+  partial: Partial<table.TableOutputBasket>
 }
 
 export interface FindOutputsArgs extends FindSincePagedArgs {
-  partial: Partial<table.Output>
+  partial: Partial<table.TableOutput>
   noScript?: boolean
   txStatus?: sdk.TransactionStatus[]
 }
@@ -271,7 +271,7 @@ export interface StorageProcessActionResults {
 }
 
 export interface ProvenOrRawTx {
-  proven?: table.ProvenTx
+  proven?: table.TableProvenTx
   rawTx?: number[]
   inputBEEF?: number[]
 }
@@ -304,8 +304,8 @@ export interface PurgeResults {
 }
 
 export interface StorageProvenOrReq {
-  proven?: table.ProvenTx
-  req?: table.ProvenTxReq
+  proven?: table.TableProvenTx
+  req?: table.TableProvenTxReq
 }
 
 /**
@@ -347,47 +347,47 @@ export interface StorageSyncReaderOptions {
 }
 
 export interface FindCertificateFieldsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.CertificateField>
+  partial: Partial<table.TableCertificateField>
 }
 
 export interface FindCommissionsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.Commission>
+  partial: Partial<table.TableCommission>
 }
 export interface FindOutputTagMapsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.OutputTagMap>
+  partial: Partial<table.TableOutputTagMap>
   tagIds?: number[]
 }
 export interface FindOutputTagsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.OutputTag>
+  partial: Partial<table.TableOutputTag>
 }
 export interface FindProvenTxReqsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.ProvenTxReq>
+  partial: Partial<table.TableProvenTxReq>
   status?: sdk.ProvenTxReqStatus[]
   txids?: string[]
 }
 export interface FindProvenTxsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.ProvenTx>
+  partial: Partial<table.TableProvenTx>
 }
 export interface FindSyncStatesArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.SyncState>
+  partial: Partial<table.TableSyncState>
 }
 export interface FindTransactionsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.Transaction>
+  partial: Partial<table.TableTransaction>
   status?: sdk.TransactionStatus[]
   noRawTx?: boolean
 }
 export interface FindTxLabelMapsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.TxLabelMap>
+  partial: Partial<table.TableTxLabelMap>
   labelIds?: number[]
 }
 export interface FindTxLabelsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.TxLabel>
+  partial: Partial<table.TableTxLabel>
 }
 export interface FindUsersArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.User>
+  partial: Partial<table.TableUser>
 }
 export interface FindMonitorEventsArgs extends sdk.FindSincePagedArgs {
-  partial: Partial<table.MonitorEvent>
+  partial: Partial<table.TableMonitorEvent>
 }
 /**
  * Place holder for the transaction control object used by actual storage provider implementation.

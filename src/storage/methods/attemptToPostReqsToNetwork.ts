@@ -10,7 +10,7 @@ import { entity, sdk } from '../../index.client'
  */
 export async function attemptToPostReqsToNetwork(
   storage: StorageProvider,
-  reqs: entity.ProvenTxReq[],
+  reqs: entity.EntityProvenTxReq[],
   trx?: sdk.TrxToken
 ): Promise<PostReqsToNetworkResult> {
   const r: PostReqsToNetworkResult = {
@@ -169,7 +169,7 @@ export type PostReqsToNetworkDetailsStatus =
 
 export interface PostReqsToNetworkDetails {
   txid: string
-  req: entity.ProvenTxReq
+  req: entity.EntityProvenTxReq
   status: PostReqsToNetworkDetailsStatus
   pbrft: sdk.PostTxResultForTxid
   data?: string

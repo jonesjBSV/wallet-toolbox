@@ -39,7 +39,7 @@ export async function listOutputs(
     */
 
   let basketId: number | undefined = undefined
-  const basketsById: Record<number, table.OutputBasket> = {}
+  const basketsById: Record<number, table.TableOutputBasket> = {}
   if (vargs.basket) {
     const baskets = await dsk.findOutputBaskets({
       partial: { userId, name: vargs.basket },
@@ -56,7 +56,7 @@ export async function listOutputs(
 
   let tagIds: number[] = []
   if (vargs.tags && vargs.tags.length > 0) {
-    const q = k<table.OutputTag>('output_tags')
+    const q = k<table.TableOutputTag>('output_tags')
       .where({
         userId: userId,
         isDeleted: false
@@ -119,7 +119,7 @@ export async function listOutputs(
   }
 
   const makeWithoutTagsQueries = () => {
-    const where: Partial<table.Output> = { userId }
+    const where: Partial<table.TableOutput> = { userId }
     if (basketId) where.basketId = basketId
     if (!includeSpent) where.spendable = true
     const q = k('outputs').where(where).whereRaw(txStatusOk)
@@ -134,7 +134,7 @@ export async function listOutputs(
   // Sort order when limit and offset are possible must be ascending for determinism.
   q.limit(limit).offset(offset).orderBy('outputId', 'asc')
 
-  const outputs: table.Output[] = await q
+  const outputs: table.TableOutput[] = await q
 
   if (!limit || outputs.length < limit) r.totalOutputs = outputs.length
   else {

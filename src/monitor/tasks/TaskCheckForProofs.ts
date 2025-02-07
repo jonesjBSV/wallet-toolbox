@@ -96,17 +96,17 @@ export class TaskCheckForProofs extends WalletMonitorTask {
    * @returns reqs partitioned by status
    */
   async getProofs(
-    reqs: table.ProvenTxReq[],
+    reqs: table.TableProvenTxReq[],
     indent = 0,
     countsAsAttempt = false,
     ignoreStatus = false
   ): Promise<{
-    proven: table.ProvenTxReq[]
-    invalid: table.ProvenTxReq[]
+    proven: table.TableProvenTxReq[]
+    invalid: table.TableProvenTxReq[]
     log: string
   }> {
-    const proven: table.ProvenTxReq[] = []
-    const invalid: table.ProvenTxReq[] = []
+    const proven: table.TableProvenTxReq[] = []
+    const invalid: table.TableProvenTxReq[] = []
 
     let log = ''
     for (const reqApi of reqs) {
@@ -126,7 +126,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
         continue
       }
 
-      const req = new entity.ProvenTxReq(reqApi)
+      const req = new entity.EntityProvenTxReq(reqApi)
 
       if (Number.isInteger(req.provenTxId)) {
         log += `Already linked to provenTxId ${req.provenTxId}.\n`
@@ -170,7 +170,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
       const since = new Date()
 
       let r: sdk.GetMerklePathResult
-      let ptx: entity.ProvenTx | undefined
+      let ptx: entity.EntityProvenTx | undefined
 
       // External services will try multiple providers until one returns a proof,
       // or they all fail.
@@ -188,7 +188,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
       // one more time.
       //
       r = await this.monitor.services.getMerklePath(req.txid)
-      ptx = await entity.ProvenTx.fromReq(
+      ptx = await entity.EntityProvenTx.fromReq(
         req,
         r,
         countsAsAttempt && req.status !== 'nosend'

@@ -27,7 +27,7 @@ export async function listActions(
 
   let labelIds: number[] = []
   if (vargs.labels.length > 0) {
-    const q = k<table.TxLabel>('tx_labels')
+    const q = k<table.TableTxLabel>('tx_labels')
       .where({
         userId: auth.userId,
         isDeleted: false
@@ -107,7 +107,7 @@ export async function listActions(
 
   q.limit(limit).offset(offset).orderBy('transactionId', 'asc')
 
-  const txs: Partial<table.Transaction>[] = await q
+  const txs: Partial<table.TableTransaction>[] = await q
 
   if (!limit || txs.length < limit) r.totalActions = txs.length
   else {

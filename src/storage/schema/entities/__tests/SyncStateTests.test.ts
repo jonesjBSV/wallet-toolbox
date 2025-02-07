@@ -1,4 +1,4 @@
-import { SyncState } from '../../../../../src/storage/schema/entities/SyncState'
+import { EntitySyncState } from '../../../../../src/storage/schema/entities/SyncState'
 import { entity, table, sdk } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
@@ -28,7 +28,7 @@ describe('SyncState class method tests', () => {
   // Test: Insert a new SyncState when id is 0
   test('0_inserts_new_sync_state', async () => {
     const ctx = ctxs[0]
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
     syncState.id = 0
 
     // Assign a unique value to refNum and valid userId
@@ -56,7 +56,7 @@ describe('SyncState class method tests', () => {
   // Test: Update an existing SyncState
   test('1_updates_existing_sync_state', async () => {
     const ctx = ctxs[0]
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
     syncState.id = 0
     // Assign a unique value to refNum and valid userId
     syncState.userId = 1
@@ -83,7 +83,7 @@ describe('SyncState class method tests', () => {
 
   // Test: Merge ID maps correctly
   test('2_merges_id_maps_correctly', async () => {
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
 
     // Complete SyncMap with all required properties
     const inputSyncMap: entity.SyncMap = {
@@ -126,7 +126,7 @@ describe('SyncState class method tests', () => {
 
   // Test: Throw error on conflicting mappings
   test('3_throws_error_on_conflicting_mappings', () => {
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
 
     syncState.syncMap = {
       provenTx: { idMap: { 1: 2 }, entityName: 'provenTx', count: 1 },
@@ -164,7 +164,7 @@ describe('SyncState class method tests', () => {
   // Test: Process a sync chunk correctly and update storage
   test('4_processes_sync_chunk_correctly', async () => {
     const ctx = ctxs[0]
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
 
     // Assign a unique value to refNum and valid userId
     syncState.userId = 1
@@ -218,13 +218,13 @@ describe('SyncState class method tests', () => {
 
   // Test: equals method always returns false
   test('6_equals_method_always_returns_false', () => {
-    const syncState = new SyncState()
-    expect(syncState.equals({} as table.SyncState)).toBe(false)
+    const syncState = new EntitySyncState()
+    expect(syncState.equals({} as table.TableSyncState)).toBe(false)
   })
 
   // Test: Getters and setters for SyncState properties
   test('7_getters_and_setters', () => {
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
 
     // Test created_at and updated_at
     const now = new Date()
@@ -269,7 +269,7 @@ describe('SyncState class method tests', () => {
 
   // Test: Derived properties apiErrorLocal, apiErrorOther, and apiSyncMap
   test('8_derived_properties', () => {
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
 
     // Test apiErrorLocal and apiErrorOther
     syncState.errorLocal = {
@@ -306,7 +306,7 @@ describe('SyncState class method tests', () => {
 
   // Test: id, entityName, and entityTable getters
   test('9_id_entityName_entityTable', () => {
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
 
     // Test id getter and setter
     syncState.id = 42
@@ -321,7 +321,7 @@ describe('SyncState class method tests', () => {
 
   // Test: mergeNew method (does not perform any operations)
   test('10_mergeNew_does_nothing', async () => {
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
     const mockStorage: entity.EntityStorage = {} as entity.EntityStorage
 
     const syncMap: entity.SyncMap = {
@@ -346,7 +346,7 @@ describe('SyncState class method tests', () => {
 
   // Test: mergeExisting method (always returns false)
   test('11_mergeExisting_always_returns_false', async () => {
-    const syncState = new SyncState()
+    const syncState = new EntitySyncState()
     const mockStorage: entity.EntityStorage = {} as entity.EntityStorage
 
     const syncMap: entity.SyncMap = {
@@ -367,7 +367,7 @@ describe('SyncState class method tests', () => {
     const result = await syncState.mergeExisting(
       mockStorage,
       new Date(),
-      {} as table.SyncState,
+      {} as table.TableSyncState,
       syncMap,
       undefined
     )

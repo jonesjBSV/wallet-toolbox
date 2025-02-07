@@ -178,8 +178,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
 
   async findOrInsertUser(
     identityKey
-  ): Promise<{ user: table.User; isNew: boolean }> {
-    return this.rpcCall<{ user: table.User; isNew: boolean }>(
+  ): Promise<{ user: table.TableUser; isNew: boolean }> {
+    return this.rpcCall<{ user: table.TableUser; isNew: boolean }>(
       'findOrInsertUser',
       [identityKey]
     )
@@ -189,8 +189,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     storageIdentityKey: string,
     storageName: string
-  ): Promise<{ syncState: table.SyncState; isNew: boolean }> {
-    return this.rpcCall<{ syncState: table.SyncState; isNew: boolean }>(
+  ): Promise<{ syncState: table.TableSyncState; isNew: boolean }> {
+    return this.rpcCall<{ syncState: table.TableSyncState; isNew: boolean }>(
       'findOrInsertSyncStateAuth',
       [auth, storageIdentityKey, storageName]
     )
@@ -230,8 +230,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
   async findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]> {
-    return this.rpcCall<table.Certificate[]>('findCertificatesAuth', [
+  ): Promise<table.TableCertificate[]> {
+    return this.rpcCall<table.TableCertificate[]>('findCertificatesAuth', [
       auth,
       args
     ])
@@ -240,21 +240,21 @@ export class StorageClient implements sdk.WalletStorageProvider {
   async findOutputBasketsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]> {
-    return this.rpcCall<table.OutputBasket[]>('findOutputBaskets', [auth, args])
+  ): Promise<table.TableOutputBasket[]> {
+    return this.rpcCall<table.TableOutputBasket[]>('findOutputBaskets', [auth, args])
   }
 
   async findOutputsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputsArgs
-  ): Promise<table.Output[]> {
-    return this.rpcCall<table.Output[]>('findOutputsAuth', [auth, args])
+  ): Promise<table.TableOutput[]> {
+    return this.rpcCall<table.TableOutput[]>('findOutputsAuth', [auth, args])
   }
 
   findProvenTxReqs(
     args: sdk.FindProvenTxReqsArgs
-  ): Promise<table.ProvenTxReq[]> {
-    return this.rpcCall<table.ProvenTxReq[]>('findProvenTxReqs', [args])
+  ): Promise<table.TableProvenTxReq[]> {
+    return this.rpcCall<table.TableProvenTxReq[]>('findProvenTxReqs', [args])
   }
 
   async relinquishCertificate(

@@ -10,8 +10,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class OutputTag extends EntityBase<table.OutputTag> {
-  constructor(api?: table.OutputTag) {
+export class EntityOutputTag extends EntityBase<table.TableOutputTag> {
+  constructor(api?: table.TableOutputTag) {
     const now = new Date()
     super(
       api || {
@@ -80,7 +80,7 @@ export class OutputTag extends EntityBase<table.OutputTag> {
   }
 
   override equals(
-    ei: table.OutputTag,
+    ei: table.TableOutputTag,
     syncMap?: entity.SyncMap | undefined
   ): boolean {
     const eo = this.toApi()
@@ -94,16 +94,16 @@ export class OutputTag extends EntityBase<table.OutputTag> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.OutputTag,
+    ei: table.TableOutputTag,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.OutputTag; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityOutputTag; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findOutputTags({ partial: { tag: ei.tag, userId }, trx })
     )
     return {
       found: !!ef,
-      eo: new entity.OutputTag(ef || { ...ei }),
+      eo: new entity.EntityOutputTag(ef || { ...ei }),
       eiId: verifyId(ei.outputTagId)
     }
   }
@@ -122,7 +122,7 @@ export class OutputTag extends EntityBase<table.OutputTag> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.OutputTag,
+    ei: table.TableOutputTag,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

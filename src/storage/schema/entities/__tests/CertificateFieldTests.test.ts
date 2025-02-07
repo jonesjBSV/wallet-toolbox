@@ -3,7 +3,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { CertificateField } from '../../../../../src/storage/schema/entities/CertificateField'
+import { EntityCertificateField } from '../../../../../src/storage/schema/entities/CertificateField'
 
 describe('CertificateField class method tests', () => {
   jest.setTimeout(99999999)
@@ -37,7 +37,7 @@ describe('CertificateField class method tests', () => {
       // Insert a valid Certificate to satisfy foreign key constraints
       const now = new Date()
       const certificateId = 300 // Ensure this ID is unique in the `certificates` table
-      const certificateData: table.Certificate = {
+      const certificateData: table.TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -58,7 +58,7 @@ describe('CertificateField class method tests', () => {
       await activeStorage.insertCertificate(certificateData)
 
       // Insert initial CertificateField record
-      const initialData: table.CertificateField = {
+      const initialData: table.TableCertificateField = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -70,8 +70,8 @@ describe('CertificateField class method tests', () => {
       await activeStorage.insertCertificateField(initialData)
 
       // Create two CertificateField entities from the same data
-      const entity1 = new CertificateField(initialData)
-      const entity2 = new CertificateField(initialData)
+      const entity1 = new EntityCertificateField(initialData)
+      const entity2 = new EntityCertificateField(initialData)
 
       // Create a valid SyncMap
       const syncMap: entity.SyncMap = {
@@ -202,7 +202,7 @@ describe('CertificateField class method tests', () => {
       })
 
       // Insert initial CertificateField record
-      const initialData: table.CertificateField = {
+      const initialData: table.TableCertificateField = {
         certificateId: certificateId1,
         created_at: now,
         updated_at: now,
@@ -214,10 +214,10 @@ describe('CertificateField class method tests', () => {
       await activeStorage.insertCertificateField(initialData)
 
       // Create a CertificateField entity from the initial data
-      const entity1 = new CertificateField(initialData)
+      const entity1 = new EntityCertificateField(initialData)
 
       // Create mismatched entities and test each condition
-      const mismatchedEntities: Partial<table.CertificateField>[] = [
+      const mismatchedEntities: Partial<table.TableCertificateField>[] = [
         { certificateId: certificateId2 }, // Requires valid certificate
         { fieldName: 'field2' },
         { fieldValue: 'value2' },
@@ -225,7 +225,7 @@ describe('CertificateField class method tests', () => {
       ]
 
       for (const mismatch of mismatchedEntities) {
-        const mismatchedEntity = new CertificateField({
+        const mismatchedEntity = new EntityCertificateField({
           ...initialData,
           ...mismatch
         })
@@ -338,7 +338,7 @@ describe('CertificateField class method tests', () => {
       })
 
       // Insert the initial CertificateField record
-      const initialData: table.CertificateField = {
+      const initialData: table.TableCertificateField = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -350,10 +350,10 @@ describe('CertificateField class method tests', () => {
       await activeStorage.insertCertificateField(initialData)
 
       // Create a CertificateField entity from the initial data
-      const entity = new CertificateField(initialData)
+      const entity = new EntityCertificateField(initialData)
 
       // Simulate the `ei` argument with a later `updated_at`
-      const updatedData: table.CertificateField = {
+      const updatedData: table.TableCertificateField = {
         ...initialData,
         updated_at: new Date(now.getTime() + 1000), // Later timestamp
         fieldValue: 'updatedValue',
@@ -486,7 +486,7 @@ describe('CertificateField class method tests', () => {
       })
 
       // Insert the initial CertificateField record
-      const initialData: table.CertificateField = {
+      const initialData: table.TableCertificateField = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -498,10 +498,10 @@ describe('CertificateField class method tests', () => {
       await activeStorage.insertCertificateField(initialData)
 
       // Create a CertificateField entity from the initial data
-      const entity = new CertificateField(initialData)
+      const entity = new EntityCertificateField(initialData)
 
       // Simulate the `ei` argument with the same `updated_at`
-      const sameUpdatedData: table.CertificateField = {
+      const sameUpdatedData: table.TableCertificateField = {
         ...initialData,
         updated_at: now, // Same timestamp
         fieldValue: 'unchangedValue',
@@ -614,7 +614,7 @@ describe('CertificateField class method tests', () => {
     const now = new Date()
 
     // Initial data for the test
-    const initialData: table.CertificateField = {
+    const initialData: table.TableCertificateField = {
       userId: 1,
       certificateId: 500,
       created_at: now,
@@ -625,7 +625,7 @@ describe('CertificateField class method tests', () => {
     }
 
     // Create a CertificateField entity
-    const entity = new CertificateField(initialData)
+    const entity = new EntityCertificateField(initialData)
 
     // Validate getters
     expect(entity.userId).toBe(1)

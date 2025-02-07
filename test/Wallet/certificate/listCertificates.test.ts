@@ -78,7 +78,7 @@ describe('listCertificates', () => {
 
   test('should return exactly the number of certificates if they are fewer than the limit', async () => {
     // Suppose we have 2 certificates
-    const fakeCerts: table.Certificate[] = [
+    const fakeCerts: table.TableCertificate[] = [
       {
         certificateId: 1,
         userId: 123,
@@ -110,7 +110,7 @@ describe('listCertificates', () => {
     ]
 
     // Suppose each cert has some fields
-    const fakeFieldsForCert1: table.CertificateField[] = [
+    const fakeFieldsForCert1: table.TableCertificateField[] = [
       {
         certificateId: 1,
         userId: 123,
@@ -122,7 +122,7 @@ describe('listCertificates', () => {
       }
     ]
 
-    const fakeFieldsForCert2: table.CertificateField[] = [
+    const fakeFieldsForCert2: table.TableCertificateField[] = [
       {
         certificateId: 2,
         userId: 123,
@@ -188,7 +188,7 @@ describe('listCertificates', () => {
   test('should call countCertificates when the returned certificates length is equal to limit', async () => {
     // We want exactly 'limit' items returned, so the function calls countCertificates
     vargs.limit = 2 // set limit to 2
-    const fakeCerts: table.Certificate[] = [
+    const fakeCerts: table.TableCertificate[] = [
       {
         certificateId: 11,
         userId: 123,
@@ -290,7 +290,7 @@ describe('listCertificates', () => {
     // but let's confirm the coverage if the function doesn't rely on partial storage returning partial results.
     vargs.limit = 2
 
-    const cA: table.Certificate = {
+    const cA: table.TableCertificate = {
       certificateId: 100,
       userId: 123,
       type: 'zzz',
@@ -304,7 +304,7 @@ describe('listCertificates', () => {
       created_at: new Date(),
       updated_at: new Date()
     }
-    const cB: table.Certificate = {
+    const cB: table.TableCertificate = {
       certificateId: 101,
       userId: 123,
       type: 'yyy',
@@ -318,7 +318,7 @@ describe('listCertificates', () => {
       created_at: new Date(),
       updated_at: new Date()
     }
-    const cC: table.Certificate = {
+    const cC: table.TableCertificate = {
       certificateId: 102,
       userId: 123,
       type: 'xxx',

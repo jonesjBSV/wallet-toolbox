@@ -3,7 +3,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { Output } from '../../../../../src/storage/schema/entities/Output'
+import { EntityOutput } from '../../../../../src/storage/schema/entities/Output'
 
 describe('Output class method tests', () => {
   jest.setTimeout(99999999)
@@ -35,7 +35,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial record into the database
-    const initialData: table.Output = {
+    const initialData: table.TableOutput = {
       outputId: 601,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -64,8 +64,8 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create two Output entities from the same data
-    const entity1 = new Output(initialData)
-    const entity2 = new Output(initialData)
+    const entity1 = new EntityOutput(initialData)
+    const entity2 = new EntityOutput(initialData)
 
     // Create a valid SyncMap
     const syncMap: entity.SyncMap = {
@@ -153,7 +153,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial record into the database
-    const initialData: table.Output = {
+    const initialData: table.TableOutput = {
       outputId: 602,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -182,8 +182,8 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create two Output entities with differing data
-    const entity1 = new Output(initialData)
-    const entity2 = new Output({
+    const entity1 = new EntityOutput(initialData)
+    const entity2 = new EntityOutput({
       ...initialData,
       satoshis: 2000
     })
@@ -197,7 +197,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial record into the database
-    const initialData: table.Output = {
+    const initialData: table.TableOutput = {
       outputId: 603,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -226,8 +226,8 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create two Output entities with differing array data
-    const entity1 = new Output(initialData)
-    const entity2 = new Output({
+    const entity1 = new EntityOutput(initialData)
+    const entity2 = new EntityOutput({
       ...initialData,
       lockingScript: [1, 2, 4]
     })
@@ -241,7 +241,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial Output record
-    const initialData: table.Output = {
+    const initialData: table.TableOutput = {
       outputId: 701,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -271,10 +271,10 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create an Output entity from the initial data
-    const entity = new Output(initialData)
+    const entity = new EntityOutput(initialData)
 
     // Simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.Output = {
+    const updatedData: table.TableOutput = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       spendable: false,
@@ -426,7 +426,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Use the same initialData as before
-    const initialData: table.Output = {
+    const initialData: table.TableOutput = {
       outputId: 702,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -456,10 +456,10 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create an Output entity from the initial data
-    const entity = new Output(initialData)
+    const entity = new EntityOutput(initialData)
 
     // Simulate the `ei` argument with an earlier `updated_at`
-    const earlierData: table.Output = {
+    const earlierData: table.TableOutput = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       spendable: false
@@ -570,7 +570,7 @@ describe('Output class method tests', () => {
     const now = new Date()
 
     // Initial test data
-    const initialData: table.Output = {
+    const initialData: table.TableOutput = {
       outputId: 701,
       created_at: now,
       updated_at: now,
@@ -598,7 +598,7 @@ describe('Output class method tests', () => {
     }
 
     // Create the Output entity
-    const entity = new Output(initialData)
+    const entity = new EntityOutput(initialData)
 
     // Validate getters
     expect(entity.outputId).toBe(initialData.outputId)

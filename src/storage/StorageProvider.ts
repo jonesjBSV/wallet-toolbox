@@ -42,7 +42,7 @@ import {
   StorageReaderWriter,
   StorageReaderWriterOptions
 } from './StorageReaderWriter'
-import { ProvenTxReq } from './schema/entities'
+import { EntityProvenTxReq } from './schema/entities'
 
 export abstract class StorageProvider
   extends StorageReaderWriter
@@ -95,7 +95,7 @@ export abstract class StorageProvider
     exactSatoshis: number | undefined,
     excludeSending: boolean,
     transactionId: number
-  ): Promise<table.Output | undefined>
+  ): Promise<table.TableOutput | undefined>
 
   abstract getProvenOrRawTx(
     txid: string,
@@ -111,11 +111,11 @@ export abstract class StorageProvider
   abstract getLabelsForTransactionId(
     transactionId?: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TxLabel[]>
+  ): Promise<table.TableTxLabel[]>
   abstract getTagsForOutputId(
     outputId: number,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputTag[]>
+  ): Promise<table.TableOutputTag[]>
 
   abstract listActions(
     auth: sdk.AuthId,
@@ -135,15 +135,15 @@ export abstract class StorageProvider
   abstract findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]>
+  ): Promise<table.TableCertificate[]>
   abstract findOutputBasketsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]>
+  ): Promise<table.TableOutputBasket[]>
   abstract findOutputsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputsArgs
-  ): Promise<table.Output[]>
+  ): Promise<table.TableOutput[]>
   abstract insertCertificateAuth(
     auth: sdk.AuthId,
     certificate: table.CertificateX
@@ -164,7 +164,7 @@ export abstract class StorageProvider
 
   async abortAction(
     auth: sdk.AuthId,
-    args: Partial<table.Transaction>
+    args: Partial<table.TableTransaction>
   ): Promise<AbortActionResult> {
     const r = await this.transaction(async trx => {
       const tx = verifyOneOrNone(
@@ -193,7 +193,7 @@ export abstract class StorageProvider
         trx
       )
       if (tx.txid) {
-        const req = await entity.ProvenTxReq.fromStorageTxid(this, tx.txid, trx)
+        const req = await entity.EntityProvenTxReq.fromStorageTxid(this, tx.txid, trx)
         if (req) {
           req.addHistoryNote({ what: 'aborted' })
           req.status = 'invalid'
@@ -299,7 +299,7 @@ export abstract class StorageProvider
   }
 
   async mergeReqToBeefToShareExternally(
-    req: table.ProvenTxReq,
+    req: table.TableProvenTxReq,
     mergeToBeef: Beef,
     knownTxids: string[],
     trx?: sdk.TrxToken
@@ -348,7 +348,7 @@ export abstract class StorageProvider
    */
   async getProvenOrReq(
     txid: string,
-    newReq?: table.ProvenTxReq,
+    newReq?: table.TableProvenTxReq,
     trx?: sdk.TrxToken
   ): Promise<sdk.StorageProvenOrReq> {
     if (newReq && txid !== newReq.txid)
@@ -372,7 +372,7 @@ export abstract class StorageProvider
         }
         if (r.req && newReq) {
           // Merge history and notify into existing
-          const req1 = new ProvenTxReq(r.req)
+          const req1 = new EntityProvenTxReq(r.req)
           req1.mergeHistory(newReq, undefined, true)
           req1.mergeNotifyTransactionIds(newReq)
           await req1.updateStorageDynamicProperties(this, trx)
@@ -427,7 +427,7 @@ export abstract class StorageProvider
       )
 
     await this.transaction(async trx => {
-      const where: Partial<table.Transaction> = {}
+      const where: Partial<table.TableTransaction> = {}
       if (transactionId) where.transactionId = transactionId
       if (userId) where.userId = userId
       if (reference) where.reference = reference
@@ -459,7 +459,7 @@ export abstract class StorageProvider
           {
             // Attempt to make outputs previously allocated as inputs to this transaction usable again.
             // Only clear input's spentBy and reset spendable = true if it references this transaction
-            const t = new entity.Transaction(tx)
+            const t = new entity.EntityTransaction(tx)
             const inputs = await t.getInputs(this, trx)
             for (const input of inputs) {
               // input is a prior output belonging to userId that reference this transaction either by `spentBy`
@@ -503,7 +503,7 @@ export abstract class StorageProvider
   }
 
   async attemptToPostReqsToNetwork(
-    reqs: entity.ProvenTxReq[],
+    reqs: entity.EntityProvenTxReq[],
     trx?: sdk.TrxToken
   ): Promise<PostReqsToNetworkResult> {
     return await attemptToPostReqsToNetwork(this, reqs, trx)
@@ -560,7 +560,7 @@ export abstract class StorageProvider
       if (trustSelf === 'known') beef.mergeTxidOnly(txid)
       else {
         beef.mergeRawTx(r.proven.rawTx)
-        const mp = new entity.ProvenTx(r.proven).getMerklePath()
+        const mp = new entity.EntityProvenTx(r.proven).getMerklePath()
         beef.mergeBump(mp)
         return beef
       }
@@ -604,7 +604,7 @@ export abstract class StorageProvider
   async findMonitorEventById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.MonitorEvent | undefined> {
+  ): Promise<table.TableMonitorEvent | undefined> {
     return verifyOneOrNone(
       await this.findMonitorEvents({ partial: { id }, trx })
     )
@@ -648,7 +648,7 @@ export abstract class StorageProvider
     const user = verifyTruthy(
       await this.findUserByIdentityKey(args.identityKey)
     )
-    const ss = new entity.SyncState(
+    const ss = new entity.EntitySyncState(
       verifyOne(
         await this.findSyncStates({
           partial: {
@@ -678,11 +678,11 @@ export abstract class StorageProvider
   async updateProvenTxReqWithNewProvenTx(
     args: sdk.UpdateProvenTxReqWithNewProvenTxArgs
   ): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult> {
-    const req = await entity.ProvenTxReq.fromStorageId(this, args.provenTxReqId)
-    let proven: entity.ProvenTx
+    const req = await entity.EntityProvenTxReq.fromStorageId(this, args.provenTxReqId)
+    let proven: entity.EntityProvenTx
     if (req.provenTxId) {
       // Someone beat us to it, grab what we need for results...
-      proven = new entity.ProvenTx(
+      proven = new entity.EntityProvenTx(
         verifyOne(await this.findProvenTxs({ partial: { txid: args.txid } }))
       )
     } else {
@@ -703,7 +703,7 @@ export abstract class StorageProvider
           },
           trx
         )
-        proven = new entity.ProvenTx(api)
+        proven = new entity.EntityProvenTx(api)
         if (isNew) {
           req.status = 'completed'
           req.provenTxId = proven.provenTxId
@@ -750,15 +750,15 @@ export abstract class StorageProvider
    * @returns object with invalidSpendableOutputs array. A good result is an empty array.
    */
   async confirmSpendableOutputs(): Promise<{
-    invalidSpendableOutputs: table.Output[]
+    invalidSpendableOutputs: table.TableOutput[]
   }> {
-    const invalidSpendableOutputs: table.Output[] = []
+    const invalidSpendableOutputs: table.TableOutput[] = []
     const users = await this.findUsers({ partial: {} })
     for (const { userId } of users) {
       const defaultBasket = verifyOne(
         await this.findOutputBaskets({ partial: { userId, name: 'default' } })
       )
-      const where: Partial<table.Output> = {
+      const where: Partial<table.TableOutput> = {
         userId,
         basketId: defaultBasket.basketId,
         spendable: true
@@ -802,7 +802,7 @@ export abstract class StorageProvider
     update: Partial<table.ProvenTxReqDynamics>,
     trx?: sdk.TrxToken
   ): Promise<number> {
-    const partial: Partial<table.ProvenTxReq> = {}
+    const partial: Partial<table.TableProvenTxReq> = {}
     if (update['updated_at']) partial['updated_at'] = update['updated_at']
     if (update['provenTxId']) partial['provenTxId'] = update['provenTxId']
     if (update['status']) partial['status'] = update['status']

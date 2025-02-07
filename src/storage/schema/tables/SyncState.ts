@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface SyncState extends sdk.EntityTimeStamp {
+export interface TableSyncState extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   syncStateId: number

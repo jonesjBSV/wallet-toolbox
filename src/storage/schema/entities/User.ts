@@ -10,8 +10,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class User extends EntityBase<table.User> {
-  constructor(api?: table.User) {
+export class EntityUser extends EntityBase<table.TableUser> {
+  constructor(api?: table.TableUser) {
     const now = new Date()
     super(
       api || {
@@ -73,7 +73,7 @@ export class User extends EntityBase<table.User> {
   }
 
   override equals(
-    ei: table.User,
+    ei: table.TableUser,
     syncMap?: entity.SyncMap | undefined
   ): boolean {
     const eo = this.toApi()
@@ -90,9 +90,9 @@ export class User extends EntityBase<table.User> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.User,
+    ei: table.TableUser,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.User; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityUser; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findUsers({ partial: { identityKey: ei.identityKey }, trx })
     )
@@ -100,7 +100,7 @@ export class User extends EntityBase<table.User> {
       throw new sdk.WERR_INTERNAL('logic error, userIds don not match.')
     return {
       found: !!ef,
-      eo: new entity.User(ef || { ...ei }),
+      eo: new entity.EntityUser(ef || { ...ei }),
       eiId: verifyId(ei.userId)
     }
   }
@@ -117,7 +117,7 @@ export class User extends EntityBase<table.User> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.User,
+    ei: table.TableUser,
     syncMap?: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

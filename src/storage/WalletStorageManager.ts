@@ -278,7 +278,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async findOrInsertUser(
     identityKey: string
-  ): Promise<{ user: table.User; isNew: boolean }> {
+  ): Promise<{ user: table.TableUser; isNew: boolean }> {
     const auth = await this.getAuth()
     if (identityKey != auth.identityKey) throw new sdk.WERR_UNAUTHORIZED()
 
@@ -344,7 +344,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
       return await writer.processAction(auth, args)
     })
   }
-  async insertCertificate(certificate: table.Certificate): Promise<number> {
+  async insertCertificate(certificate: table.TableCertificate): Promise<number> {
     return await this.runAsWriter(async writer => {
       const auth = await this.getAuth(true)
       return await writer.insertCertificateAuth(auth, certificate)
@@ -377,7 +377,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
   async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]> {
+  ): Promise<table.TableCertificate[]> {
     const auth = await this.getAuth()
     return await this.runAsReader(async reader => {
       return await reader.findCertificatesAuth(auth, args)
@@ -385,13 +385,13 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
   async findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]> {
+  ): Promise<table.TableOutputBasket[]> {
     const auth = await this.getAuth()
     return await this.runAsReader(async reader => {
       return await reader.findOutputBasketsAuth(auth, args)
     })
   }
-  async findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]> {
+  async findOutputs(args: sdk.FindOutputsArgs): Promise<table.TableOutput[]> {
     const auth = await this.getAuth()
     return await this.runAsReader(async reader => {
       return await reader.findOutputsAuth(auth, args)
@@ -400,7 +400,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async findProvenTxReqs(
     args: sdk.FindProvenTxReqsArgs
-  ): Promise<table.ProvenTxReq[]> {
+  ): Promise<table.TableProvenTxReq[]> {
     return await this.runAsReader(async reader => {
       return await reader.findProvenTxReqs(args)
     })
@@ -423,7 +423,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
       let inserts = 0,
         updates = 0
       for (;;) {
-        const ss = await entity.SyncState.fromStorage(
+        const ss = await entity.EntitySyncState.fromStorage(
           writer,
           identityKey,
           readerSettings
@@ -470,7 +470,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
       let inserts = 0,
         updates = 0
       for (;;) {
-        const ss = await entity.SyncState.fromStorage(
+        const ss = await entity.EntitySyncState.fromStorage(
           writer,
           identityKey,
           readerSettings

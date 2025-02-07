@@ -10,8 +10,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class Commission extends EntityBase<table.Commission> {
-  constructor(api?: table.Commission) {
+export class EntityCommission extends EntityBase<table.TableCommission> {
+  constructor(api?: table.TableCommission) {
     const now = new Date()
     super(
       api || {
@@ -101,7 +101,7 @@ export class Commission extends EntityBase<table.Commission> {
   }
 
   override equals(
-    ei: table.Commission,
+    ei: table.TableCommission,
     syncMap?: entity.SyncMap | undefined
   ): boolean {
     if (
@@ -122,17 +122,17 @@ export class Commission extends EntityBase<table.Commission> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.Commission,
+    ei: table.TableCommission,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.Commission; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityCommission; eiId: number }> {
     const transactionId = syncMap.transaction.idMap[ei.transactionId]
     const ef = verifyOneOrNone(
       await storage.findCommissions({ partial: { transactionId, userId }, trx })
     )
     return {
       found: !!ef,
-      eo: new entity.Commission(ef || { ...ei }),
+      eo: new entity.EntityCommission(ef || { ...ei }),
       eiId: verifyId(ei.commissionId)
     }
   }
@@ -153,7 +153,7 @@ export class Commission extends EntityBase<table.Commission> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.Commission,
+    ei: table.TableCommission,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

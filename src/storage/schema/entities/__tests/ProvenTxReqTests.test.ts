@@ -5,7 +5,7 @@ import {
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
 import {
-  ProvenTxReq,
+  EntityProvenTxReq,
   ProvenTxReqHistorySummaryApi
 } from '../../../../../src/storage/schema/entities/ProvenTxReq'
 
@@ -36,7 +36,7 @@ describe('ProvenTxReq class method tests', () => {
 
   // Test: apiNotify getter and setter
   test('0_apiNotify_getter_and_setter', () => {
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -58,7 +58,7 @@ describe('ProvenTxReq class method tests', () => {
 
   // Test: getHistorySummary method
   test('1_getHistorySummary', () => {
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -92,7 +92,7 @@ describe('ProvenTxReq class method tests', () => {
 
   // Test: parseHistoryNote method
   test('2_parseHistoryNote', () => {
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -118,7 +118,7 @@ describe('ProvenTxReq class method tests', () => {
   // Test: updateStorage method
   test('3_updateStorage', async () => {
     const ctx = ctxs[0]
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -143,7 +143,7 @@ describe('ProvenTxReq class method tests', () => {
   // Test: insertOrMerge method
   test('4_insertOrMerge', async () => {
     const ctx = ctxs[0]
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -170,7 +170,7 @@ describe('ProvenTxReq class method tests', () => {
     const currentTime = new Date()
 
     // ProvenTxReq in the first database
-    const provenTxReq1 = new ProvenTxReq({
+    const provenTxReq1 = new EntityProvenTxReq({
       provenTxReqId: 405,
       created_at: currentTime,
       updated_at: currentTime,
@@ -187,7 +187,7 @@ describe('ProvenTxReq class method tests', () => {
     await ctx1.activeStorage.insertProvenTxReq(provenTxReq1.toApi())
 
     // ProvenTxReq in the second database
-    const provenTxReq2 = new ProvenTxReq({
+    const provenTxReq2 = new EntityProvenTxReq({
       provenTxReqId: 406,
       created_at: currentTime,
       updated_at: currentTime,
@@ -241,7 +241,7 @@ describe('ProvenTxReq class method tests', () => {
     const currentTime = new Date()
 
     // ProvenTxReq in the first database
-    const provenTxReq1 = new ProvenTxReq({
+    const provenTxReq1 = new EntityProvenTxReq({
       provenTxReqId: 407,
       created_at: currentTime,
       updated_at: currentTime,
@@ -258,7 +258,7 @@ describe('ProvenTxReq class method tests', () => {
     await ctx1.activeStorage.insertProvenTxReq(provenTxReq1.toApi())
 
     // ProvenTxReq in the second database
-    const provenTxReq2 = new ProvenTxReq({
+    const provenTxReq2 = new EntityProvenTxReq({
       provenTxReqId: 408,
       created_at: currentTime,
       updated_at: currentTime,
@@ -306,7 +306,7 @@ describe('ProvenTxReq class method tests', () => {
 
   // Test: mergeNotifyTransactionIds method
   test('7_mergeNotifyTransactionIds', () => {
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -334,7 +334,7 @@ describe('ProvenTxReq class method tests', () => {
       commission: { idMap: {}, entityName: 'commission', count: 0 }
     }
 
-    const inputProvenTxReq: table.ProvenTxReq = {
+    const inputProvenTxReq: table.TableProvenTxReq = {
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -357,7 +357,7 @@ describe('ProvenTxReq class method tests', () => {
   // Test: Getters and Setters
   test('8_getters_and_setters', () => {
     const currentTime = new Date()
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 123,
       created_at: currentTime,
       updated_at: currentTime,
@@ -417,7 +417,7 @@ describe('ProvenTxReq class method tests', () => {
 
   // Test: parseHistoryNote method
   test('9_parseHistoryNote', () => {
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -500,7 +500,7 @@ describe('ProvenTxReq class method tests', () => {
   // Test: mergeHistory method
   test('10_mergeHistory', () => {
     // Create the current ProvenTxReq with some initial history
-    const provenTxReq = new ProvenTxReq({
+    const provenTxReq = new EntityProvenTxReq({
       provenTxReqId: 409,
       created_at: new Date(),
       updated_at: new Date(),
@@ -516,7 +516,7 @@ describe('ProvenTxReq class method tests', () => {
     })
 
     // Create another ProvenTxReq to merge with
-    const otherProvenTxReq = new ProvenTxReq({
+    const otherProvenTxReq = new EntityProvenTxReq({
       provenTxReqId: 410,
       created_at: new Date(),
       updated_at: new Date(),
@@ -569,7 +569,7 @@ describe('ProvenTxReq class method tests', () => {
     ]
 
     for (const { status, expected } of testCases) {
-      expect(entity.ProvenTxReq.isTerminalStatus(status)).toBe(expected)
+      expect(entity.EntityProvenTxReq.isTerminalStatus(status)).toBe(expected)
     }
   })
 
@@ -577,7 +577,7 @@ describe('ProvenTxReq class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial ProvenTxReq into the database
-    const existingProvenTxReq = new entity.ProvenTxReq({
+    const existingProvenTxReq = new entity.EntityProvenTxReq({
       provenTxReqId: 409,
       created_at: new Date('2025-01-01T00:00:00.000Z'),
       updated_at: new Date('2025-01-01T00:00:00.000Z'),
@@ -596,7 +596,7 @@ describe('ProvenTxReq class method tests', () => {
     await ctx.activeStorage.insertProvenTxReq(existingProvenTxReq.toApi())
 
     // Create the ProvenTxReq to be merged
-    const incomingProvenTxReq = new entity.ProvenTxReq({
+    const incomingProvenTxReq = new entity.EntityProvenTxReq({
       provenTxReqId: 410, // Different ID, simulating another entity
       created_at: new Date('2025-01-02T00:00:00.000Z'),
       updated_at: new Date('2025-01-02T00:00:00.000Z'),
@@ -645,7 +645,7 @@ describe('ProvenTxReq class method tests', () => {
     })
     expect(mergedProvenTxReqs.length).toBe(1)
 
-    const mergedProvenTxReq = new entity.ProvenTxReq(mergedProvenTxReqs[0])
+    const mergedProvenTxReq = new entity.EntityProvenTxReq(mergedProvenTxReqs[0])
 
     // Ensure history.notes is initialized if undefined
     const mergedNotes = mergedProvenTxReq.history.notes || {}

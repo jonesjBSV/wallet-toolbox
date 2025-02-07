@@ -61,31 +61,31 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 
   abstract findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.CertificateField[]>
+  ): Promise<table.TableCertificateField[]>
   abstract findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]>
+  ): Promise<table.TableCertificate[]>
   abstract findCommissions(
     args: sdk.FindCommissionsArgs
-  ): Promise<table.Commission[]>
+  ): Promise<table.TableCommission[]>
   abstract findMonitorEvents(
     args: sdk.FindMonitorEventsArgs
-  ): Promise<table.MonitorEvent[]>
+  ): Promise<table.TableMonitorEvent[]>
   abstract findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]>
-  abstract findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]>
+  ): Promise<table.TableOutputBasket[]>
+  abstract findOutputs(args: sdk.FindOutputsArgs): Promise<table.TableOutput[]>
   abstract findOutputTags(
     args: sdk.FindOutputTagsArgs
-  ): Promise<table.OutputTag[]>
+  ): Promise<table.TableOutputTag[]>
   abstract findSyncStates(
     args: sdk.FindSyncStatesArgs
-  ): Promise<table.SyncState[]>
+  ): Promise<table.TableSyncState[]>
   abstract findTransactions(
     args: sdk.FindTransactionsArgs
-  ): Promise<table.Transaction[]>
-  abstract findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TxLabel[]>
-  abstract findUsers(args: sdk.FindUsersArgs): Promise<table.User[]>
+  ): Promise<table.TableTransaction[]>
+  abstract findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TableTxLabel[]>
+  abstract findUsers(args: sdk.FindUsersArgs): Promise<table.TableUser[]>
 
   abstract countCertificateFields(
     args: sdk.FindCertificateFieldsArgs
@@ -103,18 +103,18 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 
   abstract getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTx[]>
+  ): Promise<table.TableProvenTx[]>
   abstract getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTxReq[]>
+  ): Promise<table.TableProvenTxReq[]>
   abstract getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TxLabelMap[]>
+  ): Promise<table.TableTxLabelMap[]>
   abstract getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.OutputTagMap[]>
+  ): Promise<table.TableOutputTagMap[]>
 
-  async findUserByIdentityKey(key: string): Promise<table.User | undefined> {
+  async findUserByIdentityKey(key: string): Promise<table.TableUser | undefined> {
     return verifyOneOrNone(
       await this.findUsers({ partial: { identityKey: key } })
     )

@@ -10,7 +10,7 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class Transaction extends EntityBase<table.Transaction> {
+export class EntityTransaction extends EntityBase<table.TableTransaction> {
   /**
    * @returns @bsv/sdk Transaction object from parsed rawTx.
    * If rawTx is undefined, returns undefined.
@@ -38,7 +38,7 @@ export class Transaction extends EntityBase<table.Transaction> {
   async getInputs(
     storage: entity.EntityStorage,
     trx?: sdk.TrxToken
-  ): Promise<table.Output[]> {
+  ): Promise<table.TableOutput[]> {
     const inputs = await storage.findOutputs({
       partial: { userId: this.userId, spentBy: this.id },
       trx
@@ -62,7 +62,7 @@ export class Transaction extends EntityBase<table.Transaction> {
     return inputs
   }
 
-  constructor(api?: table.Transaction) {
+  constructor(api?: table.TableTransaction) {
     const now = new Date()
     super(
       api || {
@@ -209,7 +209,7 @@ export class Transaction extends EntityBase<table.Transaction> {
   }
 
   override equals(
-    ei: table.Transaction,
+    ei: table.TableTransaction,
     syncMap?: entity.SyncMap | undefined
   ): boolean {
     const eo = this.toApi()
@@ -253,10 +253,10 @@ export class Transaction extends EntityBase<table.Transaction> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.Transaction,
+    ei: table.TableTransaction,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.Transaction; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityTransaction; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findTransactions({
         partial: { reference: ei.reference, userId },
@@ -265,7 +265,7 @@ export class Transaction extends EntityBase<table.Transaction> {
     )
     return {
       found: !!ef,
-      eo: new entity.Transaction(ef || { ...ei }),
+      eo: new entity.EntityTransaction(ef || { ...ei }),
       eiId: verifyId(ei.transactionId)
     }
   }
@@ -286,7 +286,7 @@ export class Transaction extends EntityBase<table.Transaction> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.Transaction,
+    ei: table.TableTransaction,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
@@ -320,7 +320,7 @@ export class Transaction extends EntityBase<table.Transaction> {
   async getProvenTx(
     storage: entity.EntityStorage,
     trx?: sdk.TrxToken
-  ): Promise<entity.ProvenTx | undefined> {
+  ): Promise<entity.EntityProvenTx | undefined> {
     if (!this.provenTxId) return undefined
     const p = verifyOneOrNone(
       await storage.findProvenTxs({
@@ -329,6 +329,6 @@ export class Transaction extends EntityBase<table.Transaction> {
       })
     )
     if (!p) return undefined
-    return new entity.ProvenTx(p)
+    return new entity.EntityProvenTx(p)
   }
 }

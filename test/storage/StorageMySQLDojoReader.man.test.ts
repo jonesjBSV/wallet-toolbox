@@ -51,7 +51,7 @@ describe('StorageMySQLDojoReader tests', () => {
     const writerSettings = await writer.getSettings()
 
     const identityKey = process.env.MY_TEST_IDENTITY || ''
-    const ss = await entity.SyncState.fromStorage(
+    const ss = await entity.EntitySyncState.fromStorage(
       writer,
       identityKey,
       readerSettings

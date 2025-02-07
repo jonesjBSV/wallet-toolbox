@@ -3,7 +3,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { Certificate } from '../../../../../src/storage/schema/entities/Certificate'
+import { EntityCertificate } from '../../../../../src/storage/schema/entities/Certificate'
 
 describe('Certificate class method tests', () => {
   jest.setTimeout(99999999)
@@ -34,7 +34,7 @@ describe('Certificate class method tests', () => {
       // Insert initial Certificate record
       const now = new Date()
       const certificateId = 500 // Unique ID for this test
-      const certificateData: table.Certificate = {
+      const certificateData: table.TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -55,8 +55,8 @@ describe('Certificate class method tests', () => {
       await activeStorage.insertCertificate(certificateData)
 
       // Create two Certificate entities from the same data
-      const entity1 = new Certificate(certificateData)
-      const entity2 = new Certificate(certificateData)
+      const entity1 = new EntityCertificate(certificateData)
+      const entity2 = new EntityCertificate(certificateData)
 
       // Validate equals returns true for identical entities
       expect(entity1.equals(entity2.toApi())).toBe(true)
@@ -69,7 +69,7 @@ describe('Certificate class method tests', () => {
       const now = new Date()
       const certificateId1 = 501
       const certificateId2 = 502
-      const certificateData1: table.Certificate = {
+      const certificateData1: table.TableCertificate = {
         certificateId: certificateId1,
         created_at: now,
         updated_at: now,
@@ -86,7 +86,7 @@ describe('Certificate class method tests', () => {
           'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       }
-      const certificateData2: table.Certificate = {
+      const certificateData2: table.TableCertificate = {
         certificateId: certificateId2,
         created_at: now,
         updated_at: now,
@@ -108,14 +108,14 @@ describe('Certificate class method tests', () => {
       await activeStorage.insertCertificate(certificateData2)
 
       // Create Certificate entities with mismatched data
-      const entity1 = new Certificate(certificateData1)
-      const entity2 = new Certificate(certificateData2)
+      const entity1 = new EntityCertificate(certificateData1)
+      const entity2 = new EntityCertificate(certificateData2)
 
       // Validate equals returns false for mismatched entities
       expect(entity1.equals(entity2.toApi())).toBe(false)
 
       // Test each mismatched field individually
-      const mismatchedEntities: Partial<table.Certificate>[] = [
+      const mismatchedEntities: Partial<table.TableCertificate>[] = [
         { type: 'differentType' },
         { subject: 'differentSubject' },
         { serialNumber: 'differentSerialNumber' },
@@ -126,7 +126,7 @@ describe('Certificate class method tests', () => {
       ]
 
       for (const mismatch of mismatchedEntities) {
-        const mismatchedEntity = new Certificate({
+        const mismatchedEntity = new EntityCertificate({
           ...certificateData1,
           ...mismatch
         })
@@ -140,7 +140,7 @@ describe('Certificate class method tests', () => {
       // Insert a valid Certificate to satisfy foreign key constraints
       const now = new Date()
       const certificateId = 600
-      const certificateData: table.Certificate = {
+      const certificateData: table.TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -161,10 +161,10 @@ describe('Certificate class method tests', () => {
       await activeStorage.insertCertificate(certificateData)
 
       // Create a Certificate entity from the initial data
-      const entity = new Certificate(certificateData)
+      const entity = new EntityCertificate(certificateData)
 
       // Simulate the `ei` argument with a later `updated_at`
-      const updatedData: table.Certificate = {
+      const updatedData: table.TableCertificate = {
         ...certificateData,
         updated_at: new Date(now.getTime() + 1000), // Later timestamp
         type: 'updatedType',
@@ -293,7 +293,7 @@ describe('Certificate class method tests', () => {
       // Insert a valid Certificate to satisfy foreign key constraints
       const now = new Date()
       const certificateId = 601
-      const certificateData: table.Certificate = {
+      const certificateData: table.TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -314,10 +314,10 @@ describe('Certificate class method tests', () => {
       await activeStorage.insertCertificate(certificateData)
 
       // Create a Certificate entity from the initial data
-      const entity = new Certificate(certificateData)
+      const entity = new EntityCertificate(certificateData)
 
       // Simulate the `ei` argument with the same or earlier `updated_at`
-      const sameUpdatedData: table.Certificate = {
+      const sameUpdatedData: table.TableCertificate = {
         ...certificateData,
         updated_at: now, // Same timestamp
         type: 'unchangedType',
@@ -456,7 +456,7 @@ describe('Certificate class method tests', () => {
       const now = new Date()
 
       // Initial test data
-      const initialData: table.Certificate = {
+      const initialData: table.TableCertificate = {
         certificateId: 701,
         created_at: now,
         updated_at: now,
@@ -472,7 +472,7 @@ describe('Certificate class method tests', () => {
       }
 
       // Create the Certificate entity
-      const entity = new Certificate(initialData)
+      const entity = new EntityCertificate(initialData)
 
       // Validate getters
       expect(entity.certificateId).toBe(initialData.certificateId)

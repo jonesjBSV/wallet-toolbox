@@ -4,7 +4,7 @@ import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { OutputTagMap } from '../../../../../src/storage/schema/entities/OutputTagMap'
+import { EntityOutputTagMap } from '../../../../../src/storage/schema/entities/OutputTagMap'
 
 describe('OutputTagMap class method tests', () => {
   jest.setTimeout(99999999)
@@ -33,7 +33,7 @@ describe('OutputTagMap class method tests', () => {
 
   test('0_OutputTagMap getters and setters', async () => {
     const now = new Date()
-    const initialData: table.OutputTagMap = {
+    const initialData: table.TableOutputTagMap = {
       created_at: now,
       updated_at: now,
       outputId: 1,
@@ -41,7 +41,7 @@ describe('OutputTagMap class method tests', () => {
       isDeleted: false
     }
 
-    const outputTagMap = new OutputTagMap(initialData)
+    const outputTagMap = new EntityOutputTagMap(initialData)
 
     // Test getters
     expect(outputTagMap.outputTagId).toBe(2)
@@ -75,7 +75,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert matching OutputTagMap records into both databases
-    const outputTagMapData: table.OutputTagMap = {
+    const outputTagMapData: table.TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 1,
@@ -87,8 +87,8 @@ describe('OutputTagMap class method tests', () => {
     await ctx2.activeStorage.insertOutputTagMap(outputTagMapData)
 
     // Create entities from the records
-    const entity1 = new OutputTagMap(outputTagMapData)
-    const entity2 = new OutputTagMap(outputTagMapData)
+    const entity1 = new EntityOutputTagMap(outputTagMapData)
+    const entity2 = new EntityOutputTagMap(outputTagMapData)
 
     // Create a sync map that maps IDs correctly
     const syncMap: entity.SyncMap = {
@@ -175,7 +175,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert mismatched OutputTagMap records into both databases
-    const outputTagMapData1: table.OutputTagMap = {
+    const outputTagMapData1: table.TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 1,
@@ -183,7 +183,7 @@ describe('OutputTagMap class method tests', () => {
       isDeleted: false
     }
 
-    const outputTagMapData2: table.OutputTagMap = {
+    const outputTagMapData2: table.TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 1, // Mismatched outputId
@@ -195,8 +195,8 @@ describe('OutputTagMap class method tests', () => {
     await ctx2.activeStorage.insertOutputTagMap(outputTagMapData2)
 
     // Create entities from the records
-    const entity1 = new OutputTagMap(outputTagMapData1)
-    const entity2 = new OutputTagMap(outputTagMapData2)
+    const entity1 = new EntityOutputTagMap(outputTagMapData1)
+    const entity2 = new EntityOutputTagMap(outputTagMapData2)
 
     // Create a sync map that maps IDs correctly
     const syncMap: entity.SyncMap = {
@@ -285,7 +285,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTagMap record with valid foreign key IDs
-    const initialData: table.OutputTagMap = {
+    const initialData: table.TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 2,
@@ -295,10 +295,10 @@ describe('OutputTagMap class method tests', () => {
     await ctx.activeStorage.insertOutputTagMap(initialData)
 
     // Create an OutputTagMap entity from the initial data
-    const entity = new OutputTagMap(initialData)
+    const entity = new EntityOutputTagMap(initialData)
 
     // Create a new record to simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.OutputTagMap = {
+    const updatedData: table.TableOutputTagMap = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       isDeleted: true // Simulate a change in `isDeleted`
@@ -411,7 +411,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTagMap record
-    const initialData: table.OutputTagMap = {
+    const initialData: table.TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 2,
@@ -421,10 +421,10 @@ describe('OutputTagMap class method tests', () => {
     await ctx.activeStorage.insertOutputTagMap(initialData)
 
     // Create an OutputTagMap entity from the initial data
-    const entity = new OutputTagMap(initialData)
+    const entity = new EntityOutputTagMap(initialData)
 
     // Create a new record to simulate the `ei` argument with an earlier `updated_at`
-    const earlierData: table.OutputTagMap = {
+    const earlierData: table.TableOutputTagMap = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       isDeleted: true // Simulate a change in `isDeleted`

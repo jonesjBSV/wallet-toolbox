@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface ProvenTxReq extends ProvenTxReqDynamics {
+export interface TableProvenTxReq extends ProvenTxReqDynamics {
   created_at: Date
   updated_at: Date
   provenTxReqId: number

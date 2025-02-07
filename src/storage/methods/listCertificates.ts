@@ -13,7 +13,7 @@ export async function listCertificates(
 ): Promise<ListCertificatesResult> {
   const paged: sdk.Paged = { limit: vargs.limit, offset: vargs.offset }
 
-  const partial: Partial<table.Certificate> = {
+  const partial: Partial<table.TableCertificate> = {
     userId: auth.userId,
     isDeleted: false
   }

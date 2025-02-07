@@ -1,4 +1,4 @@
-import { User } from '../../../../../src/storage/schema/entities/User'
+import { EntityUser } from '../../../../../src/storage/schema/entities/User'
 import { entity, table, sdk } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
@@ -34,7 +34,7 @@ describe('User class method tests', () => {
 
   // Test: Default constructor behavior
   test('1_creates_user_with_default_values', () => {
-    const user = new User()
+    const user = new EntityUser()
 
     // Default values
     expect(user.userId).toBe(0)
@@ -47,13 +47,13 @@ describe('User class method tests', () => {
   // Test: Constructor with provided API object
   test('2_creates_user_with_provided_api_object', () => {
     const now = new Date()
-    const apiObject: table.User = {
+    const apiObject: table.TableUser = {
       userId: 42,
       created_at: now,
       updated_at: now,
       identityKey: 'testIdentityKey'
     }
-    const user = new User(apiObject)
+    const user = new EntityUser(apiObject)
 
     // Verify all properties match the API object
     expect(user.userId).toBe(42)
@@ -64,7 +64,7 @@ describe('User class method tests', () => {
 
   // Test: Getters and setters behavior
   test('3_getters_and_setters_work_correctly', () => {
-    const user = new User()
+    const user = new EntityUser()
 
     // Test setting values
     const now = new Date()
@@ -87,7 +87,7 @@ describe('User class method tests', () => {
     for (const ctx1 of ctxs) {
       for (const ctx2 of ctxs2) {
         // Insert the first user into the first database
-        const user1 = new User({
+        const user1 = new EntityUser({
           userId: 2,
           identityKey: 'key1',
           created_at: new Date('2023-01-01'),
@@ -96,7 +96,7 @@ describe('User class method tests', () => {
         await ctx1.activeStorage.insertUser(user1.toApi())
 
         // Insert a matching user into the second database
-        const user2 = new User({
+        const user2 = new EntityUser({
           userId: 3, // Different ID
           identityKey: 'key1', // Same key
           created_at: new Date('2023-01-01'),
@@ -191,7 +191,7 @@ describe('User class method tests', () => {
     for (const ctx1 of ctxs) {
       for (const ctx2 of ctxs2) {
         // Insert the first user into the first database
-        const user1 = new User({
+        const user1 = new EntityUser({
           userId: 4,
           identityKey: 'key2',
           created_at: new Date('2023-01-01'),
@@ -200,7 +200,7 @@ describe('User class method tests', () => {
         await ctx1.activeStorage.insertUser(user1.toApi())
 
         // Insert a user with a different key into the second database
-        const user2 = new User({
+        const user2 = new EntityUser({
           userId: 5, // Different ID
           identityKey: 'key3', // Different key
           created_at: new Date('2023-01-01'),
@@ -296,12 +296,12 @@ describe('User class method tests', () => {
     const pastDate = new Date(now.getTime() - 1000000)
 
     // Provide incomplete API object
-    const partialApiObject: Partial<table.User> = {
+    const partialApiObject: Partial<table.TableUser> = {
       userId: 123,
       created_at: pastDate
     }
 
-    const user = new User(partialApiObject as table.User)
+    const user = new EntityUser(partialApiObject as table.TableUser)
 
     // Default values should fill in missing fields
     expect(user.userId).toBe(123)
@@ -316,13 +316,13 @@ describe('User class method tests', () => {
     const largeUserId = Number.MAX_SAFE_INTEGER
     const longIdentityKey = 'x'.repeat(1000)
 
-    const apiObject: table.User = {
+    const apiObject: table.TableUser = {
       userId: largeUserId,
       created_at: now,
       updated_at: now,
       identityKey: longIdentityKey
     }
-    const user = new User(apiObject)
+    const user = new EntityUser(apiObject)
 
     expect(user.userId).toBe(largeUserId)
     expect(user.identityKey).toBe(longIdentityKey)
@@ -330,8 +330,8 @@ describe('User class method tests', () => {
 
   // Test: Handles empty API object
   test('10_handles_empty_api_object', () => {
-    const emptyApiObject: table.User = {} as table.User
-    const user = new User(emptyApiObject)
+    const emptyApiObject: table.TableUser = {} as table.TableUser
+    const user = new EntityUser(emptyApiObject)
 
     // Default values should be applied but constructor does not set default values for empty object
     expect(user.userId).toBeUndefined()
@@ -342,7 +342,7 @@ describe('User class method tests', () => {
 
   // Test: `id` getter and setter
   test('11_id_getter_and_setter_work_correctly', () => {
-    const user = new User()
+    const user = new EntityUser()
 
     user.id = 123 // Test setter
     expect(user.id).toBe(123) // Test getter
@@ -350,21 +350,21 @@ describe('User class method tests', () => {
 
   // Test: `entityName` getter
   test('12_entityName_returns_User', () => {
-    const user = new User()
+    const user = new EntityUser()
 
     expect(user.entityName).toBe('User')
   })
 
   // Test: `entityTable` getter
   test('13_entityTable_returns_users', () => {
-    const user = new User()
+    const user = new EntityUser()
 
     expect(user.entityTable).toBe('users')
   })
 
   // Test: `mergeExisting` updates user when `ei.updated_at` is newer
   test('14_mergeExisting_updates_user_when_ei_updated_at_is_newer', async () => {
-    const user = new User({
+    const user = new EntityUser({
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-01'),
@@ -372,7 +372,7 @@ describe('User class method tests', () => {
       activeStorage: 'oldStorage'
     })
 
-    const updatedEi: table.User = {
+    const updatedEi: table.TableUser = {
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-02-01'), // Newer `updated_at`
@@ -382,7 +382,7 @@ describe('User class method tests', () => {
 
     const result = await user.mergeExisting(
       {
-        updateUser: async (id: number, data: table.User) => {
+        updateUser: async (id: number, data: table.TableUser) => {
           expect(id).toBe(1)
           expect(data.activeStorage).toBe('newStorage')
           expect(data.updated_at).toBeInstanceOf(Date)
@@ -399,7 +399,7 @@ describe('User class method tests', () => {
 
   // Test: `mergeExisting` does not update user when `ei.updated_at` is older
   test('15_mergeExisting_does_not_update_user_when_ei_updated_at_is_older', async () => {
-    const user = new User({
+    const user = new EntityUser({
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-02-01'),
@@ -407,7 +407,7 @@ describe('User class method tests', () => {
       activeStorage: 'oldStorage'
     })
 
-    const olderEi: table.User = {
+    const olderEi: table.TableUser = {
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-01'), // Older `updated_at`
@@ -432,7 +432,7 @@ describe('User class method tests', () => {
 
   // Test: `mergeExisting` updates user and uses `trx` when provided
   test('16_mergeExisting_updates_user_with_trx', async () => {
-    const user = new User({
+    const user = new EntityUser({
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-01'),
@@ -440,7 +440,7 @@ describe('User class method tests', () => {
       activeStorage: 'oldStorage'
     })
 
-    const updatedEi: table.User = {
+    const updatedEi: table.TableUser = {
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-02-01'), // Newer `updated_at`
@@ -452,7 +452,7 @@ describe('User class method tests', () => {
 
     const result = await user.mergeExisting(
       {
-        updateUser: async (id: number, data: table.User, trx: any) => {
+        updateUser: async (id: number, data: table.TableUser, trx: any) => {
           expect(id).toBe(1)
           expect(data.activeStorage).toBe('newStorage')
           expect(data.updated_at).toBeInstanceOf(Date)
@@ -471,7 +471,7 @@ describe('User class method tests', () => {
 
   // Test: `mergeNew` always throws an error
   test('17_mergeNew_always_throws_error', async () => {
-    const user = new User()
+    const user = new EntityUser()
     const storage = {} // Placeholder for `storage`, not used in this case.
     const userId = 123 // Example userId
     const syncMap = {} // Placeholder for `syncMap`, not used in this case.

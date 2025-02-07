@@ -10,8 +10,8 @@ import {
 } from '../../../index.client'
 import { EntityBase } from '.'
 
-export class Certificate extends EntityBase<table.Certificate> {
-  constructor(api?: table.Certificate) {
+export class EntityCertificate extends EntityBase<table.TableCertificate> {
+  constructor(api?: table.TableCertificate) {
     const now = new Date()
     super(
       api || {
@@ -124,7 +124,7 @@ export class Certificate extends EntityBase<table.Certificate> {
     return 'certificates'
   }
 
-  override equals(ei: table.Certificate, syncMap?: entity.SyncMap): boolean {
+  override equals(ei: table.TableCertificate, syncMap?: entity.SyncMap): boolean {
     if (
       this.type !== ei.type ||
       this.subject !== ei.subject ||
@@ -142,10 +142,10 @@ export class Certificate extends EntityBase<table.Certificate> {
   static async mergeFind(
     storage: entity.EntityStorage,
     userId: number,
-    ei: table.Certificate,
+    ei: table.TableCertificate,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.Certificate; eiId: number }> {
+  ): Promise<{ found: boolean; eo: entity.EntityCertificate; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findCertificates({
         partial: {
@@ -158,7 +158,7 @@ export class Certificate extends EntityBase<table.Certificate> {
     )
     return {
       found: !!ef,
-      eo: new entity.Certificate(ef || { ...ei }),
+      eo: new entity.EntityCertificate(ef || { ...ei }),
       eiId: verifyId(ei.certificateId)
     }
   }
@@ -177,7 +177,7 @@ export class Certificate extends EntityBase<table.Certificate> {
   override async mergeExisting(
     storage: entity.EntityStorage,
     since: Date | undefined,
-    ei: table.Certificate,
+    ei: table.TableCertificate,
     syncMap: entity.SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {

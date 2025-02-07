@@ -1,7 +1,7 @@
 import { Base64String } from '@bsv/sdk'
 import { sdk } from '../../../index.client'
 
-export interface CertificateField extends sdk.EntityTimeStamp {
+export interface TableCertificateField extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   userId: number

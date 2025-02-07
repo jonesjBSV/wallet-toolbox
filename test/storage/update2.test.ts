@@ -18,21 +18,21 @@ import {
   verifyValues
 } from '../utils/TestUtilsWalletStorage'
 import {
-  ProvenTx,
-  ProvenTxReq,
-  User,
-  Certificate,
-  CertificateField,
-  OutputBasket,
-  Transaction,
-  Commission,
-  Output,
-  OutputTag,
-  OutputTagMap,
-  TxLabel,
-  TxLabelMap,
-  MonitorEvent,
-  SyncState
+  TableProvenTx,
+  TableProvenTxReq,
+  TableUser,
+  TableCertificate,
+  TableCertificateField,
+  TableOutputBasket,
+  TableTransaction,
+  TableCommission,
+  TableOutput,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableMonitorEvent,
+  TableSyncState
 } from '../../src/storage/schema/tables'
 
 setLogging(false)
@@ -120,7 +120,7 @@ describe('update2 tests', () => {
       const records = await storage.findProvenTxs({ partial: {} })
       for (const record of records) {
         try {
-          const testValues: ProvenTx = {
+          const testValues: TableProvenTx = {
             provenTxId: record.provenTxId,
             txid: 'mockTxid',
             created_at: new Date('2024-12-30T23:00:00Z'),
@@ -280,7 +280,7 @@ describe('update2 tests', () => {
   test('4_update ProvenTx setting individual values', async () => {
     await createDB('ProvenTx4')
     for (const { storage } of setups) {
-      const initialRecord: ProvenTx = {
+      const initialRecord: TableProvenTx = {
         provenTxId: 3,
         txid: 'mockTxid',
         created_at: new Date(),
@@ -336,7 +336,7 @@ describe('update2 tests', () => {
       const records = await storage.findProvenTxReqs({ partial: {} })
       for (const record of records) {
         try {
-          const testValues: ProvenTxReq = {
+          const testValues: TableProvenTxReq = {
             provenTxReqId: record.provenTxReqId,
             provenTxId: 1,
             batch: `batch-001`,
@@ -468,7 +468,7 @@ describe('update2 tests', () => {
     await createDB('ProvenTxReq7')
     for (const { storage } of setups) {
       const referenceTime = new Date()
-      const initialRecord: ProvenTxReq = {
+      const initialRecord: TableProvenTxReq = {
         provenTxReqId: 3,
         provenTxId: 1,
         batch: 'batch',
@@ -484,7 +484,7 @@ describe('update2 tests', () => {
         rawTx: []
       }
       await storage.insertProvenTxReq(initialRecord)
-      const secondRecord: ProvenTxReq = {
+      const secondRecord: TableProvenTxReq = {
         ...initialRecord,
         provenTxReqId: 4,
         txid: 'mockTxid2'
@@ -537,7 +537,7 @@ describe('update2 tests', () => {
       const records = await storage.findUsers({ partial: {} })
       for (const record of records) {
         try {
-          const testValues: User = {
+          const testValues: TableUser = {
             userId: record.userId,
             identityKey: `mockUpdatedIdentityKey-${record[primaryKey]}`,
             created_at: new Date('2024-12-30T23:00:00Z'),
@@ -694,7 +694,7 @@ describe('update2 tests', () => {
   test('12_update User table setting individual values', async () => {
     await createDB('User12')
     for (const { storage } of setups) {
-      const initialRecord: table.User = {
+      const initialRecord: table.TableUser = {
         userId: 3,
         identityKey: '',
         created_at: new Date(),
@@ -780,7 +780,7 @@ describe('update2 tests', () => {
       const records = await storage.findCertificates({ partial: {} })
       for (const record of records) {
         try {
-          const testValues: Certificate = {
+          const testValues: TableCertificate = {
             certificateId: record.certificateId,
             userId: 1,
             certifier: `mockCertifier${record.certificateId}`,

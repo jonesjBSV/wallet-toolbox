@@ -17,35 +17,35 @@ export interface StorageSyncReader {
 
   getSettings(): table.Settings
 
-  findUserByIdentityKey(key: string): Promise<table.User | undefined>
+  findUserByIdentityKey(key: string): Promise<table.TableUser | undefined>
 
-  findSyncStates(args: sdk.FindSyncStatesArgs): Promise<table.SyncState[]>
+  findSyncStates(args: sdk.FindSyncStatesArgs): Promise<table.TableSyncState[]>
 
   findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.CertificateField[]>
-  findCertificates(args: sdk.FindCertificatesArgs): Promise<table.Certificate[]>
-  findCommissions(args: sdk.FindCommissionsArgs): Promise<table.Commission[]>
+  ): Promise<table.TableCertificateField[]>
+  findCertificates(args: sdk.FindCertificatesArgs): Promise<table.TableCertificate[]>
+  findCommissions(args: sdk.FindCommissionsArgs): Promise<table.TableCommission[]>
   findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]>
-  findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]>
-  findOutputTags(args: sdk.FindOutputTagsArgs): Promise<table.OutputTag[]>
-  findTransactions(args: sdk.FindTransactionsArgs): Promise<table.Transaction[]>
-  findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TxLabel[]>
+  ): Promise<table.TableOutputBasket[]>
+  findOutputs(args: sdk.FindOutputsArgs): Promise<table.TableOutput[]>
+  findOutputTags(args: sdk.FindOutputTagsArgs): Promise<table.TableOutputTag[]>
+  findTransactions(args: sdk.FindTransactionsArgs): Promise<table.TableTransaction[]>
+  findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TableTxLabel[]>
 
   getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTx[]>
+  ): Promise<table.TableProvenTx[]>
   getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTxReq[]>
+  ): Promise<table.TableProvenTxReq[]>
   getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TxLabelMap[]>
+  ): Promise<table.TableTxLabelMap[]>
   getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.OutputTagMap[]>
+  ): Promise<table.TableOutputTagMap[]>
 
   getSyncChunk(args: RequestSyncChunkArgs): Promise<SyncChunk>
 }
@@ -131,19 +131,19 @@ export interface SyncChunk {
   toStorageIdentityKey: string
   userIdentityKey: string
 
-  user?: table.User
-  provenTxs?: table.ProvenTx[]
-  provenTxReqs?: table.ProvenTxReq[]
-  outputBaskets?: table.OutputBasket[]
-  txLabels?: table.TxLabel[]
-  outputTags?: table.OutputTag[]
-  transactions?: table.Transaction[]
-  txLabelMaps?: table.TxLabelMap[]
-  commissions?: table.Commission[]
-  outputs?: table.Output[]
-  outputTagMaps?: table.OutputTagMap[]
-  certificates?: table.Certificate[]
-  certificateFields?: table.CertificateField[]
+  user?: table.TableUser
+  provenTxs?: table.TableProvenTx[]
+  provenTxReqs?: table.TableProvenTxReq[]
+  outputBaskets?: table.TableOutputBasket[]
+  txLabels?: table.TableTxLabel[]
+  outputTags?: table.TableOutputTag[]
+  transactions?: table.TableTransaction[]
+  txLabelMaps?: table.TableTxLabelMap[]
+  commissions?: table.TableCommission[]
+  outputs?: table.TableOutput[]
+  outputTagMaps?: table.TableOutputTagMap[]
+  certificates?: table.TableCertificate[]
+  certificateFields?: table.TableCertificateField[]
 }
 
 export interface ProcessSyncChunkResult {
