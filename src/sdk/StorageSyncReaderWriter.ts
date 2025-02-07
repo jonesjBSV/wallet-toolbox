@@ -1,4 +1,21 @@
-import { sdk, table } from '../index.client'
+import {
+  sdk,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableProvenTxReqDynamics,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser
+} from '../index.client'
 
 /**
  * This is the minimal interface required for a WalletStorageProvider to import and export data to another provider.
@@ -18,97 +35,94 @@ export interface StorageSyncReaderWriter extends sdk.StorageSyncReader {
 
   findOutputTagMaps(
     args: sdk.FindOutputTagMapsArgs
-  ): Promise<table.TableOutputTagMap[]>
-  findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<table.TableProvenTxReq[]>
-  findProvenTxs(args: sdk.FindProvenTxsArgs): Promise<table.TableProvenTx[]>
-  findTxLabelMaps(args: sdk.FindTxLabelMapsArgs): Promise<table.TableTxLabelMap[]>
+  ): Promise<TableOutputTagMap[]>
+  findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]>
+  findProvenTxs(args: sdk.FindProvenTxsArgs): Promise<TableProvenTx[]>
+  findTxLabelMaps(args: sdk.FindTxLabelMapsArgs): Promise<TableTxLabelMap[]>
 
   countOutputTagMaps(args: sdk.FindOutputTagMapsArgs): Promise<number>
   countProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<number>
   countProvenTxs(args: sdk.FindProvenTxsArgs): Promise<number>
   countTxLabelMaps(args: sdk.FindTxLabelMapsArgs): Promise<number>
 
-  insertProvenTx(tx: table.TableProvenTx, trx?: sdk.TrxToken): Promise<number>
-  insertProvenTxReq(tx: table.TableProvenTxReq, trx?: sdk.TrxToken): Promise<number>
-  insertUser(user: table.TableUser, trx?: sdk.TrxToken): Promise<number>
+  insertProvenTx(tx: TableProvenTx, trx?: sdk.TrxToken): Promise<number>
+  insertProvenTxReq(tx: TableProvenTxReq, trx?: sdk.TrxToken): Promise<number>
+  insertUser(user: TableUser, trx?: sdk.TrxToken): Promise<number>
   insertCertificate(
-    certificate: table.TableCertificate,
+    certificate: TableCertificate,
     trx?: sdk.TrxToken
   ): Promise<number>
   insertCertificateField(
-    certificateField: table.TableCertificateField,
+    certificateField: TableCertificateField,
     trx?: sdk.TrxToken
   ): Promise<void>
   insertOutputBasket(
-    basket: table.TableOutputBasket,
+    basket: TableOutputBasket,
     trx?: sdk.TrxToken
   ): Promise<number>
-  insertTransaction(tx: table.TableTransaction, trx?: sdk.TrxToken): Promise<number>
+  insertTransaction(tx: TableTransaction, trx?: sdk.TrxToken): Promise<number>
   insertCommission(
-    commission: table.TableCommission,
+    commission: TableCommission,
     trx?: sdk.TrxToken
   ): Promise<number>
-  insertOutput(output: table.TableOutput, trx?: sdk.TrxToken): Promise<number>
-  insertOutputTag(tag: table.TableOutputTag, trx?: sdk.TrxToken): Promise<number>
+  insertOutput(output: TableOutput, trx?: sdk.TrxToken): Promise<number>
+  insertOutputTag(tag: TableOutputTag, trx?: sdk.TrxToken): Promise<number>
   insertOutputTagMap(
-    tagMap: table.TableOutputTagMap,
+    tagMap: TableOutputTagMap,
     trx?: sdk.TrxToken
   ): Promise<void>
-  insertTxLabel(label: table.TableTxLabel, trx?: sdk.TrxToken): Promise<number>
-  insertTxLabelMap(
-    labelMap: table.TableTxLabelMap,
-    trx?: sdk.TrxToken
-  ): Promise<void>
+  insertTxLabel(label: TableTxLabel, trx?: sdk.TrxToken): Promise<number>
+  insertTxLabelMap(labelMap: TableTxLabelMap, trx?: sdk.TrxToken): Promise<void>
   insertSyncState(
-    syncState: table.TableSyncState,
+    syncState: TableSyncState,
     trx?: sdk.TrxToken
   ): Promise<number>
 
   updateCertificateField(
     certificateId: number,
     fieldName: string,
-    update: Partial<table.TableCertificateField>,
+    update: Partial<TableCertificateField>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateCertificate(
     id: number,
-    update: Partial<table.TableCertificate>,
+    update: Partial<TableCertificate>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateCommission(
     id: number,
-    update: Partial<table.TableCommission>,
+    update: Partial<TableCommission>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateOutputBasket(
     id: number,
-    update: Partial<table.TableOutputBasket>,
+    update: Partial<TableOutputBasket>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateOutput(
     id: number,
-    update: Partial<table.TableOutput>,
+    update: Partial<TableOutput>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateOutputTagMap(
     outputId: number,
     tagId: number,
-    update: Partial<table.TableOutputTagMap>,
+    update: Partial<TableOutputTagMap>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateOutputTag(
     id: number,
-    update: Partial<table.TableOutputTag>,
+    update: Partial<TableOutputTag>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateProvenTxReq(
     id: number | number[],
-    update: Partial<table.TableProvenTxReq>,
+    update: Partial<TableProvenTxReq>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateProvenTxReqDynamics(
     id: number,
-    update: Partial<table.ProvenTxReqDynamics>,
+    update: Partial<TableProvenTxReqDynamics>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateProvenTxReqWithNewProvenTx(
@@ -116,17 +130,17 @@ export interface StorageSyncReaderWriter extends sdk.StorageSyncReader {
   ): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult>
   updateProvenTx(
     id: number,
-    update: Partial<table.TableProvenTx>,
+    update: Partial<TableProvenTx>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateSyncState(
     id: number,
-    update: Partial<table.TableSyncState>,
+    update: Partial<TableSyncState>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateTransaction(
     id: number | number[],
-    update: Partial<table.TableTransaction>,
+    update: Partial<TableTransaction>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateTransactionStatus(
@@ -143,115 +157,115 @@ export interface StorageSyncReaderWriter extends sdk.StorageSyncReader {
   updateTxLabelMap(
     transactionId: number,
     txLabelId: number,
-    update: Partial<table.TableTxLabelMap>,
+    update: Partial<TableTxLabelMap>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateTxLabel(
     id: number,
-    update: Partial<table.TableTxLabel>,
+    update: Partial<TableTxLabel>,
     trx?: sdk.TrxToken
   ): Promise<number>
   updateUser(
     id: number,
-    update: Partial<table.TableUser>,
+    update: Partial<TableUser>,
     trx?: sdk.TrxToken
   ): Promise<number>
 
   findCertificateById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableCertificate | undefined>
+  ): Promise<TableCertificate | undefined>
   findCommissionById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableCommission | undefined>
+  ): Promise<TableCommission | undefined>
   findOutputById(
     id: number,
     trx?: sdk.TrxToken,
     noScript?: boolean
-  ): Promise<table.TableOutput | undefined>
+  ): Promise<TableOutput | undefined>
   findOutputBasketById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableOutputBasket | undefined>
+  ): Promise<TableOutputBasket | undefined>
   findProvenTxById(
     id: number,
     trx?: sdk.TrxToken | undefined
-  ): Promise<table.TableProvenTx | undefined>
+  ): Promise<TableProvenTx | undefined>
   findProvenTxReqById(
     id: number,
     trx?: sdk.TrxToken | undefined
-  ): Promise<table.TableProvenTxReq | undefined>
+  ): Promise<TableProvenTxReq | undefined>
   findSyncStateById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableSyncState | undefined>
+  ): Promise<TableSyncState | undefined>
   findTransactionById(
     id: number,
     trx?: sdk.TrxToken,
     noRawTx?: boolean
-  ): Promise<table.TableTransaction | undefined>
+  ): Promise<TableTransaction | undefined>
   findTxLabelById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableTxLabel | undefined>
+  ): Promise<TableTxLabel | undefined>
   findOutputTagById(
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableOutputTag | undefined>
-  findUserById(id: number, trx?: sdk.TrxToken): Promise<table.TableUser | undefined>
+  ): Promise<TableOutputTag | undefined>
+  findUserById(id: number, trx?: sdk.TrxToken): Promise<TableUser | undefined>
 
   findOrInsertUser(
     identityKey: string,
     trx?: sdk.TrxToken
-  ): Promise<{ user: table.TableUser; isNew: boolean }>
+  ): Promise<{ user: TableUser; isNew: boolean }>
 
   findOrInsertTransaction(
-    newTx: table.TableTransaction,
+    newTx: TableTransaction,
     trx?: sdk.TrxToken
-  ): Promise<{ tx: table.TableTransaction; isNew: boolean }>
+  ): Promise<{ tx: TableTransaction; isNew: boolean }>
   findOrInsertOutputBasket(
     userId: number,
     name: string,
     trx?: sdk.TrxToken
-  ): Promise<table.TableOutputBasket>
+  ): Promise<TableOutputBasket>
   findOrInsertTxLabel(
     userId: number,
     label: string,
     trx?: sdk.TrxToken
-  ): Promise<table.TableTxLabel>
+  ): Promise<TableTxLabel>
   findOrInsertTxLabelMap(
     transactionId: number,
     txLabelId: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableTxLabelMap>
+  ): Promise<TableTxLabelMap>
   findOrInsertOutputTag(
     userId: number,
     tag: string,
     trx?: sdk.TrxToken
-  ): Promise<table.TableOutputTag>
+  ): Promise<TableOutputTag>
   findOrInsertOutputTagMap(
     outputId: number,
     outputTagId: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TableOutputTagMap>
+  ): Promise<TableOutputTagMap>
   findOrInsertSyncStateAuth(
     auth: sdk.AuthId,
     storageIdentityKey: string,
     storageName: string
-  ): Promise<{ syncState: table.TableSyncState; isNew: boolean }>
+  ): Promise<{ syncState: TableSyncState; isNew: boolean }>
   findOrInsertProvenTxReq(
-    newReq: table.TableProvenTxReq,
+    newReq: TableProvenTxReq,
     trx?: sdk.TrxToken
-  ): Promise<{ req: table.TableProvenTxReq; isNew: boolean }>
+  ): Promise<{ req: TableProvenTxReq; isNew: boolean }>
   findOrInsertProvenTx(
-    newProven: table.TableProvenTx,
+    newProven: TableProvenTx,
     trx?: sdk.TrxToken
-  ): Promise<{ proven: table.TableProvenTx; isNew: boolean }>
-  findUsers(args: sdk.FindUsersArgs): Promise<table.TableUser[]>
+  ): Promise<{ proven: TableProvenTx; isNew: boolean }>
+  findUsers(args: sdk.FindUsersArgs): Promise<TableUser[]>
 
   tagOutput(
-    partial: Partial<table.TableOutput>,
+    partial: Partial<TableOutput>,
     tag: string,
     trx?: sdk.TrxToken
   ): Promise<void>

@@ -30,7 +30,7 @@ export interface TableOutput extends sdk.EntityTimeStamp {
   lockingScript?: number[]
 }
 
-export interface OutputX extends TableOutput {
+export interface TableOutputX extends TableOutput {
   basket?: TableOutputBasket
   tags?: TableOutputTag[]
 }

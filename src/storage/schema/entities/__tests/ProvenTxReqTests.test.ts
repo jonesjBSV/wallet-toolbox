@@ -1,5 +1,10 @@
 import * as bsv from '@bsv/sdk'
-import { entity, table, sdk } from '../../../../../src'
+import {
+  createSyncMap,
+  sdk,
+  SyncMap,
+  TableProvenTxReq
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -203,31 +208,8 @@ describe('ProvenTxReq class method tests', () => {
     })
     await ctx2.activeStorage.insertProvenTxReq(provenTxReq2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: { 406: 405 },
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: { idMap: {}, entityName: 'Transaction', count: 0 },
-      outputBasket: { idMap: {}, entityName: 'OutputBasket', count: 0 },
-      txLabel: { idMap: {}, entityName: 'TxLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'TxLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'Output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'OutputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'OutputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'Certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'CertificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'Commission', count: 0 }
-    }
+    const syncMap = createSyncMap()
+    syncMap.provenTxReq.idMap = { 406: 405 }
 
     // Assert entities are equal
     expect(provenTxReq1.equals(provenTxReq2.toApi(), syncMap)).toBe(true)
@@ -274,31 +256,8 @@ describe('ProvenTxReq class method tests', () => {
     })
     await ctx2.activeStorage.insertProvenTxReq(provenTxReq2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: { 406: 405 },
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: { idMap: {}, entityName: 'Transaction', count: 0 },
-      outputBasket: { idMap: {}, entityName: 'OutputBasket', count: 0 },
-      txLabel: { idMap: {}, entityName: 'TxLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'TxLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'Output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'OutputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'OutputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'Certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'CertificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'Commission', count: 0 }
-    }
+    const syncMap = createSyncMap()
+    syncMap.provenTxReq.idMap = { 406: 405 }
 
     // Assert entities are not equal
     expect(provenTxReq1.equals(provenTxReq2.toApi(), syncMap)).toBe(false)
@@ -319,22 +278,10 @@ describe('ProvenTxReq class method tests', () => {
       notified: false
     })
 
-    const syncMap: entity.SyncMap = {
-      provenTx: { idMap: {}, entityName: 'provenTx', count: 0 },
-      transaction: { idMap: { 100: 200 }, entityName: 'transaction', count: 1 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = { 100: 200 }
 
-    const inputProvenTxReq: table.TableProvenTxReq = {
+    const inputProvenTxReq: TableProvenTxReq = {
       provenTxReqId: 0,
       created_at: new Date(),
       updated_at: new Date(),
@@ -385,7 +332,7 @@ describe('ProvenTxReq class method tests', () => {
     expect(provenTxReq.notified).toBe(true)
     expect(provenTxReq.batch).toBe('test-batch')
     expect(provenTxReq.id).toBe(123)
-    expect(provenTxReq.entityName).toBe('ProvenTxReq')
+    expect(provenTxReq.entityName).toBe('provenTxReq')
     expect(provenTxReq.entityTable).toBe('proven_tx_reqs')
 
     // Verify setters
@@ -569,7 +516,7 @@ describe('ProvenTxReq class method tests', () => {
     ]
 
     for (const { status, expected } of testCases) {
-      expect(entity.EntityProvenTxReq.isTerminalStatus(status)).toBe(expected)
+      expect(EntityProvenTxReq.isTerminalStatus(status)).toBe(expected)
     }
   })
 
@@ -577,7 +524,7 @@ describe('ProvenTxReq class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial ProvenTxReq into the database
-    const existingProvenTxReq = new entity.EntityProvenTxReq({
+    const existingProvenTxReq = new EntityProvenTxReq({
       provenTxReqId: 409,
       created_at: new Date('2025-01-01T00:00:00.000Z'),
       updated_at: new Date('2025-01-01T00:00:00.000Z'),
@@ -596,7 +543,7 @@ describe('ProvenTxReq class method tests', () => {
     await ctx.activeStorage.insertProvenTxReq(existingProvenTxReq.toApi())
 
     // Create the ProvenTxReq to be merged
-    const incomingProvenTxReq = new entity.EntityProvenTxReq({
+    const incomingProvenTxReq = new EntityProvenTxReq({
       provenTxReqId: 410, // Different ID, simulating another entity
       created_at: new Date('2025-01-02T00:00:00.000Z'),
       updated_at: new Date('2025-01-02T00:00:00.000Z'),
@@ -612,21 +559,8 @@ describe('ProvenTxReq class method tests', () => {
       batch: 'batch1'
     })
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      provenTx: { idMap: {}, entityName: 'provenTx', count: 0 },
-      transaction: { idMap: { 200: 100 }, entityName: 'transaction', count: 1 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = { 200: 100 }
 
     // Call mergeExisting
     const result = await existingProvenTxReq.mergeExisting(
@@ -645,7 +579,7 @@ describe('ProvenTxReq class method tests', () => {
     })
     expect(mergedProvenTxReqs.length).toBe(1)
 
-    const mergedProvenTxReq = new entity.EntityProvenTxReq(mergedProvenTxReqs[0])
+    const mergedProvenTxReq = new EntityProvenTxReq(mergedProvenTxReqs[0])
 
     // Ensure history.notes is initialized if undefined
     const mergedNotes = mergedProvenTxReq.history.notes || {}

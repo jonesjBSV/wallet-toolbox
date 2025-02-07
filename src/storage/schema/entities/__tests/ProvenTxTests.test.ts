@@ -1,5 +1,5 @@
 import * as bsv from '@bsv/sdk'
-import { entity, table, sdk } from '../../../../../src'
+import { createSyncMap, sdk, SyncMap } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -228,7 +228,7 @@ describe('ProvenTx class method tests', () => {
 
     // Validate overridden methods
     expect(provenTx.id).toBe(2)
-    expect(provenTx.entityName).toBe('ProvenTx')
+    expect(provenTx.entityName).toBe('provenTx')
     expect(provenTx.entityTable).toBe('proven_txs')
 
     // Update id via overridden setter
@@ -273,81 +273,8 @@ describe('ProvenTx class method tests', () => {
 
     await ctx2.activeStorage.insertProvenTx(provenTx2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      provenTx: {
-        idMap: { [provenTx1.provenTxId]: provenTx2.provenTxId },
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.provenTx.idMap = { [provenTx1.provenTxId]: provenTx2.provenTxId }
 
     // Verify the ProvenTx entities match
     expect(provenTx1.equals(provenTx2.toApi(), syncMap)).toBe(true)
@@ -474,80 +401,8 @@ describe('ProvenTx class method tests', () => {
       merkleRoot: 'merkle-root'
     })
 
-    const syncMap: entity.SyncMap = {
-      provenTx: {
-        idMap: { 108: 999 },
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.provenTx.idMap = { 108: 999 }
 
     expect(provenTx1.equals(provenTx2.toApi(), syncMap)).toBe(false)
   })
@@ -607,82 +462,11 @@ describe('ProvenTx class method tests', () => {
       merkleRoot: 'merkle-root-1'
     })
 
+    const mockSyncMap = createSyncMap()
+    mockSyncMap.provenTx.idMap = { [provenTx.provenTxId]: provenTx.provenTxId }
+
     // Create mock storage, syncMap, and trx token
     const mockStorage = ctx.activeStorage
-    const mockSyncMap: entity.SyncMap = {
-      provenTx: {
-        idMap: { [provenTx.provenTxId]: provenTx.provenTxId },
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
     const mockTrx: sdk.TrxToken = {}
 
     // Call the mergeExisting method

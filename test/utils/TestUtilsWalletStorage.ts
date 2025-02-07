@@ -27,14 +27,28 @@ import {
   StorageProvider,
   StorageKnex,
   StorageSyncReader,
-  table,
   verifyTruthy,
   Wallet,
   Monitor,
   Services,
   WalletStorageManager,
   verifyOne,
-  StorageClient
+  StorageClient,
+  TableOutputBasket,
+  TableOutput,
+  TableMonitorEvent,
+  TableProvenTxReq,
+  TableProvenTx,
+  TableCommission,
+  TableTransaction,
+  TableTxLabelMap,
+  TableTxLabel,
+  TableUser,
+  TableSyncState,
+  TableCertificate,
+  TableCertificateField,
+  TableOutputTagMap,
+  TableOutputTag
 } from '../../src/index.all'
 
 import { Knex, knex as makeKnex } from 'knex'
@@ -714,7 +728,7 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestProvenTx(storage: StorageProvider, txid?: string) {
     const now = new Date()
-    const ptx: table.TableProvenTx = {
+    const ptx: TableProvenTx = {
       created_at: now,
       updated_at: now,
       provenTxId: 0,
@@ -737,7 +751,7 @@ export abstract class TestUtilsWalletStorage {
     onlyRequired?: boolean
   ) {
     const now = new Date()
-    const ptxreq: table.TableProvenTxReq = {
+    const ptxreq: TableProvenTxReq = {
       // Required:
       created_at: now,
       updated_at: now,
@@ -760,7 +774,7 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestUser(storage: StorageProvider, identityKey?: string) {
     const now = new Date()
-    const e: table.TableUser = {
+    const e: TableUser = {
       created_at: now,
       updated_at: now,
       userId: 0,
@@ -770,10 +784,10 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestCertificate(storage: StorageProvider, u?: table.TableUser) {
+  static async insertTestCertificate(storage: StorageProvider, u?: TableUser) {
     const now = new Date()
     u ||= await _tu.insertTestUser(storage)
-    const e: table.TableCertificate = {
+    const e: TableCertificate = {
       created_at: now,
       updated_at: now,
       certificateId: 0,
@@ -793,12 +807,12 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestCertificateField(
     storage: StorageProvider,
-    c: table.TableCertificate,
+    c: TableCertificate,
     name: string,
     value: string
   ) {
     const now = new Date()
-    const e: table.TableCertificateField = {
+    const e: TableCertificateField = {
       created_at: now,
       updated_at: now,
       certificateId: c.certificateId,
@@ -813,18 +827,25 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestOutputBasket(
     storage: StorageProvider,
-    u?: table.TableUser | number,
-    partial?: Partial<table.TableOutputBasket>
+    u?: TableUser | number,
+    partial?: Partial<TableOutputBasket>
   ) {
     const now = new Date()
-    if (typeof u === 'number')
-      u = verifyOne(await storage.findUsers({ partial: { userId: u } }))
-    u ||= await _tu.insertTestUser(storage)
-    const e: table.TableOutputBasket = {
+    let user: TableUser
+    if (u === undefined) {
+      user = await _tu.insertTestUser(storage)
+    } else if (typeof u === 'number') {
+      user = verifyOne(
+        await storage.findUsers({ partial: { userId: u } })
+      ) as TableUser
+    } else {
+      user = u
+    }
+    const e: TableOutputBasket = {
       created_at: now,
       updated_at: now,
       basketId: 0,
-      userId: u.userId,
+      userId: user.userId,
       name: randomBytesHex(6),
       numberOfDesiredUTXOs: 42,
       minimumDesiredUTXOValue: 1642,
@@ -837,13 +858,13 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestTransaction(
     storage: StorageProvider,
-    u?: table.TableUser,
+    u?: TableUser,
     onlyRequired?: boolean,
-    partial?: Partial<table.TableTransaction>
+    partial?: Partial<TableTransaction>
   ) {
     const now = new Date()
     u ||= await _tu.insertTestUser(storage)
-    const e: table.TableTransaction = {
+    const e: TableTransaction = {
       // Required:
       created_at: now,
       updated_at: now,
@@ -868,15 +889,15 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestOutput(
     storage: StorageProvider,
-    t: table.TableTransaction,
+    t: TableTransaction,
     vout: number,
     satoshis: number,
-    basket?: table.TableOutputBasket,
+    basket?: TableOutputBasket,
     requiredOnly?: boolean,
-    partial?: Partial<table.TableOutput>
+    partial?: Partial<TableOutput>
   ) {
     const now = new Date()
-    const e: table.TableOutput = {
+    const e: TableOutput = {
       created_at: now,
       updated_at: now,
       outputId: 0,
@@ -909,11 +930,11 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestOutputTag(
     storage: StorageProvider,
-    u: table.TableUser,
-    partial?: Partial<table.TableOutputTag>
+    u: TableUser,
+    partial?: Partial<TableOutputTag>
   ) {
     const now = new Date()
-    const e: table.TableOutputTag = {
+    const e: TableOutputTag = {
       created_at: now,
       updated_at: now,
       outputTagId: 0,
@@ -928,11 +949,11 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestOutputTagMap(
     storage: StorageProvider,
-    o: table.TableOutput,
-    tag: table.TableOutputTag
+    o: TableOutput,
+    tag: TableOutputTag
   ) {
     const now = new Date()
-    const e: table.TableOutputTagMap = {
+    const e: TableOutputTagMap = {
       created_at: now,
       updated_at: now,
       outputTagId: tag.outputTagId,
@@ -945,11 +966,11 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestTxLabel(
     storage: StorageProvider,
-    u: table.TableUser,
-    partial?: Partial<table.TableTxLabel>
+    u: TableUser,
+    partial?: Partial<TableTxLabel>
   ) {
     const now = new Date()
-    const e: table.TableTxLabel = {
+    const e: TableTxLabel = {
       created_at: now,
       updated_at: now,
       txLabelId: 0,
@@ -964,12 +985,12 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestTxLabelMap(
     storage: StorageProvider,
-    tx: table.TableTransaction,
-    label: table.TableTxLabel,
-    partial?: Partial<table.TableTxLabelMap>
+    tx: TableTransaction,
+    label: TableTxLabel,
+    partial?: Partial<TableTxLabelMap>
   ) {
     const now = new Date()
-    const e: table.TableTxLabelMap = {
+    const e: TableTxLabelMap = {
       created_at: now,
       updated_at: now,
       txLabelId: label.txLabelId,
@@ -981,10 +1002,10 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestSyncState(storage: StorageProvider, u: table.TableUser) {
+  static async insertTestSyncState(storage: StorageProvider, u: TableUser) {
     const now = new Date()
     const settings = await storage.getSettings()
-    const e: table.TableSyncState = {
+    const e: TableSyncState = {
       created_at: now,
       updated_at: now,
       syncStateId: 0,
@@ -1002,7 +1023,7 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestMonitorEvent(storage: StorageProvider) {
     const now = new Date()
-    const e: table.TableMonitorEvent = {
+    const e: TableMonitorEvent = {
       created_at: now,
       updated_at: now,
       id: 0,
@@ -1014,10 +1035,10 @@ export abstract class TestUtilsWalletStorage {
 
   static async insertTestCommission(
     storage: StorageProvider,
-    t: table.TableTransaction
+    t: TableTransaction
   ) {
     const now = new Date()
-    const e: table.TableCommission = {
+    const e: TableCommission = {
       created_at: now,
       updated_at: now,
       commissionId: 0,
@@ -1381,45 +1402,45 @@ export abstract class TestUtilsWalletStorage {
 export abstract class _tu extends TestUtilsWalletStorage {}
 
 export interface TestSetup1 {
-  u1: table.TableUser
-  u1basket1: table.TableOutputBasket
-  u1basket2: table.TableOutputBasket
-  u1label1: table.TableTxLabel
-  u1label2: table.TableTxLabel
-  u1tag1: table.TableOutputTag
-  u1tag2: table.TableOutputTag
-  u1tx1: table.TableTransaction
-  u1comm1: table.TableCommission
-  u1tx1label1: table.TableTxLabelMap
-  u1tx1label2: table.TableTxLabelMap
-  u1tx1o0: table.TableOutput
-  u1o0tag1: table.TableOutputTagMap
-  u1o0tag2: table.TableOutputTagMap
-  u1tx1o1: table.TableOutput
-  u1o1tag1: table.TableOutputTagMap
-  u1cert1: table.TableCertificate
-  u1cert1field1: table.TableCertificateField
-  u1cert1field2: table.TableCertificateField
-  u1cert2: table.TableCertificate
-  u1cert2field1: table.TableCertificateField
-  u1cert3: table.TableCertificate
-  u1sync1: table.TableSyncState
+  u1: TableUser
+  u1basket1: TableOutputBasket
+  u1basket2: TableOutputBasket
+  u1label1: TableTxLabel
+  u1label2: TableTxLabel
+  u1tag1: TableOutputTag
+  u1tag2: TableOutputTag
+  u1tx1: TableTransaction
+  u1comm1: TableCommission
+  u1tx1label1: TableTxLabelMap
+  u1tx1label2: TableTxLabelMap
+  u1tx1o0: TableOutput
+  u1o0tag1: TableOutputTagMap
+  u1o0tag2: TableOutputTagMap
+  u1tx1o1: TableOutput
+  u1o1tag1: TableOutputTagMap
+  u1cert1: TableCertificate
+  u1cert1field1: TableCertificateField
+  u1cert1field2: TableCertificateField
+  u1cert2: TableCertificate
+  u1cert2field1: TableCertificateField
+  u1cert3: TableCertificate
+  u1sync1: TableSyncState
 
-  u2: table.TableUser
-  u2basket1: table.TableOutputBasket
-  u2label1: table.TableTxLabel
-  u2tx1: table.TableTransaction
-  u2comm1: table.TableCommission
-  u2tx1label1: table.TableTxLabelMap
-  u2tx1o0: table.TableOutput
-  u2tx2: table.TableTransaction
-  u2comm2: table.TableCommission
+  u2: TableUser
+  u2basket1: TableOutputBasket
+  u2label1: TableTxLabel
+  u2tx1: TableTransaction
+  u2comm1: TableCommission
+  u2tx1label1: TableTxLabelMap
+  u2tx1o0: TableOutput
+  u2tx2: TableTransaction
+  u2comm2: TableCommission
 
-  proven1: table.TableProvenTx
-  req1: table.TableProvenTxReq
-  req2: table.TableProvenTxReq
+  proven1: TableProvenTx
+  req1: TableProvenTxReq
+  req2: TableProvenTxReq
 
-  we1: table.TableMonitorEvent
+  we1: TableMonitorEvent
 }
 
 export interface MockData {
@@ -2061,7 +2082,7 @@ export async function logTransaction(
 
 export async function logOutput(
   storage: StorageKnex,
-  output: table.TableOutput
+  output: TableOutput
 ): Promise<string> {
   let log = `\n-- Output --\n`
   log += `Outpoint: ${output.txid}:${output.vout}\n`
@@ -2156,7 +2177,7 @@ export async function logInput(
   return log
 }
 
-export function logBasket(basket: table.TableOutputBasket): string {
+export function logBasket(basket: TableOutputBasket): string {
   return `\n-- Basket --\nName: ${basket.name}\n`
 }
 

@@ -14,14 +14,17 @@ import {
 import {
   asArray,
   asString,
-  entity,
+  EntityProvenTx,
   randomBytesBase64,
   sdk,
   sha256Hash,
   stampLog,
   stampLogFormat,
   StorageProvider,
-  table,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableTransaction,
   validateStorageFeeModel,
   verifyId,
   verifyNumber,
@@ -157,8 +160,8 @@ export async function createAction(
 interface CreateTransactionSdkContext {
   xinputs: XValidCreateActionInput[]
   xoutputs: XValidCreateActionOutput[]
-  changeBasket: table.TableOutputBasket
-  noSendChangeIn: table.TableOutput[]
+  changeBasket: TableOutputBasket
+  noSendChangeIn: TableOutput[]
   availableChangeCount: number
   feeModel: sdk.StorageFeeModel
   transactionId: number
@@ -168,7 +171,7 @@ interface XValidCreateActionInput extends sdk.ValidCreateActionInput {
   vin: number
   lockingScript: Script
   satoshis: number
-  output?: table.TableOutput
+  output?: TableOutput
 }
 
 export interface XValidCreateActionOutput extends sdk.ValidCreateActionOutput {
@@ -184,9 +187,9 @@ function makeDefaultOutput(
   transactionId: number,
   satoshis: number,
   vout: number
-): table.TableOutput {
+): TableOutput {
   const now = new Date()
-  const output: table.TableOutput = {
+  const output: TableOutput = {
     created_at: now,
     updated_at: now,
     outputId: 0,
@@ -219,13 +222,13 @@ async function createNewInputs(
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   ctx: CreateTransactionSdkContext,
-  allocatedChange: table.TableOutput[]
+  allocatedChange: TableOutput[]
 ): Promise<sdk.StorageCreateTransactionSdkInput[]> {
   const r: sdk.StorageCreateTransactionSdkInput[] = []
 
   const newInputs: {
     i?: XValidCreateActionInput
-    o?: table.TableOutput
+    o?: TableOutput
     unlockLen?: number
   }[] = []
   for (const i of ctx.xinputs) {
@@ -298,7 +301,7 @@ async function createNewOutputs(
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   ctx: CreateTransactionSdkContext,
-  changeOutputs: table.TableOutput[]
+  changeOutputs: TableOutput[]
 ): Promise<{
   outputs: sdk.StorageCreateTransactionSdkOutput[]
   changeVouts: number[]
@@ -306,7 +309,7 @@ async function createNewOutputs(
   const outputs: sdk.StorageCreateTransactionSdkOutput[] = []
 
   // Lookup output baskets
-  const txBaskets: Record<string, table.TableOutputBasket> = {}
+  const txBaskets: Record<string, TableOutputBasket> = {}
   for (const xo of ctx.xoutputs) {
     if (xo.basket !== undefined && !txBaskets[xo.basket])
       txBaskets[xo.basket] = await storage.findOrInsertOutputBasket(
@@ -315,14 +318,14 @@ async function createNewOutputs(
       )
   }
   // Lookup output tags
-  const txTags: Record<string, table.TableOutputTag> = {}
+  const txTags: Record<string, TableOutputTag> = {}
   for (const xo of ctx.xoutputs) {
     for (const tag of xo.tags) {
       txTags[tag] = await storage.findOrInsertOutputTag(userId, tag)
     }
   }
 
-  const newOutputs: { o: table.TableOutput; tags: string[] }[] = []
+  const newOutputs: { o: TableOutput; tags: string[] }[] = []
 
   for (const xo of ctx.xoutputs) {
     const lockingScript = asArray(xo.lockingScript)
@@ -463,9 +466,9 @@ async function createNewTxRecord(
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
   storageBeef: Beef
-): Promise<table.TableTransaction> {
+): Promise<TableTransaction> {
   const now = new Date()
-  const newTx: table.TableTransaction = {
+  const newTx: TableTransaction = {
     created_at: now,
     updated_at: now,
     transactionId: 0,
@@ -695,7 +698,7 @@ async function validateRequiredInputs(
             `valid and contain proof data for ${txid}`
           )
         btx = beef.mergeRawTx(asArray(rawTx))
-        if (proven) beef.mergeBump(new entity.EntityProvenTx(proven).getMerklePath())
+        if (proven) beef.mergeBump(new EntityProvenTx(proven).getMerklePath())
       }
       // btx is valid has parsed transaction data.
       if (vout >= btx.tx.outputs.length)
@@ -716,9 +719,9 @@ async function validateNoSendChange(
   storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
-  changeBasket: table.TableOutputBasket
-): Promise<table.TableOutput[]> {
-  const r: table.TableOutput[] = []
+  changeBasket: TableOutputBasket
+): Promise<TableOutput[]> {
+  const r: TableOutput[] = []
 
   if (!vargs.isNoSend) return []
 
@@ -761,8 +764,8 @@ async function fundNewTransactionSdk(
   vargs: sdk.ValidCreateActionArgs,
   ctx: CreateTransactionSdkContext
 ): Promise<{
-  allocatedChange: table.TableOutput[]
-  changeOutputs: table.TableOutput[]
+  allocatedChange: TableOutput[]
+  changeOutputs: TableOutput[]
   derivationPrefix: string
 }> {
   const params: GenerateChangeSdkParams = {
@@ -788,7 +791,7 @@ async function fundNewTransactionSdk(
   }
 
   const noSendChange = [...ctx.noSendChangeIn]
-  const outputs: Record<number, table.TableOutput> = {}
+  const outputs: Record<number, TableOutput> = {}
 
   const allocateChangeInput = async (
     targetSatoshis: number,
@@ -885,14 +888,14 @@ async function fundNewTransactionSdk(
   const derivationPrefix = randomDerivation(16)
 
   const r: {
-    allocatedChange: table.TableOutput[]
-    changeOutputs: table.TableOutput[]
+    allocatedChange: TableOutput[]
+    changeOutputs: TableOutput[]
     derivationPrefix: string
   } = {
     allocatedChange: gcr.allocatedChangeInputs.map(i => outputs[i.outputId]),
     changeOutputs: gcr.changeOutputs.map(
       (o, i) =>
-        <table.TableOutput>{
+        <TableOutput>{
           // what we knnow now and can insert into the database for this new transaction's change output
           created_at: new Date(),
           updated_at: new Date(),
@@ -949,7 +952,7 @@ async function mergeAllocatedChangeBeefs(
   storage: StorageProvider,
   userId: number,
   vargs: sdk.ValidCreateActionArgs,
-  allocatedChange: table.TableOutput[],
+  allocatedChange: TableOutput[],
   beef: Beef
 ): Promise<number[] | undefined> {
   const options: sdk.StorageGetBeefOptions = {

@@ -62,7 +62,7 @@ export abstract class EntityBase<T> {
 
   /**
    * Perform a 'merge' / 'convergent' equality migration of state
-   * from external `ei` to this existing local entity.
+   * from external `ei` to this existing local EntityUser
    *
    * @param ei
    * @param syncMap

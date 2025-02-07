@@ -8,7 +8,7 @@ import {
 import {
   asArray,
   asString,
-  entity,
+  EntityProvenTxReq,
   parseTxScriptOffsets,
   randomBytesBase64,
   sdk,
@@ -16,7 +16,11 @@ import {
   stampLog,
   stampLogFormat,
   StorageProvider,
-  table,
+  TableCommission,
+  TableOutput,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableTransaction,
   TxScriptOffsets,
   validateStorageFeeModel,
   verifyId,
@@ -38,7 +42,7 @@ export async function processAction(
     sendWithResults: undefined
   }
 
-  let req: entity.EntityProvenTxReq | undefined
+  let req: EntityProvenTxReq | undefined
   const txidsOfReqsToShareWithWorld: string[] = [...args.sendWith]
 
   if (args.isNewTx) {
@@ -109,7 +113,7 @@ async function shareReqsWithWorld(
   // Filter original txids down to reqIds that are available and need sending
   const readyToSendReqs = r.details
     .filter(d => d.status === 'readyToSend')
-    .map(d => new entity.EntityProvenTxReq(d.req!))
+    .map(d => new EntityProvenTxReq(d.req!))
   const readyToSendReqIds = readyToSendReqs.map(r => r.id)
   const transactionIds = readyToSendReqs
     .map(r => r.notify.transactionIds || [])
@@ -213,15 +217,15 @@ interface ValidCommitNewTxToStorageArgs {
   tx: BsvTransaction
   txScriptOffsets: TxScriptOffsets
   transactionId: number
-  transaction: table.TableTransaction
-  inputOutputs: table.TableOutput[]
-  outputOutputs: table.TableOutput[]
-  commission: table.TableCommission | undefined
+  transaction: TableTransaction
+  inputOutputs: TableOutput[]
+  outputOutputs: TableOutput[]
+  commission: TableCommission | undefined
   beef: Beef
 
-  req: entity.EntityProvenTxReq
-  outputUpdates: { id: number; update: Partial<table.TableOutput> }[]
-  transactionUpdate: Partial<table.TableTransaction>
+  req: EntityProvenTxReq
+  outputUpdates: { id: number; update: Partial<TableOutput> }[]
+  transactionUpdate: Partial<TableTransaction>
   postStatus?: ReqTxStatus
 }
 
@@ -292,7 +296,7 @@ async function validateCommitNewTxToStorageArgs(
       )
   }
 
-  const req = entity.EntityProvenTxReq.fromTxid(
+  const req = EntityProvenTxReq.fromTxid(
     params.txid,
     params.rawTx,
     transaction.inputBEEF
@@ -368,7 +372,7 @@ async function validateCommitNewTxToStorageArgs(
       throw new sdk.WERR_INVALID_OPERATION(
         `parsed transaction output locking script for vout ${vout} not equal to expected output script.`
       )
-    const update: Partial<table.TableOutput> = {
+    const update: Partial<TableOutput> = {
       txid: vargs.txid,
       spendable: true, // spendability is gated by transaction status. Remains true until the output is spent.
       scriptLength: offset.length,
@@ -384,7 +388,7 @@ async function validateCommitNewTxToStorageArgs(
 }
 
 export interface CommitNewTxResults {
-  req: entity.EntityProvenTxReq
+  req: EntityProvenTxReq
   log?: string
 }
 
@@ -397,7 +401,7 @@ async function commitNewTxToStorage(
 
   log = stampLog(log, `start storage commitNewTxToStorage`)
 
-  let req: entity.EntityProvenTxReq | undefined
+  let req: EntityProvenTxReq | undefined
 
   await storage.transaction(async trx => {
     log = stampLog(
@@ -445,8 +449,8 @@ async function commitNewTxToStorage(
 
 export interface GetReqsAndBeefDetail {
   txid: string
-  req?: table.TableProvenTxReq
-  proven?: table.TableProvenTx
+  req?: TableProvenTxReq
+  proven?: TableProvenTx
   status: 'readyToSend' | 'alreadySent' | 'error' | 'unknown'
   error?: string
 }

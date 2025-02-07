@@ -1,4 +1,4 @@
-import { entity, table, sdk } from '../../../../../src'
+import { createSyncMap, sdk, TableCertificate } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -34,7 +34,7 @@ describe('Certificate class method tests', () => {
       // Insert initial Certificate record
       const now = new Date()
       const certificateId = 500 // Unique ID for this test
-      const certificateData: table.TableCertificate = {
+      const certificateData: TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -69,7 +69,7 @@ describe('Certificate class method tests', () => {
       const now = new Date()
       const certificateId1 = 501
       const certificateId2 = 502
-      const certificateData1: table.TableCertificate = {
+      const certificateData1: TableCertificate = {
         certificateId: certificateId1,
         created_at: now,
         updated_at: now,
@@ -86,7 +86,7 @@ describe('Certificate class method tests', () => {
           'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       }
-      const certificateData2: table.TableCertificate = {
+      const certificateData2: TableCertificate = {
         certificateId: certificateId2,
         created_at: now,
         updated_at: now,
@@ -115,7 +115,7 @@ describe('Certificate class method tests', () => {
       expect(entity1.equals(entity2.toApi())).toBe(false)
 
       // Test each mismatched field individually
-      const mismatchedEntities: Partial<table.TableCertificate>[] = [
+      const mismatchedEntities: Partial<TableCertificate>[] = [
         { type: 'differentType' },
         { subject: 'differentSubject' },
         { serialNumber: 'differentSerialNumber' },
@@ -140,7 +140,7 @@ describe('Certificate class method tests', () => {
       // Insert a valid Certificate to satisfy foreign key constraints
       const now = new Date()
       const certificateId = 600
-      const certificateData: table.TableCertificate = {
+      const certificateData: TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -164,7 +164,7 @@ describe('Certificate class method tests', () => {
       const entity = new EntityCertificate(certificateData)
 
       // Simulate the `ei` argument with a later `updated_at`
-      const updatedData: table.TableCertificate = {
+      const updatedData: TableCertificate = {
         ...certificateData,
         updated_at: new Date(now.getTime() + 1000), // Later timestamp
         type: 'updatedType',
@@ -176,85 +176,15 @@ describe('Certificate class method tests', () => {
         isDeleted: true
       }
 
+      const syncMap = createSyncMap()
+      syncMap.certificate.idMap[certificateId] = certificateId
+
       // Call mergeExisting
       const wasMergedRaw = await entity.mergeExisting(
         activeStorage,
         undefined, // `since` is not used in this method
         updatedData,
-        {
-          certificate: {
-            idMap: { [certificateId]: certificateId },
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          transaction: {
-            idMap: {},
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        },
+        syncMap,
         undefined // `trx` is not used
       )
 
@@ -293,7 +223,7 @@ describe('Certificate class method tests', () => {
       // Insert a valid Certificate to satisfy foreign key constraints
       const now = new Date()
       const certificateId = 601
-      const certificateData: table.TableCertificate = {
+      const certificateData: TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -317,7 +247,7 @@ describe('Certificate class method tests', () => {
       const entity = new EntityCertificate(certificateData)
 
       // Simulate the `ei` argument with the same or earlier `updated_at`
-      const sameUpdatedData: table.TableCertificate = {
+      const sameUpdatedData: TableCertificate = {
         ...certificateData,
         updated_at: now, // Same timestamp
         type: 'unchangedType',
@@ -329,85 +259,15 @@ describe('Certificate class method tests', () => {
         isDeleted: false
       }
 
+      const syncMap = createSyncMap()
+      syncMap.certificate.idMap[certificateId] = certificateId
+
       // Call mergeExisting
       const wasMergedRaw = await entity.mergeExisting(
         activeStorage,
         undefined, // `since` is not used
         sameUpdatedData,
-        {
-          certificate: {
-            idMap: { [certificateId]: certificateId },
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          transaction: {
-            idMap: {},
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        },
+        syncMap,
         undefined // `trx` is not used
       )
 
@@ -456,7 +316,7 @@ describe('Certificate class method tests', () => {
       const now = new Date()
 
       // Initial test data
-      const initialData: table.TableCertificate = {
+      const initialData: TableCertificate = {
         certificateId: 701,
         created_at: now,
         updated_at: now,
@@ -488,7 +348,7 @@ describe('Certificate class method tests', () => {
       expect(entity.signature).toBe(initialData.signature)
       expect(entity.isDeleted).toBe(initialData.isDeleted)
       expect(entity.id).toBe(initialData.certificateId)
-      expect(entity.entityName).toBe('entity.Certificate')
+      expect(entity.entityName).toBe('certificate')
       expect(entity.entityTable).toBe('certificates')
 
       // Validate setters
@@ -520,7 +380,7 @@ describe('Certificate class method tests', () => {
       expect(entity.signature).toBe('updatedSignature')
       expect(entity.isDeleted).toBe(true)
       expect(entity.id).toBe(900)
-      expect(entity.entityName).toBe('entity.Certificate')
+      expect(entity.entityName).toBe('certificate')
       expect(entity.entityTable).toBe('certificates')
     }
   })

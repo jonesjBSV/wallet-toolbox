@@ -1,5 +1,5 @@
 import { Base64String, HexString, OutpointString, PubKeyHex } from '@bsv/sdk'
-import { sdk, table } from '../../../index.client'
+import { sdk, TableCertificateField } from '../../../index.client'
 
 export interface TableCertificate extends sdk.EntityTimeStamp {
   created_at: Date
@@ -16,6 +16,6 @@ export interface TableCertificate extends sdk.EntityTimeStamp {
   isDeleted: boolean
 }
 
-export interface CertificateX extends table.TableCertificate {
-  fields?: table.TableCertificateField[]
+export interface TableCertificateX extends TableCertificate {
+  fields?: TableCertificateField[]
 }

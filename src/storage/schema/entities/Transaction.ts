@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Transaction as BsvTransaction, TransactionInput } from '@bsv/sdk'
 import {
-  entity,
   optionalArraysEqual,
   sdk,
-  table,
+  TableOutput,
+  TableTransaction,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityProvenTx, EntityStorage, SyncMap } from '.'
 
-export class EntityTransaction extends EntityBase<table.TableTransaction> {
+export class EntityTransaction extends EntityBase<TableTransaction> {
   /**
    * @returns @bsv/sdk Transaction object from parsed rawTx.
    * If rawTx is undefined, returns undefined.
@@ -36,9 +36,9 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
    * Not all transaction inputs correspond to prior storage outputs.
    */
   async getInputs(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     trx?: sdk.TrxToken
-  ): Promise<table.TableOutput[]> {
+  ): Promise<TableOutput[]> {
     const inputs = await storage.findOutputs({
       partial: { userId: this.userId, spentBy: this.id },
       trx
@@ -62,7 +62,7 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
     return inputs
   }
 
-  constructor(api?: table.TableTransaction) {
+  constructor(api?: TableTransaction) {
     const now = new Date()
     super(
       api || {
@@ -202,15 +202,15 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
     this.api.transactionId = v
   }
   override get entityName(): string {
-    return 'ojoTransaction'
+    return 'transaction'
   }
   override get entityTable(): string {
     return 'transactions'
   }
 
   override equals(
-    ei: table.TableTransaction,
-    syncMap?: entity.SyncMap | undefined
+    ei: TableTransaction,
+    syncMap?: SyncMap | undefined
   ): boolean {
     const eo = this.toApi()
 
@@ -251,12 +251,12 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.TableTransaction,
-    syncMap: entity.SyncMap,
+    ei: TableTransaction,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.EntityTransaction; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityTransaction; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findTransactions({
         partial: { reference: ei.reference, userId },
@@ -265,15 +265,15 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
     )
     return {
       found: !!ef,
-      eo: new entity.EntityTransaction(ef || { ...ei }),
+      eo: new EntityTransaction(ef || { ...ei }),
       eiId: verifyId(ei.transactionId)
     }
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     if (this.provenTxId)
@@ -284,10 +284,10 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
   }
 
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.TableTransaction,
-    syncMap: entity.SyncMap,
+    ei: TableTransaction,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     let wasMerged = false
@@ -318,9 +318,9 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
   }
 
   async getProvenTx(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     trx?: sdk.TrxToken
-  ): Promise<entity.EntityProvenTx | undefined> {
+  ): Promise<EntityProvenTx | undefined> {
     if (!this.provenTxId) return undefined
     const p = verifyOneOrNone(
       await storage.findProvenTxs({
@@ -329,6 +329,6 @@ export class EntityTransaction extends EntityBase<table.TableTransaction> {
       })
     )
     if (!p) return undefined
-    return new entity.EntityProvenTx(p)
+    return new EntityProvenTx(p)
   }
 }

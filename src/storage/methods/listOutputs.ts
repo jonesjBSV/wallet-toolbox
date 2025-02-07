@@ -4,7 +4,7 @@ import {
   OriginatorDomainNameStringUnder250Bytes,
   WalletOutput
 } from '@bsv/sdk'
-import { table } from '../index.client'
+import { TableOutput, TableOutputBasket, TableOutputTag } from '../index.client'
 import { asString, sdk, verifyId, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 
@@ -39,7 +39,7 @@ export async function listOutputs(
     */
 
   let basketId: number | undefined = undefined
-  const basketsById: Record<number, table.TableOutputBasket> = {}
+  const basketsById: Record<number, TableOutputBasket> = {}
   if (vargs.basket) {
     const baskets = await dsk.findOutputBaskets({
       partial: { userId, name: vargs.basket },
@@ -56,7 +56,7 @@ export async function listOutputs(
 
   let tagIds: number[] = []
   if (vargs.tags && vargs.tags.length > 0) {
-    const q = k<table.TableOutputTag>('output_tags')
+    const q = k<TableOutputTag>('output_tags')
       .where({
         userId: userId,
         isDeleted: false
@@ -119,7 +119,7 @@ export async function listOutputs(
   }
 
   const makeWithoutTagsQueries = () => {
-    const where: Partial<table.TableOutput> = { userId }
+    const where: Partial<TableOutput> = { userId }
     if (basketId) where.basketId = basketId
     if (!includeSpent) where.spendable = true
     const q = k('outputs').where(where).whereRaw(txStatusOk)
@@ -134,7 +134,7 @@ export async function listOutputs(
   // Sort order when limit and offset are possible must be ascending for determinism.
   q.limit(limit).offset(offset).orderBy('outputId', 'asc')
 
-  const outputs: table.TableOutput[] = await q
+  const outputs: TableOutput[] = await q
 
   if (!limit || outputs.length < limit) r.totalOutputs = outputs.length
   else {

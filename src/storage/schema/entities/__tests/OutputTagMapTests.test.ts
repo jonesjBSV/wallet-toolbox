@@ -1,5 +1,10 @@
 import * as bsv from '@bsv/sdk'
-import { entity, table, sdk } from '../../../../../src'
+import {
+  createSyncMap,
+  sdk,
+  SyncMap,
+  TableOutputTagMap
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -33,7 +38,7 @@ describe('OutputTagMap class method tests', () => {
 
   test('0_OutputTagMap getters and setters', async () => {
     const now = new Date()
-    const initialData: table.TableOutputTagMap = {
+    const initialData: TableOutputTagMap = {
       created_at: now,
       updated_at: now,
       outputId: 1,
@@ -49,7 +54,7 @@ describe('OutputTagMap class method tests', () => {
     expect(outputTagMap.created_at).toBe(now)
     expect(outputTagMap.updated_at).toBe(now)
     expect(outputTagMap.isDeleted).toBe(false)
-    expect(outputTagMap.entityName).toBe('OutputTagMap')
+    expect(outputTagMap.entityName).toBe('outputTagMap')
     expect(outputTagMap.entityTable).toBe('output_tags_map')
 
     // Test setters
@@ -75,7 +80,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert matching OutputTagMap records into both databases
-    const outputTagMapData: table.TableOutputTagMap = {
+    const outputTagMapData: TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 1,
@@ -90,81 +95,9 @@ describe('OutputTagMap class method tests', () => {
     const entity1 = new EntityOutputTagMap(outputTagMapData)
     const entity2 = new EntityOutputTagMap(outputTagMapData)
 
-    // Create a sync map that maps IDs correctly
-    const syncMap: entity.SyncMap = {
-      output: {
-        idMap: { 1: 1 },
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: { 8: 8 },
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.output.idMap[1] = 1
+    syncMap.outputTag.idMap[8] = 8
 
     // Verify that equals returns true
     expect(entity1.equals(entity2.toApi(), syncMap)).toBe(true)
@@ -175,7 +108,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert mismatched OutputTagMap records into both databases
-    const outputTagMapData1: table.TableOutputTagMap = {
+    const outputTagMapData1: TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 1,
@@ -183,7 +116,7 @@ describe('OutputTagMap class method tests', () => {
       isDeleted: false
     }
 
-    const outputTagMapData2: table.TableOutputTagMap = {
+    const outputTagMapData2: TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 1, // Mismatched outputId
@@ -198,81 +131,8 @@ describe('OutputTagMap class method tests', () => {
     const entity1 = new EntityOutputTagMap(outputTagMapData1)
     const entity2 = new EntityOutputTagMap(outputTagMapData2)
 
-    // Create a sync map that maps IDs correctly
-    const syncMap: entity.SyncMap = {
-      output: {
-        idMap: { 101: 102 },
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: { 201: 202 },
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.output.idMap[101] = 101
 
     // Verify that equals returns false due to mismatched properties
     expect(entity1.equals(entity2.toApi(), syncMap)).toBe(false)
@@ -285,7 +145,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTagMap record with valid foreign key IDs
-    const initialData: table.TableOutputTagMap = {
+    const initialData: TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 2,
@@ -298,91 +158,21 @@ describe('OutputTagMap class method tests', () => {
     const entity = new EntityOutputTagMap(initialData)
 
     // Create a new record to simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.TableOutputTagMap = {
+    const updatedData: TableOutputTagMap = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       isDeleted: true // Simulate a change in `isDeleted`
     }
+
+    const syncMap = createSyncMap()
+    syncMap.output.idMap[1] = 1
 
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
       ctx.activeStorage,
       undefined, // `since` is not used in this method
       updatedData,
-      {
-        output: {
-          idMap: { 1: 1 },
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: { 8: 8 },
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        transaction: {
-          idMap: {},
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      }
+      syncMap
     )
 
     const wasMerged = Boolean(wasMergedRaw)
@@ -411,7 +201,7 @@ describe('OutputTagMap class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTagMap record
-    const initialData: table.TableOutputTagMap = {
+    const initialData: TableOutputTagMap = {
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
       outputId: 2,
@@ -424,91 +214,21 @@ describe('OutputTagMap class method tests', () => {
     const entity = new EntityOutputTagMap(initialData)
 
     // Create a new record to simulate the `ei` argument with an earlier `updated_at`
-    const earlierData: table.TableOutputTagMap = {
+    const earlierData: TableOutputTagMap = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       isDeleted: true // Simulate a change in `isDeleted`
     }
+
+    const syncMap = createSyncMap()
+    syncMap.output.idMap[101] = 101
 
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
       ctx.activeStorage,
       undefined, // `since` is not used in this method
       earlierData,
-      {
-        output: {
-          idMap: { 101: 101 },
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: { 201: 201 },
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        transaction: {
-          idMap: {},
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      }
+      syncMap
     )
 
     // Normalize the result

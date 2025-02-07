@@ -2,16 +2,15 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   sdk,
-  table,
+  TableUser,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityStorage, SyncMap } from '.'
 
-export class EntityUser extends EntityBase<table.TableUser> {
-  constructor(api?: table.TableUser) {
+export class EntityUser extends EntityBase<TableUser> {
+  constructor(api?: TableUser) {
     const now = new Date()
     super(
       api || {
@@ -66,16 +65,13 @@ export class EntityUser extends EntityBase<table.TableUser> {
     this.api.userId = v
   }
   override get entityName(): string {
-    return 'User'
+    return 'user'
   }
   override get entityTable(): string {
     return 'users'
   }
 
-  override equals(
-    ei: table.TableUser,
-    syncMap?: entity.SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableUser, syncMap?: SyncMap | undefined): boolean {
     const eo = this.toApi()
     if (
       eo.identityKey != ei.identityKey ||
@@ -88,11 +84,11 @@ export class EntityUser extends EntityBase<table.TableUser> {
     return true
   }
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.TableUser,
+    ei: TableUser,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.EntityUser; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityUser; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findUsers({ partial: { identityKey: ei.identityKey }, trx })
     )
@@ -100,14 +96,14 @@ export class EntityUser extends EntityBase<table.TableUser> {
       throw new sdk.WERR_INTERNAL('logic error, userIds don not match.')
     return {
       found: !!ef,
-      eo: new entity.EntityUser(ef || { ...ei }),
+      eo: new EntityUser(ef || { ...ei }),
       eiId: verifyId(ei.userId)
     }
   }
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     throw new sdk.WERR_INTERNAL(
@@ -115,10 +111,10 @@ export class EntityUser extends EntityBase<table.TableUser> {
     )
   }
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.TableUser,
-    syncMap?: entity.SyncMap,
+    ei: TableUser,
+    syncMap?: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     let wasMerged = false

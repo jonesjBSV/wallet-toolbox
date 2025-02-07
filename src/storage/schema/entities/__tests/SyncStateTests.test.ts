@@ -1,5 +1,11 @@
 import { EntitySyncState } from '../../../../../src/storage/schema/entities/SyncState'
-import { entity, table, sdk } from '../../../../../src'
+import {
+  createSyncMap,
+  EntityStorage,
+  sdk,
+  SyncMap,
+  TableSyncState
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -85,36 +91,15 @@ describe('SyncState class method tests', () => {
   test('2_merges_id_maps_correctly', async () => {
     const syncState = new EntitySyncState()
 
-    // Complete SyncMap with all required properties
-    const inputSyncMap: entity.SyncMap = {
-      provenTx: { idMap: { 1: 2 }, entityName: 'provenTx', count: 1 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      transaction: { idMap: { 3: 4 }, entityName: 'transaction', count: 1 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    const inputSyncMap = createSyncMap()
+    inputSyncMap.provenTx.idMap = { 1: 2 }
+    inputSyncMap.transaction.idMap = { 3: 4 }
 
-    syncState.syncMap = {
-      provenTx: { idMap: { 1: 2 }, entityName: 'provenTx', count: 1 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      transaction: { idMap: { 5: 6 }, entityName: 'transaction', count: 1 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    syncState.syncMap = createSyncMap()
+    syncState.syncMap.provenTx.idMap = { 1: 2 }
+    syncState.syncMap.provenTx.count = 1
+    syncState.syncMap.transaction.idMap = { 5: 6 }
+    syncState.syncMap.transaction.count = 1
 
     syncState.mergeSyncMap(inputSyncMap)
 
@@ -128,35 +113,17 @@ describe('SyncState class method tests', () => {
   test('3_throws_error_on_conflicting_mappings', () => {
     const syncState = new EntitySyncState()
 
-    syncState.syncMap = {
-      provenTx: { idMap: { 1: 2 }, entityName: 'provenTx', count: 1 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      transaction: { idMap: { 3: 4 }, entityName: 'transaction', count: 1 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    syncState.syncMap = createSyncMap()
+    syncState.syncMap.provenTx.idMap = { 1: 2 }
+    syncState.syncMap.provenTx.count = 1
+    syncState.syncMap.transaction.idMap = { 3: 4 }
+    syncState.syncMap.transaction.count = 1
 
-    const conflictingSyncMap: entity.SyncMap = {
-      provenTx: { idMap: { 1: 3 }, entityName: 'provenTx', count: 1 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      transaction: { idMap: { 3: 4 }, entityName: 'transaction', count: 1 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    const conflictingSyncMap = createSyncMap()
+    conflictingSyncMap.provenTx.idMap = { 1: 3 }
+    conflictingSyncMap.provenTx.count = 1
+    conflictingSyncMap.transaction.idMap = { 3: 4 }
+    conflictingSyncMap.transaction.count = 1
 
     expect(() => syncState.mergeSyncMap(conflictingSyncMap)).toThrow()
   })
@@ -219,7 +186,7 @@ describe('SyncState class method tests', () => {
   // Test: equals method always returns false
   test('6_equals_method_always_returns_false', () => {
     const syncState = new EntitySyncState()
-    expect(syncState.equals({} as table.TableSyncState)).toBe(false)
+    expect(syncState.equals({} as TableSyncState)).toBe(false)
   })
 
   // Test: Getters and setters for SyncState properties
@@ -285,21 +252,12 @@ describe('SyncState class method tests', () => {
     expect(syncState.apiErrorLocal).toBe(JSON.stringify(syncState.errorLocal))
     expect(syncState.apiErrorOther).toBe(JSON.stringify(syncState.errorOther))
 
-    // Test apiSyncMap with inline syncMap definition
-    const syncMap: entity.SyncMap = {
-      provenTx: { idMap: { 1: 2 }, entityName: 'provenTx', count: 1 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      transaction: { idMap: { 3: 4 }, entityName: 'transaction', count: 1 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    const syncMap = createSyncMap()
+    syncMap.provenTx.idMap = { 1: 2 }
+    syncMap.provenTx.count = 1
+    syncMap.transaction.idMap = { 3: 4 }
+    syncMap.transaction.count = 1
+
     syncState.syncMap = syncMap
     expect(syncState.apiSyncMap).toBe(JSON.stringify(syncMap))
   })
@@ -313,7 +271,7 @@ describe('SyncState class method tests', () => {
     expect(syncState.id).toBe(42)
 
     // Test entityName
-    expect(syncState.entityName).toBe('table.SyncState')
+    expect(syncState.entityName).toBe('syncState')
 
     // Test entityTable
     expect(syncState.entityTable).toBe('sync_states')
@@ -322,22 +280,9 @@ describe('SyncState class method tests', () => {
   // Test: mergeNew method (does not perform any operations)
   test('10_mergeNew_does_nothing', async () => {
     const syncState = new EntitySyncState()
-    const mockStorage: entity.EntityStorage = {} as entity.EntityStorage
+    const mockStorage: EntityStorage = {} as EntityStorage
 
-    const syncMap: entity.SyncMap = {
-      provenTx: { idMap: {}, entityName: 'provenTx', count: 0 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      transaction: { idMap: {}, entityName: 'transaction', count: 0 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    const syncMap = createSyncMap()
 
     await expect(
       syncState.mergeNew(mockStorage, 1, syncMap, undefined)
@@ -347,27 +292,14 @@ describe('SyncState class method tests', () => {
   // Test: mergeExisting method (always returns false)
   test('11_mergeExisting_always_returns_false', async () => {
     const syncState = new EntitySyncState()
-    const mockStorage: entity.EntityStorage = {} as entity.EntityStorage
+    const mockStorage: EntityStorage = {} as EntityStorage
 
-    const syncMap: entity.SyncMap = {
-      provenTx: { idMap: {}, entityName: 'provenTx', count: 0 },
-      outputBasket: { idMap: {}, entityName: 'outputBasket', count: 0 },
-      transaction: { idMap: {}, entityName: 'transaction', count: 0 },
-      provenTxReq: { idMap: {}, entityName: 'provenTxReq', count: 0 },
-      txLabel: { idMap: {}, entityName: 'txLabel', count: 0 },
-      txLabelMap: { idMap: {}, entityName: 'txLabelMap', count: 0 },
-      output: { idMap: {}, entityName: 'output', count: 0 },
-      outputTag: { idMap: {}, entityName: 'outputTag', count: 0 },
-      outputTagMap: { idMap: {}, entityName: 'outputTagMap', count: 0 },
-      certificate: { idMap: {}, entityName: 'certificate', count: 0 },
-      certificateField: { idMap: {}, entityName: 'certificateField', count: 0 },
-      commission: { idMap: {}, entityName: 'commission', count: 0 }
-    }
+    const syncMap = createSyncMap()
 
     const result = await syncState.mergeExisting(
       mockStorage,
       new Date(),
-      {} as table.TableSyncState,
+      {} as TableSyncState,
       syncMap,
       undefined
     )

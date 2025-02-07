@@ -6,7 +6,7 @@ import {
   WalletActionOutput,
   WalletActionInput
 } from '@bsv/sdk'
-import { table } from '../index.client'
+import { TableOutputX, TableTransaction, TableTxLabel } from '../index.client'
 import { asString, sdk, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 
@@ -27,7 +27,7 @@ export async function listActions(
 
   let labelIds: number[] = []
   if (vargs.labels.length > 0) {
-    const q = k<table.TableTxLabel>('tx_labels')
+    const q = k<TableTxLabel>('tx_labels')
       .where({
         userId: auth.userId,
         isDeleted: false
@@ -107,7 +107,7 @@ export async function listActions(
 
   q.limit(limit).offset(offset).orderBy('transactionId', 'asc')
 
-  const txs: Partial<table.TableTransaction>[] = await q
+  const txs: Partial<TableTransaction>[] = await q
 
   if (!limit || txs.length < limit) r.totalActions = txs.length
   else {
@@ -141,7 +141,7 @@ export async function listActions(
           ).map(l => l.label)
         }
         if (vargs.includeOutputs) {
-          const outputs: table.OutputX[] = await storage.findOutputs({
+          const outputs: TableOutputX[] = await storage.findOutputs({
             partial: { transactionId: tx.transactionId },
             noScript: !vargs.includeOutputLockingScripts
           })
@@ -162,7 +162,7 @@ export async function listActions(
           }
         }
         if (vargs.includeInputs) {
-          const inputs: table.OutputX[] = await storage.findOutputs({
+          const inputs: TableOutputX[] = await storage.findOutputs({
             partial: { spentBy: tx.transactionId },
             noScript: !vargs.includeInputSourceLockingScripts
           })

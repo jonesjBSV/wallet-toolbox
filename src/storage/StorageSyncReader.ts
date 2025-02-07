@@ -1,4 +1,21 @@
-import { sdk, table } from '../index.client'
+import {
+  sdk,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser
+} from '../index.client'
 import { StorageReader } from './StorageReader'
 
 /**
@@ -16,7 +33,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   isAvailable(): boolean {
     return this.storage.isAvailable()
   }
-  async makeAvailable(): Promise<table.Settings> {
+  async makeAvailable(): Promise<TableSettings> {
     await this.storage.makeAvailable()
     if (this.auth.userId === undefined) {
       const user = await this.storage.findUserByIdentityKey(
@@ -30,7 +47,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   destroy(): Promise<void> {
     return this.storage.destroy()
   }
-  getSettings(): table.Settings {
+  getSettings(): TableSettings {
     return this.storage.getSettings()
   }
   async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> {
@@ -39,14 +56,14 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
       throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.getSyncChunk(args)
   }
-  async findUserByIdentityKey(key: string): Promise<table.TableUser | undefined> {
+  async findUserByIdentityKey(key: string): Promise<TableUser | undefined> {
     if (!this.auth.userId) await this.makeAvailable()
     if (key !== this.auth.identityKey) throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.findUserByIdentityKey(key)
   }
   async findSyncStates(
     args: sdk.FindSyncStatesArgs
-  ): Promise<table.TableSyncState[]> {
+  ): Promise<TableSyncState[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
@@ -54,7 +71,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.TableCertificateField[]> {
+  ): Promise<TableCertificateField[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
@@ -62,7 +79,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.TableCertificate[]> {
+  ): Promise<TableCertificate[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
@@ -70,7 +87,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async findCommissions(
     args: sdk.FindCommissionsArgs
-  ): Promise<table.TableCommission[]> {
+  ): Promise<TableCommission[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
@@ -78,13 +95,13 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.TableOutputBasket[]> {
+  ): Promise<TableOutputBasket[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.findOutputBaskets(args)
   }
-  async findOutputs(args: sdk.FindOutputsArgs): Promise<table.TableOutput[]> {
+  async findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
@@ -92,7 +109,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async findOutputTags(
     args: sdk.FindOutputTagsArgs
-  ): Promise<table.TableOutputTag[]> {
+  ): Promise<TableOutputTag[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
@@ -100,13 +117,13 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async findTransactions(
     args: sdk.FindTransactionsArgs
-  ): Promise<table.TableTransaction[]> {
+  ): Promise<TableTransaction[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.findTransactions(args)
   }
-  async findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TableTxLabel[]> {
+  async findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()
@@ -114,28 +131,28 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableProvenTx[]> {
+  ): Promise<TableProvenTx[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.userId !== this.auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.getProvenTxsForUser(args)
   }
   async getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableProvenTxReq[]> {
+  ): Promise<TableProvenTxReq[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.userId !== this.auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.getProvenTxReqsForUser(args)
   }
   async getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableTxLabelMap[]> {
+  ): Promise<TableTxLabelMap[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.userId !== this.auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.getTxLabelMapsForUser(args)
   }
   async getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableOutputTagMap[]> {
+  ): Promise<TableOutputTagMap[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.userId !== this.auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.getOutputTagMapsForUser(args)

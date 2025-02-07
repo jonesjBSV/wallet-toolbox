@@ -2,17 +2,16 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   optionalArraysEqual,
   sdk,
-  table,
+  TableOutput,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityStorage, SyncMap } from '.'
 
-export class EntityOutput extends EntityBase<table.TableOutput> {
-  constructor(api?: table.TableOutput) {
+export class EntityOutput extends EntityBase<TableOutput> {
+  constructor(api?: TableOutput) {
     const now = new Date()
     super(
       api || {
@@ -202,16 +201,13 @@ export class EntityOutput extends EntityBase<table.TableOutput> {
     this.api.outputId = v
   }
   override get entityName(): string {
-    return 'Output'
+    return 'output'
   }
   override get entityTable(): string {
     return 'outputs'
   }
 
-  override equals(
-    ei: table.TableOutput,
-    syncMap?: entity.SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableOutput, syncMap?: SyncMap | undefined): boolean {
     if (
       this.transactionId !==
         (syncMap
@@ -249,12 +245,12 @@ export class EntityOutput extends EntityBase<table.TableOutput> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.TableOutput,
-    syncMap: entity.SyncMap,
+    ei: TableOutput,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.EntityOutput; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityOutput; eiId: number }> {
     const transactionId = syncMap.transaction.idMap[ei.transactionId]
     const basketId = ei.basketId
       ? syncMap.outputBasket.idMap[ei.basketId]
@@ -267,15 +263,15 @@ export class EntityOutput extends EntityBase<table.TableOutput> {
     )
     return {
       found: !!ef,
-      eo: new entity.EntityOutput(ef || { ...ei }),
+      eo: new EntityOutput(ef || { ...ei }),
       eiId: verifyId(ei.outputId)
     }
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     this.userId = userId
@@ -291,10 +287,10 @@ export class EntityOutput extends EntityBase<table.TableOutput> {
   }
 
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.TableOutput,
-    syncMap: entity.SyncMap,
+    ei: TableOutput,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     let wasMerged = false

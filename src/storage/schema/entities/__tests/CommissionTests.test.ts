@@ -1,4 +1,10 @@
-import { entity, table, sdk } from '../../../../../src'
+import {
+  createSyncMap,
+  sdk,
+  SyncMap,
+  TableCommission,
+  TableTransaction
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -37,7 +43,7 @@ describe('Commission class method tests', () => {
 
       // Insert the transaction to satisfy the foreign key constraint
       const now = new Date()
-      const transactionData: table.TableTransaction = {
+      const transactionData: TableTransaction = {
         transactionId,
         created_at: now,
         updated_at: now,
@@ -53,7 +59,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData)
 
       // Insert initial Commission record
-      const initialData: table.TableCommission = {
+      const initialData: TableCommission = {
         commissionId: 801,
         created_at: now,
         updated_at: now,
@@ -71,81 +77,8 @@ describe('Commission class method tests', () => {
       const entity1 = new EntityCommission(initialData)
       const entity2 = new EntityCommission(initialData)
 
-      // Create a valid SyncMap
-      const syncMap: entity.SyncMap = {
-        transaction: {
-          idMap: { [transactionId]: transactionId },
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: {},
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      }
+      const syncMap = createSyncMap()
+      syncMap.transaction.idMap[transactionId] = transactionId
 
       // Test: equals returns true for identical entities without SyncMap
       expect(entity1.equals(entity2.toApi())).toBe(true)
@@ -164,7 +97,7 @@ describe('Commission class method tests', () => {
 
       // Insert the first transaction to satisfy the foreign key constraint
       const now = new Date()
-      const transactionData1: table.TableTransaction = {
+      const transactionData1: TableTransaction = {
         transactionId: transactionId1,
         created_at: now,
         updated_at: now,
@@ -179,7 +112,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData1)
 
       // Insert the second transaction to satisfy the foreign key constraint for mismatched data
-      const transactionData2: table.TableTransaction = {
+      const transactionData2: TableTransaction = {
         transactionId: transactionId2,
         created_at: now,
         updated_at: now,
@@ -194,7 +127,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData2)
 
       // Insert initial Commission record
-      const initialData: table.TableCommission = {
+      const initialData: TableCommission = {
         commissionId: 802,
         created_at: now,
         updated_at: now,
@@ -211,7 +144,7 @@ describe('Commission class method tests', () => {
       const entity1 = new EntityCommission(initialData)
 
       // Create mismatched entities and test each condition
-      const mismatchedEntities: Partial<table.TableCommission>[] = [
+      const mismatchedEntities: Partial<TableCommission>[] = [
         { isRedeemed: true },
         { transactionId: transactionId2 }, // Requires valid transaction
         { keyOffset: 'offset456' },
@@ -220,87 +153,16 @@ describe('Commission class method tests', () => {
       ]
 
       for (const mismatch of mismatchedEntities) {
-        const mismatchedEntity = new EntityCommission({ ...initialData, ...mismatch })
+        const mismatchedEntity = new EntityCommission({
+          ...initialData,
+          ...mismatch
+        })
         expect(entity1.equals(mismatchedEntity.toApi())).toBe(false)
 
-        // Test with SyncMap, where transactionId is resolved
-        const syncMap: entity.SyncMap = {
-          transaction: {
-            idMap: {
-              [transactionId1]: transactionId1,
-              [transactionId2]: transactionId2
-            },
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificate: {
-            idMap: {},
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        }
+        const syncMap = createSyncMap()
+        syncMap.transaction.idMap[transactionId1] = transactionId1
+        syncMap.transaction.idMap[transactionId2] = transactionId2
+
         expect(entity1.equals(mismatchedEntity.toApi(), syncMap)).toBe(false)
       }
     }
@@ -314,7 +176,7 @@ describe('Commission class method tests', () => {
 
       // Insert a valid transaction to satisfy foreign key constraints
       const now = new Date()
-      const transactionData: table.TableTransaction = {
+      const transactionData: TableTransaction = {
         transactionId,
         created_at: now,
         updated_at: now,
@@ -329,7 +191,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData)
 
       // Insert the initial Commission record
-      const initialData: table.TableCommission = {
+      const initialData: TableCommission = {
         commissionId: 803,
         created_at: now,
         updated_at: now,
@@ -346,91 +208,21 @@ describe('Commission class method tests', () => {
       const entity = new EntityCommission(initialData)
 
       // Simulate the `ei` argument with a later `updated_at`
-      const updatedData: table.TableCommission = {
+      const updatedData: TableCommission = {
         ...initialData,
         updated_at: new Date(now.getTime() + 1000),
         isRedeemed: true
       }
+
+      const syncMap = createSyncMap()
+      syncMap.transaction.idMap[transactionId] = transactionId
 
       // Call mergeExisting
       const wasMergedRaw = await entity.mergeExisting(
         activeStorage,
         undefined, // `since` is not used
         updatedData,
-        {
-          transaction: {
-            idMap: { [transactionId]: transactionId },
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificate: {
-            idMap: {},
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        },
+        syncMap,
         undefined // `trx` is not used
       )
 
@@ -460,7 +252,7 @@ describe('Commission class method tests', () => {
 
       // Insert a valid transaction to satisfy foreign key constraints
       const now = new Date()
-      const transactionData: table.TableTransaction = {
+      const transactionData: TableTransaction = {
         transactionId,
         created_at: now,
         updated_at: now,
@@ -475,7 +267,7 @@ describe('Commission class method tests', () => {
       await activeStorage.insertTransaction(transactionData)
 
       // Insert the initial Commission record
-      const initialData: table.TableCommission = {
+      const initialData: TableCommission = {
         commissionId: 804,
         created_at: now,
         updated_at: now,
@@ -492,91 +284,21 @@ describe('Commission class method tests', () => {
       const entity = new EntityCommission(initialData)
 
       // Simulate the `ei` argument with an earlier or equal `updated_at`
-      const olderOrEqualData: table.TableCommission = {
+      const olderOrEqualData: TableCommission = {
         ...initialData,
         updated_at: new Date(now.getTime()),
         isRedeemed: true
       }
+
+      const syncMap = createSyncMap()
+      syncMap.transaction.idMap[transactionId] = transactionId
 
       // Call mergeExisting
       const wasMergedRaw = await entity.mergeExisting(
         activeStorage,
         undefined,
         olderOrEqualData,
-        {
-          transaction: {
-            idMap: { [transactionId]: transactionId },
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificate: {
-            idMap: {},
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        },
+        syncMap,
         undefined // `trx` is not used
       )
 
@@ -603,7 +325,7 @@ describe('Commission class method tests', () => {
     const now = new Date()
 
     // Initial test data
-    const initialData: table.TableCommission = {
+    const initialData: TableCommission = {
       commissionId: 801,
       created_at: now,
       updated_at: now,
@@ -629,7 +351,7 @@ describe('Commission class method tests', () => {
     expect(entity.lockingScript).toEqual(initialData.lockingScript)
     expect(entity.satoshis).toBe(initialData.satoshis)
     expect(entity.id).toBe(initialData.commissionId)
-    expect(entity.entityName).toBe('Commission')
+    expect(entity.entityName).toBe('commission')
     expect(entity.entityTable).toBe('commissions')
 
     // Validate setters

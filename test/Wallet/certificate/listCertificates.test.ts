@@ -1,7 +1,11 @@
 import { OriginatorDomainNameStringUnder250Bytes } from '@bsv/sdk'
 import { listCertificates } from '../../../src/storage/methods/listCertificates'
 import { StorageProvider } from '../../../src/storage/StorageProvider'
-import { sdk, table } from '../../../src/index.all'
+import {
+  sdk,
+  TableCertificate,
+  TableCertificateField
+} from '../../../src/index.all'
 import { TrxToken } from '../../../src/sdk'
 
 jest.mock('../../../src/storage/StorageProvider')
@@ -78,7 +82,7 @@ describe('listCertificates', () => {
 
   test('should return exactly the number of certificates if they are fewer than the limit', async () => {
     // Suppose we have 2 certificates
-    const fakeCerts: table.TableCertificate[] = [
+    const fakeCerts: TableCertificate[] = [
       {
         certificateId: 1,
         userId: 123,
@@ -110,7 +114,7 @@ describe('listCertificates', () => {
     ]
 
     // Suppose each cert has some fields
-    const fakeFieldsForCert1: table.TableCertificateField[] = [
+    const fakeFieldsForCert1: TableCertificateField[] = [
       {
         certificateId: 1,
         userId: 123,
@@ -122,7 +126,7 @@ describe('listCertificates', () => {
       }
     ]
 
-    const fakeFieldsForCert2: table.TableCertificateField[] = [
+    const fakeFieldsForCert2: TableCertificateField[] = [
       {
         certificateId: 2,
         userId: 123,
@@ -188,7 +192,7 @@ describe('listCertificates', () => {
   test('should call countCertificates when the returned certificates length is equal to limit', async () => {
     // We want exactly 'limit' items returned, so the function calls countCertificates
     vargs.limit = 2 // set limit to 2
-    const fakeCerts: table.TableCertificate[] = [
+    const fakeCerts: TableCertificate[] = [
       {
         certificateId: 11,
         userId: 123,
@@ -290,7 +294,7 @@ describe('listCertificates', () => {
     // but let's confirm the coverage if the function doesn't rely on partial storage returning partial results.
     vargs.limit = 2
 
-    const cA: table.TableCertificate = {
+    const cA: TableCertificate = {
       certificateId: 100,
       userId: 123,
       type: 'zzz',
@@ -304,7 +308,7 @@ describe('listCertificates', () => {
       created_at: new Date(),
       updated_at: new Date()
     }
-    const cB: table.TableCertificate = {
+    const cB: TableCertificate = {
       certificateId: 101,
       userId: 123,
       type: 'yyy',
@@ -318,7 +322,7 @@ describe('listCertificates', () => {
       created_at: new Date(),
       updated_at: new Date()
     }
-    const cC: table.TableCertificate = {
+    const cC: TableCertificate = {
       certificateId: 102,
       userId: 123,
       type: 'xxx',

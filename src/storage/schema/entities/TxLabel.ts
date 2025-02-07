@@ -2,16 +2,15 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   sdk,
-  table,
+  TableTxLabel,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityStorage, SyncMap } from '.'
 
-export class EntityTxLabel extends EntityBase<table.TableTxLabel> {
-  constructor(api?: table.TableTxLabel) {
+export class EntityTxLabel extends EntityBase<TableTxLabel> {
+  constructor(api?: TableTxLabel) {
     const now = new Date()
     super(
       api || {
@@ -73,13 +72,13 @@ export class EntityTxLabel extends EntityBase<table.TableTxLabel> {
     this.api.txLabelId = v
   }
   override get entityName(): string {
-    return 'entity.TxLabel'
+    return 'txLabel'
   }
   override get entityTable(): string {
     return 'tx_labels'
   }
 
-  override equals(ei: table.TableTxLabel, syncMap?: entity.SyncMap): boolean {
+  override equals(ei: TableTxLabel, syncMap?: SyncMap): boolean {
     const eo = this.toApi()
     if (eo.label != ei.label || eo.isDeleted != ei.isDeleted) return false
     if (!syncMap) {
@@ -89,26 +88,26 @@ export class EntityTxLabel extends EntityBase<table.TableTxLabel> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.TableTxLabel,
-    syncMap: entity.SyncMap,
+    ei: TableTxLabel,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.EntityTxLabel; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityTxLabel; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findTxLabels({ partial: { label: ei.label, userId }, trx })
     )
     return {
       found: !!ef,
-      eo: new entity.EntityTxLabel(ef || { ...ei }),
+      eo: new EntityTxLabel(ef || { ...ei }),
       eiId: verifyId(ei.txLabelId)
     }
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     this.userId = userId
@@ -117,10 +116,10 @@ export class EntityTxLabel extends EntityBase<table.TableTxLabel> {
   }
 
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.TableTxLabel,
-    syncMap: entity.SyncMap,
+    ei: TableTxLabel,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     let wasMerged = false

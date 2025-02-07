@@ -1,4 +1,10 @@
-import { entity, table, sdk } from '../../../../../src'
+import {
+  createSyncMap,
+  sdk,
+  SyncMap,
+  TableCertificate,
+  TableCertificateField
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -37,7 +43,7 @@ describe('CertificateField class method tests', () => {
       // Insert a valid Certificate to satisfy foreign key constraints
       const now = new Date()
       const certificateId = 300 // Ensure this ID is unique in the `certificates` table
-      const certificateData: table.TableCertificate = {
+      const certificateData: TableCertificate = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -58,7 +64,7 @@ describe('CertificateField class method tests', () => {
       await activeStorage.insertCertificate(certificateData)
 
       // Insert initial CertificateField record
-      const initialData: table.TableCertificateField = {
+      const initialData: TableCertificateField = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -74,80 +80,8 @@ describe('CertificateField class method tests', () => {
       const entity2 = new EntityCertificateField(initialData)
 
       // Create a valid SyncMap
-      const syncMap: entity.SyncMap = {
-        certificate: {
-          idMap: { [certificateId]: certificateId },
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        transaction: {
-          idMap: {},
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: {},
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      }
+      const syncMap = createSyncMap()
+      syncMap.certificate.idMap[certificateId] = certificateId
 
       // Test: equals returns true for identical entities without SyncMap
       expect(entity1.equals(entity2.toApi())).toBe(true)
@@ -202,7 +136,7 @@ describe('CertificateField class method tests', () => {
       })
 
       // Insert initial CertificateField record
-      const initialData: table.TableCertificateField = {
+      const initialData: TableCertificateField = {
         certificateId: certificateId1,
         created_at: now,
         updated_at: now,
@@ -217,7 +151,7 @@ describe('CertificateField class method tests', () => {
       const entity1 = new EntityCertificateField(initialData)
 
       // Create mismatched entities and test each condition
-      const mismatchedEntities: Partial<table.TableCertificateField>[] = [
+      const mismatchedEntities: Partial<TableCertificateField>[] = [
         { certificateId: certificateId2 }, // Requires valid certificate
         { fieldName: 'field2' },
         { fieldValue: 'value2' },
@@ -232,83 +166,10 @@ describe('CertificateField class method tests', () => {
         expect(entity1.equals(mismatchedEntity.toApi())).toBe(false)
 
         // Test with SyncMap, where certificateId is resolved
-        const syncMap: entity.SyncMap = {
-          certificate: {
-            idMap: {
-              [certificateId1]: certificateId1,
-              [certificateId2]: certificateId2
-            },
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          transaction: {
-            idMap: {},
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        }
+        const syncMap = createSyncMap()
+        syncMap.certificate.idMap[certificateId1] = certificateId1
+        syncMap.certificate.idMap[certificateId2] = certificateId2
+
         expect(entity1.equals(mismatchedEntity.toApi(), syncMap)).toBe(false)
       }
     }
@@ -338,7 +199,7 @@ describe('CertificateField class method tests', () => {
       })
 
       // Insert the initial CertificateField record
-      const initialData: table.TableCertificateField = {
+      const initialData: TableCertificateField = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -353,92 +214,22 @@ describe('CertificateField class method tests', () => {
       const entity = new EntityCertificateField(initialData)
 
       // Simulate the `ei` argument with a later `updated_at`
-      const updatedData: table.TableCertificateField = {
+      const updatedData: TableCertificateField = {
         ...initialData,
         updated_at: new Date(now.getTime() + 1000), // Later timestamp
         fieldValue: 'updatedValue',
         masterKey: 'updatedMasterKey'
       }
 
+      const syncMap = createSyncMap()
+      syncMap.certificate.idMap[certificateId] = certificateId
+
       // Call mergeExisting
       const wasMergedRaw = await entity.mergeExisting(
         activeStorage,
         undefined, // `since` is not used in this method
         updatedData,
-        {
-          certificate: {
-            idMap: { [certificateId]: certificateId },
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          transaction: {
-            idMap: {},
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        },
+        syncMap,
         undefined // `trx` is not used
       )
 
@@ -486,7 +277,7 @@ describe('CertificateField class method tests', () => {
       })
 
       // Insert the initial CertificateField record
-      const initialData: table.TableCertificateField = {
+      const initialData: TableCertificateField = {
         certificateId,
         created_at: now,
         updated_at: now,
@@ -501,92 +292,22 @@ describe('CertificateField class method tests', () => {
       const entity = new EntityCertificateField(initialData)
 
       // Simulate the `ei` argument with the same `updated_at`
-      const sameUpdatedData: table.TableCertificateField = {
+      const sameUpdatedData: TableCertificateField = {
         ...initialData,
         updated_at: now, // Same timestamp
         fieldValue: 'unchangedValue',
         masterKey: 'unchangedMasterKey'
       }
 
+      const syncMap = createSyncMap()
+      syncMap.certificate.idMap[certificateId] = certificateId
+
       // Call mergeExisting
       const wasMergedRaw = await entity.mergeExisting(
         activeStorage,
         undefined, // `since` is not used
         sameUpdatedData,
-        {
-          certificate: {
-            idMap: { [certificateId]: certificateId },
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          transaction: {
-            idMap: {},
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        },
+        syncMap,
         undefined // `trx` is not used
       )
 
@@ -614,7 +335,7 @@ describe('CertificateField class method tests', () => {
     const now = new Date()
 
     // Initial data for the test
-    const initialData: table.TableCertificateField = {
+    const initialData: TableCertificateField = {
       userId: 1,
       certificateId: 500,
       created_at: now,
@@ -638,7 +359,7 @@ describe('CertificateField class method tests', () => {
 
     // Validate overridden properties
     expect(() => entity.id).toThrowError('entity has no "id" value')
-    expect(entity.entityName).toBe('CertificateField')
+    expect(entity.entityName).toBe('certificateField')
     expect(entity.entityTable).toBe('certificate_fields')
 
     // Validate setters

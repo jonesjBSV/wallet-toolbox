@@ -14,13 +14,13 @@ import {
   asString,
   StorageKnex,
   sdk,
-  table,
   verifyOne,
   verifyId,
   ScriptTemplateSABPPP,
   randomBytesBase64,
   randomBytes,
-  entity
+  EntityProvenTxReq,
+  TableOutput
 } from '../../../src/index.all'
 import {
   _tu,
@@ -264,7 +264,7 @@ describe('walletLive test', () => {
     const beef = Beef.fromString(r.atomicBEEF)
     const btx = beef.txs.slice(-1)[0]
     const txid = btx.txid
-    const req = await entity.EntityProvenTxReq.fromStorageTxid(stagingStorage, txid)
+    const req = await EntityProvenTxReq.fromStorageTxid(stagingStorage, txid)
     expect(req?.notify.transactionIds?.length).toBe(2)
   })
 
@@ -384,15 +384,15 @@ ${Utils.toHex(beef.toBinaryAtomic(txid))}
 async function confirmSpendableOutputs(
   storage: StorageKnex,
   services: Services
-): Promise<{ invalidSpendableOutputs: table.TableOutput[] }> {
-  const invalidSpendableOutputs: table.TableOutput[] = []
+): Promise<{ invalidSpendableOutputs: TableOutput[] }> {
+  const invalidSpendableOutputs: TableOutput[] = []
   const users = await storage.findUsers({ partial: {} })
 
   for (const { userId } of users) {
     const defaultBasket = verifyOne(
       await storage.findOutputBaskets({ partial: { userId, name: 'default' } })
     )
-    const where: Partial<table.TableOutput> = {
+    const where: Partial<TableOutput> = {
       userId,
       basketId: defaultBasket.basketId,
       spendable: true

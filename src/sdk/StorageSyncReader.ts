@@ -1,11 +1,28 @@
-import { sdk, table } from '../index.client'
+import {
+  sdk,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser
+} from '../index.client'
 
 /**
  * This is the minimal interface required for a WalletStorageProvider to export data to another provider.
  */
 export interface StorageSyncReader {
   isAvailable(): boolean
-  makeAvailable(): Promise<table.Settings>
+  makeAvailable(): Promise<TableSettings>
 
   destroy(): Promise<void>
 
@@ -15,37 +32,37 @@ export interface StorageSyncReader {
   //
   /////////////////
 
-  getSettings(): table.Settings
+  getSettings(): TableSettings
 
-  findUserByIdentityKey(key: string): Promise<table.TableUser | undefined>
+  findUserByIdentityKey(key: string): Promise<TableUser | undefined>
 
-  findSyncStates(args: sdk.FindSyncStatesArgs): Promise<table.TableSyncState[]>
+  findSyncStates(args: sdk.FindSyncStatesArgs): Promise<TableSyncState[]>
 
   findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.TableCertificateField[]>
-  findCertificates(args: sdk.FindCertificatesArgs): Promise<table.TableCertificate[]>
-  findCommissions(args: sdk.FindCommissionsArgs): Promise<table.TableCommission[]>
+  ): Promise<TableCertificateField[]>
+  findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificate[]>
+  findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]>
   findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.TableOutputBasket[]>
-  findOutputs(args: sdk.FindOutputsArgs): Promise<table.TableOutput[]>
-  findOutputTags(args: sdk.FindOutputTagsArgs): Promise<table.TableOutputTag[]>
-  findTransactions(args: sdk.FindTransactionsArgs): Promise<table.TableTransaction[]>
-  findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TableTxLabel[]>
+  ): Promise<TableOutputBasket[]>
+  findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]>
+  findOutputTags(args: sdk.FindOutputTagsArgs): Promise<TableOutputTag[]>
+  findTransactions(args: sdk.FindTransactionsArgs): Promise<TableTransaction[]>
+  findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]>
 
   getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableProvenTx[]>
+  ): Promise<TableProvenTx[]>
   getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableProvenTxReq[]>
+  ): Promise<TableProvenTxReq[]>
   getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableTxLabelMap[]>
+  ): Promise<TableTxLabelMap[]>
   getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableOutputTagMap[]>
+  ): Promise<TableOutputTagMap[]>
 
   getSyncChunk(args: RequestSyncChunkArgs): Promise<SyncChunk>
 }
@@ -131,19 +148,19 @@ export interface SyncChunk {
   toStorageIdentityKey: string
   userIdentityKey: string
 
-  user?: table.TableUser
-  provenTxs?: table.TableProvenTx[]
-  provenTxReqs?: table.TableProvenTxReq[]
-  outputBaskets?: table.TableOutputBasket[]
-  txLabels?: table.TableTxLabel[]
-  outputTags?: table.TableOutputTag[]
-  transactions?: table.TableTransaction[]
-  txLabelMaps?: table.TableTxLabelMap[]
-  commissions?: table.TableCommission[]
-  outputs?: table.TableOutput[]
-  outputTagMaps?: table.TableOutputTagMap[]
-  certificates?: table.TableCertificate[]
-  certificateFields?: table.TableCertificateField[]
+  user?: TableUser
+  provenTxs?: TableProvenTx[]
+  provenTxReqs?: TableProvenTxReq[]
+  outputBaskets?: TableOutputBasket[]
+  txLabels?: TableTxLabel[]
+  outputTags?: TableOutputTag[]
+  transactions?: TableTransaction[]
+  txLabelMaps?: TableTxLabelMap[]
+  commissions?: TableCommission[]
+  outputs?: TableOutput[]
+  outputTagMaps?: TableOutputTagMap[]
+  certificates?: TableCertificate[]
+  certificateFields?: TableCertificateField[]
 }
 
 export interface ProcessSyncChunkResult {

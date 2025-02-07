@@ -5,7 +5,6 @@ import {
   sdk,
   StorageProvider,
   StorageKnex,
-  table,
   verifyOne
 } from '../../src/index.all'
 import {
@@ -694,7 +693,7 @@ describe('update2 tests', () => {
   test('12_update User table setting individual values', async () => {
     await createDB('User12')
     for (const { storage } of setups) {
-      const initialRecord: table.TableUser = {
+      const initialRecord: TableUser = {
         userId: 3,
         identityKey: '',
         created_at: new Date(),

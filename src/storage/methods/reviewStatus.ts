@@ -1,6 +1,6 @@
 import { Beef } from '@bsv/sdk'
 import { Knex } from 'knex'
-import { table } from '../index.client'
+import { TableOutput, TableTransaction } from '../index.client'
 import { sdk } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 
@@ -36,7 +36,7 @@ export async function reviewStatus(
         UPDATE transactions SET status = 'failed'
         WHERE exists(select 1 from proven_tx_reqs as r where transactions.txid = r.txid and r.status = 'invalid')
         */
-    q: k<table.TableTransaction>('transactions')
+    q: k<TableTransaction>('transactions')
       .update({ status: 'failed' })
       .whereNot({ status: 'failed' })
       .whereExists(function () {
@@ -52,7 +52,7 @@ export async function reviewStatus(
         UPDATE outputs SET spentBy = null, spendable = 1
         where exists(select 1 from transactions as t where outputs.spentBy = t.transactionId and t.status = 'failed')
         */
-    q: k<table.TableOutput>('outputs')
+    q: k<TableOutput>('outputs')
       .update({ spentBy: null as unknown as undefined, spendable: true })
       .whereExists(function () {
         this.select(k.raw(1))
@@ -68,7 +68,7 @@ export async function reviewStatus(
         FROM proven_txs p
         WHERE transactions.txid = p.txid AND transactions.provenTxId IS NULL
         */
-    q: k<table.TableTransaction>('transactions')
+    q: k<TableTransaction>('transactions')
       .update({
         status: 'completed',
         provenTxId: k.raw(

@@ -1,6 +1,6 @@
 import { Beef } from '@bsv/sdk'
 import { StorageProvider } from '../StorageProvider'
-import { entity, sdk } from '../../index.client'
+import { EntityProvenTxReq, sdk } from '../../index.client'
 
 /**
  * Attempt to post one or more `ProvenTxReq` with status 'unsent'
@@ -10,7 +10,7 @@ import { entity, sdk } from '../../index.client'
  */
 export async function attemptToPostReqsToNetwork(
   storage: StorageProvider,
-  reqs: entity.EntityProvenTxReq[],
+  reqs: EntityProvenTxReq[],
   trx?: sdk.TrxToken
 ): Promise<PostReqsToNetworkResult> {
   const r: PostReqsToNetworkResult = {
@@ -169,7 +169,7 @@ export type PostReqsToNetworkDetailsStatus =
 
 export interface PostReqsToNetworkDetails {
   txid: string
-  req: entity.EntityProvenTxReq
+  req: EntityProvenTxReq
   status: PostReqsToNetworkDetailsStatus
   pbrft: sdk.PostTxResultForTxid
   data?: string

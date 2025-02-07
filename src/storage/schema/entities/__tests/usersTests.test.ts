@@ -1,5 +1,5 @@
 import { EntityUser } from '../../../../../src/storage/schema/entities/User'
-import { entity, table, sdk } from '../../../../../src'
+import { createSyncMap, sdk, SyncMap, TableUser } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -47,7 +47,7 @@ describe('User class method tests', () => {
   // Test: Constructor with provided API object
   test('2_creates_user_with_provided_api_object', () => {
     const now = new Date()
-    const apiObject: table.TableUser = {
+    const apiObject: TableUser = {
       userId: 42,
       created_at: now,
       updated_at: now,
@@ -104,81 +104,7 @@ describe('User class method tests', () => {
         })
         await ctx2.activeStorage.insertUser(user2.toApi())
 
-        // Create a valid SyncMap mapping IDs from db1 to db2
-        const syncMap: entity.SyncMap = {
-          transaction: {
-            idMap: { [user1.userId]: user2.userId },
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 1
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificate: {
-            idMap: {},
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        }
+        const syncMap = createSyncMap()
 
         // Verify the entities match across databases
         expect(user1.equals(user2.toApi(), syncMap)).toBe(true) // Should match
@@ -208,81 +134,7 @@ describe('User class method tests', () => {
         })
         await ctx2.activeStorage.insertUser(user2.toApi())
 
-        // Create a valid SyncMap mapping IDs from db1 to db2
-        const syncMap: entity.SyncMap = {
-          transaction: {
-            idMap: { [user1.userId]: user2.userId },
-            entityName: 'Transaction',
-            maxUpdated_at: undefined,
-            count: 1
-          },
-          provenTx: {
-            idMap: {},
-            entityName: 'ProvenTx',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputBasket: {
-            idMap: {},
-            entityName: 'OutputBasket',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          provenTxReq: {
-            idMap: {},
-            entityName: 'ProvenTxReq',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabel: {
-            idMap: {},
-            entityName: 'TxLabel',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          txLabelMap: {
-            idMap: {},
-            entityName: 'TxLabelMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          output: {
-            idMap: {},
-            entityName: 'Output',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTag: {
-            idMap: {},
-            entityName: 'OutputTag',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          outputTagMap: {
-            idMap: {},
-            entityName: 'OutputTagMap',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificate: {
-            idMap: {},
-            entityName: 'Certificate',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          certificateField: {
-            idMap: {},
-            entityName: 'CertificateField',
-            maxUpdated_at: undefined,
-            count: 0
-          },
-          commission: {
-            idMap: {},
-            entityName: 'Commission',
-            maxUpdated_at: undefined,
-            count: 0
-          }
-        }
+        const syncMap = createSyncMap()
 
         // Verify the entities do not match across databases
         expect(user1.equals(user2.toApi(), syncMap)).toBe(false) // Should not match
@@ -296,12 +148,12 @@ describe('User class method tests', () => {
     const pastDate = new Date(now.getTime() - 1000000)
 
     // Provide incomplete API object
-    const partialApiObject: Partial<table.TableUser> = {
+    const partialApiObject: Partial<TableUser> = {
       userId: 123,
       created_at: pastDate
     }
 
-    const user = new EntityUser(partialApiObject as table.TableUser)
+    const user = new EntityUser(partialApiObject as TableUser)
 
     // Default values should fill in missing fields
     expect(user.userId).toBe(123)
@@ -316,7 +168,7 @@ describe('User class method tests', () => {
     const largeUserId = Number.MAX_SAFE_INTEGER
     const longIdentityKey = 'x'.repeat(1000)
 
-    const apiObject: table.TableUser = {
+    const apiObject: TableUser = {
       userId: largeUserId,
       created_at: now,
       updated_at: now,
@@ -330,7 +182,7 @@ describe('User class method tests', () => {
 
   // Test: Handles empty API object
   test('10_handles_empty_api_object', () => {
-    const emptyApiObject: table.TableUser = {} as table.TableUser
+    const emptyApiObject: TableUser = {} as TableUser
     const user = new EntityUser(emptyApiObject)
 
     // Default values should be applied but constructor does not set default values for empty object
@@ -352,7 +204,7 @@ describe('User class method tests', () => {
   test('12_entityName_returns_User', () => {
     const user = new EntityUser()
 
-    expect(user.entityName).toBe('User')
+    expect(user.entityName).toBe('user')
   })
 
   // Test: `entityTable` getter
@@ -372,7 +224,7 @@ describe('User class method tests', () => {
       activeStorage: 'oldStorage'
     })
 
-    const updatedEi: table.TableUser = {
+    const updatedEi: TableUser = {
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-02-01'), // Newer `updated_at`
@@ -382,7 +234,7 @@ describe('User class method tests', () => {
 
     const result = await user.mergeExisting(
       {
-        updateUser: async (id: number, data: table.TableUser) => {
+        updateUser: async (id: number, data: TableUser) => {
           expect(id).toBe(1)
           expect(data.activeStorage).toBe('newStorage')
           expect(data.updated_at).toBeInstanceOf(Date)
@@ -407,7 +259,7 @@ describe('User class method tests', () => {
       activeStorage: 'oldStorage'
     })
 
-    const olderEi: table.TableUser = {
+    const olderEi: TableUser = {
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-01'), // Older `updated_at`
@@ -440,7 +292,7 @@ describe('User class method tests', () => {
       activeStorage: 'oldStorage'
     })
 
-    const updatedEi: table.TableUser = {
+    const updatedEi: TableUser = {
       userId: 1,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-02-01'), // Newer `updated_at`
@@ -452,7 +304,7 @@ describe('User class method tests', () => {
 
     const result = await user.mergeExisting(
       {
-        updateUser: async (id: number, data: table.TableUser, trx: any) => {
+        updateUser: async (id: number, data: TableUser, trx: any) => {
           expect(id).toBe(1)
           expect(data.activeStorage).toBe('newStorage')
           expect(data.updated_at).toBeInstanceOf(Date)

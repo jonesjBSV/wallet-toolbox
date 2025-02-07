@@ -1,5 +1,5 @@
 import { EntityTxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
-import { entity, table, sdk } from '../../../../../src'
+import { createSyncMap, sdk, SyncMap, TableTxLabel } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -50,7 +50,7 @@ describe('TxLabel Class Tests', () => {
   // Test: Constructor with provided API object
   test('2_creates_txLabel_with_provided_api_object', () => {
     const now = new Date()
-    const apiObject: table.TableTxLabel = {
+    const apiObject: TableTxLabel = {
       txLabelId: 42,
       label: 'Test Label',
       userId: 101,
@@ -83,7 +83,7 @@ describe('TxLabel Class Tests', () => {
     txLabel.id = 2
 
     expect(txLabel.id).toBe(2)
-    expect(txLabel.entityName).toBe('entity.TxLabel')
+    expect(txLabel.entityName).toBe('txLabel')
     expect(txLabel.entityTable).toBe('tx_labels')
     expect(txLabel.txLabelId).toBe(2)
     expect(txLabel.label).toBe('New Label')
@@ -107,7 +107,7 @@ describe('TxLabel Class Tests', () => {
 
       await activeStorage.insertTxLabel(txLabel.toApi())
 
-      const olderEi: table.TableTxLabel = {
+      const olderEi: TableTxLabel = {
         txLabelId: 302,
         label: 'Outdated Label',
         userId: 1,
@@ -160,81 +160,9 @@ describe('TxLabel Class Tests', () => {
 
     await ctx2.activeStorage.insertTxLabel(txLabel2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      txLabel: {
-        idMap: { [txLabel2.userId]: txLabel1.userId },
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.txLabel.idMap = { [txLabel2.userId]: txLabel1.userId }
+    syncMap.txLabel.count = 1
 
     // Verify the entities match
     expect(txLabel1.equals(txLabel2.toApi(), syncMap)).toBe(true)
@@ -268,81 +196,9 @@ describe('TxLabel Class Tests', () => {
 
     await ctx2.activeStorage.insertTxLabel(txLabel2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      txLabel: {
-        idMap: { [txLabel2.userId]: txLabel1.userId },
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.txLabel.idMap = { [txLabel2.userId]: txLabel1.userId }
+    syncMap.txLabel.count = 1
 
     // Verify the entities do not match
     expect(txLabel1.equals(txLabel2.toApi(), syncMap)).toBe(false)

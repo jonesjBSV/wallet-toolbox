@@ -1,4 +1,9 @@
-import { entity, table, sdk } from '../../../../../src'
+import {
+  createSyncMap,
+  sdk,
+  SyncMap,
+  TableOutputBasket
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -34,7 +39,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputBasket record with valid data
-    const initialData: table.TableOutputBasket = {
+    const initialData: TableOutputBasket = {
       basketId: 100,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -50,7 +55,7 @@ describe('OutputBasket class method tests', () => {
     const entity = new EntityOutputBasket(initialData)
 
     // Simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.TableOutputBasket = {
+    const updatedData: TableOutputBasket = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       numberOfDesiredUTXOs: 20, // Update this field
@@ -58,85 +63,15 @@ describe('OutputBasket class method tests', () => {
       isDeleted: true // Simulate a change in `isDeleted`
     }
 
+    const syncMap = createSyncMap()
+    syncMap.outputBasket.idMap[100] = 100
+
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
       ctx.activeStorage,
       undefined, // `since` is not used in this method
       updatedData,
-      {
-        outputBasket: {
-          idMap: { 100: 100 },
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        transaction: {
-          idMap: {},
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: {},
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      },
+      syncMap,
       undefined // `trx` is not used
     )
 
@@ -165,7 +100,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputBasket record with valid data
-    const initialData: table.TableOutputBasket = {
+    const initialData: TableOutputBasket = {
       basketId: 200,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -181,7 +116,7 @@ describe('OutputBasket class method tests', () => {
     const entity = new EntityOutputBasket(initialData)
 
     // Simulate the `ei` argument with an earlier `updated_at`
-    const earlierData: table.TableOutputBasket = {
+    const earlierData: TableOutputBasket = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       numberOfDesiredUTXOs: 20, // Simulate a change
@@ -189,85 +124,15 @@ describe('OutputBasket class method tests', () => {
       isDeleted: true // Simulate a change
     }
 
+    const syncMap = createSyncMap()
+    syncMap.outputBasket.idMap[200] = 200
+
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
       ctx.activeStorage,
       undefined, // `since` is not used in this method
       earlierData,
-      {
-        outputBasket: {
-          idMap: { 200: 200 },
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        transaction: {
-          idMap: {},
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: {},
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      },
+      syncMap,
       undefined // `trx` is not used
     )
 
@@ -296,7 +161,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert two identical OutputBasket records in the database
-    const basketData: table.TableOutputBasket = {
+    const basketData: TableOutputBasket = {
       basketId: 401,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -316,81 +181,8 @@ describe('OutputBasket class method tests', () => {
     // Test: equals returns true for identical entities without SyncMap
     expect(entity1.equals(entity2.toApi())).toBe(true)
 
-    // Create a valid SyncMap
-    const syncMap = {
-      outputBasket: {
-        idMap: { 401: 401 },
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.outputBasket.idMap[401] = 401
 
     // Test: equals returns true for identical entities with SyncMap
     expect(entity1.equals(entity2.toApi(), syncMap)).toBe(true)
@@ -400,7 +192,7 @@ describe('OutputBasket class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert two different OutputBasket records in the database
-    const basketData1: table.TableOutputBasket = {
+    const basketData1: TableOutputBasket = {
       basketId: 402,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -411,7 +203,7 @@ describe('OutputBasket class method tests', () => {
       isDeleted: false
     }
 
-    const basketData2: table.TableOutputBasket = {
+    const basketData2: TableOutputBasket = {
       basketId: 403,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -432,81 +224,8 @@ describe('OutputBasket class method tests', () => {
     // Test: equals returns false for different entities without SyncMap
     expect(entity1.equals(entity2.toApi())).toBe(false)
 
-    // Create a SyncMap with mismatched mapping
-    const syncMap: entity.SyncMap = {
-      outputBasket: {
-        idMap: { 1: 2 }, // Mismatched mapping
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.outputBasket.idMap[1] = 2
 
     // Test: equals returns false for different entities with SyncMap
     expect(entity1.equals(entity2.toApi(), syncMap)).toBe(false)
@@ -514,7 +233,7 @@ describe('OutputBasket class method tests', () => {
 
   test('OutputBasket getters, setters, and updateApi', () => {
     // Create a mock OutputBasket instance
-    const initialData: table.TableOutputBasket = {
+    const initialData: TableOutputBasket = {
       basketId: 123,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -537,7 +256,7 @@ describe('OutputBasket class method tests', () => {
     expect(entity.minimumDesiredUTXOValue).toBe(1000)
     expect(entity.isDeleted).toBe(false)
     expect(entity.id).toBe(123)
-    expect(entity.entityName).toBe('OutputBasket')
+    expect(entity.entityName).toBe('outputBasket')
     expect(entity.entityTable).toBe('output_baskets')
 
     // Test setters

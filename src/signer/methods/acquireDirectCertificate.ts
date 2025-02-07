@@ -1,5 +1,5 @@
 import { AcquireCertificateResult } from '@bsv/sdk'
-import { sdk, table, Wallet } from '../../index.client'
+import { sdk, TableCertificateX, Wallet } from '../../index.client'
 
 export async function acquireDirectCertificate(
   wallet: Wallet,
@@ -7,7 +7,7 @@ export async function acquireDirectCertificate(
   vargs: sdk.ValidAcquireDirectCertificateArgs
 ): Promise<AcquireCertificateResult> {
   const now = new Date()
-  const newCert: table.CertificateX = {
+  const newCert: TableCertificateX = {
     certificateId: 0, // replaced by storage insert
     created_at: now,
     updated_at: now,

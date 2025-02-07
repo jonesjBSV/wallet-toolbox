@@ -1,6 +1,12 @@
 import { Beef } from '@bsv/sdk'
 import { Knex } from 'knex'
-import { table } from '../index.client'
+import {
+  TableCommission,
+  TableOutput,
+  TableOutputTagMap,
+  TableTransaction,
+  TableTxLabelMap
+} from '../index.client'
 import { sdk } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 
@@ -148,25 +154,25 @@ export async function purgeData(
     let qs: PurgeQuery[] = []
 
     const spentTxsQ = storage
-      .toDb(trx)<table.TableTransaction>('transactions')
+      .toDb(trx)<TableTransaction>('transactions')
       .where('updated_at', '<', before)
       .where('status', 'completed')
       .whereRaw(
         `not exists(select outputId from outputs as o where o.transactionId = transactions.transactionId and o.spendable = 1)`
       )
-    const txs: table.TableTransaction[] = await spentTxsQ
+    const txs: TableTransaction[] = await spentTxsQ
     // Save any spent txid still needed to prove a utxo:
     const nptxs = txs.filter(t => !proofTxids[t.txid || ''])
     let spentTxIds = nptxs.map(tx => tx.transactionId)
 
     if (spentTxIds.length > 0) {
-      const update: Partial<table.TableOutput> = {
+      const update: Partial<TableOutput> = {
         spentBy: null as unknown as undefined
       }
       qs.push({
         log: 'spent outputs no longer tracked by spentBy',
         q: storage
-          .toDb(trx)<table.TableOutput>('outputs')
+          .toDb(trx)<TableOutput>('outputs')
           .update(
             storage.validatePartialForUpdate(update, undefined, ['spendable'])
           )
@@ -214,14 +220,14 @@ export async function purgeData(
         qs.push({
           log: `${reason} output_tags_map deleted`,
           q: storage
-            .toDb(trx)<table.TableOutputTagMap>('output_tags_map')
+            .toDb(trx)<TableOutputTagMap>('output_tags_map')
             .whereIn('outputId', outputIds)
             .delete()
         })
         qs.push({
           log: `${reason} outputs deleted`,
           q: storage
-            .toDb(trx)<table.TableOutput>('outputs')
+            .toDb(trx)<TableOutput>('outputs')
             .whereIn('outputId', outputIds)
             .delete()
         })
@@ -230,7 +236,7 @@ export async function purgeData(
       qs.push({
         log: `${reason} tx_labels_map deleted`,
         q: storage
-          .toDb(trx)<table.TableTxLabelMap>('tx_labels_map')
+          .toDb(trx)<TableTxLabelMap>('tx_labels_map')
           .whereIn('transactionId', transactionIds)
           .delete()
       })
@@ -238,7 +244,7 @@ export async function purgeData(
       qs.push({
         log: `${reason} commissions deleted`,
         q: storage
-          .toDb(trx)<table.TableCommission>('commissions')
+          .toDb(trx)<TableCommission>('commissions')
           .whereIn('transactionId', transactionIds)
           .delete()
       })
@@ -247,7 +253,7 @@ export async function purgeData(
         qs.push({
           log: 'unspent outputs updated to spendable',
           q: storage
-            .toDb(trx)<table.TableOutput>('outputs')
+            .toDb(trx)<TableOutput>('outputs')
             .update({ spendable: true, spentBy: null as unknown as undefined })
             .whereIn('spentBy', transactionIds)
         })
@@ -256,7 +262,7 @@ export async function purgeData(
       qs.push({
         log: `${reason} transactions deleted`,
         q: storage
-          .toDb(trx)<table.TableTransaction>('transactions')
+          .toDb(trx)<TableTransaction>('transactions')
           .whereIn('transactionId', transactionIds)
           .delete()
       })

@@ -1,15 +1,14 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   sdk,
-  table,
+  TableProvenTx,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityProvenTxReq, EntityStorage, SyncMap } from '.'
 
-export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
+export class EntityProvenTx extends EntityBase<TableProvenTx> {
   /**
    * Given a txid and optionally its rawTx, create a new ProvenTx object.
    *
@@ -48,7 +47,7 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
     if (gmpr.merklePath && gmpr.header) {
       const index = gmpr.merklePath.path[0].find(l => l.hash === txid)?.offset
       if (index !== undefined) {
-        const api: table.TableProvenTx = {
+        const api: TableProvenTx = {
           created_at: new Date(),
           updated_at: new Date(),
           provenTxId: 0,
@@ -67,7 +66,7 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
     return r
   }
 
-  constructor(api?: table.TableProvenTx) {
+  constructor(api?: TableProvenTx) {
     const now = new Date()
     super(
       api || {
@@ -165,16 +164,13 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
     this.api.provenTxId = v
   }
   override get entityName(): string {
-    return 'ProvenTx'
+    return 'provenTx'
   }
   override get entityTable(): string {
     return 'proven_txs'
   }
 
-  override equals(
-    ei: table.TableProvenTx,
-    syncMap?: entity.SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableProvenTx, syncMap?: SyncMap | undefined): boolean {
     const eo = this.toApi()
     if (
       eo.txid != ei.txid ||
@@ -198,12 +194,12 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.TableProvenTx,
-    syncMap: entity.SyncMap,
+    ei: TableProvenTx,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.EntityProvenTx; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityProvenTx; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findProvenTxs({ partial: { txid: ei.txid }, trx })
     )
@@ -215,9 +211,9 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     this.provenTxId = 0
@@ -226,10 +222,10 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
   }
 
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.TableProvenTx,
-    syncMap: entity.SyncMap,
+    ei: TableProvenTx,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     // ProvenTxs are never updated.
@@ -256,7 +252,7 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
    * @returns
    */
   static async fromReq(
-    req: entity.EntityProvenTxReq,
+    req: EntityProvenTxReq,
     gmpResult: sdk.GetMerklePathResult,
     countsAsAttempt: boolean
   ): Promise<EntityProvenTx | undefined> {
@@ -285,8 +281,8 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
         )
 
         if (
-          req.attempts > entity.EntityProvenTx.getProofAttemptsLimit &&
-          reqAgeInMinutes > entity.EntityProvenTx.getProofMinutes
+          req.attempts > EntityProvenTx.getProofAttemptsLimit &&
+          reqAgeInMinutes > EntityProvenTx.getProofMinutes
         ) {
           // Start the process of setting transactions to 'failed'
           req.addHistoryNote({
@@ -344,6 +340,6 @@ export class EntityProvenTx extends EntityBase<table.TableProvenTx> {
 }
 
 export interface ProvenTxFromTxidResult {
-  proven?: entity.EntityProvenTx
+  proven?: EntityProvenTx
   rawTx?: number[]
 }

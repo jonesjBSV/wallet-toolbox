@@ -2,16 +2,15 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   sdk,
-  table,
+  TableCertificate,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityStorage, SyncMap } from '.'
 
-export class EntityCertificate extends EntityBase<table.TableCertificate> {
-  constructor(api?: table.TableCertificate) {
+export class EntityCertificate extends EntityBase<TableCertificate> {
+  constructor(api?: TableCertificate) {
     const now = new Date()
     super(
       api || {
@@ -118,13 +117,13 @@ export class EntityCertificate extends EntityBase<table.TableCertificate> {
     this.api.certificateId = v
   }
   override get entityName(): string {
-    return 'entity.Certificate'
+    return 'certificate'
   }
   override get entityTable(): string {
     return 'certificates'
   }
 
-  override equals(ei: table.TableCertificate, syncMap?: entity.SyncMap): boolean {
+  override equals(ei: TableCertificate, syncMap?: SyncMap): boolean {
     if (
       this.type !== ei.type ||
       this.subject !== ei.subject ||
@@ -140,12 +139,12 @@ export class EntityCertificate extends EntityBase<table.TableCertificate> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.TableCertificate,
-    syncMap: entity.SyncMap,
+    ei: TableCertificate,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.EntityCertificate; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityCertificate; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findCertificates({
         partial: {
@@ -158,15 +157,15 @@ export class EntityCertificate extends EntityBase<table.TableCertificate> {
     )
     return {
       found: !!ef,
-      eo: new entity.EntityCertificate(ef || { ...ei }),
+      eo: new EntityCertificate(ef || { ...ei }),
       eiId: verifyId(ei.certificateId)
     }
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     this.userId = userId
@@ -175,10 +174,10 @@ export class EntityCertificate extends EntityBase<table.TableCertificate> {
   }
 
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.TableCertificate,
-    syncMap: entity.SyncMap,
+    ei: TableCertificate,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     let wasMerged = false

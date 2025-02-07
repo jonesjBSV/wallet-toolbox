@@ -1,5 +1,10 @@
 import { EntityTxLabelMap } from '../../../../../src/storage/schema/entities/TxLabelMap'
-import { table, sdk, entity } from '../../../../../src'
+import {
+  createSyncMap,
+  sdk,
+  SyncMap,
+  TableTxLabelMap
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -52,7 +57,7 @@ describe('TxLabelMap Class Tests', () => {
   // Test: Constructor with provided API object
   test('2_creates_instance_with_provided_api_object', () => {
     const now = new Date()
-    const apiObject: table.TableTxLabelMap = {
+    const apiObject: TableTxLabelMap = {
       transactionId: 123,
       txLabelId: 456,
       created_at: now,
@@ -119,7 +124,7 @@ describe('TxLabelMap Class Tests', () => {
       isDeleted: false
     }
 
-    const result = txLabelMap.equals(other as table.TableTxLabelMap, syncMap)
+    const result = txLabelMap.equals(other as TableTxLabelMap, syncMap)
     expect(result).toBe(true)
   })
 
@@ -141,7 +146,7 @@ describe('TxLabelMap Class Tests', () => {
     const result = await EntityTxLabelMap.mergeFind(
       storage,
       1,
-      ei as table.TableTxLabelMap,
+      ei as TableTxLabelMap,
       syncMap
     )
     expect(result.found).toBe(true)
@@ -191,7 +196,7 @@ describe('TxLabelMap Class Tests', () => {
       isDeleted: false
     })
 
-    const ei: table.TableTxLabelMap = {
+    const ei: TableTxLabelMap = {
       transactionId: 123,
       txLabelId: 456,
       isDeleted: true,
@@ -224,7 +229,7 @@ describe('TxLabelMap Class Tests', () => {
   // Test: `entityName` getter
   test('10_entityName_returns_correct_value', () => {
     const txLabelMap = new EntityTxLabelMap()
-    expect(txLabelMap.entityName).toBe('TxLabelMap') // Ensure entityName returns the correct string
+    expect(txLabelMap.entityName).toBe('txLabelMap') // Ensure entityName returns the correct string
   })
 
   // Test: `entityTable` getter
@@ -323,81 +328,11 @@ describe('TxLabelMap Class Tests', () => {
 
     await ctx2.activeStorage.insertTxLabelMap(txLabelMap2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      transaction: {
-        idMap: { 406: 405 },
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      txLabel: {
-        idMap: { 307: 306 },
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = { 406: 405 }
+    syncMap.transaction.count = 1
+    syncMap.txLabel.idMap = { 307: 306 }
+    syncMap.txLabel.count = 1
 
     // Verify the entities match
     expect(txLabelMap1.equals(txLabelMap2.toApi(), syncMap)).toBe(true)
@@ -430,81 +365,13 @@ describe('TxLabelMap Class Tests', () => {
 
     await ctx2.activeStorage.insertTxLabelMap(txLabelMap2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      transaction: {
-        idMap: { [txLabelMap1.transactionId]: txLabelMap2.transactionId },
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      txLabel: {
-        idMap: { [txLabelMap1.txLabelId]: txLabelMap2.txLabelId },
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = {
+      [txLabelMap1.transactionId]: txLabelMap2.transactionId
     }
+    syncMap.transaction.count = 1
+    syncMap.txLabel.idMap = { [txLabelMap1.txLabelId]: txLabelMap2.txLabelId }
+    syncMap.txLabel.count = 1
 
     // Verify the entities do not match
     expect(txLabelMap1.equals(txLabelMap2.toApi(), syncMap)).toBe(false)

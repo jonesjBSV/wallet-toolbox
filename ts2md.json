@@ -22,24 +22,10 @@
       "noDetailsSummary": true
     },
     {
-      "inputFilename": "src/storage/index.all.ts",
+      "inputFilename": "src/index.ts",
       "outputFilename": "docs/storage.md",
       "firstHeadingLevel": 2,
       "filenameSubString": "storage",
-      "noDetailsSummary": true
-    },
-    {
-      "inputFilename": "src/storage/schema/tables/index.ts",
-      "outputFilename": "docs/storage-tables.md",
-      "firstHeadingLevel": 2,
-      "filenameSubString": "tables",
-      "noDetailsSummary": true
-    },
-    {
-      "inputFilename": "src/storage/schema/entities/index.ts",
-      "outputFilename": "docs/storage-entities.md",
-      "firstHeadingLevel": 2,
-      "filenameSubString": "entities",
       "noDetailsSummary": true
     },
     {

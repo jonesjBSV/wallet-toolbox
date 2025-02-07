@@ -1,6 +1,21 @@
 import {
   sdk,
-  table,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableMonitorEvent,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser,
   validateSecondsSinceEpoch,
   verifyOneOrNone,
   verifyTruthy
@@ -21,7 +36,7 @@ import { getSyncChunk } from './methods/getSyncChunk'
  */
 export abstract class StorageReader implements sdk.StorageSyncReader {
   chain: sdk.Chain
-  _settings?: table.Settings
+  _settings?: TableSettings
   whenLastAccess?: Date
   get dbtype(): DBType | undefined {
     return this._settings?.dbtype
@@ -34,11 +49,11 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
   isAvailable(): boolean {
     return !!this._settings
   }
-  async makeAvailable(): Promise<table.Settings> {
+  async makeAvailable(): Promise<TableSettings> {
     return (this._settings = await this.readSettings())
   }
 
-  getSettings(): table.Settings {
+  getSettings(): TableSettings {
     if (!this._settings)
       throw new sdk.WERR_INVALID_OPERATION(
         'must call "makeAvailable" before accessing "settings"'
@@ -57,35 +72,35 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
     trx?: sdk.TrxToken
   ): Promise<T>
 
-  abstract readSettings(trx?: sdk.TrxToken): Promise<table.Settings>
+  abstract readSettings(trx?: sdk.TrxToken): Promise<TableSettings>
 
   abstract findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.TableCertificateField[]>
+  ): Promise<TableCertificateField[]>
   abstract findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.TableCertificate[]>
+  ): Promise<TableCertificate[]>
   abstract findCommissions(
     args: sdk.FindCommissionsArgs
-  ): Promise<table.TableCommission[]>
+  ): Promise<TableCommission[]>
   abstract findMonitorEvents(
     args: sdk.FindMonitorEventsArgs
-  ): Promise<table.TableMonitorEvent[]>
+  ): Promise<TableMonitorEvent[]>
   abstract findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.TableOutputBasket[]>
-  abstract findOutputs(args: sdk.FindOutputsArgs): Promise<table.TableOutput[]>
+  ): Promise<TableOutputBasket[]>
+  abstract findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]>
   abstract findOutputTags(
     args: sdk.FindOutputTagsArgs
-  ): Promise<table.TableOutputTag[]>
+  ): Promise<TableOutputTag[]>
   abstract findSyncStates(
     args: sdk.FindSyncStatesArgs
-  ): Promise<table.TableSyncState[]>
+  ): Promise<TableSyncState[]>
   abstract findTransactions(
     args: sdk.FindTransactionsArgs
-  ): Promise<table.TableTransaction[]>
-  abstract findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TableTxLabel[]>
-  abstract findUsers(args: sdk.FindUsersArgs): Promise<table.TableUser[]>
+  ): Promise<TableTransaction[]>
+  abstract findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]>
+  abstract findUsers(args: sdk.FindUsersArgs): Promise<TableUser[]>
 
   abstract countCertificateFields(
     args: sdk.FindCertificateFieldsArgs
@@ -103,18 +118,18 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 
   abstract getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableProvenTx[]>
+  ): Promise<TableProvenTx[]>
   abstract getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableProvenTxReq[]>
+  ): Promise<TableProvenTxReq[]>
   abstract getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableTxLabelMap[]>
+  ): Promise<TableTxLabelMap[]>
   abstract getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TableOutputTagMap[]>
+  ): Promise<TableOutputTagMap[]>
 
-  async findUserByIdentityKey(key: string): Promise<table.TableUser | undefined> {
+  async findUserByIdentityKey(key: string): Promise<TableUser | undefined> {
     return verifyOneOrNone(
       await this.findUsers({ partial: { identityKey: key } })
     )
