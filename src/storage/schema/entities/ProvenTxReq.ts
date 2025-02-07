@@ -2,53 +2,53 @@ import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
   asString,
-  entity,
   sdk,
   StorageProvider,
-  table,
+  TableProvenTxReq,
+  TableProvenTxReqDynamics,
   verifyId,
   verifyOne,
   verifyOneOrNone,
   verifyTruthy,
   WalletStorageManager
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityStorage, SyncMap } from '.'
 
 import { StorageProcessActionArgs } from '../../../sdk'
 
-export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
+export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   static async fromStorageTxid(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     txid: string,
     trx?: sdk.TrxToken
-  ): Promise<ProvenTxReq | undefined> {
+  ): Promise<EntityProvenTxReq | undefined> {
     const reqApi = verifyOneOrNone(
       await storage.findProvenTxReqs({ partial: { txid }, trx })
     )
     if (!reqApi) return undefined
-    return new ProvenTxReq(reqApi)
+    return new EntityProvenTxReq(reqApi)
   }
 
   static async fromStorageId(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     id: number,
     trx?: sdk.TrxToken
-  ): Promise<ProvenTxReq> {
+  ): Promise<EntityProvenTxReq> {
     const reqApi = verifyOneOrNone(
       await storage.findProvenTxReqs({ partial: { provenTxReqId: id }, trx })
     )
     if (!reqApi)
       throw new sdk.WERR_INTERNAL(`proven_tx_reqs with id ${id} is missing.`)
-    return new ProvenTxReq(reqApi)
+    return new EntityProvenTxReq(reqApi)
   }
 
   static fromTxid(
     txid: string,
     rawTx: number[],
     inputBEEF?: number[]
-  ): ProvenTxReq {
+  ): EntityProvenTxReq {
     const now = new Date()
-    return new ProvenTxReq({
+    return new EntityProvenTxReq({
       provenTxReqId: 0,
       created_at: now,
       updated_at: now,
@@ -118,7 +118,7 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
   }
 
   async refreshFromStorage(
-    storage: entity.EntityStorage | WalletStorageManager
+    storage: EntityStorage | WalletStorageManager
   ): Promise<void> {
     const newApi = verifyOne(
       await storage.findProvenTxReqs({ partial: { provenTxReqId: this.id } })
@@ -127,7 +127,7 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     this.unpackApi()
   }
 
-  constructor(api?: table.ProvenTxReq) {
+  constructor(api?: TableProvenTxReq) {
     const now = new Date()
     super(
       api || {
@@ -294,18 +294,18 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
   }
 
   /**
-     * Updates database record with current state of this entity.
+     * Updates database record with current state of this EntityUser
 
      * @param storage 
      * @param trx 
      */
-  async updateStorage(storage: entity.EntityStorage, trx?: sdk.TrxToken) {
+  async updateStorage(storage: EntityStorage, trx?: sdk.TrxToken) {
     this.updated_at = new Date()
     this.updateApi()
     if (this.id === 0) {
       await storage.insertProvenTxReq(this.api)
     }
-    const update: Partial<table.ProvenTxReq> = { ...this.api }
+    const update: Partial<TableProvenTxReq> = { ...this.api }
     await storage.updateProvenTxReq(this.id, update, trx)
   }
 
@@ -329,7 +329,7 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
   ) {
     this.updated_at = new Date()
     this.updateApi()
-    const update: Partial<table.ProvenTxReqDynamics> = {
+    const update: Partial<TableProvenTxReqDynamics> = {
       updated_at: this.api.updated_at,
       provenTxId: this.api.provenTxId,
       status: this.api.status,
@@ -351,19 +351,19 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
   }
 
   async insertOrMerge(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     trx?: sdk.TrxToken
-  ): Promise<ProvenTxReq> {
-    const req = await storage.transaction<ProvenTxReq>(async trx => {
+  ): Promise<EntityProvenTxReq> {
+    const req = await storage.transaction<EntityProvenTxReq>(async trx => {
       let reqApi0 = this.toApi()
       const { req: reqApi1, isNew } = await storage.findOrInsertProvenTxReq(
         reqApi0,
         trx
       )
       if (isNew) {
-        return new entity.ProvenTxReq(reqApi1)
+        return new EntityProvenTxReq(reqApi1)
       } else {
-        const req = new ProvenTxReq(reqApi1)
+        const req = new EntityProvenTxReq(reqApi1)
         req.mergeNotifyTransactionIds(reqApi0)
         req.mergeHistory(reqApi0)
         await req.updateStorage(storage, trx)
@@ -457,7 +457,7 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     this.api.provenTxReqId = v
   }
   override get entityName(): string {
-    return 'ProvenTxReq'
+    return 'provenTxReq'
   }
   override get entityTable(): string {
     return 'proven_tx_reqs'
@@ -467,8 +467,8 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
    * 'convergent' equality must satisfy (A sync B) equals (B sync A)
    */
   override equals(
-    ei: table.ProvenTxReq,
-    syncMap?: entity.SyncMap | undefined
+    ei: TableProvenTxReq,
+    syncMap?: SyncMap | undefined
   ): boolean {
     const eo = this.toApi()
     if (
@@ -513,23 +513,23 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.ProvenTxReq,
-    syncMap: entity.SyncMap,
+    ei: TableProvenTxReq,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: ProvenTxReq; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityProvenTxReq; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findProvenTxReqs({ partial: { txid: ei.txid }, trx })
     )
     return {
       found: !!ef,
-      eo: new ProvenTxReq(ef || { ...ei }),
+      eo: new EntityProvenTxReq(ef || { ...ei }),
       eiId: verifyId(ei.provenTxReqId)
     }
   }
 
-  mapNotifyTransactionIds(syncMap: entity.SyncMap): void {
+  mapNotifyTransactionIds(syncMap: SyncMap): void {
     // Map external notification transaction ids to local ids
     const externalIds = this.notify.transactionIds || []
     this.notify.transactionIds = []
@@ -542,12 +542,9 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
     }
   }
 
-  mergeNotifyTransactionIds(
-    ei: table.ProvenTxReq,
-    syncMap?: entity.SyncMap
-  ): void {
+  mergeNotifyTransactionIds(ei: TableProvenTxReq, syncMap?: SyncMap): void {
     // Map external notification transaction ids to local ids and merge them if they exist.
-    const eie = new ProvenTxReq(ei)
+    const eie = new EntityProvenTxReq(ei)
     if (eie.notify.transactionIds) {
       this.notify.transactionIds ||= []
       for (const transactionId of eie.notify.transactionIds) {
@@ -563,11 +560,11 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mergeHistory(
-    ei: table.ProvenTxReq,
-    syncMap?: entity.SyncMap,
+    ei: TableProvenTxReq,
+    syncMap?: SyncMap,
     noDupes?: boolean
   ): void {
-    const eie = new ProvenTxReq(ei)
+    const eie = new EntityProvenTxReq(ei)
     if (eie.history.notes) {
       for (const [k, v] of Object.entries(eie.history.notes)) {
         this.addHistoryNote(v, new Date(k), noDupes)
@@ -580,9 +577,9 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     if (this.provenTxId)
@@ -605,10 +602,10 @@ export class ProvenTxReq extends EntityBase<table.ProvenTxReq> {
    * On terminal failure: `doubleSpend` trumps `invalid` as it contains more data.
    */
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.ProvenTxReq,
-    syncMap: entity.SyncMap,
+    ei: TableProvenTxReq,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     if (!this.batch && ei.batch) this.batch = ei.batch

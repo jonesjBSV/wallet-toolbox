@@ -4,7 +4,7 @@ import {
   randomBytesHex,
   sdk,
   StorageProvider,
-  table
+  TableCommission
 } from '../../src/index.client'
 import { StorageKnex } from '../../src/storage/StorageKnex'
 
@@ -174,7 +174,7 @@ describe('insert tests', () => {
   test('7 insert Commission', async () => {
     for (const storage of storages) {
       const { tx: t, user } = await _tu.insertTestTransaction(storage)
-      const e: table.Commission = await _tu.insertTestCommission(storage, t)
+      const e: TableCommission = await _tu.insertTestCommission(storage, t)
       const id = e.commissionId
       expect(id).toBeGreaterThan(0)
       e.commissionId = 0

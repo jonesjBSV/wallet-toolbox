@@ -17,7 +17,17 @@ import {
   RelinquishOutputArgs,
   WalletInterface
 } from '@bsv/sdk'
-import { sdk, table } from '../../index.client'
+import {
+  sdk,
+  TableCertificate,
+  TableCertificateX,
+  TableOutput,
+  TableOutputBasket,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableUser
+} from '../../index.client'
 import { AuthFetch } from '@bsv/sdk'
 
 export class StorageClient implements sdk.WalletStorageProvider {
@@ -26,7 +36,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
   private authClient: AuthFetch
 
   // Track ephemeral (in-memory) "settings" if you wish to align with isAvailable() checks
-  public settings?: table.Settings
+  public settings?: TableSettings
 
   constructor(wallet: WalletInterface, endpointUrl: string) {
     this.authClient = new AuthFetch(wallet)
@@ -91,7 +101,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
     return !!this.settings
   }
 
-  getSettings(): table.Settings {
+  getSettings(): TableSettings {
     if (!this.settings) {
       throw new sdk.WERR_INVALID_OPERATION(
         'call makeAvailable at least once before getSettings'
@@ -100,9 +110,9 @@ export class StorageClient implements sdk.WalletStorageProvider {
     return this.settings
   }
 
-  async makeAvailable(): Promise<table.Settings> {
+  async makeAvailable(): Promise<TableSettings> {
     if (!this.settings) {
-      this.settings = await this.rpcCall<table.Settings>('makeAvailable', [])
+      this.settings = await this.rpcCall<TableSettings>('makeAvailable', [])
     }
     return this.settings
   }
@@ -178,8 +188,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
 
   async findOrInsertUser(
     identityKey
-  ): Promise<{ user: table.User; isNew: boolean }> {
-    return this.rpcCall<{ user: table.User; isNew: boolean }>(
+  ): Promise<{ user: TableUser; isNew: boolean }> {
+    return this.rpcCall<{ user: TableUser; isNew: boolean }>(
       'findOrInsertUser',
       [identityKey]
     )
@@ -189,8 +199,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     storageIdentityKey: string,
     storageName: string
-  ): Promise<{ syncState: table.SyncState; isNew: boolean }> {
-    return this.rpcCall<{ syncState: table.SyncState; isNew: boolean }>(
+  ): Promise<{ syncState: TableSyncState; isNew: boolean }> {
+    return this.rpcCall<{ syncState: TableSyncState; isNew: boolean }>(
       'findOrInsertSyncStateAuth',
       [auth, storageIdentityKey, storageName]
     )
@@ -198,7 +208,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
 
   async insertCertificateAuth(
     auth: sdk.AuthId,
-    certificate: table.CertificateX
+    certificate: TableCertificateX
   ): Promise<number> {
     return this.rpcCall<number>('insertCertificateAuth', [auth, certificate])
   }
@@ -230,8 +240,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
   async findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]> {
-    return this.rpcCall<table.Certificate[]>('findCertificatesAuth', [
+  ): Promise<TableCertificate[]> {
+    return this.rpcCall<TableCertificate[]>('findCertificatesAuth', [
       auth,
       args
     ])
@@ -240,21 +250,21 @@ export class StorageClient implements sdk.WalletStorageProvider {
   async findOutputBasketsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]> {
-    return this.rpcCall<table.OutputBasket[]>('findOutputBaskets', [auth, args])
+  ): Promise<TableOutputBasket[]> {
+    return this.rpcCall<TableOutputBasket[]>('findOutputBaskets', [auth, args])
   }
 
   async findOutputsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputsArgs
-  ): Promise<table.Output[]> {
-    return this.rpcCall<table.Output[]>('findOutputsAuth', [auth, args])
+  ): Promise<TableOutput[]> {
+    return this.rpcCall<TableOutput[]>('findOutputsAuth', [auth, args])
   }
 
   findProvenTxReqs(
     args: sdk.FindProvenTxReqsArgs
-  ): Promise<table.ProvenTxReq[]> {
-    return this.rpcCall<table.ProvenTxReq[]>('findProvenTxReqs', [args])
+  ): Promise<TableProvenTxReq[]> {
+    return this.rpcCall<TableProvenTxReq[]>('findProvenTxReqs', [args])
   }
 
   async relinquishCertificate(

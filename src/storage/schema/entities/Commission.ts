@@ -2,16 +2,15 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   sdk,
-  table,
+  TableCommission,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityStorage, SyncMap } from '.'
 
-export class Commission extends EntityBase<table.Commission> {
-  constructor(api?: table.Commission) {
+export class EntityCommission extends EntityBase<TableCommission> {
+  constructor(api?: TableCommission) {
     const now = new Date()
     super(
       api || {
@@ -94,16 +93,13 @@ export class Commission extends EntityBase<table.Commission> {
     this.api.commissionId = v
   }
   override get entityName(): string {
-    return 'Commission'
+    return 'commission'
   }
   override get entityTable(): string {
     return 'commissions'
   }
 
-  override equals(
-    ei: table.Commission,
-    syncMap?: entity.SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableCommission, syncMap?: SyncMap | undefined): boolean {
     if (
       this.isRedeemed !== ei.isRedeemed ||
       this.transactionId !==
@@ -120,27 +116,27 @@ export class Commission extends EntityBase<table.Commission> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.Commission,
-    syncMap: entity.SyncMap,
+    ei: TableCommission,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.Commission; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityCommission; eiId: number }> {
     const transactionId = syncMap.transaction.idMap[ei.transactionId]
     const ef = verifyOneOrNone(
       await storage.findCommissions({ partial: { transactionId, userId }, trx })
     )
     return {
       found: !!ef,
-      eo: new entity.Commission(ef || { ...ei }),
+      eo: new EntityCommission(ef || { ...ei }),
       eiId: verifyId(ei.commissionId)
     }
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     if (this.transactionId)
@@ -151,10 +147,10 @@ export class Commission extends EntityBase<table.Commission> {
   }
 
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.Commission,
-    syncMap: entity.SyncMap,
+    ei: TableCommission,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     let wasMerged = false

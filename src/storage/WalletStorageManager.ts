@@ -12,11 +12,16 @@ import {
   RelinquishOutputArgs
 } from '@bsv/sdk'
 import {
-  entity,
+  EntitySyncState,
   sdk,
   StorageProvider,
   StorageSyncReader,
-  table,
+  TableCertificate,
+  TableOutput,
+  TableOutputBasket,
+  TableProvenTxReq,
+  TableSettings,
+  TableUser,
   wait
 } from '../index.client'
 
@@ -250,11 +255,11 @@ export class WalletStorageManager implements sdk.WalletStorage {
     return this._services
   }
 
-  getSettings(): table.Settings {
+  getSettings(): TableSettings {
     return this.getActive().getSettings()
   }
 
-  async makeAvailable(): Promise<table.Settings> {
+  async makeAvailable(): Promise<TableSettings> {
     return await this.runAsWriter(async writer => {
       writer.makeAvailable()
       return writer.getSettings()
@@ -278,7 +283,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async findOrInsertUser(
     identityKey: string
-  ): Promise<{ user: table.User; isNew: boolean }> {
+  ): Promise<{ user: TableUser; isNew: boolean }> {
     const auth = await this.getAuth()
     if (identityKey != auth.identityKey) throw new sdk.WERR_UNAUTHORIZED()
 
@@ -344,7 +349,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
       return await writer.processAction(auth, args)
     })
   }
-  async insertCertificate(certificate: table.Certificate): Promise<number> {
+  async insertCertificate(certificate: TableCertificate): Promise<number> {
     return await this.runAsWriter(async writer => {
       const auth = await this.getAuth(true)
       return await writer.insertCertificateAuth(auth, certificate)
@@ -377,7 +382,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
   async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]> {
+  ): Promise<TableCertificate[]> {
     const auth = await this.getAuth()
     return await this.runAsReader(async reader => {
       return await reader.findCertificatesAuth(auth, args)
@@ -385,13 +390,13 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
   async findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]> {
+  ): Promise<TableOutputBasket[]> {
     const auth = await this.getAuth()
     return await this.runAsReader(async reader => {
       return await reader.findOutputBasketsAuth(auth, args)
     })
   }
-  async findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]> {
+  async findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]> {
     const auth = await this.getAuth()
     return await this.runAsReader(async reader => {
       return await reader.findOutputsAuth(auth, args)
@@ -400,7 +405,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async findProvenTxReqs(
     args: sdk.FindProvenTxReqsArgs
-  ): Promise<table.ProvenTxReq[]> {
+  ): Promise<TableProvenTxReq[]> {
     return await this.runAsReader(async reader => {
       return await reader.findProvenTxReqs(args)
     })
@@ -423,7 +428,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
       let inserts = 0,
         updates = 0
       for (;;) {
-        const ss = await entity.SyncState.fromStorage(
+        const ss = await EntitySyncState.fromStorage(
           writer,
           identityKey,
           readerSettings
@@ -470,7 +475,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
       let inserts = 0,
         updates = 0
       for (;;) {
-        const ss = await entity.SyncState.fromStorage(
+        const ss = await EntitySyncState.fromStorage(
           writer,
           identityKey,
           readerSettings

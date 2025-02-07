@@ -1,6 +1,8 @@
 import { sdk } from '../../../index.client'
 
-export interface Settings extends sdk.StorageIdentity, sdk.EntityTimeStamp {
+export interface TableSettings
+  extends sdk.StorageIdentity,
+    sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   /**

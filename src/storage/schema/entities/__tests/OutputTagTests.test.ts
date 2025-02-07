@@ -1,9 +1,9 @@
-import { entity, table, sdk } from '../../../../../src'
+import { createSyncMap, sdk, SyncMap, TableOutputTag } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { OutputTag } from '../../../../../src/storage/schema/entities/OutputTag'
+import { EntityOutputTag } from '../../../../../src/storage/schema/entities/OutputTag'
 
 describe('OutputTag class method tests', () => {
   jest.setTimeout(99999999)
@@ -34,7 +34,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTag record with valid userId
-    const initialData: table.OutputTag = {
+    const initialData: TableOutputTag = {
       outputTagId: 401,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -45,94 +45,24 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(initialData)
 
     // Create an OutputTag entity from the initial data
-    const entity = new OutputTag(initialData)
+    const entity = new EntityOutputTag(initialData)
 
     // Simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.OutputTag = {
+    const updatedData: TableOutputTag = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       isDeleted: true // Simulate a change in `isDeleted`
     }
+
+    const syncMap = createSyncMap()
+    syncMap.outputTag.idMap[401] = 401
 
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
       ctx.activeStorage,
       undefined, // `since` is not used in this method
       updatedData,
-      {
-        outputTag: {
-          idMap: { 401: 401 },
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        transaction: {
-          idMap: {},
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      },
+      syncMap,
       undefined
     )
 
@@ -157,7 +87,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial OutputTag record with valid userId
-    const initialData: table.OutputTag = {
+    const initialData: TableOutputTag = {
       outputTagId: 402,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -168,94 +98,24 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(initialData)
 
     // Create an OutputTag entity from the initial data
-    const entity = new OutputTag(initialData)
+    const entity = new EntityOutputTag(initialData)
 
     // Simulate the `ei` argument with an earlier or equal `updated_at`
-    const earlierData: table.OutputTag = {
+    const earlierData: TableOutputTag = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       isDeleted: true // Simulate a change in `isDeleted`
     }
+
+    const syncMap = createSyncMap()
+    syncMap.outputTag.idMap[1] = 1
 
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
       ctx.activeStorage,
       undefined, // `since` is not used in this method
       earlierData,
-      {
-        outputTag: {
-          idMap: { 1: 1 }, // Correct mapping for outputTagId
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        transaction: {
-          idMap: {},
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      },
+      syncMap,
       undefined
     )
 
@@ -279,7 +139,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert matching OutputTag record into the database
-    const data: table.OutputTag = {
+    const data: TableOutputTag = {
       outputTagId: 403,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -290,8 +150,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data)
-    const entity2 = new OutputTag(data)
+    const entity1 = new EntityOutputTag(data)
+    const entity2 = new EntityOutputTag(data)
 
     // Verify that equals returns true for matching entities
     expect(entity1.equals(entity2.toApi())).toBe(true)
@@ -301,7 +161,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert differing OutputTag records into the database
-    const data1: table.OutputTag = {
+    const data1: TableOutputTag = {
       outputTagId: 404,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -314,8 +174,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data1)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data1)
-    const entity2 = new OutputTag(data2)
+    const entity1 = new EntityOutputTag(data1)
+    const entity2 = new EntityOutputTag(data2)
 
     // Verify that equals returns false when tags differ
     expect(entity1.equals(entity2.toApi())).toBe(false)
@@ -325,7 +185,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert differing OutputTag records into the database
-    const data1: table.OutputTag = {
+    const data1: TableOutputTag = {
       outputTagId: 405,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -338,8 +198,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data1)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data1)
-    const entity2 = new OutputTag(data2)
+    const entity1 = new EntityOutputTag(data1)
+    const entity2 = new EntityOutputTag(data2)
 
     // Verify that equals returns false when isDeleted differs
     expect(entity1.equals(entity2.toApi())).toBe(false)
@@ -349,7 +209,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert matching OutputTag record into the database
-    const data: table.OutputTag = {
+    const data: TableOutputTag = {
       outputTagId: 406,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -360,84 +220,11 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data)
-    const entity2 = new OutputTag(data)
+    const entity1 = new EntityOutputTag(data)
+    const entity2 = new EntityOutputTag(data)
 
-    // SyncMap with valid mapping
-    const syncMap: entity.SyncMap = {
-      outputTag: {
-        idMap: { 1: 1 },
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.outputTag.idMap[1] = 1
 
     // Verify that equals returns true with syncMap
     expect(entity1.equals(entity2.toApi(), syncMap)).toBe(true)
@@ -447,7 +234,7 @@ describe('OutputTag class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert differing OutputTag records into the database
-    const data1: table.OutputTag = {
+    const data1: TableOutputTag = {
       outputTagId: 407,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -460,8 +247,8 @@ describe('OutputTag class method tests', () => {
     await ctx.activeStorage.insertOutputTag(data1)
 
     // Create OutputTag entities
-    const entity1 = new OutputTag(data1)
-    const entity2 = new OutputTag(data2)
+    const entity1 = new EntityOutputTag(data1)
+    const entity2 = new EntityOutputTag(data2)
 
     // Verify that equals returns false when userIds differ and no syncMap is provided
     expect(entity1.equals(entity2.toApi())).toBe(false)
@@ -472,7 +259,7 @@ describe('OutputTag class method tests', () => {
     const later = new Date(now.getTime() + 1000)
 
     // Create an OutputTag instance
-    const outputTag = new OutputTag()
+    const outputTag = new EntityOutputTag()
 
     // Set values using setters
     outputTag.outputTagId = 123
@@ -492,7 +279,7 @@ describe('OutputTag class method tests', () => {
 
     // Validate id, entityName, and entityTable
     expect(outputTag.id).toBe(123)
-    expect(outputTag.entityName).toBe('entity.OutputTag')
+    expect(outputTag.entityName).toBe('outputTag')
     expect(outputTag.entityTable).toBe('output_tags')
 
     // Update id using override setter

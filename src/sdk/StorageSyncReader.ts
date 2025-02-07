@@ -1,11 +1,28 @@
-import { sdk, table } from '../index.client'
+import {
+  sdk,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser
+} from '../index.client'
 
 /**
  * This is the minimal interface required for a WalletStorageProvider to export data to another provider.
  */
 export interface StorageSyncReader {
   isAvailable(): boolean
-  makeAvailable(): Promise<table.Settings>
+  makeAvailable(): Promise<TableSettings>
 
   destroy(): Promise<void>
 
@@ -15,37 +32,37 @@ export interface StorageSyncReader {
   //
   /////////////////
 
-  getSettings(): table.Settings
+  getSettings(): TableSettings
 
-  findUserByIdentityKey(key: string): Promise<table.User | undefined>
+  findUserByIdentityKey(key: string): Promise<TableUser | undefined>
 
-  findSyncStates(args: sdk.FindSyncStatesArgs): Promise<table.SyncState[]>
+  findSyncStates(args: sdk.FindSyncStatesArgs): Promise<TableSyncState[]>
 
   findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.CertificateField[]>
-  findCertificates(args: sdk.FindCertificatesArgs): Promise<table.Certificate[]>
-  findCommissions(args: sdk.FindCommissionsArgs): Promise<table.Commission[]>
+  ): Promise<TableCertificateField[]>
+  findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificate[]>
+  findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]>
   findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]>
-  findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]>
-  findOutputTags(args: sdk.FindOutputTagsArgs): Promise<table.OutputTag[]>
-  findTransactions(args: sdk.FindTransactionsArgs): Promise<table.Transaction[]>
-  findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TxLabel[]>
+  ): Promise<TableOutputBasket[]>
+  findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]>
+  findOutputTags(args: sdk.FindOutputTagsArgs): Promise<TableOutputTag[]>
+  findTransactions(args: sdk.FindTransactionsArgs): Promise<TableTransaction[]>
+  findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]>
 
   getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTx[]>
+  ): Promise<TableProvenTx[]>
   getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTxReq[]>
+  ): Promise<TableProvenTxReq[]>
   getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TxLabelMap[]>
+  ): Promise<TableTxLabelMap[]>
   getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.OutputTagMap[]>
+  ): Promise<TableOutputTagMap[]>
 
   getSyncChunk(args: RequestSyncChunkArgs): Promise<SyncChunk>
 }
@@ -131,19 +148,19 @@ export interface SyncChunk {
   toStorageIdentityKey: string
   userIdentityKey: string
 
-  user?: table.User
-  provenTxs?: table.ProvenTx[]
-  provenTxReqs?: table.ProvenTxReq[]
-  outputBaskets?: table.OutputBasket[]
-  txLabels?: table.TxLabel[]
-  outputTags?: table.OutputTag[]
-  transactions?: table.Transaction[]
-  txLabelMaps?: table.TxLabelMap[]
-  commissions?: table.Commission[]
-  outputs?: table.Output[]
-  outputTagMaps?: table.OutputTagMap[]
-  certificates?: table.Certificate[]
-  certificateFields?: table.CertificateField[]
+  user?: TableUser
+  provenTxs?: TableProvenTx[]
+  provenTxReqs?: TableProvenTxReq[]
+  outputBaskets?: TableOutputBasket[]
+  txLabels?: TableTxLabel[]
+  outputTags?: TableOutputTag[]
+  transactions?: TableTransaction[]
+  txLabelMaps?: TableTxLabelMap[]
+  commissions?: TableCommission[]
+  outputs?: TableOutput[]
+  outputTagMaps?: TableOutputTagMap[]
+  certificates?: TableCertificate[]
+  certificateFields?: TableCertificateField[]
 }
 
 export interface ProcessSyncChunkResult {

@@ -1,16 +1,15 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   sdk,
-  table,
+  TableOutputBasket,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityStorage, SyncMap } from '.'
 
-export class OutputBasket extends EntityBase<table.OutputBasket> {
-  constructor(api?: table.OutputBasket) {
+export class EntityOutputBasket extends EntityBase<TableOutputBasket> {
+  constructor(api?: TableOutputBasket) {
     const now = new Date()
     super(
       api || {
@@ -82,7 +81,7 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
     this.api.basketId = v
   }
   override get entityName(): string {
-    return 'OutputBasket'
+    return 'outputBasket'
   }
   override get entityTable(): string {
     return 'output_baskets'
@@ -92,7 +91,7 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
     /* nothing needed yet... */
   }
 
-  override equals(ei: table.OutputBasket, syncMap?: entity.SyncMap): boolean {
+  override equals(ei: TableOutputBasket, syncMap?: SyncMap): boolean {
     const eo = this.api
     if (
       eo.name != ei.name ||
@@ -110,12 +109,12 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.OutputBasket,
-    syncMap: entity.SyncMap,
+    ei: TableOutputBasket,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: OutputBasket; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityOutputBasket; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findOutputBaskets({
         partial: { name: ei.name, userId },
@@ -124,16 +123,16 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
     )
     return {
       found: !!ef,
-      eo: new OutputBasket(ef || { ...ei }),
+      eo: new EntityOutputBasket(ef || { ...ei }),
       eiId: verifyId(ei.basketId)
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     this.userId = userId
@@ -144,10 +143,10 @@ export class OutputBasket extends EntityBase<table.OutputBasket> {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.OutputBasket,
-    syncMap: entity.SyncMap,
+    ei: TableOutputBasket,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     let wasMerged = false

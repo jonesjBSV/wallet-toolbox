@@ -25,7 +25,7 @@
       "inputFilename": "src/index.ts",
       "outputFilename": "docs/storage.md",
       "firstHeadingLevel": 2,
-      "filenameSubString": "storage",
+      "filenameSubString": "src/storage",
       "noDetailsSummary": true
     },
     {

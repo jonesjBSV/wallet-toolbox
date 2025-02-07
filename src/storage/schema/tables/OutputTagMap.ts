@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface OutputTagMap extends sdk.EntityTimeStamp {
+export interface TableOutputTagMap extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   outputTagId: number

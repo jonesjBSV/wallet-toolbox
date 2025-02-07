@@ -1,7 +1,7 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   asArray,
-  entity,
+  EntityProvenTxReq,
   sdk,
   verifyOne,
   verifyTruthy,
@@ -165,7 +165,7 @@ describe('Monitor tests', () => {
             (await storage.findProvenTxs({ partial: { txid } })).length
           ).toBe(0)
           const req = verifyTruthy(
-            await entity.ProvenTxReq.fromStorageTxid(storage, txid)
+            await EntityProvenTxReq.fromStorageTxid(storage, txid)
           )
           expect(req.status).toBe('unmined')
         }
@@ -181,7 +181,7 @@ describe('Monitor tests', () => {
           )
           expect(proven.merklePath).toBeTruthy()
           const req = verifyTruthy(
-            await entity.ProvenTxReq.fromStorageTxid(storage, txid)
+            await EntityProvenTxReq.fromStorageTxid(storage, txid)
           )
           expect(req.status).toBe('completed')
           expect(req.provenTxId).toBe(proven.provenTxId)
@@ -227,7 +227,7 @@ describe('Monitor tests', () => {
             (await storage.findProvenTxs({ partial: { txid } })).length
           ).toBe(0)
           const req = verifyTruthy(
-            await entity.ProvenTxReq.fromStorageTxid(storage, txid)
+            await EntityProvenTxReq.fromStorageTxid(storage, txid)
           )
           expect(req.status).toBe('unmined')
           attempts.push(req.attempts)
@@ -246,7 +246,7 @@ describe('Monitor tests', () => {
             (await storage.findProvenTxs({ partial: { txid } })).length
           ).toBe(0)
           const req = verifyTruthy(
-            await entity.ProvenTxReq.fromStorageTxid(storage, txid)
+            await EntityProvenTxReq.fromStorageTxid(storage, txid)
           )
           expect(req.status).toBe('unmined')
           expect(req.attempts).toBeGreaterThanOrEqual(attempts[i])
@@ -462,7 +462,7 @@ describe('Monitor tests', () => {
           )
           expect(req.status).toBe('unsent')
           const notifyIds =
-            new entity.ProvenTxReq(req).notify.transactionIds || []
+            new EntityProvenTxReq(req).notify.transactionIds || []
           for (const transactionId of notifyIds) {
             const tx = verifyTruthy(
               await storage.findTransactionById(transactionId)
@@ -479,9 +479,9 @@ describe('Monitor tests', () => {
             await storage.findProvenTxReqs({ partial: { txid } })
           )
           if (env.logTests)
-            console.log(new entity.ProvenTxReq(req).historyPretty())
+            console.log(new EntityProvenTxReq(req).historyPretty())
           const notifyIds =
-            new entity.ProvenTxReq(req).notify.transactionIds || []
+            new EntityProvenTxReq(req).notify.transactionIds || []
           switch (postBeefMockStatus) {
             case 'success':
               {

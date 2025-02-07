@@ -5,7 +5,29 @@ import {
   ListOutputsResult
 } from '@bsv/sdk'
 import { sdk, verifyOne, verifyOneOrNone, verifyTruthy } from '../index.all'
-import { KnexMigrations, table } from './index.all'
+import {
+  KnexMigrations,
+  outputColumnsWithoutLockingScript,
+  TableCertificate,
+  TableCertificateField,
+  TableCertificateX,
+  TableCommission,
+  TableMonitorEvent,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableOutputX,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser,
+  transactionColumnsWithoutRawTx
+} from './index.all'
 
 import { Knex } from 'knex'
 import { StorageProvider, StorageProviderOptions } from './StorageProvider'
@@ -35,9 +57,9 @@ export class StorageKnex
     this.knex = options.knex
   }
 
-  async readSettings(): Promise<table.Settings> {
+  async readSettings(): Promise<TableSettings> {
     return this.validateEntity(
-      verifyOne(await this.toDb(undefined)<table.Settings>('settings'))
+      verifyOne(await this.toDb(undefined)<TableSettings>('settings'))
     )
   }
 
@@ -143,7 +165,7 @@ export class StorageKnex
   }
   override async getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTx[]> {
+  ): Promise<TableProvenTx[]> {
     const q = this.getProvenTxsForUserQuery(args)
     const rs = await q
     return this.validateEntities(rs)
@@ -172,7 +194,7 @@ export class StorageKnex
   }
   override async getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTxReq[]> {
+  ): Promise<TableProvenTxReq[]> {
     const q = this.getProvenTxReqsForUserQuery(args)
     const rs = await q
     return this.validateEntities(rs, undefined, ['notified'])
@@ -200,7 +222,7 @@ export class StorageKnex
   }
   override async getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TxLabelMap[]> {
+  ): Promise<TableTxLabelMap[]> {
     const q = this.getTxLabelMapsForUserQuery(args)
     const rs = await q
     return this.validateEntities(rs, undefined, ['isDeleted'])
@@ -228,7 +250,7 @@ export class StorageKnex
   }
   override async getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.OutputTagMap[]> {
+  ): Promise<TableOutputTagMap[]> {
     const q = this.getOutputTagMapsForUserQuery(args)
     const rs = await q
     return this.validateEntities(rs, undefined, ['isDeleted'])
@@ -250,42 +272,42 @@ export class StorageKnex
   }
 
   override async insertProvenTx(
-    tx: table.ProvenTx,
+    tx: TableProvenTx,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(tx, trx)
     if (e.provenTxId === 0) delete e.provenTxId
-    const [id] = await this.toDb(trx)<table.ProvenTx>('proven_txs').insert(e)
+    const [id] = await this.toDb(trx)<TableProvenTx>('proven_txs').insert(e)
     tx.provenTxId = id
     return tx.provenTxId
   }
 
   override async insertProvenTxReq(
-    tx: table.ProvenTxReq,
+    tx: TableProvenTxReq,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(tx, trx)
     if (e.provenTxReqId === 0) delete e.provenTxReqId
     const [id] =
-      await this.toDb(trx)<table.ProvenTxReq>('proven_tx_reqs').insert(e)
+      await this.toDb(trx)<TableProvenTxReq>('proven_tx_reqs').insert(e)
     tx.provenTxReqId = id
     return tx.provenTxReqId
   }
 
   override async insertUser(
-    user: table.User,
+    user: TableUser,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(user, trx)
     if (e.userId === 0) delete e.userId
-    const [id] = await this.toDb(trx)<table.User>('users').insert(e)
+    const [id] = await this.toDb(trx)<TableUser>('users').insert(e)
     user.userId = id
     return user.userId
   }
 
   override async insertCertificateAuth(
     auth: sdk.AuthId,
-    certificate: table.CertificateX
+    certificate: TableCertificateX
   ): Promise<number> {
     if (
       !auth.userId ||
@@ -297,7 +319,7 @@ export class StorageKnex
   }
 
   override async insertCertificate(
-    certificate: table.CertificateX,
+    certificate: TableCertificateX,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(certificate, trx, undefined, [
@@ -307,7 +329,7 @@ export class StorageKnex
     if (e.fields) delete e.fields
     if (e.certificateId === 0) delete e.certificateId
     const [id] =
-      await this.toDb(trx)<table.Certificate>('certificates').insert(e)
+      await this.toDb(trx)<TableCertificate>('certificates').insert(e)
     certificate.certificateId = id
 
     if (fields) {
@@ -322,15 +344,15 @@ export class StorageKnex
   }
 
   override async insertCertificateField(
-    certificateField: table.CertificateField,
+    certificateField: TableCertificateField,
     trx?: sdk.TrxToken
   ): Promise<void> {
     const e = await this.validateEntityForInsert(certificateField, trx)
-    await this.toDb(trx)<table.Certificate>('certificate_fields').insert(e)
+    await this.toDb(trx)<TableCertificate>('certificate_fields').insert(e)
   }
 
   override async insertOutputBasket(
-    basket: table.OutputBasket,
+    basket: TableOutputBasket,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(basket, trx, undefined, [
@@ -338,107 +360,107 @@ export class StorageKnex
     ])
     if (e.basketId === 0) delete e.basketId
     const [id] =
-      await this.toDb(trx)<table.OutputBasket>('output_baskets').insert(e)
+      await this.toDb(trx)<TableOutputBasket>('output_baskets').insert(e)
     basket.basketId = id
     return basket.basketId
   }
 
   override async insertTransaction(
-    tx: table.Transaction,
+    tx: TableTransaction,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(tx, trx)
     if (e.transactionId === 0) delete e.transactionId
     const [id] =
-      await this.toDb(trx)<table.Transaction>('transactions').insert(e)
+      await this.toDb(trx)<TableTransaction>('transactions').insert(e)
     tx.transactionId = id
     return tx.transactionId
   }
 
   override async insertCommission(
-    commission: table.Commission,
+    commission: TableCommission,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(commission, trx)
     if (e.commissionId === 0) delete e.commissionId
-    const [id] = await this.toDb(trx)<table.Commission>('commissions').insert(e)
+    const [id] = await this.toDb(trx)<TableCommission>('commissions').insert(e)
     commission.commissionId = id
     return commission.commissionId
   }
 
   override async insertOutput(
-    output: table.Output,
+    output: TableOutput,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(output, trx)
     if (e.outputId === 0) delete e.outputId
-    const [id] = await this.toDb(trx)<table.Output>('outputs').insert(e)
+    const [id] = await this.toDb(trx)<TableOutput>('outputs').insert(e)
     output.outputId = id
     return output.outputId
   }
 
   override async insertOutputTag(
-    tag: table.OutputTag,
+    tag: TableOutputTag,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(tag, trx, undefined, [
       'isDeleted'
     ])
     if (e.outputTagId === 0) delete e.outputTagId
-    const [id] = await this.toDb(trx)<table.OutputTag>('output_tags').insert(e)
+    const [id] = await this.toDb(trx)<TableOutputTag>('output_tags').insert(e)
     tag.outputTagId = id
     return tag.outputTagId
   }
 
   override async insertOutputTagMap(
-    tagMap: table.OutputTagMap,
+    tagMap: TableOutputTagMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     const e = await this.validateEntityForInsert(tagMap, trx, undefined, [
       'isDeleted'
     ])
     const [id] =
-      await this.toDb(trx)<table.OutputTagMap>('output_tags_map').insert(e)
+      await this.toDb(trx)<TableOutputTagMap>('output_tags_map').insert(e)
   }
 
   override async insertTxLabel(
-    label: table.TxLabel,
+    label: TableTxLabel,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(label, trx, undefined, [
       'isDeleted'
     ])
     if (e.txLabelId === 0) delete e.txLabelId
-    const [id] = await this.toDb(trx)<table.TxLabel>('tx_labels').insert(e)
+    const [id] = await this.toDb(trx)<TableTxLabel>('tx_labels').insert(e)
     label.txLabelId = id
     return label.txLabelId
   }
 
   override async insertTxLabelMap(
-    labelMap: table.TxLabelMap,
+    labelMap: TableTxLabelMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     const e = await this.validateEntityForInsert(labelMap, trx, undefined, [
       'isDeleted'
     ])
     const [id] =
-      await this.toDb(trx)<table.TxLabelMap>('tx_labels_map').insert(e)
+      await this.toDb(trx)<TableTxLabelMap>('tx_labels_map').insert(e)
   }
 
   override async insertMonitorEvent(
-    event: table.MonitorEvent,
+    event: TableMonitorEvent,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(event, trx)
     if (e.id === 0) delete e.id
     const [id] =
-      await this.toDb(trx)<table.MonitorEvent>('monitor_events').insert(e)
+      await this.toDb(trx)<TableMonitorEvent>('monitor_events').insert(e)
     event.id = id
     return event.id
   }
 
   override async insertSyncState(
-    syncState: table.SyncState,
+    syncState: TableSyncState,
     trx?: sdk.TrxToken
   ): Promise<number> {
     const e = await this.validateEntityForInsert(
@@ -448,7 +470,7 @@ export class StorageKnex
       ['init']
     )
     if (e.syncStateId === 0) delete e.syncStateId
-    const [id] = await this.toDb(trx)<table.SyncState>('sync_states').insert(e)
+    const [id] = await this.toDb(trx)<TableSyncState>('sync_states').insert(e)
     syncState.syncStateId = id
     return syncState.syncStateId
   }
@@ -456,88 +478,88 @@ export class StorageKnex
   override async updateCertificateField(
     certificateId: number,
     fieldName: string,
-    update: Partial<table.CertificateField>,
+    update: Partial<TableCertificateField>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.CertificateField>('certificate_fields')
+    return await this.toDb(trx)<TableCertificateField>('certificate_fields')
       .where({ certificateId, fieldName })
       .update(this.validatePartialForUpdate(update))
   }
   override async updateCertificate(
     id: number,
-    update: Partial<table.Certificate>,
+    update: Partial<TableCertificate>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.Certificate>('certificates')
+    return await this.toDb(trx)<TableCertificate>('certificates')
       .where({ certificateId: id })
       .update(this.validatePartialForUpdate(update, undefined, ['isDeleted']))
   }
   override async updateCommission(
     id: number,
-    update: Partial<table.Commission>,
+    update: Partial<TableCommission>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.Commission>('commissions')
+    return await this.toDb(trx)<TableCommission>('commissions')
       .where({ commissionId: id })
       .update(this.validatePartialForUpdate(update))
   }
   override async updateOutputBasket(
     id: number,
-    update: Partial<table.OutputBasket>,
+    update: Partial<TableOutputBasket>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.OutputBasket>('output_baskets')
+    return await this.toDb(trx)<TableOutputBasket>('output_baskets')
       .where({ basketId: id })
       .update(this.validatePartialForUpdate(update, undefined, ['isDeleted']))
   }
   override async updateOutput(
     id: number,
-    update: Partial<table.Output>,
+    update: Partial<TableOutput>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.Output>('outputs')
+    return await this.toDb(trx)<TableOutput>('outputs')
       .where({ outputId: id })
       .update(this.validatePartialForUpdate(update))
   }
   override async updateOutputTagMap(
     outputId: number,
     tagId: number,
-    update: Partial<table.OutputTagMap>,
+    update: Partial<TableOutputTagMap>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.OutputTagMap>('output_tags_map')
+    return await this.toDb(trx)<TableOutputTagMap>('output_tags_map')
       .where({ outputId, outputTagId: tagId })
       .update(this.validatePartialForUpdate(update, undefined, ['isDeleted']))
   }
   override async updateOutputTag(
     id: number,
-    update: Partial<table.OutputTag>,
+    update: Partial<TableOutputTag>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.OutputTag>('output_tags')
+    return await this.toDb(trx)<TableOutputTag>('output_tags')
       .where({ outputTagId: id })
       .update(this.validatePartialForUpdate(update, undefined, ['isDeleted']))
   }
   override async updateProvenTxReq(
     id: number | number[],
-    update: Partial<table.ProvenTxReq>,
+    update: Partial<TableProvenTxReq>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
     let r: number
     if (Array.isArray(id)) {
-      r = await this.toDb(trx)<table.ProvenTxReq>('proven_tx_reqs')
+      r = await this.toDb(trx)<TableProvenTxReq>('proven_tx_reqs')
         .whereIn('provenTxReqId', id)
         .update(this.validatePartialForUpdate(update))
     } else if (Number.isInteger(id)) {
-      r = await this.toDb(trx)<table.ProvenTxReq>('proven_tx_reqs')
+      r = await this.toDb(trx)<TableProvenTxReq>('proven_tx_reqs')
         .where({ provenTxReqId: id })
         .update(this.validatePartialForUpdate(update))
     } else {
@@ -550,37 +572,37 @@ export class StorageKnex
   }
   override async updateProvenTx(
     id: number,
-    update: Partial<table.ProvenTx>,
+    update: Partial<TableProvenTx>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.ProvenTx>('proven_txs')
+    return await this.toDb(trx)<TableProvenTx>('proven_txs')
       .where({ provenTxId: id })
       .update(this.validatePartialForUpdate(update))
   }
   override async updateSyncState(
     id: number,
-    update: Partial<table.SyncState>,
+    update: Partial<TableSyncState>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.SyncState>('sync_states')
+    return await this.toDb(trx)<TableSyncState>('sync_states')
       .where({ syncStateId: id })
       .update(this.validatePartialForUpdate(update, ['when'], ['init']))
   }
   override async updateTransaction(
     id: number | number[],
-    update: Partial<table.Transaction>,
+    update: Partial<TableTransaction>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
     let r: number
     if (Array.isArray(id)) {
-      r = await this.toDb(trx)<table.Transaction>('transactions')
+      r = await this.toDb(trx)<TableTransaction>('transactions')
         .whereIn('transactionId', id)
         .update(await this.validatePartialForUpdate(update))
     } else if (Number.isInteger(id)) {
-      r = await this.toDb(trx)<table.Transaction>('transactions')
+      r = await this.toDb(trx)<TableTransaction>('transactions')
         .where({ transactionId: id })
         .update(await this.validatePartialForUpdate(update))
     } else {
@@ -594,41 +616,41 @@ export class StorageKnex
   override async updateTxLabelMap(
     transactionId: number,
     txLabelId: number,
-    update: Partial<table.TxLabelMap>,
+    update: Partial<TableTxLabelMap>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.TxLabelMap>('tx_labels_map')
+    return await this.toDb(trx)<TableTxLabelMap>('tx_labels_map')
       .where({ transactionId, txLabelId })
       .update(this.validatePartialForUpdate(update, undefined, ['isDeleted']))
   }
   override async updateTxLabel(
     id: number,
-    update: Partial<table.TxLabel>,
+    update: Partial<TableTxLabel>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.TxLabel>('tx_labels')
+    return await this.toDb(trx)<TableTxLabel>('tx_labels')
       .where({ txLabelId: id })
       .update(this.validatePartialForUpdate(update, undefined, ['isDeleted']))
   }
   override async updateUser(
     id: number,
-    update: Partial<table.User>,
+    update: Partial<TableUser>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.User>('users')
+    return await this.toDb(trx)<TableUser>('users')
       .where({ userId: id })
       .update(this.validatePartialForUpdate(update))
   }
   override async updateMonitorEvent(
     id: number,
-    update: Partial<table.MonitorEvent>,
+    update: Partial<TableMonitorEvent>,
     trx?: sdk.TrxToken
   ): Promise<number> {
     await this.verifyReadyForDatabaseAccess(trx)
-    return await this.toDb(trx)<table.MonitorEvent>('monitor_events')
+    return await this.toDb(trx)<TableMonitorEvent>('monitor_events')
       .where({ id })
       .update(this.validatePartialForUpdate(update))
   }
@@ -688,9 +710,7 @@ export class StorageKnex
       )
     }
     if (args.noScript && !count) {
-      const columns = table.outputColumnsWithoutLockingScript.map(
-        c => `outputs.${c}`
-      )
+      const columns = outputColumnsWithoutLockingScript.map(c => `outputs.${c}`)
       q.select(columns)
     }
     return q
@@ -753,7 +773,7 @@ export class StorageKnex
     const q = this.setupQuery('transactions', args)
     if (args.status && args.status.length > 0) q.whereIn('status', args.status)
     if (args.noRawTx && !count) {
-      const columns = table.transactionColumnsWithoutRawTx.map(
+      const columns = transactionColumnsWithoutRawTx.map(
         c => `transactions.${c}`
       )
       q.select(columns)
@@ -779,7 +799,7 @@ export class StorageKnex
   override async findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]> {
+  ): Promise<TableCertificate[]> {
     if (
       !auth.userId ||
       (args.partial.userId && args.partial.userId !== auth.userId)
@@ -791,7 +811,7 @@ export class StorageKnex
   override async findOutputBasketsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]> {
+  ): Promise<TableOutputBasket[]> {
     if (
       !auth.userId ||
       (args.partial.userId && args.partial.userId !== auth.userId)
@@ -803,7 +823,7 @@ export class StorageKnex
   override async findOutputsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputsArgs
-  ): Promise<table.Output[]> {
+  ): Promise<TableOutput[]> {
     if (
       !auth.userId ||
       (args.partial.userId && args.partial.userId !== auth.userId)
@@ -815,33 +835,33 @@ export class StorageKnex
 
   override async findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.CertificateField[]> {
+  ): Promise<TableCertificateField[]> {
     return this.validateEntities(await this.findCertificateFieldsQuery(args))
   }
   override async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]> {
+  ): Promise<TableCertificate[]> {
     const q = this.findCertificatesQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['isDeleted'])
   }
   override async findCommissions(
     args: sdk.FindCommissionsArgs
-  ): Promise<table.Commission[]> {
+  ): Promise<TableCommission[]> {
     const q = this.findCommissionsQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['isRedeemed'])
   }
   override async findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]> {
+  ): Promise<TableOutputBasket[]> {
     const q = this.findOutputBasketsQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['isDeleted'])
   }
   override async findOutputs(
     args: sdk.FindOutputsArgs
-  ): Promise<table.Output[]> {
+  ): Promise<TableOutput[]> {
     const q = this.findOutputsQuery(args)
     const r = await q
     if (!args.noScript) {
@@ -853,42 +873,42 @@ export class StorageKnex
   }
   override async findOutputTagMaps(
     args: sdk.FindOutputTagMapsArgs
-  ): Promise<table.OutputTagMap[]> {
+  ): Promise<TableOutputTagMap[]> {
     const q = this.findOutputTagMapsQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['isDeleted'])
   }
   override async findOutputTags(
     args: sdk.FindOutputTagsArgs
-  ): Promise<table.OutputTag[]> {
+  ): Promise<TableOutputTag[]> {
     const q = this.findOutputTagsQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['isDeleted'])
   }
   override async findProvenTxReqs(
     args: sdk.FindProvenTxReqsArgs
-  ): Promise<table.ProvenTxReq[]> {
+  ): Promise<TableProvenTxReq[]> {
     const q = this.findProvenTxReqsQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['notified'])
   }
   override async findProvenTxs(
     args: sdk.FindProvenTxsArgs
-  ): Promise<table.ProvenTx[]> {
+  ): Promise<TableProvenTx[]> {
     const q = this.findProvenTxsQuery(args)
     const r = await q
     return this.validateEntities(r)
   }
   override async findSyncStates(
     args: sdk.FindSyncStatesArgs
-  ): Promise<table.SyncState[]> {
+  ): Promise<TableSyncState[]> {
     const q = this.findSyncStatesQuery(args)
     const r = await q
     return this.validateEntities(r, ['when'], ['init'])
   }
   override async findTransactions(
     args: sdk.FindTransactionsArgs
-  ): Promise<table.Transaction[]> {
+  ): Promise<TableTransaction[]> {
     const q = this.findTransactionsQuery(args)
     const r = await q
     if (!args.noRawTx) {
@@ -900,26 +920,26 @@ export class StorageKnex
   }
   override async findTxLabelMaps(
     args: sdk.FindTxLabelMapsArgs
-  ): Promise<table.TxLabelMap[]> {
+  ): Promise<TableTxLabelMap[]> {
     const q = this.findTxLabelMapsQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['isDeleted'])
   }
   override async findTxLabels(
     args: sdk.FindTxLabelsArgs
-  ): Promise<table.TxLabel[]> {
+  ): Promise<TableTxLabel[]> {
     const q = this.findTxLabelsQuery(args)
     const r = await q
     return this.validateEntities(r, undefined, ['isDeleted'])
   }
-  override async findUsers(args: sdk.FindUsersArgs): Promise<table.User[]> {
+  override async findUsers(args: sdk.FindUsersArgs): Promise<TableUser[]> {
     const q = this.findUsersQuery(args)
     const r = await q
     return this.validateEntities(r)
   }
   override async findMonitorEvents(
     args: sdk.FindMonitorEventsArgs
-  ): Promise<table.MonitorEvent[]> {
+  ): Promise<TableMonitorEvent[]> {
     const q = this.findMonitorEventsQuery(args)
     const r = await q
     return this.validateEntities(r, ['when'], undefined)
@@ -1062,7 +1082,7 @@ export class StorageKnex
   }
 
   async validateRawTransaction(
-    t: table.Transaction,
+    t: TableTransaction,
     trx?: sdk.TrxToken
   ): Promise<void> {
     // if there is no txid or there is a rawTransaction return what we have.
@@ -1081,7 +1101,7 @@ export class StorageKnex
   }
 
   async validateOutputScript(
-    o: table.Output,
+    o: TableOutput,
     trx?: sdk.TrxToken
   ): Promise<void> {
     // without offset and length values return what we have (make no changes)
@@ -1216,9 +1236,9 @@ export class StorageKnex
   override async getLabelsForTransactionId(
     transactionId?: number,
     trx?: sdk.TrxToken
-  ): Promise<table.TxLabel[]> {
+  ): Promise<TableTxLabel[]> {
     if (transactionId === undefined) return []
-    const labels = await this.toDb(trx)<table.TxLabel>('tx_labels')
+    const labels = await this.toDb(trx)<TableTxLabel>('tx_labels')
       .join('tx_labels_map', 'tx_labels_map.txLabelId', 'tx_labels.txLabelId')
       .where('tx_labels_map.transactionId', transactionId)
       .whereNot('tx_labels_map.isDeleted', true)
@@ -1227,12 +1247,12 @@ export class StorageKnex
   }
 
   async extendOutput(
-    o: table.Output,
+    o: TableOutput,
     includeBasket = false,
     includeTags = false,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputX> {
-    const ox = o as table.OutputX
+  ): Promise<TableOutputX> {
+    const ox = o as TableOutputX
     if (includeBasket && ox.basketId)
       ox.basket = await this.findOutputBasketById(o.basketId!, trx)
     if (includeTags) {
@@ -1244,8 +1264,8 @@ export class StorageKnex
   override async getTagsForOutputId(
     outputId: number,
     trx?: sdk.TrxToken
-  ): Promise<table.OutputTag[]> {
-    const tags = await this.toDb(trx)<table.OutputTag>('output_tags')
+  ): Promise<TableOutputTag[]> {
+    const tags = await this.toDb(trx)<TableOutputTag>('output_tags')
       .join(
         'output_tags_map',
         'output_tags_map.outputTagId',
@@ -1285,7 +1305,7 @@ export class StorageKnex
     if (!excludeSending) status.push('sending')
     const statusText = status.map(s => `'${s}'`).join(',')
     const txStatusCondition = `(SELECT status FROM transactions WHERE outputs.transactionId = transactions.transactionId) in (${statusText})`
-    let q = this.knex<table.Output>('outputs')
+    let q = this.knex<TableOutput>('outputs')
       .where({ userId, spendable: true, basketId })
       .whereRaw(txStatusCondition)
     const count = await this.getCount(q)
@@ -1304,12 +1324,12 @@ export class StorageKnex
     exactSatoshis: number | undefined,
     excludeSending: boolean,
     transactionId: number
-  ): Promise<table.Output | undefined> {
+  ): Promise<TableOutput | undefined> {
     const status: sdk.TransactionStatus[] = ['completed', 'unproven']
     if (!excludeSending) status.push('sending')
     const statusText = status.map(s => `'${s}'`).join(',')
 
-    const r: table.Output | undefined = await this.knex.transaction(
+    const r: TableOutput | undefined = await this.knex.transaction(
       async trx => {
         const txStatusCondition = `AND (SELECT status FROM transactions WHERE outputs.transactionId = transactions.transactionId) in (${statusText})`
 

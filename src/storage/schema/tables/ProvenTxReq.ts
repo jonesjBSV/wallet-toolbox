@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface ProvenTxReq extends ProvenTxReqDynamics {
+export interface TableProvenTxReq extends TableProvenTxReqDynamics {
   created_at: Date
   updated_at: Date
   provenTxReqId: number
@@ -36,7 +36,7 @@ export interface ProvenTxReq extends ProvenTxReqDynamics {
 /**
  * Table properties that may change after initial record insertion.
  */
-export interface ProvenTxReqDynamics extends sdk.EntityTimeStamp {
+export interface TableProvenTxReqDynamics extends sdk.EntityTimeStamp {
   updated_at: Date
   provenTxId?: number
   status: sdk.ProvenTxReqStatus

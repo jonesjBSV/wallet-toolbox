@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface OutputBasket extends sdk.EntityTimeStamp {
+export interface TableOutputBasket extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   basketId: number

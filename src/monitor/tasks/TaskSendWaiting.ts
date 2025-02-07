@@ -1,4 +1,4 @@
-import { entity, table } from '../../storage/index.client'
+import { EntityProvenTxReq, TableProvenTxReq } from '../../storage/index.client'
 import { verifyTruthy } from '../../utility/index.client'
 import { Monitor } from '../Monitor'
 import { WalletMonitorTask } from './WalletMonitorTask'
@@ -63,7 +63,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
    * @param reqApis
    */
   async processUnsent(
-    reqApis: table.ProvenTxReq[],
+    reqApis: TableProvenTxReq[],
     indent = 0
   ): Promise<string> {
     let log = ''
@@ -75,8 +75,8 @@ export class TaskSendWaiting extends WalletMonitorTask {
         log += `  status now ${reqApi.status}\n`
         continue
       }
-      const req = new entity.ProvenTxReq(reqApi)
-      const reqs: entity.ProvenTxReq[] = []
+      const req = new EntityProvenTxReq(reqApi)
+      const reqs: EntityProvenTxReq[] = []
       if (req.batch) {
         // Make sure wew process entire batch together for efficient beef generation
         const batchReqApis = await this.storage.findProvenTxReqs({
@@ -89,7 +89,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
           )
           if (index > -1) reqApis.slice(index, index + 1)
           // And add to reqs being processed now:
-          reqs.push(new entity.ProvenTxReq(bra))
+          reqs.push(new EntityProvenTxReq(bra))
         }
       } else {
         // Just a single non-batched req...

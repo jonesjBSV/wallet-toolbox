@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface TxLabel extends sdk.EntityTimeStamp {
+export interface TableTxLabel extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   txLabelId: number

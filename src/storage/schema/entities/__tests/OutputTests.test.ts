@@ -1,9 +1,9 @@
-import { entity, table, sdk } from '../../../../../src'
+import { createSyncMap, sdk, SyncMap, TableOutput } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { Output } from '../../../../../src/storage/schema/entities/Output'
+import { EntityOutput } from '../../../../../src/storage/schema/entities/Output'
 
 describe('Output class method tests', () => {
   jest.setTimeout(99999999)
@@ -35,7 +35,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial record into the database
-    const initialData: table.Output = {
+    const initialData: TableOutput = {
       outputId: 601,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -64,84 +64,12 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create two Output entities from the same data
-    const entity1 = new Output(initialData)
-    const entity2 = new Output(initialData)
+    const entity1 = new EntityOutput(initialData)
+    const entity2 = new EntityOutput(initialData)
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      transaction: {
-        idMap: { 100: 100 },
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: { 1: 1 },
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap[100] = 100
+    syncMap.outputBasket.idMap[1] = 1
 
     // Verify equals with and without SyncMap
     expect(entity1.equals(entity2.toApi())).toBe(true)
@@ -153,7 +81,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial record into the database
-    const initialData: table.Output = {
+    const initialData: TableOutput = {
       outputId: 602,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -182,8 +110,8 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create two Output entities with differing data
-    const entity1 = new Output(initialData)
-    const entity2 = new Output({
+    const entity1 = new EntityOutput(initialData)
+    const entity2 = new EntityOutput({
       ...initialData,
       satoshis: 2000
     })
@@ -197,7 +125,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial record into the database
-    const initialData: table.Output = {
+    const initialData: TableOutput = {
       outputId: 603,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -226,8 +154,8 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create two Output entities with differing array data
-    const entity1 = new Output(initialData)
-    const entity2 = new Output({
+    const entity1 = new EntityOutput(initialData)
+    const entity2 = new EntityOutput({
       ...initialData,
       lockingScript: [1, 2, 4]
     })
@@ -241,7 +169,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Insert initial Output record
-    const initialData: table.Output = {
+    const initialData: TableOutput = {
       outputId: 701,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -271,10 +199,10 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create an Output entity from the initial data
-    const entity = new Output(initialData)
+    const entity = new EntityOutput(initialData)
 
     // Simulate the `ei` argument with a later `updated_at`
-    const updatedData: table.Output = {
+    const updatedData: TableOutput = {
       ...initialData,
       updated_at: new Date('2023-01-03'), // Later timestamp
       spendable: false,
@@ -292,80 +220,9 @@ describe('Output class method tests', () => {
       spentBy: 105
     }
 
-    const syncMap: entity.SyncMap = {
-      transaction: {
-        idMap: { 103: 103, 105: 105 },
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: { 1: 1 },
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = { 103: 103, 105: 105 }
+    syncMap.outputBasket.idMap[1] = 1
 
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
@@ -426,7 +283,7 @@ describe('Output class method tests', () => {
     const ctx = ctxs[0]
 
     // Use the same initialData as before
-    const initialData: table.Output = {
+    const initialData: TableOutput = {
       outputId: 702,
       created_at: new Date('2023-01-01'),
       updated_at: new Date('2023-01-02'),
@@ -456,89 +313,18 @@ describe('Output class method tests', () => {
     await ctx.activeStorage.insertOutput(initialData)
 
     // Create an Output entity from the initial data
-    const entity = new Output(initialData)
+    const entity = new EntityOutput(initialData)
 
     // Simulate the `ei` argument with an earlier `updated_at`
-    const earlierData: table.Output = {
+    const earlierData: TableOutput = {
       ...initialData,
       updated_at: new Date('2023-01-01'), // Earlier timestamp
       spendable: false
     }
 
-    const syncMap: entity.SyncMap = {
-      transaction: {
-        idMap: { 104: 104 },
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: { 1: 1 },
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = { 104: 104 }
+    syncMap.outputBasket.idMap[1] = 1
 
     // Call mergeExisting
     const wasMergedRaw = await entity.mergeExisting(
@@ -570,7 +356,7 @@ describe('Output class method tests', () => {
     const now = new Date()
 
     // Initial test data
-    const initialData: table.Output = {
+    const initialData: TableOutput = {
       outputId: 701,
       created_at: now,
       updated_at: now,
@@ -598,7 +384,7 @@ describe('Output class method tests', () => {
     }
 
     // Create the Output entity
-    const entity = new Output(initialData)
+    const entity = new EntityOutput(initialData)
 
     // Validate getters
     expect(entity.outputId).toBe(initialData.outputId)
@@ -683,7 +469,7 @@ describe('Output class method tests', () => {
     expect(entity.outputId).toBe(900)
 
     // Validate `entityName` and `entityTable`
-    expect(entity.entityName).toBe('Output')
+    expect(entity.entityName).toBe('output')
     expect(entity.entityTable).toBe('outputs')
   })
 })

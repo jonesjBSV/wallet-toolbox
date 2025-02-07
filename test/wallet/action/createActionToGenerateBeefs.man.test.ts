@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as bsv from '@bsv/sdk'
-import { sdk, StorageKnex, table, Wallet } from '../../../src/index.all'
+import { sdk, Wallet } from '../../../src/index.all'
 
 import {
   _tu,
-  expectToThrowWERR,
   logTransaction,
   TestKeyPair,
   TestWalletNoSetup,

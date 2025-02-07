@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface ProvenTx extends sdk.EntityTimeStamp {
+export interface TableProvenTx extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   provenTxId: number

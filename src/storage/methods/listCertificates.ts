@@ -2,7 +2,7 @@ import {
   ListCertificatesResult,
   OriginatorDomainNameStringUnder250Bytes
 } from '@bsv/sdk'
-import { StorageProvider, table } from '../index.client'
+import { StorageProvider, TableCertificate } from '../index.client'
 import { sdk } from '../../index.client'
 
 export async function listCertificates(
@@ -13,7 +13,7 @@ export async function listCertificates(
 ): Promise<ListCertificatesResult> {
   const paged: sdk.Paged = { limit: vargs.limit, offset: vargs.offset }
 
-  const partial: Partial<table.Certificate> = {
+  const partial: Partial<TableCertificate> = {
     userId: auth.userId,
     isDeleted: false
   }

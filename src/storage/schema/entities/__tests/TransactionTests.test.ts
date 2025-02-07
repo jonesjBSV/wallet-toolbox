@@ -1,11 +1,16 @@
 import { Knex } from 'knex'
 import * as bsv from '@bsv/sdk'
-import { entity, table, sdk } from '../../../../../src'
+import {
+  createSyncMap,
+  sdk,
+  SyncMap,
+  TableTransaction
+} from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
 } from '../../../../../test/utils/TestUtilsWalletStorage'
-import { Transaction } from '../../../../../src/storage/schema/entities/Transaction'
+import { EntityTransaction } from '../../../../../src/storage/schema/entities/Transaction'
 
 describe('Transaction class method tests', () => {
   jest.setTimeout(99999999)
@@ -35,7 +40,7 @@ describe('Transaction class method tests', () => {
 
   // Test: Constructor with default values
   test('0_creates_instance_with_default_values', () => {
-    const tx = new Transaction()
+    const tx = new EntityTransaction()
 
     const now = new Date()
     expect(tx.transactionId).toBe(0)
@@ -57,7 +62,7 @@ describe('Transaction class method tests', () => {
   // Test: Constructor with provided API object
   test('1_creates_instance_with_provided_api_object', () => {
     const now = new Date()
-    const apiObject: table.Transaction = {
+    const apiObject: TableTransaction = {
       transactionId: 123,
       userId: 456,
       txid: 'testTxid',
@@ -72,7 +77,7 @@ describe('Transaction class method tests', () => {
       updated_at: now
     }
 
-    const tx = new Transaction(apiObject)
+    const tx = new EntityTransaction(apiObject)
 
     expect(tx.transactionId).toBe(123)
     expect(tx.userId).toBe(456)
@@ -90,7 +95,7 @@ describe('Transaction class method tests', () => {
 
   // Test: Getters and setters
   test('2_getters_and_setters_work_correctly', () => {
-    const tx = new Transaction()
+    const tx = new EntityTransaction()
 
     const now = new Date()
     tx.transactionId = 123
@@ -131,9 +136,9 @@ describe('Transaction class method tests', () => {
   // Test: `getBsvTx` returns parsed transaction
   test('3_getBsvTx_returns_parsed_transaction', () => {
     const rawTx = Uint8Array.from([1, 2, 3])
-    const tx = new Transaction({
+    const tx = new EntityTransaction({
       rawTx: Array.from(rawTx)
-    } as table.Transaction)
+    } as TableTransaction)
 
     const bsvTx = tx.getBsvTx()
     expect(bsvTx).toBeInstanceOf(bsv.Transaction)
@@ -141,7 +146,7 @@ describe('Transaction class method tests', () => {
 
   // Test: `getBsvTx` returns undefined if rawTx is not set
   test('4_getBsvTx_returns_undefined_if_no_rawTx', () => {
-    const tx = new Transaction()
+    const tx = new EntityTransaction()
     const bsvTx = tx.getBsvTx()
     expect(bsvTx).toBeUndefined()
   })
@@ -149,9 +154,9 @@ describe('Transaction class method tests', () => {
   // Test: `getBsvTxIns` returns parsed inputs
   test('5_getBsvTxIns_returns_inputs', () => {
     const rawTx = Uint8Array.from([1, 2, 3])
-    const tx = new Transaction({
+    const tx = new EntityTransaction({
       rawTx: Array.from(rawTx)
-    } as table.Transaction)
+    } as TableTransaction)
 
     const inputs = tx.getBsvTxIns()
     expect(inputs).toBeInstanceOf(Array)
@@ -166,7 +171,7 @@ describe('Transaction class method tests', () => {
         undefined,
         true
       )
-      const tx = new Transaction(txData.tx)
+      const tx = new EntityTransaction(txData.tx)
 
       // Assign rawTx to simulate transaction inputs
       const rawTx = Uint8Array.from([1, 2, 3])
@@ -219,93 +224,21 @@ describe('Transaction class method tests', () => {
       )
 
       // Create the `Transaction` instance with an earlier updated_at timestamp
-      const tx = new Transaction({
+      const tx = new EntityTransaction({
         ...txData.tx,
         updated_at: new Date(2022, 1, 1)
       })
 
       // Create an incoming entity object (`ei`) with a newer updated_at timestamp
-      const ei: table.Transaction = {
+      const ei: TableTransaction = {
         ...txData.tx,
         updated_at: new Date(2023, 1, 1),
         txid: 'newTxId'
       }
 
-      // Prepare a syncMap
-      const syncMap: entity.SyncMap = {
-        transaction: {
-          idMap: { 456: 123 },
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 1
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: {},
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
-      }
+      const syncMap = createSyncMap()
+      syncMap.transaction.idMap = { 456: 123 }
+      syncMap.transaction.count = 1
 
       // Execute `mergeExisting`
       const result = await tx.mergeExisting(
@@ -332,7 +265,7 @@ describe('Transaction class method tests', () => {
 
   // Test: getBsvTx handles undefined rawTx
   test('10_getBsvTx_handles_undefined_rawTx', () => {
-    const tx = new Transaction() // No rawTx provided
+    const tx = new EntityTransaction() // No rawTx provided
     const bsvTx = tx.getBsvTx()
     expect(bsvTx).toBeUndefined()
   })
@@ -348,7 +281,7 @@ describe('Transaction class method tests', () => {
       )
 
       // Create a Transaction instance with the inserted transaction's data
-      const transaction = new Transaction(tx)
+      const transaction = new EntityTransaction(tx)
 
       // Insert known inputs into the database and set the `spentBy` column to the transaction ID
       const input1 = await _tu.insertTestOutput(activeStorage, tx, 0, 100) // vout = 0
@@ -399,9 +332,9 @@ describe('Transaction class method tests', () => {
       const provenTx = await _tu.insertTestProvenTx(activeStorage)
 
       // Create a Transaction instance with a valid provenTxId
-      const tx = new Transaction({
+      const tx = new EntityTransaction({
         provenTxId: provenTx.provenTxId
-      } as table.Transaction)
+      } as TableTransaction)
 
       // Retrieve the ProvenTx using the getProvenTx method
       const retrievedProvenTx = await tx.getProvenTx(activeStorage)
@@ -416,7 +349,7 @@ describe('Transaction class method tests', () => {
   test('16_getProvenTx_returns_undefined_when_provenTxId_is_not_set', async () => {
     for (const { activeStorage } of ctxs) {
       // Create a Transaction instance with no provenTxId
-      const tx = new Transaction()
+      const tx = new EntityTransaction()
 
       // Attempt to retrieve a ProvenTx
       const retrievedProvenTx = await tx.getProvenTx(activeStorage)
@@ -430,7 +363,7 @@ describe('Transaction class method tests', () => {
   test('17_getProvenTx_returns_undefined_when_no_matching_ProvenTx_is_found', async () => {
     for (const { activeStorage } of ctxs) {
       // Create a Transaction instance with a provenTxId that doesn't exist in storage
-      const tx = new Transaction({ provenTxId: 9999 } as table.Transaction) // Use an ID unlikely to exist
+      const tx = new EntityTransaction({ provenTxId: 9999 } as TableTransaction) // Use an ID unlikely to exist
 
       // Attempt to retrieve a ProvenTx
       const retrievedProvenTx = await tx.getProvenTx(activeStorage)
@@ -456,10 +389,10 @@ describe('Transaction class method tests', () => {
 
       // Step 3: Create a Transaction instance with rawTx
       const rawTx = Uint8Array.from([1, 2, 3]) // Example raw transaction
-      const transaction = new Transaction({
+      const transaction = new EntityTransaction({
         ...tx,
         rawTx: Array.from(rawTx)
-      } as table.Transaction)
+      } as TableTransaction)
 
       // Step 4: Simulate rawTx inputs
       transaction.getBsvTxIns = () => [
@@ -489,32 +422,32 @@ describe('Transaction class method tests', () => {
 
   // Test: getVersion returns API version
   test('19_get_version_returns_api_version', () => {
-    const tx = new Transaction({ version: 2 } as table.Transaction)
+    const tx = new EntityTransaction({ version: 2 } as TableTransaction)
     expect(tx.version).toBe(2)
   })
 
   // Test: getLockTime returns API lockTime
   test('20_get_lockTime_returns_api_lockTime', () => {
-    const tx = new Transaction({ lockTime: 500 } as table.Transaction)
+    const tx = new EntityTransaction({ lockTime: 500 } as TableTransaction)
     expect(tx.lockTime).toBe(500)
   })
 
   // Test: set id updates transactionId
   test('21_set_id_updates_transactionId', () => {
-    const tx = new Transaction()
+    const tx = new EntityTransaction()
     tx.id = 123
     expect(tx.transactionId).toBe(123)
   })
 
   // Test: get entityName returns correct value
   test('22_get_entityName_returns_correct_value', () => {
-    const tx = new Transaction()
-    expect(tx.entityName).toBe('ojoTransaction')
+    const tx = new EntityTransaction()
+    expect(tx.entityName).toBe('transaction')
   })
 
   // Test: get entityTable returns correct value
   test('23_get_entityTable_returns_correct_value', () => {
-    const tx = new Transaction()
+    const tx = new EntityTransaction()
     expect(tx.entityTable).toBe('transactions')
   })
 
@@ -528,82 +461,13 @@ describe('Transaction class method tests', () => {
         true
       )
 
-      const syncMap: entity.SyncMap = {
-        transaction: {
-          idMap: { [txData.tx.transactionId]: txData.tx.transactionId },
-          entityName: 'Transaction',
-          maxUpdated_at: undefined,
-          count: 1
-        },
-        provenTx: {
-          idMap: {},
-          entityName: 'ProvenTx',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputBasket: {
-          idMap: {},
-          entityName: 'OutputBasket',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        provenTxReq: {
-          idMap: {},
-          entityName: 'ProvenTxReq',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabel: {
-          idMap: {},
-          entityName: 'TxLabel',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        txLabelMap: {
-          idMap: {},
-          entityName: 'TxLabelMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        output: {
-          idMap: {},
-          entityName: 'Output',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTag: {
-          idMap: {},
-          entityName: 'OutputTag',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        outputTagMap: {
-          idMap: {},
-          entityName: 'OutputTagMap',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificate: {
-          idMap: {},
-          entityName: 'Certificate',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        certificateField: {
-          idMap: {},
-          entityName: 'CertificateField',
-          maxUpdated_at: undefined,
-          count: 0
-        },
-        commission: {
-          idMap: {},
-          entityName: 'Commission',
-          maxUpdated_at: undefined,
-          count: 0
-        }
+      const syncMap = createSyncMap()
+      syncMap.transaction.idMap = {
+        [txData.tx.transactionId]: txData.tx.transactionId
       }
+      syncMap.transaction.count = 1
 
-      const tx = new Transaction({
+      const tx = new EntityTransaction({
         ...txData.tx, // Base transaction
         version: 2,
         lockTime: 500,
@@ -614,7 +478,7 @@ describe('Transaction class method tests', () => {
         description: 'desc1',
         status: 'completed',
         reference: 'ref1'
-      } as table.Transaction)
+      } as TableTransaction)
 
       const other = {
         transactionId: txData.tx.transactionId, // Matching transactionId
@@ -627,7 +491,7 @@ describe('Transaction class method tests', () => {
         txid: 'txid2', // Different txid
         rawTx: [7, 8, 9], // Different rawTx
         inputBEEF: [10, 11, 12] // Different inputBEEF
-      } as table.Transaction
+      } as TableTransaction
 
       expect(tx.equals(other, syncMap)).toBe(false) // Should return false due to mismatched properties
     }
@@ -685,7 +549,7 @@ describe('Transaction class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert a transaction into the first database
-    const tx1 = new Transaction({
+    const tx1 = new EntityTransaction({
       transactionId: 405,
       userId: 1,
       txid: 'txid1',
@@ -705,7 +569,7 @@ describe('Transaction class method tests', () => {
     await ctx1.activeStorage.insertTransaction(tx1.toApi())
 
     // Insert a matching transaction into the second database
-    const tx2 = new Transaction({
+    const tx2 = new EntityTransaction({
       transactionId: 405,
       userId: 1, // Matching userId
       txid: 'txid1', // Matching txid
@@ -723,81 +587,9 @@ describe('Transaction class method tests', () => {
     })
     await ctx2.activeStorage.insertTransaction(tx2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      transaction: {
-        idMap: { [tx1.transactionId]: tx2.transactionId },
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = { [tx1.transactionId]: tx2.transactionId }
+    syncMap.transaction.count = 1
 
     // Verify the transactions match
     expect(tx1.equals(tx2.toApi(), syncMap)).toBe(true)
@@ -809,7 +601,7 @@ describe('Transaction class method tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert a transaction into the first database
-    const tx1 = new Transaction({
+    const tx1 = new EntityTransaction({
       transactionId: 303,
       userId: 1,
       txid: 'tx456',
@@ -824,7 +616,7 @@ describe('Transaction class method tests', () => {
     await ctx1.activeStorage.insertTransaction(tx1.toApi())
 
     // Insert a non-matching transaction into the second database
-    const tx2 = new Transaction({
+    const tx2 = new EntityTransaction({
       transactionId: 304,
       userId: 1,
       txid: 'tx789',
@@ -838,81 +630,9 @@ describe('Transaction class method tests', () => {
     })
     await ctx2.activeStorage.insertTransaction(tx2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      transaction: {
-        idMap: { [tx1.transactionId]: tx2.transactionId },
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabel: {
-        idMap: {},
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.transaction.idMap = { [tx1.transactionId]: tx2.transactionId }
+    syncMap.transaction.count = 1
 
     // Verify the transactions do not match
     expect(tx1.equals(tx2.toApi(), syncMap)).toBe(false)

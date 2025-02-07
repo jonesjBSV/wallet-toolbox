@@ -1,4 +1,19 @@
-import { sdk, table, verifyTruthy } from '../../index.client'
+import {
+  sdk,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  verifyTruthy
+} from '../../index.client'
 import { StorageReader } from '../StorageReader'
 
 /**
@@ -34,7 +49,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.provenTxs = []
       },
-      addItem: (i: table.ProvenTx) => {
+      addItem: (i: TableProvenTx) => {
         r.provenTxs!.push(i)
       },
       findItems: async (
@@ -50,7 +65,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.outputBaskets = []
       },
-      addItem: (i: table.OutputBasket) => {
+      addItem: (i: TableOutputBasket) => {
         r.outputBaskets!.push(i)
       },
       findItems: async (
@@ -70,7 +85,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.outputTags = []
       },
-      addItem: (i: table.OutputTag) => {
+      addItem: (i: TableOutputTag) => {
         r.outputTags!.push(i)
       },
       findItems: async (
@@ -90,7 +105,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.txLabels = []
       },
-      addItem: (i: table.TxLabel) => {
+      addItem: (i: TableTxLabel) => {
         r.txLabels!.push(i)
       },
       findItems: async (
@@ -110,7 +125,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.transactions = []
       },
-      addItem: (i: table.Transaction) => {
+      addItem: (i: TableTransaction) => {
         r.transactions!.push(i)
       },
       findItems: async (
@@ -130,7 +145,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.outputs = []
       },
-      addItem: (i: table.Output) => {
+      addItem: (i: TableOutput) => {
         r.outputs!.push(i)
       },
       findItems: async (
@@ -150,7 +165,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.txLabelMaps = []
       },
-      addItem: (i: table.TxLabelMap) => {
+      addItem: (i: TableTxLabelMap) => {
         r.txLabelMaps!.push(i)
       },
       findItems: async (
@@ -166,7 +181,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.outputTagMaps = []
       },
-      addItem: (i: table.OutputTagMap) => {
+      addItem: (i: TableOutputTagMap) => {
         r.outputTagMaps!.push(i)
       },
       findItems: async (
@@ -182,7 +197,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.certificates = []
       },
-      addItem: (i: table.Certificate) => {
+      addItem: (i: TableCertificate) => {
         r.certificates!.push(i)
       },
       findItems: async (
@@ -202,7 +217,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.certificateFields = []
       },
-      addItem: (i: table.CertificateField) => {
+      addItem: (i: TableCertificateField) => {
         r.certificateFields!.push(i)
       },
       findItems: async (
@@ -222,7 +237,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.commissions = []
       },
-      addItem: (i: table.Commission) => {
+      addItem: (i: TableCommission) => {
         r.commissions!.push(i)
       },
       findItems: async (
@@ -242,7 +257,7 @@ export async function getSyncChunk(
       preAdd: () => {
         r.provenTxReqs = []
       },
-      addItem: (i: table.ProvenTxReq) => {
+      addItem: (i: TableProvenTxReq) => {
         r.provenTxReqs!.push(i)
       },
       findItems: async (

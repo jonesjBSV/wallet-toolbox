@@ -1,8 +1,8 @@
 import { Base64String, DescriptionString5to50Bytes, PubKeyHex } from '@bsv/sdk'
-import { OutputBasket, OutputTag } from '.'
+import { TableOutputBasket, TableOutputTag } from '.'
 import { sdk } from '../../../index.client'
 
-export interface Output extends sdk.EntityTimeStamp {
+export interface TableOutput extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   outputId: number
@@ -30,9 +30,9 @@ export interface Output extends sdk.EntityTimeStamp {
   lockingScript?: number[]
 }
 
-export interface OutputX extends Output {
-  basket?: OutputBasket
-  tags?: OutputTag[]
+export interface TableOutputX extends TableOutput {
+  basket?: TableOutputBasket
+  tags?: TableOutputTag[]
 }
 
 export const outputColumnsWithoutLockingScript = [

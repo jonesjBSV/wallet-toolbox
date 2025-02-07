@@ -12,7 +12,26 @@ import {
   verifyOptionalHexString,
   verifyTruthy
 } from '../../index.all'
-import { table } from '../index.all'
+import {
+  outputColumnsWithoutLockingScript,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableMonitorEvent,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser,
+  transactionColumnsWithoutRawTx
+} from '../index.all'
 
 import { Knex } from 'knex'
 import { isHexString } from '../../sdk'
@@ -59,9 +78,9 @@ export class StorageMySQLDojoReader extends StorageReader {
     return db
   }
 
-  override async readSettings(trx?: sdk.TrxToken): Promise<table.Settings> {
+  override async readSettings(trx?: sdk.TrxToken): Promise<TableSettings> {
     const d = verifyOne(await this.toDb(trx)('settings'))
-    const r: table.Settings = {
+    const r: TableSettings = {
       created_at: verifyTruthy(d.created_at),
       updated_at: verifyTruthy(d.updated_at),
       storageIdentityKey: verifyHexString(d.dojoIdentityKey),
@@ -100,12 +119,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]> {
+  ): Promise<TableOutputBasket[]> {
     const q = this.findOutputBasketsQuery(args)
     const ds = await q
-    const rs: table.OutputBasket[] = []
+    const rs: TableOutputBasket[] = []
     for (const d of ds) {
-      const r: table.OutputBasket = {
+      const r: TableOutputBasket = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         basketId: verifyInteger(d.basketId),
@@ -122,12 +141,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   findTxLabelsQuery(args: sdk.FindTxLabelsArgs): Knex.QueryBuilder {
     return this.setupQuery('tx_labels', args)
   }
-  async findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TxLabel[]> {
+  async findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]> {
     const q = this.findTxLabelsQuery(args)
     const ds = await q
-    const rs: table.TxLabel[] = []
+    const rs: TableTxLabel[] = []
     for (const d of ds) {
-      const r: table.TxLabel = {
+      const r: TableTxLabel = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         txLabelId: verifyInteger(d.txLabelId),
@@ -144,12 +163,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async findOutputTags(
     args: sdk.FindOutputTagsArgs
-  ): Promise<table.OutputTag[]> {
+  ): Promise<TableOutputTag[]> {
     const q = this.findOutputTagsQuery(args)
     const ds = await q
-    const rs: table.OutputTag[] = []
+    const rs: TableOutputTag[] = []
     for (const d of ds) {
-      const r: table.OutputTag = {
+      const r: TableOutputTag = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         outputTagId: verifyInteger(d.outputTagId),
@@ -178,7 +197,7 @@ export class StorageMySQLDojoReader extends StorageReader {
     const q = this.setupQuery('transactions', args)
     if (args.status && args.status.length > 0) q.whereIn('status', args.status)
     if (args.noRawTx && !count) {
-      const columns = table.transactionColumnsWithoutRawTx.map(
+      const columns = transactionColumnsWithoutRawTx.map(
         c => `transactions.${c}`
       )
       q.select(columns)
@@ -187,12 +206,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async findTransactions(
     args: sdk.FindTransactionsArgs
-  ): Promise<table.Transaction[]> {
+  ): Promise<TableTransaction[]> {
     const q = this.findTransactionsQuery(args)
     const ds = await q
-    const rs: table.Transaction[] = []
+    const rs: TableTransaction[] = []
     for (const d of ds) {
-      const r: table.Transaction = {
+      const r: TableTransaction = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         transactionId: verifyInteger(d.transactionId),
@@ -223,12 +242,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async findCommissions(
     args: sdk.FindCommissionsArgs
-  ): Promise<table.Commission[]> {
+  ): Promise<TableCommission[]> {
     const q = this.findCommissionsQuery(args)
     const ds = await q
-    const rs: table.Commission[] = []
+    const rs: TableCommission[] = []
     for (const d of ds) {
-      const r: table.Commission = {
+      const r: TableCommission = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         commissionId: verifyInteger(d.commissionId),
@@ -258,19 +277,17 @@ export class StorageMySQLDojoReader extends StorageReader {
       )
     const q = this.setupQuery('outputs', args)
     if (args.noScript && !count) {
-      const columns = table.outputColumnsWithoutLockingScript.map(
-        c => `outputs.${c}`
-      )
+      const columns = outputColumnsWithoutLockingScript.map(c => `outputs.${c}`)
       q.select(columns)
     }
     return q
   }
-  async findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]> {
+  async findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]> {
     const q = this.findOutputsQuery(args)
     const ds = await q
-    const rs: table.Output[] = []
+    const rs: TableOutput[] = []
     for (const d of ds) {
-      const r: table.Output = {
+      const r: TableOutput = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         outputId: verifyInteger(d.outputId),
@@ -315,12 +332,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]> {
+  ): Promise<TableCertificate[]> {
     const q = this.findCertificatesQuery(args)
     const ds = await q
-    const rs: table.Certificate[] = []
+    const rs: TableCertificate[] = []
     for (const d of ds) {
-      const r: table.Certificate = {
+      const r: TableCertificate = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         certificateId: verifyInteger(d.certificateId),
@@ -347,12 +364,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.CertificateField[]> {
+  ): Promise<TableCertificateField[]> {
     const q = this.findCertificateFieldsQuery(args)
     const ds = await q
-    const rs: table.CertificateField[] = []
+    const rs: TableCertificateField[] = []
     for (const d of ds) {
-      const r: table.CertificateField = {
+      const r: TableCertificateField = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         userId: verifyInteger(d.userId),
@@ -367,12 +384,12 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   override async findSyncStates(
     args: sdk.FindSyncStatesArgs
-  ): Promise<table.SyncState[]> {
+  ): Promise<TableSyncState[]> {
     const q = this.setupQuery('sync_state', args)
     const ds = await q
-    const rs: table.SyncState[] = []
+    const rs: TableSyncState[] = []
     for (const d of ds) {
-      const r: table.SyncState = {
+      const r: TableSyncState = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         syncStateId: verifyInteger(d.syncStateId),
@@ -394,12 +411,12 @@ export class StorageMySQLDojoReader extends StorageReader {
     }
     return this.validateEntities(rs, undefined, ['init'])
   }
-  override async findUsers(args: sdk.FindUsersArgs): Promise<table.User[]> {
+  override async findUsers(args: sdk.FindUsersArgs): Promise<TableUser[]> {
     const q = this.setupQuery('users', args)
     const ds = await q
-    const rs: table.User[] = []
+    const rs: TableUser[] = []
     for (const d of ds) {
-      const r: table.User = {
+      const r: TableUser = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         userId: verifyId(d.userId),
@@ -433,10 +450,10 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTx[]> {
+  ): Promise<TableProvenTx[]> {
     const q = this.getProvenTxsForUserQuery(args)
     const ds = await q
-    const rs: table.ProvenTx[] = []
+    const rs: TableProvenTx[] = []
     for (const d of ds) {
       const mp = convertProofToMerklePath(d.txid, {
         index: d.index,
@@ -444,7 +461,7 @@ export class StorageMySQLDojoReader extends StorageReader {
         height: d.height
       })
 
-      const r: table.ProvenTx = {
+      const r: TableProvenTx = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         provenTxId: verifyInteger(d.provenTxId),
@@ -486,12 +503,12 @@ export class StorageMySQLDojoReader extends StorageReader {
 
   async getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTxReq[]> {
+  ): Promise<TableProvenTxReq[]> {
     const q = this.getProvenTxReqsForUserQuery(args)
     const ds = await q
-    const rs: table.ProvenTxReq[] = []
+    const rs: TableProvenTxReq[] = []
     for (const d of ds) {
-      const r: table.ProvenTxReq = {
+      const r: TableProvenTxReq = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         provenTxReqId: verifyInteger(d.provenTxReqId),
@@ -534,12 +551,12 @@ export class StorageMySQLDojoReader extends StorageReader {
 
   async getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TxLabelMap[]> {
+  ): Promise<TableTxLabelMap[]> {
     const q = this.getTxLabelMapsForUserQuery(args)
     const ds = await q
-    const rs: table.TxLabelMap[] = []
+    const rs: TableTxLabelMap[] = []
     for (const d of ds) {
-      const r: table.TxLabelMap = {
+      const r: TableTxLabelMap = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         txLabelId: verifyInteger(d.txLabelId),
@@ -574,12 +591,12 @@ export class StorageMySQLDojoReader extends StorageReader {
 
   async getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.OutputTagMap[]> {
+  ): Promise<TableOutputTagMap[]> {
     const q = this.getOutputTagMapsForUserQuery(args)
     const ds = await q
-    const rs: table.OutputTagMap[] = []
+    const rs: TableOutputTagMap[] = []
     for (const d of ds) {
-      const r: table.OutputTagMap = {
+      const r: TableOutputTagMap = {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         outputId: verifyInteger(d.outputId),
@@ -627,7 +644,7 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   override findMonitorEvents(
     args: sdk.FindMonitorEventsArgs
-  ): Promise<table.MonitorEvent[]> {
+  ): Promise<TableMonitorEvent[]> {
     throw new Error('Method not implemented.')
   }
   override countMonitorEvents(

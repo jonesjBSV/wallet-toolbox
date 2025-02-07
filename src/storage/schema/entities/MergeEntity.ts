@@ -1,6 +1,6 @@
-import { entity } from '../../index.client'
+import {} from '../../index.client'
 import { maxDate, sdk, verifyId } from '../../../index.client'
-import { EntityBase } from './EntityBase'
+import { EntityBase, EntityStorage, EntitySyncMap, SyncMap } from './EntityBase'
 
 /**
  * @param API one of the storage table interfaces.
@@ -15,14 +15,14 @@ export class MergeEntity<
   constructor(
     public stateArray: API[] | undefined,
     public find: (
-      storage: entity.EntityStorage,
+      storage: EntityStorage,
       userId: number,
       ei: API,
-      syncMap: entity.SyncMap,
+      syncMap: SyncMap,
       trx?: sdk.TrxToken
     ) => Promise<{ found: boolean; eo: DE; eiId: number }>,
     /** id map for primary id of API and DE object. */
-    public esm: entity.EntitySyncMap
+    public esm: EntitySyncMap
   ) {
     this.idMap = esm.idMap
   }
@@ -43,9 +43,9 @@ export class MergeEntity<
    */
   async merge(
     since: Date | undefined,
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<{ inserts: number; updates: number }> {
     let inserts = 0,

@@ -1,6 +1,6 @@
 {
   "name": "@bsv/wallet-toolbox",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "BRC100 conforming wallet, wallet storage and wallet signer components",
   "main": "./out/src/index.js",
   "types": "./out/src/index.d.ts",
@@ -57,7 +57,7 @@
     "standard": "^17.1.0",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "ts2md": "^0.2.7",
+    "ts2md": "^0.2.8",
     "typescript": "^5.2.2"
   }
 }

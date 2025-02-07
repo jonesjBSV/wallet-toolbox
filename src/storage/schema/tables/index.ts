@@ -1,4 +1,4 @@
-export * from './Settings'
+export * from './TableSettings'
 export * from './ProvenTx'
 export * from './ProvenTxReq'
 export * from './User'

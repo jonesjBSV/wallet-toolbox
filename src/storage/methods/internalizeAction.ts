@@ -10,12 +10,14 @@ import {
   Beef
 } from '@bsv/sdk'
 import {
-  entity,
+  EntityProvenTxReq,
   randomBytesBase64,
   sdk,
   stampLog,
   StorageProvider,
-  table,
+  TableOutput,
+  TableOutputBasket,
+  TableTransaction,
   verifyId,
   verifyOne,
   verifyOneOrNone
@@ -77,7 +79,7 @@ interface BasketInsertionX extends BasketInsertion {
   /** incoming transaction output */
   txo: TransactionOutput
   /** if valid, corresponding storage output  */
-  eo?: table.Output
+  eo?: TableOutput
 }
 
 interface WalletPaymentX extends WalletPayment {
@@ -86,7 +88,7 @@ interface WalletPaymentX extends WalletPayment {
   /** incoming transaction output */
   txo: TransactionOutput
   /** if valid, corresponding storage output  */
-  eo?: table.Output
+  eo?: TableOutput
   /** corresponds to an existing change output */
   ignore: boolean
 }
@@ -99,13 +101,13 @@ class InternalizeActionContext {
   /** the incoming transaction extracted from AtomicBEEF */
   tx: BsvTransaction
   /** the user's change basket */
-  changeBasket: table.OutputBasket
+  changeBasket: TableOutputBasket
   /** cached baskets referenced by basket insertions */
-  baskets: Record<string, table.OutputBasket>
+  baskets: Record<string, TableOutputBasket>
   /** existing storage transaction for this txid and userId */
-  etx?: table.Transaction
+  etx?: TableTransaction
   /** existing outputs */
-  eos: table.Output[]
+  eos: TableOutput[]
   /** all the basket insertions from incoming outputs array */
   basketInsertions: BasketInsertionX[]
   /** all the wallet payments from incoming outputs array */
@@ -128,7 +130,7 @@ class InternalizeActionContext {
     }
     this.ab = new Beef()
     this.tx = new BsvTransaction()
-    this.changeBasket = {} as table.OutputBasket
+    this.changeBasket = {} as TableOutputBasket
     this.baskets = {}
     this.basketInsertions = []
     this.walletPayments = []
@@ -154,7 +156,7 @@ class InternalizeActionContext {
     this.r.satoshis = v
   }
 
-  async getBasket(basketName: string): Promise<table.OutputBasket> {
+  async getBasket(basketName: string): Promise<TableOutputBasket> {
     let b = this.baskets[basketName]
     if (b) return b
     b = await this.storage.findOrInsertOutputBasket(this.userId, basketName)
@@ -322,9 +324,9 @@ class InternalizeActionContext {
   async findOrInsertTargetTransaction(
     satoshis: number,
     status: sdk.TransactionStatus
-  ): Promise<table.Transaction> {
+  ): Promise<TableTransaction> {
     const now = new Date()
-    const newTx: table.Transaction = {
+    const newTx: TableTransaction = {
       created_at: now,
       updated_at: now,
       transactionId: 0,
@@ -386,7 +388,7 @@ class InternalizeActionContext {
 
     // transaction record for user is new, but the txid may not be new to storage
     // make sure storage pursues getting a proof for it.
-    const newReq = entity.ProvenTxReq.fromTxid(
+    const newReq = EntityProvenTxReq.fromTxid(
       this.txid,
       this.tx.toBinary(),
       this.args.tx
@@ -428,7 +430,7 @@ class InternalizeActionContext {
     payment: WalletPaymentX
   ): Promise<void> {
     const now = new Date()
-    const txOut: table.Output = {
+    const txOut: TableOutput = {
       created_at: now,
       updated_at: now,
       outputId: 0,
@@ -462,7 +464,7 @@ class InternalizeActionContext {
     payment: WalletPaymentX
   ) {
     const outputId = payment.eo!.outputId!
-    const update: Partial<table.Output> = {
+    const update: Partial<TableOutput> = {
       basketId: this.changeBasket.basketId,
       type: 'P2PKH',
       customInstructions: undefined,
@@ -482,7 +484,7 @@ class InternalizeActionContext {
     basket: BasketInsertionX
   ) {
     const outputId = basket.eo!.outputId!
-    const update: Partial<table.Output> = {
+    const update: Partial<TableOutput> = {
       basketId: (await this.getBasket(basket.basket)).basketId,
       type: 'custom',
       customInstructions: basket.customInstructions,
@@ -502,7 +504,7 @@ class InternalizeActionContext {
     basket: BasketInsertionX
   ): Promise<void> {
     const now = new Date()
-    const txOut: table.Output = {
+    const txOut: TableOutput = {
       created_at: now,
       updated_at: now,
       outputId: 0,

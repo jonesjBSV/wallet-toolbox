@@ -1,15 +1,14 @@
 import { MerklePath } from '@bsv/sdk'
 import {
   arraysEqual,
-  entity,
   sdk,
-  table,
+  TableProvenTx,
   verifyId,
   verifyOneOrNone
 } from '../../../index.client'
-import { EntityBase } from '.'
+import { EntityBase, EntityProvenTxReq, EntityStorage, SyncMap } from '.'
 
-export class ProvenTx extends EntityBase<table.ProvenTx> {
+export class EntityProvenTx extends EntityBase<TableProvenTx> {
   /**
    * Given a txid and optionally its rawTx, create a new ProvenTx object.
    *
@@ -48,7 +47,7 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
     if (gmpr.merklePath && gmpr.header) {
       const index = gmpr.merklePath.path[0].find(l => l.hash === txid)?.offset
       if (index !== undefined) {
-        const api: table.ProvenTx = {
+        const api: TableProvenTx = {
           created_at: new Date(),
           updated_at: new Date(),
           provenTxId: 0,
@@ -60,14 +59,14 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
           blockHash: gmpr.header.hash,
           merkleRoot: gmpr.header.merkleRoot
         }
-        r.proven = new ProvenTx(api)
+        r.proven = new EntityProvenTx(api)
       }
     }
 
     return r
   }
 
-  constructor(api?: table.ProvenTx) {
+  constructor(api?: TableProvenTx) {
     const now = new Date()
     super(
       api || {
@@ -165,16 +164,13 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
     this.api.provenTxId = v
   }
   override get entityName(): string {
-    return 'ProvenTx'
+    return 'provenTx'
   }
   override get entityTable(): string {
     return 'proven_txs'
   }
 
-  override equals(
-    ei: table.ProvenTx,
-    syncMap?: entity.SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableProvenTx, syncMap?: SyncMap | undefined): boolean {
     const eo = this.toApi()
     if (
       eo.txid != ei.txid ||
@@ -198,26 +194,26 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
   }
 
   static async mergeFind(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    ei: table.ProvenTx,
-    syncMap: entity.SyncMap,
+    ei: TableProvenTx,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
-  ): Promise<{ found: boolean; eo: entity.ProvenTx; eiId: number }> {
+  ): Promise<{ found: boolean; eo: EntityProvenTx; eiId: number }> {
     const ef = verifyOneOrNone(
       await storage.findProvenTxs({ partial: { txid: ei.txid }, trx })
     )
     return {
       found: !!ef,
-      eo: new ProvenTx(ef || { ...ei }),
+      eo: new EntityProvenTx(ef || { ...ei }),
       eiId: verifyId(ei.provenTxId)
     }
   }
 
   override async mergeNew(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     userId: number,
-    syncMap: entity.SyncMap,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<void> {
     this.provenTxId = 0
@@ -226,10 +222,10 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
   }
 
   override async mergeExisting(
-    storage: entity.EntityStorage,
+    storage: EntityStorage,
     since: Date | undefined,
-    ei: table.ProvenTx,
-    syncMap: entity.SyncMap,
+    ei: TableProvenTx,
+    syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<boolean> {
     // ProvenTxs are never updated.
@@ -256,10 +252,10 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
    * @returns
    */
   static async fromReq(
-    req: entity.ProvenTxReq,
+    req: EntityProvenTxReq,
     gmpResult: sdk.GetMerklePathResult,
     countsAsAttempt: boolean
-  ): Promise<ProvenTx | undefined> {
+  ): Promise<EntityProvenTx | undefined> {
     if (!req.txid) throw new sdk.WERR_MISSING_PARAMETER('req.txid')
     if (!req.rawTx) throw new sdk.WERR_MISSING_PARAMETER('req.rawTx')
 
@@ -285,8 +281,8 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
         )
 
         if (
-          req.attempts > entity.ProvenTx.getProofAttemptsLimit &&
-          reqAgeInMinutes > entity.ProvenTx.getProofMinutes
+          req.attempts > EntityProvenTx.getProofAttemptsLimit &&
+          reqAgeInMinutes > EntityProvenTx.getProofMinutes
         ) {
           // Start the process of setting transactions to 'failed'
           req.addHistoryNote({
@@ -318,7 +314,7 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
             'merkle path does not contain leaf for txid'
           )
 
-        const proven = new ProvenTx({
+        const proven = new EntityProvenTx({
           created_at: now,
           updated_at: now,
           provenTxId: 0,
@@ -344,6 +340,6 @@ export class ProvenTx extends EntityBase<table.ProvenTx> {
 }
 
 export interface ProvenTxFromTxidResult {
-  proven?: entity.ProvenTx
+  proven?: EntityProvenTx
   rawTx?: number[]
 }

@@ -1,6 +1,6 @@
 import { sdk } from '../../../index.client'
 
-export interface User extends sdk.EntityTimeStamp {
+export interface TableUser extends sdk.EntityTimeStamp {
   created_at: Date
   updated_at: Date
   userId: number

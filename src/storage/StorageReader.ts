@@ -1,6 +1,21 @@
 import {
   sdk,
-  table,
+  TableCertificate,
+  TableCertificateField,
+  TableCommission,
+  TableMonitorEvent,
+  TableOutput,
+  TableOutputBasket,
+  TableOutputTag,
+  TableOutputTagMap,
+  TableProvenTx,
+  TableProvenTxReq,
+  TableSettings,
+  TableSyncState,
+  TableTransaction,
+  TableTxLabel,
+  TableTxLabelMap,
+  TableUser,
   validateSecondsSinceEpoch,
   verifyOneOrNone,
   verifyTruthy
@@ -21,7 +36,7 @@ import { getSyncChunk } from './methods/getSyncChunk'
  */
 export abstract class StorageReader implements sdk.StorageSyncReader {
   chain: sdk.Chain
-  _settings?: table.Settings
+  _settings?: TableSettings
   whenLastAccess?: Date
   get dbtype(): DBType | undefined {
     return this._settings?.dbtype
@@ -34,11 +49,11 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
   isAvailable(): boolean {
     return !!this._settings
   }
-  async makeAvailable(): Promise<table.Settings> {
+  async makeAvailable(): Promise<TableSettings> {
     return (this._settings = await this.readSettings())
   }
 
-  getSettings(): table.Settings {
+  getSettings(): TableSettings {
     if (!this._settings)
       throw new sdk.WERR_INVALID_OPERATION(
         'must call "makeAvailable" before accessing "settings"'
@@ -57,35 +72,35 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
     trx?: sdk.TrxToken
   ): Promise<T>
 
-  abstract readSettings(trx?: sdk.TrxToken): Promise<table.Settings>
+  abstract readSettings(trx?: sdk.TrxToken): Promise<TableSettings>
 
   abstract findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
-  ): Promise<table.CertificateField[]>
+  ): Promise<TableCertificateField[]>
   abstract findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<table.Certificate[]>
+  ): Promise<TableCertificate[]>
   abstract findCommissions(
     args: sdk.FindCommissionsArgs
-  ): Promise<table.Commission[]>
+  ): Promise<TableCommission[]>
   abstract findMonitorEvents(
     args: sdk.FindMonitorEventsArgs
-  ): Promise<table.MonitorEvent[]>
+  ): Promise<TableMonitorEvent[]>
   abstract findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
-  ): Promise<table.OutputBasket[]>
-  abstract findOutputs(args: sdk.FindOutputsArgs): Promise<table.Output[]>
+  ): Promise<TableOutputBasket[]>
+  abstract findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]>
   abstract findOutputTags(
     args: sdk.FindOutputTagsArgs
-  ): Promise<table.OutputTag[]>
+  ): Promise<TableOutputTag[]>
   abstract findSyncStates(
     args: sdk.FindSyncStatesArgs
-  ): Promise<table.SyncState[]>
+  ): Promise<TableSyncState[]>
   abstract findTransactions(
     args: sdk.FindTransactionsArgs
-  ): Promise<table.Transaction[]>
-  abstract findTxLabels(args: sdk.FindTxLabelsArgs): Promise<table.TxLabel[]>
-  abstract findUsers(args: sdk.FindUsersArgs): Promise<table.User[]>
+  ): Promise<TableTransaction[]>
+  abstract findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]>
+  abstract findUsers(args: sdk.FindUsersArgs): Promise<TableUser[]>
 
   abstract countCertificateFields(
     args: sdk.FindCertificateFieldsArgs
@@ -103,18 +118,18 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 
   abstract getProvenTxsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTx[]>
+  ): Promise<TableProvenTx[]>
   abstract getProvenTxReqsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.ProvenTxReq[]>
+  ): Promise<TableProvenTxReq[]>
   abstract getTxLabelMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.TxLabelMap[]>
+  ): Promise<TableTxLabelMap[]>
   abstract getOutputTagMapsForUser(
     args: sdk.FindForUserSincePagedArgs
-  ): Promise<table.OutputTagMap[]>
+  ): Promise<TableOutputTagMap[]>
 
-  async findUserByIdentityKey(key: string): Promise<table.User | undefined> {
+  async findUserByIdentityKey(key: string): Promise<TableUser | undefined> {
     return verifyOneOrNone(
       await this.findUsers({ partial: { identityKey: key } })
     )

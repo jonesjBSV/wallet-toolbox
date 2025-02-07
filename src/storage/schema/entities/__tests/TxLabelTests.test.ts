@@ -1,5 +1,5 @@
-import { TxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
-import { entity, table, sdk } from '../../../../../src'
+import { EntityTxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
+import { createSyncMap, sdk, SyncMap, TableTxLabel } from '../../../../../src'
 import {
   TestUtilsWalletStorage as _tu,
   TestWalletNoSetup
@@ -35,7 +35,7 @@ describe('TxLabel Class Tests', () => {
 
   // Test: Default constructor behavior
   test('1_creates_txLabel_with_default_values', () => {
-    const txLabel = new TxLabel()
+    const txLabel = new EntityTxLabel()
 
     // Default values
     expect(txLabel.txLabelId).toBe(0)
@@ -50,7 +50,7 @@ describe('TxLabel Class Tests', () => {
   // Test: Constructor with provided API object
   test('2_creates_txLabel_with_provided_api_object', () => {
     const now = new Date()
-    const apiObject: table.TxLabel = {
+    const apiObject: TableTxLabel = {
       txLabelId: 42,
       label: 'Test Label',
       userId: 101,
@@ -58,7 +58,7 @@ describe('TxLabel Class Tests', () => {
       created_at: now,
       updated_at: now
     }
-    const txLabel = new TxLabel(apiObject)
+    const txLabel = new EntityTxLabel(apiObject)
 
     // Verify all properties match the API object
     expect(txLabel.txLabelId).toBe(42)
@@ -71,7 +71,7 @@ describe('TxLabel Class Tests', () => {
 
   // Test: Getters and setters behavior
   test('3_getters_and_setters_work_correctly', () => {
-    const txLabel = new TxLabel()
+    const txLabel = new EntityTxLabel()
 
     const now = new Date()
     txLabel.txLabelId = 1
@@ -83,7 +83,7 @@ describe('TxLabel Class Tests', () => {
     txLabel.id = 2
 
     expect(txLabel.id).toBe(2)
-    expect(txLabel.entityName).toBe('entity.TxLabel')
+    expect(txLabel.entityName).toBe('txLabel')
     expect(txLabel.entityTable).toBe('tx_labels')
     expect(txLabel.txLabelId).toBe(2)
     expect(txLabel.label).toBe('New Label')
@@ -96,7 +96,7 @@ describe('TxLabel Class Tests', () => {
   // Test: mergeExisting does not update TxLabel when `ei.updated_at` is older
   test('5_mergeExisting_does_not_update_txLabel_when_ei_updated_at_is_older', async () => {
     for (const { activeStorage } of ctxs) {
-      const txLabel = new TxLabel({
+      const txLabel = new EntityTxLabel({
         txLabelId: 302,
         label: 'Original Label',
         userId: 1,
@@ -107,7 +107,7 @@ describe('TxLabel Class Tests', () => {
 
       await activeStorage.insertTxLabel(txLabel.toApi())
 
-      const olderEi: table.TxLabel = {
+      const olderEi: TableTxLabel = {
         txLabelId: 302,
         label: 'Outdated Label',
         userId: 1,
@@ -137,7 +137,7 @@ describe('TxLabel Class Tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert a TxLabel into the first database
-    const txLabel1 = new TxLabel({
+    const txLabel1 = new EntityTxLabel({
       txLabelId: 303,
       userId: 1,
       label: 'Test Label',
@@ -149,7 +149,7 @@ describe('TxLabel Class Tests', () => {
     await ctx1.activeStorage.insertTxLabel(txLabel1.toApi())
 
     // Insert a matching TxLabel into the second database
-    const txLabel2 = new TxLabel({
+    const txLabel2 = new EntityTxLabel({
       txLabelId: 304,
       userId: 1, // Different userId to simulate syncMap usage
       label: 'Test Label',
@@ -160,81 +160,9 @@ describe('TxLabel Class Tests', () => {
 
     await ctx2.activeStorage.insertTxLabel(txLabel2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      txLabel: {
-        idMap: { [txLabel2.userId]: txLabel1.userId },
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.txLabel.idMap = { [txLabel2.userId]: txLabel1.userId }
+    syncMap.txLabel.count = 1
 
     // Verify the entities match
     expect(txLabel1.equals(txLabel2.toApi(), syncMap)).toBe(true)
@@ -245,7 +173,7 @@ describe('TxLabel Class Tests', () => {
     const ctx2 = ctxs2[0]
 
     // Insert a TxLabel into the first database
-    const txLabel1 = new TxLabel({
+    const txLabel1 = new EntityTxLabel({
       txLabelId: 305,
       userId: 1,
       label: 'Label A',
@@ -257,7 +185,7 @@ describe('TxLabel Class Tests', () => {
     await ctx1.activeStorage.insertTxLabel(txLabel1.toApi())
 
     // Insert a non-matching TxLabel into the second database
-    const txLabel2 = new TxLabel({
+    const txLabel2 = new EntityTxLabel({
       txLabelId: 306, // Different txLabelId
       userId: 1, // Different userId
       label: 'Label B', // Different label
@@ -268,81 +196,9 @@ describe('TxLabel Class Tests', () => {
 
     await ctx2.activeStorage.insertTxLabel(txLabel2.toApi())
 
-    // Create a valid SyncMap
-    const syncMap: entity.SyncMap = {
-      txLabel: {
-        idMap: { [txLabel2.userId]: txLabel1.userId },
-        entityName: 'TxLabel',
-        maxUpdated_at: undefined,
-        count: 1
-      },
-      transaction: {
-        idMap: {},
-        entityName: 'Transaction',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTx: {
-        idMap: {},
-        entityName: 'ProvenTx',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputBasket: {
-        idMap: {},
-        entityName: 'OutputBasket',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      provenTxReq: {
-        idMap: {},
-        entityName: 'ProvenTxReq',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      txLabelMap: {
-        idMap: {},
-        entityName: 'TxLabelMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      output: {
-        idMap: {},
-        entityName: 'Output',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTag: {
-        idMap: {},
-        entityName: 'OutputTag',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      outputTagMap: {
-        idMap: {},
-        entityName: 'OutputTagMap',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificate: {
-        idMap: {},
-        entityName: 'Certificate',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      certificateField: {
-        idMap: {},
-        entityName: 'CertificateField',
-        maxUpdated_at: undefined,
-        count: 0
-      },
-      commission: {
-        idMap: {},
-        entityName: 'Commission',
-        maxUpdated_at: undefined,
-        count: 0
-      }
-    }
+    const syncMap = createSyncMap()
+    syncMap.txLabel.idMap = { [txLabel2.userId]: txLabel1.userId }
+    syncMap.txLabel.count = 1
 
     // Verify the entities do not match
     expect(txLabel1.equals(txLabel2.toApi(), syncMap)).toBe(false)
