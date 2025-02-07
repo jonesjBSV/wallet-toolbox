@@ -1,6 +1,5 @@
 import {
   BEEF,
-  Beef,
   CreateActionArgs,
   CreateActionOptions,
   CreateActionOutput,
@@ -9,10 +8,6 @@ import {
   P2PKH,
   PrivateKey,
   PublicKey,
-  SignActionArgs,
-  SignActionResult,
-  Transaction,
-  UnlockingScript,
   WalletInterface
 } from '@bsv/sdk'
 import {
@@ -44,7 +39,7 @@ export abstract class SetupClient {
    * Loading secrets from a .env file is intended only for experimentation and getting started.
    * Private keys should never be included directly in your source code.
    *
-   * @publicBody
+   * @publicbody
    */
   static makeEnv(): string {
     const testPrivKey1 = PrivateKey.fromRandom()
@@ -87,7 +82,7 @@ export abstract class SetupClient {
    * @param chain Which chain to use: 'test' or 'main'
    * @returns {SetupEnv} with configuration environment secrets used by `Setup` functions.
    *
-   * @publicBody
+   * @publicbody
    */
   static getEnv(chain: sdk.Chain): SetupEnv {
     // Identity keys of the lead maintainer of this repo...
@@ -180,7 +175,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static async createWalletClient(
     args: SetupWalletClientArgs
@@ -204,7 +199,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static getKeyPair(priv?: string | PrivateKey): KeyPairAddress {
     if (priv === undefined) priv = PrivateKey.fromRandom()
@@ -216,7 +211,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static getLockP2PKH(address: string) {
     const p2pkh = new P2PKH()
@@ -225,7 +220,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static getUnlockP2PKH(
     priv: PrivateKey,
@@ -243,7 +238,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static createP2PKHOutputs(
     outputs: {
@@ -270,7 +265,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static async createP2PKHOutputsAction(
     wallet: WalletInterface,
@@ -310,7 +305,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static async fundWalletFromP2PKHOutpoints(
     wallet: WalletInterface,
@@ -323,9 +318,9 @@ export abstract class SetupClient {
 }
 
 /**
- *
+ * A private key and associated public key and address.
  */
-export type KeyPairAddress = {
+export interface KeyPairAddress {
   privateKey: PrivateKey
   publicKey: PublicKey
   address: string
