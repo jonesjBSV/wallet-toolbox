@@ -42,7 +42,6 @@ describe('update tests', () => {
   let setups: { setup: TestSetup1; storage: StorageProvider }[]
 
   beforeEach(async () => {
-    
     setups = []
     storages = []
     const databaseName = testName()
