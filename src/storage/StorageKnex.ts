@@ -799,7 +799,7 @@ export class StorageKnex
   override async findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]> {
+  ): Promise<TableCertificateX[]> {
     if (
       !auth.userId ||
       (args.partial.userId && args.partial.userId !== auth.userId)
@@ -840,10 +840,21 @@ export class StorageKnex
   }
   override async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]> {
+  ): Promise<TableCertificateX[]> {
     const q = this.findCertificatesQuery(args)
-    const r = await q
-    return this.validateEntities(r, undefined, ['isDeleted'])
+    let r: TableCertificateX[] = await q
+    r = this.validateEntities(r, undefined, ['isDeleted'])
+    if (args.includeFields) {
+      for (const c of r) {
+        c.fields = this.validateEntities(
+          await this.findCertificateFields({
+            partial: { certificateId: c.certificateId, userId: c.userId },
+            trx: args.trx
+          })
+        )
+      }
+    }
+    return r
   }
   override async findCommissions(
     args: sdk.FindCommissionsArgs

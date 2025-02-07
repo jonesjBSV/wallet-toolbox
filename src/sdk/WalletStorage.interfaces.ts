@@ -73,7 +73,7 @@ export interface WalletStorage {
     args: InternalizeActionArgs
   ): Promise<InternalizeActionResult>
 
-  findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificate[]>
+  findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]>
   findOutputBaskets(
     args: sdk.FindOutputBasketsArgs
   ): Promise<TableOutputBasket[]>
@@ -173,7 +173,7 @@ export interface WalletStorageReader {
   findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]>
+  ): Promise<TableCertificateX[]>
   findOutputBasketsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs

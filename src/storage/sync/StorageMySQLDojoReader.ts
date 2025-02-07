@@ -16,6 +16,7 @@ import {
   outputColumnsWithoutLockingScript,
   TableCertificate,
   TableCertificateField,
+  TableCertificateX,
   TableCommission,
   TableMonitorEvent,
   TableOutput,
@@ -332,7 +333,7 @@ export class StorageMySQLDojoReader extends StorageReader {
   }
   async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]> {
+  ): Promise<TableCertificateX[]> {
     const q = this.findCertificatesQuery(args)
     const ds = await q
     const rs: TableCertificate[] = []
