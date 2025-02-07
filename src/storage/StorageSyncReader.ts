@@ -2,6 +2,7 @@ import {
   sdk,
   TableCertificate,
   TableCertificateField,
+  TableCertificateX,
   TableCommission,
   TableOutput,
   TableOutputBasket,
@@ -79,7 +80,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
   }
   async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]> {
+  ): Promise<TableCertificateX[]> {
     if (!this.auth.userId) await this.makeAvailable()
     if (args.partial.userId !== this.auth.userId)
       throw new sdk.WERR_UNAUTHORIZED()

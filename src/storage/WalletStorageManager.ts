@@ -17,6 +17,7 @@ import {
   StorageProvider,
   StorageSyncReader,
   TableCertificate,
+  TableCertificateX,
   TableOutput,
   TableOutputBasket,
   TableProvenTxReq,
@@ -382,7 +383,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
   async findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]> {
+  ): Promise<TableCertificateX[]> {
     const auth = await this.getAuth()
     return await this.runAsReader(async reader => {
       return await reader.findCertificatesAuth(auth, args)

@@ -2,6 +2,7 @@ import {
   sdk,
   TableCertificate,
   TableCertificateField,
+  TableCertificateX,
   TableCommission,
   TableOutput,
   TableOutputBasket,
@@ -41,7 +42,7 @@ export interface StorageSyncReader {
   findCertificateFields(
     args: sdk.FindCertificateFieldsArgs
   ): Promise<TableCertificateField[]>
-  findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificate[]>
+  findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]>
   findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]>
   findOutputBaskets(
     args: sdk.FindOutputBasketsArgs

@@ -2,6 +2,7 @@ import {
   sdk,
   TableCertificate,
   TableCertificateField,
+  TableCertificateX,
   TableCommission,
   TableMonitorEvent,
   TableOutput,
@@ -79,7 +80,7 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
   ): Promise<TableCertificateField[]>
   abstract findCertificates(
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]>
+  ): Promise<TableCertificateX[]>
   abstract findCommissions(
     args: sdk.FindCommissionsArgs
   ): Promise<TableCommission[]>

@@ -148,7 +148,7 @@ export abstract class StorageProvider
   abstract findCertificatesAuth(
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificate[]>
+  ): Promise<TableCertificateX[]>
   abstract findOutputBasketsAuth(
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
