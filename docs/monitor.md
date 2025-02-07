@@ -298,15 +298,15 @@ export class TaskCheckForProofs extends WalletMonitorTask {
         run: boolean;
     } 
     async runTask(): Promise<string> 
-    async getProofs(reqs: table.ProvenTxReq[], indent = 0, countsAsAttempt = false, ignoreStatus = false): Promise<{
-        proven: table.ProvenTxReq[];
-        invalid: table.ProvenTxReq[];
+    async getProofs(reqs: TableProvenTxReq[], indent = 0, countsAsAttempt = false, ignoreStatus = false): Promise<{
+        proven: TableProvenTxReq[];
+        invalid: TableProvenTxReq[];
         log: string;
     }> 
 }
 ```
 
-See also: [Monitor](./monitor.md#class-monitor), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -331,13 +331,13 @@ depending on chaintracks succeeding on proof verification.
 Increments attempts if proofs where requested.
 
 ```ts
-async getProofs(reqs: table.ProvenTxReq[], indent = 0, countsAsAttempt = false, ignoreStatus = false): Promise<{
-    proven: table.ProvenTxReq[];
-    invalid: table.ProvenTxReq[];
+async getProofs(reqs: TableProvenTxReq[], indent = 0, countsAsAttempt = false, ignoreStatus = false): Promise<{
+    proven: TableProvenTxReq[];
+    invalid: TableProvenTxReq[];
     log: string;
 }> 
 ```
-See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq)
+See also: [TableProvenTxReq](./storage.md#interface-tableproventxreq)
 
 Returns
 
@@ -493,11 +493,11 @@ export class TaskSendWaiting extends WalletMonitorTask {
         run: boolean;
     } 
     async runTask(): Promise<string> 
-    async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string> 
+    async processUnsent(reqApis: TableProvenTxReq[], indent = 0): Promise<string> 
 }
 ```
 
-See also: [Monitor](./monitor.md#class-monitor), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Method processUnsent
 
@@ -516,9 +516,9 @@ Add mapi responses to database table if received.
 Increments attempts if sending was attempted.
 
 ```ts
-async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string> 
+async processUnsent(reqApis: TableProvenTxReq[], indent = 0): Promise<string> 
 ```
-See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq)
+See also: [TableProvenTxReq](./storage.md#interface-tableproventxreq)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
