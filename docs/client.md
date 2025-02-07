@@ -230,7 +230,7 @@ export interface BlockHeader extends BaseBlockHeader {
 }
 ```
 
-See also: [BaseBlockHeader](#interface-baseblockheader)
+See also: [BaseBlockHeader](./client.md#interface-baseblockheader)
 
 ###### Property hash
 
@@ -286,6 +286,8 @@ export interface CommitNewTxResults {
 }
 ```
 
+See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq)
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -337,7 +339,7 @@ export interface FindCertificateFieldsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [CertificateField](./storage-tables.md#interface-certificatefield), [FindSincePagedArgs](./client.md#interface-findsincepagedargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -353,7 +355,7 @@ export interface FindCertificatesArgs extends FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [Certificate](./storage-tables.md#interface-certificate), [FindSincePagedArgs](./client.md#interface-findsincepagedargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -366,7 +368,7 @@ export interface FindCommissionsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [Commission](./storage-tables.md#interface-commission), [FindSincePagedArgs](./client.md#interface-findsincepagedargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -379,7 +381,7 @@ export interface FindForUserSincePagedArgs extends FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -392,7 +394,7 @@ export interface FindMonitorEventsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [MonitorEvent](./storage-tables.md#interface-monitorevent)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -405,7 +407,7 @@ export interface FindOutputBasketsArgs extends FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [OutputBasket](./storage-tables.md#interface-outputbasket)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -419,7 +421,7 @@ export interface FindOutputTagMapsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [OutputTagMap](./storage-tables.md#interface-outputtagmap)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -432,7 +434,7 @@ export interface FindOutputTagsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [OutputTag](./storage-tables.md#interface-outputtag)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -447,7 +449,7 @@ export interface FindOutputsArgs extends FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs), [TransactionStatus](#type-transactionstatus)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [Output](./storage-tables.md#interface-output), [TransactionStatus](./client.md#type-transactionstatus)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -460,7 +462,7 @@ export interface FindPartialSincePagedArgs<T extends object> extends FindSincePa
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -475,7 +477,7 @@ export interface FindProvenTxReqsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs), [ProvenTxReqStatus](#type-proventxreqstatus)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [ProvenTxReqStatus](./client.md#type-proventxreqstatus)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -488,7 +490,7 @@ export interface FindProvenTxsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [ProvenTx](./storage-tables.md#interface-proventx)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -503,7 +505,7 @@ export interface FindSincePagedArgs {
 }
 ```
 
-See also: [Paged](#interface-paged), [TrxToken](#interface-trxtoken)
+See also: [Paged](./client.md#interface-paged), [TrxToken](./client.md#interface-trxtoken)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -516,7 +518,7 @@ export interface FindSyncStatesArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [SyncState](./storage-tables.md#interface-syncstate)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -531,7 +533,7 @@ export interface FindTransactionsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs), [TransactionStatus](#type-transactionstatus)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [Transaction](./storage-tables.md#interface-transaction), [TransactionStatus](./client.md#type-transactionstatus)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -545,7 +547,7 @@ export interface FindTxLabelMapsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [TxLabelMap](./storage-tables.md#interface-txlabelmap)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -558,7 +560,7 @@ export interface FindTxLabelsArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [TxLabel](./storage-tables.md#interface-txlabel)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -571,7 +573,7 @@ export interface FindUsersArgs extends sdk.FindSincePagedArgs {
 }
 ```
 
-See also: [FindSincePagedArgs](#interface-findsincepagedargs)
+See also: [FindSincePagedArgs](./client.md#interface-findsincepagedargs), [User](./storage-tables.md#interface-user)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -642,7 +644,7 @@ export interface GenerateChangeSdkParams {
 }
 ```
 
-See also: [GenerateChangeSdkInput](#interface-generatechangesdkinput), [GenerateChangeSdkOutput](#interface-generatechangesdkoutput), [StorageFeeModel](#interface-storagefeemodel)
+See also: [GenerateChangeSdkInput](./storage.md#interface-generatechangesdkinput), [GenerateChangeSdkOutput](./storage.md#interface-generatechangesdkoutput), [StorageFeeModel](./client.md#interface-storagefeemodel)
 
 ###### Property changeFirstSatoshis
 
@@ -706,7 +708,7 @@ export interface GenerateChangeSdkResult {
 }
 ```
 
-See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput), [GenerateChangeSdkChangeOutput](#interface-generatechangesdkchangeoutput)
+See also: [GenerateChangeSdkChangeInput](./storage.md#interface-generatechangesdkchangeinput), [GenerateChangeSdkChangeOutput](./storage.md#interface-generatechangesdkchangeoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -719,7 +721,7 @@ export interface GenerateChangeSdkStorageChange extends GenerateChangeSdkChangeI
 }
 ```
 
-See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput)
+See also: [GenerateChangeSdkChangeInput](./storage.md#interface-generatechangesdkchangeinput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -737,7 +739,7 @@ export interface GetMerklePathResult {
 }
 ```
 
-See also: [BlockHeader](#interface-blockheader), [WalletError](#class-walleterror)
+See also: [BlockHeader](./client.md#interface-blockheader), [WalletError](./client.md#class-walleterror)
 
 ###### Property error
 
@@ -746,7 +748,7 @@ The first exception error that occurred during processing, if any.
 ```ts
 error?: sdk.WalletError
 ```
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 ###### Property merklePath
 
@@ -781,7 +783,7 @@ export interface GetRawTxResult {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 ###### Property error
 
@@ -790,7 +792,7 @@ The first exception error that occurred during processing, if any.
 ```ts
 error?: sdk.WalletError
 ```
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 ###### Property name
 
@@ -832,6 +834,8 @@ export interface GetReqsAndBeefDetail {
 }
 ```
 
+See also: [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq)
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -844,7 +848,7 @@ export interface GetReqsAndBeefResult {
 }
 ```
 
-See also: [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail)
+See also: [GetReqsAndBeefDetail](./storage.md#interface-getreqsandbeefdetail)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -915,7 +919,7 @@ export interface GetUtxoStatusResult {
 }
 ```
 
-See also: [GetUtxoStatusDetails](#interface-getutxostatusdetails), [WalletError](#class-walleterror)
+See also: [GetUtxoStatusDetails](./client.md#interface-getutxostatusdetails), [WalletError](./client.md#class-walleterror)
 
 ###### Property details
 
@@ -927,7 +931,7 @@ there could be more than one block in which it is a valid utxo.
 ```ts
 details: GetUtxoStatusDetails[]
 ```
-See also: [GetUtxoStatusDetails](#interface-getutxostatusdetails)
+See also: [GetUtxoStatusDetails](./client.md#interface-getutxostatusdetails)
 
 ###### Property error
 
@@ -936,7 +940,7 @@ When status is 'error', provides code and description
 ```ts
 error?: sdk.WalletError
 ```
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 ###### Property isUtxo
 
@@ -994,7 +998,7 @@ export interface MonitorOptions {
 }
 ```
 
-See also: [Chain](#type-chain), [MonitorStorage](#type-monitorstorage), [Services](#class-services)
+See also: [Chain](./client.md#type-chain), [MonitorStorage](./monitor.md#type-monitorstorage), [Services](./services.md#class-services)
 
 ###### Property msecsWaitPerMerkleProofServiceReq
 
@@ -1062,7 +1066,7 @@ export interface PendingSignAction {
 }
 ```
 
-See also: [PendingStorageInput](#interface-pendingstorageinput), [StorageCreateActionResult](#interface-storagecreateactionresult), [ValidCreateActionArgs](#interface-validcreateactionargs)
+See also: [PendingStorageInput](./client.md#interface-pendingstorageinput), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1090,7 +1094,7 @@ export interface PostBeefResult extends PostTxsResult {
 }
 ```
 
-See also: [PostTxsResult](#interface-posttxsresult)
+See also: [PostTxsResult](./client.md#interface-posttxsresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1142,7 +1146,7 @@ export interface PostReqsToNetworkDetails {
 }
 ```
 
-See also: [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus), [PostTxResultForTxid](#interface-posttxresultfortxid)
+See also: [PostReqsToNetworkDetailsStatus](./storage.md#type-postreqstonetworkdetailsstatus), [PostTxResultForTxid](./client.md#interface-posttxresultfortxid), [ProvenTxReq](./storage-tables.md#interface-proventxreq)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1159,7 +1163,7 @@ export interface PostReqsToNetworkResult {
 }
 ```
 
-See also: [PostBeefResult](#interface-postbeefresult), [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails)
+See also: [PostBeefResult](./client.md#interface-postbeefresult), [PostReqsToNetworkDetails](./storage.md#interface-postreqstonetworkdetails)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1213,7 +1217,7 @@ export interface PostTxsResult {
 }
 ```
 
-See also: [PostTxResultForTxid](#interface-posttxresultfortxid), [WalletError](#class-walleterror)
+See also: [PostTxResultForTxid](./client.md#interface-posttxresultfortxid), [WalletError](./client.md#class-walleterror)
 
 ###### Property data
 
@@ -1255,7 +1259,7 @@ export interface ProcessSyncChunkResult {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1269,6 +1273,8 @@ export interface ProvenOrRawTx {
     inputBEEF?: number[];
 }
 ```
+
+See also: [ProvenTx](./storage-tables.md#interface-proventx)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1448,6 +1454,8 @@ export interface ScriptTemplateUnlock {
 }
 ```
 
+See also: [Transaction](./storage-tables.md#interface-transaction)
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -1470,7 +1478,7 @@ export interface SetupEnv {
 }
 ```
 
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 ###### Property chain
 
@@ -1479,7 +1487,7 @@ The chan being accessed: 'main' for mainnet, 'test' for 'testnet'.
 ```ts
 chain: sdk.Chain
 ```
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 ###### Property devKeys
 
@@ -1546,7 +1554,7 @@ export interface SetupWallet {
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [Monitor](./monitor.md#class-monitor), [Services](./services.md#class-services), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Property chain
 
@@ -1555,7 +1563,7 @@ The chain ('main' or 'test') which the wallet accesses.
 ```ts
 chain: sdk.Chain
 ```
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 ###### Property identityKey
 
@@ -1581,7 +1589,7 @@ that speed up wallet operations and maintain data integrity.
 ```ts
 monitor: Monitor
 ```
-See also: [Monitor](#class-monitor)
+See also: [Monitor](./monitor.md#class-monitor)
 
 ###### Property rootKey
 
@@ -1599,7 +1607,7 @@ on the public network.
 ```ts
 services: Services
 ```
-See also: [Services](#class-services)
+See also: [Services](./services.md#class-services)
 
 ###### Property storage
 
@@ -1609,7 +1617,7 @@ accessed by the wallet.
 ```ts
 storage: WalletStorageManager
 ```
-See also: [WalletStorageManager](#class-walletstoragemanager)
+See also: [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Property wallet
 
@@ -1623,7 +1631,7 @@ components after construction may disrupt the normal operation of the wallet.
 ```ts
 wallet: Wallet
 ```
-See also: [Wallet](#class-wallet)
+See also: [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1650,7 +1658,7 @@ export interface SetupWalletArgs {
 }
 ```
 
-See also: [SetupEnv](#interface-setupenv), [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [SetupEnv](./setup.md#interface-setupenv), [WalletStorageProvider](./client.md#interface-walletstorageprovider)
 
 ###### Property active
 
@@ -1659,7 +1667,7 @@ Optional. Active wallet storage. Can be added later.
 ```ts
 active?: sdk.WalletStorageProvider
 ```
-See also: [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [WalletStorageProvider](./client.md#interface-walletstorageprovider)
 
 ###### Property backups
 
@@ -1668,7 +1676,7 @@ Optional. One or more storage providers managed as backup destinations. Can be a
 ```ts
 backups?: sdk.WalletStorageProvider[]
 ```
-See also: [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [WalletStorageProvider](./client.md#interface-walletstorageprovider)
 
 ###### Property env
 
@@ -1677,7 +1685,7 @@ Configuration "secrets" typically obtained by `Setup.makeEnv` and `Setup.getEnv`
 ```ts
 env: SetupEnv
 ```
-See also: [SetupEnv](#interface-setupenv)
+See also: [SetupEnv](./setup.md#interface-setupenv)
 
 ###### Property privKeyHex
 
@@ -1710,7 +1718,7 @@ export interface SetupWalletClient extends SetupWallet {
 }
 ```
 
-See also: [SetupWallet](#interface-setupwallet)
+See also: [SetupWallet](./setup.md#interface-setupwallet)
 
 ###### Property endpointUrl
 
@@ -1736,7 +1744,7 @@ export interface SetupWalletClientArgs extends SetupWalletArgs {
 }
 ```
 
-See also: [SetupWalletArgs](#interface-setupwalletargs)
+See also: [SetupWalletArgs](./setup.md#interface-setupwalletargs)
 
 ###### Property endpointUrl
 
@@ -1766,7 +1774,7 @@ export interface StorageCreateActionResult {
 }
 ```
 
-See also: [StorageCreateTransactionSdkInput](#interface-storagecreatetransactionsdkinput), [StorageCreateTransactionSdkOutput](#interface-storagecreatetransactionsdkoutput)
+See also: [StorageCreateTransactionSdkInput](./client.md#interface-storagecreatetransactionsdkinput), [StorageCreateTransactionSdkOutput](./client.md#interface-storagecreatetransactionsdkoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1790,7 +1798,7 @@ export interface StorageCreateTransactionSdkInput {
 }
 ```
 
-See also: [StorageProvidedBy](#type-storageprovidedby)
+See also: [StorageProvidedBy](./client.md#type-storageprovidedby)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1806,7 +1814,7 @@ export interface StorageCreateTransactionSdkOutput extends sdk.ValidCreateAction
 }
 ```
 
-See also: [StorageProvidedBy](#type-storageprovidedby), [ValidCreateActionOutput](#interface-validcreateactionoutput)
+See also: [StorageProvidedBy](./client.md#type-storageprovidedby), [ValidCreateActionOutput](./client.md#interface-validcreateactionoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2022,6 +2030,8 @@ export interface StorageProvenOrReq {
 }
 ```
 
+See also: [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq)
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -2036,7 +2046,7 @@ export interface StorageProviderOptions extends StorageReaderWriterOptions {
 }
 ```
 
-See also: [Chain](#type-chain), [StorageFeeModel](#interface-storagefeemodel), [StorageReaderWriterOptions](#interface-storagereaderwriteroptions)
+See also: [Chain](./client.md#type-chain), [StorageFeeModel](./client.md#interface-storagefeemodel), [StorageReaderWriterOptions](./storage.md#interface-storagereaderwriteroptions)
 
 ###### Property commissionPubKeyHex
 
@@ -2068,7 +2078,7 @@ export interface StorageReaderOptions {
 }
 ```
 
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2080,7 +2090,7 @@ export interface StorageReaderWriterOptions extends StorageReaderOptions {
 }
 ```
 
-See also: [StorageReaderOptions](#interface-storagereaderoptions)
+See also: [StorageReaderOptions](./storage.md#interface-storagereaderoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2113,7 +2123,7 @@ export interface StorageSyncReader {
 }
 ```
 
-See also: [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [SyncChunk](#interface-syncchunk), [getSyncChunk](#function-getsyncchunk)
+See also: [Certificate](./storage-tables.md#interface-certificate), [CertificateField](./storage-tables.md#interface-certificatefield), [Commission](./storage-tables.md#interface-commission), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [OutputTag](./storage-tables.md#interface-outputtag), [OutputTagMap](./storage-tables.md#interface-outputtagmap), [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [Settings](./storage-tables.md#interface-settings), [SyncChunk](./client.md#interface-syncchunk), [SyncState](./storage-tables.md#interface-syncstate), [Transaction](./storage-tables.md#interface-transaction), [TxLabel](./storage-tables.md#interface-txlabel), [TxLabelMap](./storage-tables.md#interface-txlabelmap), [User](./storage-tables.md#interface-user), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2126,7 +2136,7 @@ export interface StorageSyncReaderOptions {
 }
 ```
 
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2222,7 +2232,7 @@ export interface StorageSyncReaderWriter extends sdk.StorageSyncReader {
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [FindProvenTxsArgs](#interface-findproventxsargs), [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs), [FindUsersArgs](#interface-findusersargs), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageSyncReader](#class-storagesyncreader), [SyncChunk](#interface-syncchunk), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [CertificateField](./storage-tables.md#interface-certificatefield), [Commission](./storage-tables.md#interface-commission), [FindOutputTagMapsArgs](./client.md#interface-findoutputtagmapsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [FindProvenTxsArgs](./client.md#interface-findproventxsargs), [FindTxLabelMapsArgs](./client.md#interface-findtxlabelmapsargs), [FindUsersArgs](./client.md#interface-findusersargs), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [OutputTag](./storage-tables.md#interface-outputtag), [OutputTagMap](./storage-tables.md#interface-outputtagmap), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [ProvenOrRawTx](./client.md#interface-provenorrawtx), [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [ProvenTxReqDynamics](./storage-tables.md#interface-proventxreqdynamics), [PurgeParams](./client.md#interface-purgeparams), [PurgeResults](./client.md#interface-purgeresults), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageSyncReader](./storage.md#class-storagesyncreader), [SyncChunk](./client.md#interface-syncchunk), [SyncState](./storage-tables.md#interface-syncstate), [Transaction](./storage-tables.md#interface-transaction), [TransactionStatus](./client.md#type-transactionstatus), [TrxToken](./client.md#interface-trxtoken), [TxLabel](./storage-tables.md#interface-txlabel), [TxLabelMap](./storage-tables.md#interface-txlabelmap), [UpdateProvenTxReqWithNewProvenTxArgs](./client.md#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](./client.md#interface-updateproventxreqwithnewproventxresult), [User](./storage-tables.md#interface-user), [purgeData](./storage.md#function-purgedata)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2255,6 +2265,8 @@ export interface SyncChunk {
     certificateFields?: table.CertificateField[];
 }
 ```
+
+See also: [Certificate](./storage-tables.md#interface-certificate), [CertificateField](./storage-tables.md#interface-certificatefield), [Commission](./storage-tables.md#interface-commission), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [OutputTag](./storage-tables.md#interface-outputtag), [OutputTagMap](./storage-tables.md#interface-outputtagmap), [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [Transaction](./storage-tables.md#interface-transaction), [TxLabel](./storage-tables.md#interface-txlabel), [TxLabelMap](./storage-tables.md#interface-txlabelmap), [User](./storage-tables.md#interface-user)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2290,7 +2302,7 @@ export interface TaskPurgeParams extends sdk.PurgeParams {
 }
 ```
 
-See also: [PurgeParams](#interface-purgeparams)
+See also: [PurgeParams](./client.md#interface-purgeparams)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2357,7 +2369,7 @@ export interface UpdateProvenTxReqWithNewProvenTxArgs {
 }
 ```
 
-See also: [ProvenTxReqStatus](#type-proventxreqstatus)
+See also: [ProvenTxReqStatus](./client.md#type-proventxreqstatus)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2373,7 +2385,7 @@ export interface UpdateProvenTxReqWithNewProvenTxResult {
 }
 ```
 
-See also: [ProvenTxReqStatus](#type-proventxreqstatus)
+See also: [ProvenTxReqStatus](./client.md#type-proventxreqstatus)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2386,7 +2398,7 @@ export interface ValidAbortActionArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2410,7 +2422,7 @@ export interface ValidAcquireCertificateArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2433,7 +2445,7 @@ export interface ValidAcquireDirectCertificateArgs extends ValidWalletSignerArgs
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 ###### Property subject
 
@@ -2461,7 +2473,7 @@ export interface ValidAcquireIssuanceCertificateArgs extends ValidWalletSignerAr
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 ###### Property subject
 
@@ -2505,7 +2517,7 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
 }
 ```
 
-See also: [ValidCreateActionInput](#interface-validcreateactioninput), [ValidCreateActionOptions](#interface-validcreateactionoptions), [ValidCreateActionOutput](#interface-validcreateactionoutput), [ValidProcessActionArgs](#interface-validprocessactionargs)
+See also: [ValidCreateActionInput](./client.md#interface-validcreateactioninput), [ValidCreateActionOptions](./client.md#interface-validcreateactionoptions), [ValidCreateActionOutput](./client.md#interface-validcreateactionoutput), [ValidProcessActionArgs](./client.md#interface-validprocessactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2522,7 +2534,7 @@ export interface ValidCreateActionInput {
 }
 ```
 
-See also: [OutPoint](#interface-outpoint)
+See also: [OutPoint](./client.md#interface-outpoint)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2539,7 +2551,7 @@ export interface ValidCreateActionOptions extends ValidProcessActionOptions {
 }
 ```
 
-See also: [OutPoint](#interface-outpoint), [ValidProcessActionOptions](#interface-validprocessactionoptions)
+See also: [OutPoint](./client.md#interface-outpoint), [ValidProcessActionOptions](./client.md#interface-validprocessactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2571,7 +2583,7 @@ export interface ValidDiscoverByAttributesArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2587,7 +2599,7 @@ export interface ValidDiscoverByIdentityKeyArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2604,7 +2616,7 @@ export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2620,7 +2632,7 @@ export interface ValidInternalizeOutput {
 }
 ```
 
-See also: [ValidBasketInsertion](#interface-validbasketinsertion), [ValidWalletPayment](#interface-validwalletpayment)
+See also: [ValidBasketInsertion](./client.md#interface-validbasketinsertion), [ValidWalletPayment](./client.md#interface-validwalletpayment)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2643,7 +2655,7 @@ export interface ValidListActionsArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2669,7 +2681,7 @@ export interface ValidListCertificatesArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2693,7 +2705,7 @@ export interface ValidListOutputsArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2710,7 +2722,7 @@ export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidProcessActionOptions](#interface-validprocessactionoptions), [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidProcessActionOptions](./client.md#interface-validprocessactionoptions), [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2746,7 +2758,7 @@ export interface ValidProveCertificateArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2761,7 +2773,7 @@ export interface ValidRelinquishCertificateArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2775,7 +2787,7 @@ export interface ValidRelinquishOutputArgs extends ValidWalletSignerArgs {
 }
 ```
 
-See also: [ValidWalletSignerArgs](#interface-validwalletsignerargs)
+See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2790,7 +2802,7 @@ export interface ValidSignActionArgs extends ValidProcessActionArgs {
 }
 ```
 
-See also: [ValidProcessActionArgs](#interface-validprocessactionargs), [ValidSignActionOptions](#interface-validsignactionoptions)
+See also: [ValidProcessActionArgs](./client.md#interface-validprocessactionargs), [ValidSignActionOptions](./client.md#interface-validsignactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2806,7 +2818,7 @@ export interface ValidSignActionOptions extends ValidProcessActionOptions {
 }
 ```
 
-See also: [ValidProcessActionOptions](#interface-validprocessactionoptions)
+See also: [ValidProcessActionOptions](./client.md#interface-validprocessactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2847,7 +2859,7 @@ export interface WalletArgs {
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [WalletServices](#interface-walletservices), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [WalletServices](./client.md#interface-walletservices), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2874,7 +2886,7 @@ export interface WalletServices {
 }
 ```
 
-See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathresult), [GetRawTxResult](#interface-getrawtxresult), [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult), [PostBeefResult](#interface-postbeefresult), [PostTxsResult](#interface-posttxsresult)
+See also: [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [PostBeefResult](./client.md#interface-postbeefresult), [PostTxsResult](./client.md#interface-posttxsresult)
 
 ###### Property chain
 
@@ -2883,7 +2895,7 @@ The chain being serviced.
 ```ts
 chain: sdk.Chain
 ```
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 ###### Method getBsvExchangeRate
 
@@ -2954,7 +2966,7 @@ Increments to next configured service and tries again until all services have be
 ```ts
 getMerklePath(txid: string, useNext?: boolean): Promise<GetMerklePathResult>
 ```
-See also: [GetMerklePathResult](#interface-getmerklepathresult)
+See also: [GetMerklePathResult](./client.md#interface-getmerklepathresult)
 
 Argument Details
 
@@ -2984,7 +2996,7 @@ Increments to next configured service and tries again until all services have be
 ```ts
 getRawTx(txid: string, useNext?: boolean): Promise<GetRawTxResult>
 ```
-See also: [GetRawTxResult](#interface-getrawtxresult)
+See also: [GetRawTxResult](./client.md#interface-getrawtxresult)
 
 Argument Details
 
@@ -3002,7 +3014,7 @@ Cycles through configured transaction processing services attempting to get a va
 ```ts
 getUtxoStatus(output: string, outputFormat?: GetUtxoStatusOutputFormat, useNext?: boolean): Promise<GetUtxoStatusResult>
 ```
-See also: [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult)
+See also: [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult)
 
 Argument Details
 
@@ -3024,7 +3036,7 @@ undefined if length of `output` is 32 then 'hashBE`, otherwise 'script'.
 ```ts
 hashToHeader(hash: string): Promise<sdk.BlockHeader>
 ```
-See also: [BlockHeader](#interface-blockheader)
+See also: [BlockHeader](./client.md#interface-blockheader)
 
 Returns
 
@@ -3070,7 +3082,7 @@ export interface WalletServicesOptions {
 }
 ```
 
-See also: [BsvExchangeRate](#interface-bsvexchangerate), [Chain](#type-chain), [FiatExchangeRates](#interface-fiatexchangerates)
+See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3085,7 +3097,7 @@ export interface WalletSigner {
 }
 ```
 
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3130,7 +3142,7 @@ export interface WalletStorage {
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [WalletServices](#interface-walletservices), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [processAction](#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [CertificateX](./storage-tables.md#interface-certificatex), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [Settings](./storage-tables.md#interface-settings), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [User](./storage-tables.md#interface-user), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [WalletServices](./client.md#interface-walletservices), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
 
 ###### Method isStorageProvider
 
@@ -3157,7 +3169,7 @@ export interface WalletStorageProvider extends WalletStorageSync {
 }
 ```
 
-See also: [WalletServices](#interface-walletservices), [WalletStorageSync](#interface-walletstoragesync)
+See also: [WalletServices](./client.md#interface-walletservices), [WalletStorageSync](./client.md#interface-walletstoragesync)
 
 ###### Method isStorageProvider
 
@@ -3189,7 +3201,7 @@ export interface WalletStorageReader {
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [listCertificates](#function-listcertificates)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [Settings](./storage-tables.md#interface-settings), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3208,7 +3220,7 @@ export interface WalletStorageSync extends WalletStorageWriter {
 }
 ```
 
-See also: [AuthId](#interface-authid), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [SyncChunk](#interface-syncchunk), [WalletStorageWriter](#interface-walletstoragewriter), [getSyncChunk](#function-getsyncchunk)
+See also: [AuthId](./client.md#interface-authid), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [SyncChunk](./client.md#interface-syncchunk), [SyncState](./storage-tables.md#interface-syncstate), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3234,7 +3246,7 @@ export interface WalletStorageWriter extends WalletStorageReader {
 }
 ```
 
-See also: [AuthId](#interface-authid), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [ValidCreateActionArgs](#interface-validcreateactionargs), [WalletStorageReader](#interface-walletstoragereader), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [processAction](#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [CertificateX](./storage-tables.md#interface-certificatex), [Settings](./storage-tables.md#interface-settings), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [User](./storage-tables.md#interface-user), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [WalletStorageReader](./client.md#interface-walletstoragereader), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [processAction](./storage.md#function-processaction)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3251,7 +3263,7 @@ export interface XValidCreateActionOutput extends sdk.ValidCreateActionOutput {
 }
 ```
 
-See also: [StorageProvidedBy](#type-storageprovidedby), [ValidCreateActionOutput](#interface-validcreateactionoutput)
+See also: [StorageProvidedBy](./client.md#type-storageprovidedby), [ValidCreateActionOutput](./client.md#interface-validcreateactionoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3321,7 +3333,7 @@ export class CertOps extends BsvCertificate {
 }
 ```
 
-See also: [CertOpsWallet](#interface-certopswallet)
+See also: [CertOpsWallet](./client.md#interface-certopswallet)
 
 ###### Method createKeyringForVerifier
 
@@ -3412,7 +3424,7 @@ export class Monitor {
 }
 ```
 
-See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [MonitorOptions](#interface-monitoroptions), [MonitorStorage](#type-monitorstorage), [Services](#class-services), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
+See also: [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [MonitorOptions](./monitor.md#interface-monitoroptions), [MonitorStorage](./monitor.md#type-monitorstorage), [Services](./services.md#class-services), [TaskPurgeParams](./monitor.md#interface-taskpurgeparams), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property _otherTasks
 
@@ -3421,7 +3433,7 @@ _otherTasks can be run by runTask but not by scheduler.
 ```ts
 _otherTasks: WalletMonitorTask[] = []
 ```
-See also: [WalletMonitorTask](#class-walletmonitortask)
+See also: [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property _tasks
 
@@ -3430,7 +3442,7 @@ _tasks are typically run by the scheduler but may also be run by runTask.
 ```ts
 _tasks: WalletMonitorTask[] = []
 ```
-See also: [WalletMonitorTask](#class-walletmonitortask)
+See also: [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Method addDefaultTasks
 
@@ -3459,7 +3471,7 @@ Kicks processing 'unconfirmed' and 'unmined' request processing.
 ```ts
 processNewBlockHeader(header: BlockHeader): void 
 ```
-See also: [BlockHeader](#interface-blockheader)
+See also: [BlockHeader](./client.md#interface-blockheader)
 
 ###### Method processReorg
 
@@ -3475,7 +3487,7 @@ Coinbase transactions always become invalid.
 ```ts
 processReorg(depth: number, oldTip: BlockHeader, newTip: BlockHeader): void 
 ```
-See also: [BlockHeader](#interface-blockheader)
+See also: [BlockHeader](./client.md#interface-blockheader)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3557,7 +3569,7 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
 }
 ```
 
-See also: [ScriptTemplateParamsSABPPP](#interface-scripttemplateparamssabppp)
+See also: [ScriptTemplateParamsSABPPP](./client.md#interface-scripttemplateparamssabppp), [Transaction](./storage-tables.md#interface-transaction)
 
 ###### Property unlockLength
 
@@ -3639,7 +3651,7 @@ export class Services implements sdk.WalletServices {
 }
 ```
 
-See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [FiatExchangeRates](#interface-fiatexchangerates), [GetMerklePathResult](#interface-getmerklepathresult), [GetMerklePathService](#type-getmerklepathservice), [GetRawTxResult](#interface-getrawtxresult), [GetRawTxService](#type-getrawtxservice), [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult), [GetUtxoStatusService](#type-getutxostatusservice), [PostBeefResult](#interface-postbeefresult), [PostBeefService](#type-postbeefservice), [PostTxsResult](#interface-posttxsresult), [PostTxsService](#type-posttxsservice), [ServiceCollection](#class-servicecollection), [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice), [WalletServices](#interface-walletservices), [WalletServicesOptions](#interface-walletservicesoptions)
+See also: [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [PostTxsResult](./client.md#interface-posttxsresult), [PostTxsService](./client.md#type-posttxsservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions)
 
 ###### Method postTxs
 
@@ -3650,7 +3662,7 @@ These will be fetched if missing, greatly extending the service response time.
 ```ts
 async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
 ```
-See also: [PostTxsResult](#interface-posttxsresult)
+See also: [PostTxsResult](./client.md#interface-posttxsresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3761,7 +3773,7 @@ export abstract class SetupClient {
 }
 ```
 
-See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [ScriptTemplateUnlock](#interface-scripttemplateunlock), [Services](#class-services), [SetupEnv](#interface-setupenv), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [SetupWalletClient](#interface-setupwalletclient), [SetupWalletClientArgs](#interface-setupwalletclientargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#type-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Method createWallet
 
@@ -3812,7 +3824,7 @@ static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
     return r;
 }
 ```
-See also: [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [Services](#class-services), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [Services](./services.md#class-services), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Method getEnv
 
@@ -3825,7 +3837,7 @@ Access private keys through the `devKeys` object: `devKeys[identityKey]`
 ```ts
 static getEnv(chain: sdk.Chain): SetupEnv 
 ```
-See also: [Chain](#type-chain), [SetupEnv](#interface-setupenv)
+See also: [Chain](./client.md#type-chain), [SetupEnv](./setup.md#interface-setupenv)
 
 Returns
 
@@ -3895,7 +3907,7 @@ export class StorageClient implements sdk.WalletStorageProvider {
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [SyncChunk](#interface-syncchunk), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [createAction](#function-createaction), [getSyncChunk](#function-getsyncchunk), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [processAction](#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [CertificateX](./storage-tables.md#interface-certificatex), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [Settings](./storage-tables.md#interface-settings), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [SyncChunk](./client.md#interface-syncchunk), [SyncState](./storage-tables.md#interface-syncstate), [UpdateProvenTxReqWithNewProvenTxArgs](./client.md#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](./client.md#interface-updateproventxreqwithnewproventxresult), [User](./storage-tables.md#interface-user), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [createAction](./storage.md#function-createaction), [getSyncChunk](./storage.md#function-getsyncchunk), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3962,7 +3974,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
 }
 ```
 
-See also: [AuthId](#interface-authid), [Chain](#type-chain), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [ProvenOrRawTx](#interface-provenorrawtx), [PurgeParams](#interface-purgeparams), [PurgeResults](#interface-purgeresults), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageFeeModel](#interface-storagefeemodel), [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvenOrReq](#interface-storageprovenorreq), [StorageProviderOptions](#interface-storageprovideroptions), [StorageReaderWriter](#class-storagereaderwriter), [SyncChunk](#interface-syncchunk), [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken), [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorageProvider](#interface-walletstorageprovider), [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork), [createAction](#function-createaction), [getBeefForTransaction](#function-getbeeffortransaction), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [processAction](#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [CertificateX](./storage-tables.md#interface-certificatex), [Chain](./client.md#type-chain), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [GetReqsAndBeefResult](./storage.md#interface-getreqsandbeefresult), [MonitorEvent](./storage-tables.md#interface-monitorevent), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [OutputTag](./storage-tables.md#interface-outputtag), [PostReqsToNetworkResult](./storage.md#interface-postreqstonetworkresult), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [ProvenOrRawTx](./client.md#interface-provenorrawtx), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [ProvenTxReqDynamics](./storage-tables.md#interface-proventxreqdynamics), [PurgeParams](./client.md#interface-purgeparams), [PurgeResults](./client.md#interface-purgeresults), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageFeeModel](./client.md#interface-storagefeemodel), [StorageGetBeefOptions](./client.md#interface-storagegetbeefoptions), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvenOrReq](./client.md#interface-storageprovenorreq), [StorageProviderOptions](./storage.md#interface-storageprovideroptions), [StorageReaderWriter](./storage.md#class-storagereaderwriter), [SyncChunk](./client.md#interface-syncchunk), [Transaction](./storage-tables.md#interface-transaction), [TransactionStatus](./client.md#type-transactionstatus), [TrxToken](./client.md#interface-trxtoken), [TxLabel](./storage-tables.md#interface-txlabel), [UpdateProvenTxReqWithNewProvenTxArgs](./client.md#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](./client.md#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [attemptToPostReqsToNetwork](./storage.md#function-attempttopostreqstonetwork), [createAction](./storage.md#function-createaction), [getBeefForTransaction](./storage.md#function-getbeeffortransaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction), [purgeData](./storage.md#function-purgedata), [reviewStatus](./storage.md#function-reviewstatus)
 
 ###### Method confirmSpendableOutputs
 
@@ -3975,6 +3987,7 @@ async confirmSpendableOutputs(): Promise<{
     invalidSpendableOutputs: table.Output[];
 }> 
 ```
+See also: [Output](./storage-tables.md#interface-output)
 
 Returns
 
@@ -3993,7 +4006,7 @@ is violated by a race condition insert.
 ```ts
 async getProvenOrReq(txid: string, newReq?: table.ProvenTxReq, trx?: sdk.TrxToken): Promise<sdk.StorageProvenOrReq> 
 ```
-See also: [StorageProvenOrReq](#interface-storageprovenorreq), [TrxToken](#interface-trxtoken)
+See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq), [StorageProvenOrReq](./client.md#interface-storageprovenorreq), [TrxToken](./client.md#interface-trxtoken)
 
 ###### Method getReqsAndBeefToShareWithWorld
 
@@ -4004,7 +4017,7 @@ For the txids with reqs and status still ready to send construct a single merged
 ```ts
 async getReqsAndBeefToShareWithWorld(txids: string[], knownTxids: string[], trx?: sdk.TrxToken): Promise<GetReqsAndBeefResult> 
 ```
-See also: [GetReqsAndBeefResult](#interface-getreqsandbeefresult), [TrxToken](#interface-trxtoken)
+See also: [GetReqsAndBeefResult](./storage.md#interface-getreqsandbeefresult), [TrxToken](./client.md#interface-trxtoken)
 
 ###### Method updateProvenTxReqWithNewProvenTx
 
@@ -4023,7 +4036,7 @@ Alterations of "typically" to handle:
 ```ts
 async updateProvenTxReqWithNewProvenTx(args: sdk.UpdateProvenTxReqWithNewProvenTxArgs): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult> 
 ```
-See also: [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult)
+See also: [UpdateProvenTxReqWithNewProvenTxArgs](./client.md#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](./client.md#interface-updateproventxreqwithnewproventxresult)
 
 ###### Method updateTransactionStatus
 
@@ -4034,7 +4047,7 @@ For 'status' of 'failed', attempts to make outputs previously allocated as input
 ```ts
 async updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: number, userId?: number, reference?: string, trx?: sdk.TrxToken): Promise<void> 
 ```
-See also: [TransactionStatus](#type-transactionstatus), [TrxToken](#interface-trxtoken)
+See also: [TransactionStatus](./client.md#type-transactionstatus), [TrxToken](./client.md#interface-trxtoken)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4102,7 +4115,7 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 }
 ```
 
-See also: [Chain](#type-chain), [DBType](#type-dbtype), [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindMonitorEventsArgs](#interface-findmonitoreventsargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [FindUsersArgs](#interface-findusersargs), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReaderOptions](#interface-storagereaderoptions), [StorageSyncReader](#class-storagesyncreader), [SyncChunk](#interface-syncchunk), [TrxToken](#interface-trxtoken), [getSyncChunk](#function-getsyncchunk)
+See also: [Certificate](./storage-tables.md#interface-certificate), [CertificateField](./storage-tables.md#interface-certificatefield), [Chain](./client.md#type-chain), [Commission](./storage-tables.md#interface-commission), [DBType](./storage.md#type-dbtype), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindMonitorEventsArgs](./client.md#interface-findmonitoreventsargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [FindUsersArgs](./client.md#interface-findusersargs), [MonitorEvent](./storage-tables.md#interface-monitorevent), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [OutputTag](./storage-tables.md#interface-outputtag), [OutputTagMap](./storage-tables.md#interface-outputtagmap), [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [Settings](./storage-tables.md#interface-settings), [StorageReaderOptions](./storage.md#interface-storagereaderoptions), [StorageSyncReader](./storage.md#class-storagesyncreader), [SyncChunk](./client.md#interface-syncchunk), [SyncState](./storage-tables.md#interface-syncstate), [Transaction](./storage-tables.md#interface-transaction), [TrxToken](./client.md#interface-trxtoken), [TxLabel](./storage-tables.md#interface-txlabel), [TxLabelMap](./storage-tables.md#interface-txlabelmap), [User](./storage-tables.md#interface-user), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 ###### Method validateEntityDate
 
@@ -4213,7 +4226,7 @@ export abstract class StorageReaderWriter extends StorageReader {
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [FindProvenTxsArgs](#interface-findproventxsargs), [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs), [ProcessSyncChunkResult](#interface-processsyncchunkresult), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReader](#class-storagereader), [StorageReaderWriterOptions](#interface-storagereaderwriteroptions), [SyncChunk](#interface-syncchunk), [TrxToken](#interface-trxtoken)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [CertificateField](./storage-tables.md#interface-certificatefield), [Commission](./storage-tables.md#interface-commission), [FindOutputTagMapsArgs](./client.md#interface-findoutputtagmapsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [FindProvenTxsArgs](./client.md#interface-findproventxsargs), [FindTxLabelMapsArgs](./client.md#interface-findtxlabelmapsargs), [MonitorEvent](./storage-tables.md#interface-monitorevent), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [OutputTag](./storage-tables.md#interface-outputtag), [OutputTagMap](./storage-tables.md#interface-outputtagmap), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReader](./storage.md#class-storagereader), [StorageReaderWriterOptions](./storage.md#interface-storagereaderwriteroptions), [SyncChunk](./client.md#interface-syncchunk), [SyncState](./storage-tables.md#interface-syncstate), [Transaction](./storage-tables.md#interface-transaction), [TrxToken](./client.md#interface-trxtoken), [TxLabel](./storage-tables.md#interface-txlabel), [TxLabelMap](./storage-tables.md#interface-txlabelmap), [User](./storage-tables.md#interface-user)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4250,7 +4263,7 @@ export class StorageSyncReader implements sdk.StorageSyncReader {
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs), [FindCertificatesArgs](#interface-findcertificatesargs), [FindCommissionsArgs](#interface-findcommissionsargs), [FindForUserSincePagedArgs](#interface-findforusersincepagedargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputTagsArgs](#interface-findoutputtagsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindSyncStatesArgs](#interface-findsyncstatesargs), [FindTransactionsArgs](#interface-findtransactionsargs), [FindTxLabelsArgs](#interface-findtxlabelsargs), [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReader](#class-storagereader), [SyncChunk](#interface-syncchunk), [getSyncChunk](#function-getsyncchunk)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [CertificateField](./storage-tables.md#interface-certificatefield), [Commission](./storage-tables.md#interface-commission), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [OutputTag](./storage-tables.md#interface-outputtag), [OutputTagMap](./storage-tables.md#interface-outputtagmap), [ProvenTx](./storage-tables.md#interface-proventx), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [Settings](./storage-tables.md#interface-settings), [StorageReader](./storage.md#class-storagereader), [SyncChunk](./client.md#interface-syncchunk), [SyncState](./storage-tables.md#interface-syncstate), [Transaction](./storage-tables.md#interface-transaction), [TxLabel](./storage-tables.md#interface-txlabel), [TxLabelMap](./storage-tables.md#interface-txlabelmap), [User](./storage-tables.md#interface-user), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4285,7 +4298,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -4316,6 +4329,7 @@ async getProofs(reqs: table.ProvenTxReq[], indent = 0, countsAsAttempt = false, 
     log: string;
 }> 
 ```
+See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq)
 
 Returns
 
@@ -4349,7 +4363,7 @@ export class TaskClock extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4374,7 +4388,7 @@ export class TaskFailAbandoned extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4394,7 +4408,7 @@ export class TaskNewHeader extends WalletMonitorTask {
 }
 ```
 
-See also: [BlockHeader](#interface-blockheader), [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [BlockHeader](./client.md#interface-blockheader), [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4413,7 +4427,7 @@ export class TaskPurge extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [TaskPurgeParams](./monitor.md#interface-taskpurgeparams), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -4448,7 +4462,7 @@ export class TaskReviewStatus extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -4475,7 +4489,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Method processUnsent
 
@@ -4496,6 +4510,7 @@ Increments attempts if sending was attempted.
 ```ts
 async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string> 
 ```
+See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4513,7 +4528,7 @@ export class TaskSyncWhenIdle extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4528,7 +4543,7 @@ export class WERR_BAD_REQUEST extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4546,7 +4561,7 @@ export class WERR_INSUFFICIENT_FUNDS extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 ###### Constructor
 
@@ -4576,7 +4591,7 @@ export class WERR_INTERNAL extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4593,7 +4608,7 @@ export class WERR_INVALID_OPERATION extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4610,7 +4625,7 @@ export class WERR_INVALID_PARAMETER extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4623,7 +4638,7 @@ export class WERR_INVALID_PUBLIC_KEY extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 ###### Constructor
 
@@ -4653,7 +4668,7 @@ export class WERR_MISSING_PARAMETER extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4668,7 +4683,7 @@ export class WERR_NETWORK_CHAIN extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4683,7 +4698,7 @@ export class WERR_NOT_ACTIVE extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4698,7 +4713,7 @@ export class WERR_NOT_IMPLEMENTED extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4713,7 +4728,7 @@ export class WERR_UNAUTHORIZED extends WalletError {
 }
 ```
 
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4774,7 +4789,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 }
 ```
 
-See also: [Chain](#type-chain), [KeyPair](#interface-keypair), [Monitor](#class-monitor), [PendingSignAction](#interface-pendingsignaction), [PrivilegedKeyManager](#class-privilegedkeymanager), [StorageIdentity](#interface-storageidentity), [WalletArgs](#interface-walletargs), [WalletServices](#interface-walletservices), [WalletSigner](#class-walletsigner), [WalletStorageManager](#class-walletstoragemanager), [createAction](#function-createaction), [getIdentityKey](#function-getidentitykey), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [proveCertificate](#function-provecertificate), [signAction](#function-signaction)
+See also: [Chain](./client.md#type-chain), [KeyPair](./client.md#interface-keypair), [Monitor](./monitor.md#class-monitor), [PendingSignAction](./client.md#interface-pendingsignaction), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [StorageIdentity](./client.md#interface-storageidentity), [WalletArgs](./client.md#interface-walletargs), [WalletServices](./client.md#interface-walletservices), [WalletSigner](./client.md#class-walletsigner), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [getIdentityKey](./client.md#function-getidentitykey), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [proveCertificate](./client.md#function-provecertificate), [signAction](./client.md#function-signaction)
 
 ###### Property beef
 
@@ -4870,7 +4885,7 @@ Recovers all public fields from WalletError derived error classes and relevant E
 ```ts
 static fromUnknown(err: unknown): WalletError 
 ```
-See also: [WalletError](#class-walleterror)
+See also: [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4904,7 +4919,7 @@ export abstract class WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [MonitorStorage](#type-monitorstorage)
+See also: [Monitor](./monitor.md#class-monitor), [MonitorStorage](./monitor.md#type-monitorstorage)
 
 ###### Property lastRunMsecsSinceEpoch
 
@@ -4949,7 +4964,7 @@ export class WalletSigner {
 }
 ```
 
-See also: [Chain](#type-chain), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5031,7 +5046,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 }
 ```
 
-See also: [AuthId](#interface-authid), [FindCertificatesArgs](#interface-findcertificatesargs), [FindOutputBasketsArgs](#interface-findoutputbasketsargs), [FindOutputsArgs](#interface-findoutputsargs), [FindProvenTxReqsArgs](#interface-findproventxreqsargs), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvider](#class-storageprovider), [StorageSyncReader](#class-storagesyncreader), [ValidCreateActionArgs](#interface-validcreateactionargs), [ValidListActionsArgs](#interface-validlistactionsargs), [ValidListCertificatesArgs](#interface-validlistcertificatesargs), [ValidListOutputsArgs](#interface-validlistoutputsargs), [WalletServices](#interface-walletservices), [WalletStorage](#interface-walletstorage), [WalletStorageProvider](#interface-walletstorageprovider), [WalletStorageReader](#interface-walletstoragereader), [WalletStorageSync](#interface-walletstoragesync), [WalletStorageWriter](#interface-walletstoragewriter), [createAction](#function-createaction), [internalizeAction](#function-internalizeaction), [listCertificates](#function-listcertificates), [processAction](#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [Certificate](./storage-tables.md#interface-certificate), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [Output](./storage-tables.md#interface-output), [OutputBasket](./storage-tables.md#interface-outputbasket), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [Settings](./storage-tables.md#interface-settings), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvider](./storage.md#class-storageprovider), [StorageSyncReader](./storage.md#class-storagesyncreader), [User](./storage-tables.md#interface-user), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorage](./client.md#interface-walletstorage), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [WalletStorageReader](./client.md#interface-walletstoragereader), [WalletStorageSync](./client.md#interface-walletstoragesync), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
 
 ###### Property _isSingleWriter
 
@@ -5075,7 +5090,7 @@ true if the active `WalletStorageProvider` also implements `StorageProvider`
 ```ts
 async runAsSync<R>(sync: (active: sdk.WalletStorageSync) => Promise<R>, activeSync?: sdk.WalletStorageSync): Promise<R> 
 ```
-See also: [WalletStorageSync](#interface-walletstoragesync)
+See also: [WalletStorageSync](./client.md#interface-walletstoragesync)
 
 Argument Details
 
@@ -5153,7 +5168,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function acquireDirectCertificate(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidAcquireDirectCertificateArgs): Promise<AcquireCertificateResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs), [Wallet](#class-wallet)
+See also: [AuthId](./client.md#interface-authid), [ValidAcquireDirectCertificateArgs](./client.md#interface-validacquiredirectcertificateargs), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5243,6 +5258,8 @@ export function asBsvSdkTx(tx: HexString | number[] | Transaction): Transaction 
 }
 ```
 
+See also: [Transaction](./storage-tables.md#interface-transaction)
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -5279,7 +5296,7 @@ to the bitcoin network.
 export async function attemptToPostReqsToNetwork(storage: StorageProvider, reqs: entity.ProvenTxReq[], trx?: sdk.TrxToken): Promise<PostReqsToNetworkResult> 
 ```
 
-See also: [PostReqsToNetworkResult](#interface-postreqstonetworkresult), [StorageProvider](#class-storageprovider), [TrxToken](#interface-trxtoken)
+See also: [PostReqsToNetworkResult](./storage.md#interface-postreqstonetworkresult), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [StorageProvider](./storage.md#class-storageprovider), [TrxToken](./client.md#interface-trxtoken)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5290,7 +5307,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, wallet: Wallet): Promise<Transaction> 
 ```
 
-See also: [PendingSignAction](#interface-pendingsignaction), [Wallet](#class-wallet)
+See also: [PendingSignAction](./client.md#interface-pendingsignaction), [Transaction](./storage-tables.md#interface-transaction), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5301,7 +5318,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function completeSignedTransaction(prior: PendingSignAction, spends: Record<number, SignActionSpend>, wallet: Wallet): Promise<BsvTransaction> 
 ```
 
-See also: [PendingSignAction](#interface-pendingsignaction), [Wallet](#class-wallet)
+See also: [PendingSignAction](./client.md#interface-pendingsignaction), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5312,7 +5329,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function convertProofToMerklePath(txid: string, proof: TscMerkleProofApi): MerklePath 
 ```
 
-See also: [TscMerkleProofApi](#interface-tscmerkleproofapi)
+See also: [TscMerkleProofApi](./client.md#interface-tscmerkleproofapi)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5323,7 +5340,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function createAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs): Promise<CreateActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ValidCreateActionArgs](#interface-validcreateactionargs), [Wallet](#class-wallet)
+See also: [AuthId](./client.md#interface-authid), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5334,7 +5351,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function createAction(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidCreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<sdk.StorageCreateActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [StorageCreateActionResult](#interface-storagecreateactionresult), [StorageProvider](#class-storageprovider), [ValidCreateActionArgs](#interface-validcreateactionargs)
+See also: [AuthId](./client.md#interface-authid), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProvider](./storage.md#class-storageprovider), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5345,7 +5362,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function createDefaultWalletServicesOptions(chain: sdk.Chain): sdk.WalletServicesOptions 
 ```
 
-See also: [Chain](#type-chain), [WalletServicesOptions](#interface-walletservicesoptions)
+See also: [Chain](./client.md#type-chain), [WalletServicesOptions](./client.md#interface-walletservicesoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5372,7 +5389,7 @@ export function doubleSha256BE(data: number[]): number[] {
 }
 ```
 
-See also: [doubleSha256HashLE](#function-doublesha256hashle)
+See also: [doubleSha256HashLE](./client.md#function-doublesha256hashle)
 
 Returns
 
@@ -5422,7 +5439,7 @@ Confirms for each availbleChange output that it remains available as they are al
 export async function generateChangeSdk(params: GenerateChangeSdkParams, allocateChangeInput: (targetSatoshis: number, exactSatoshis?: number) => Promise<GenerateChangeSdkChangeInput | undefined>, releaseChangeInput: (outputId: number) => Promise<void>): Promise<GenerateChangeSdkResult> 
 ```
 
-See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput), [GenerateChangeSdkParams](#interface-generatechangesdkparams), [GenerateChangeSdkResult](#interface-generatechangesdkresult)
+See also: [GenerateChangeSdkChangeInput](./storage.md#interface-generatechangesdkchangeinput), [GenerateChangeSdkParams](./storage.md#interface-generatechangesdkparams), [GenerateChangeSdkResult](./storage.md#interface-generatechangesdkresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5437,7 +5454,7 @@ export function generateChangeSdkMakeStorage(availableChange: GenerateChangeSdkC
 } 
 ```
 
-See also: [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput)
+See also: [GenerateChangeSdkChangeInput](./storage.md#interface-generatechangesdkchangeinput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5461,7 +5478,7 @@ If `knownTxids` is defined, any 'txid' required by the `Beef` that appears in th
 export async function getBeefForTransaction(storage: StorageProvider, txid: string, options: sdk.StorageGetBeefOptions): Promise<Beef> 
 ```
 
-See also: [StorageGetBeefOptions](#interface-storagegetbeefoptions), [StorageProvider](#class-storageprovider)
+See also: [StorageGetBeefOptions](./client.md#interface-storagegetbeefoptions), [StorageProvider](./storage.md#class-storageprovider)
 
 Argument Details
 
@@ -5479,7 +5496,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function getExchangeRatesIo(key: string): Promise<ExchangeRatesIoApi> 
 ```
 
-See also: [ExchangeRatesIoApi](#interface-exchangeratesioapi)
+See also: [ExchangeRatesIoApi](./services.md#interface-exchangeratesioapi)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5490,7 +5507,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function getIdentityKey(wallet: CertOpsWallet): Promise<PubKeyHex> 
 ```
 
-See also: [CertOpsWallet](#interface-certopswallet)
+See also: [CertOpsWallet](./client.md#interface-certopswallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5501,7 +5518,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function getMerklePathFromTaalARC(txid: string, config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [GetMerklePathResult](#interface-getmerklepathresult), [WalletServices](#interface-walletservices)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [WalletServices](./client.md#interface-walletservices)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5518,7 +5535,7 @@ Duplicate hash values are provided in full instead of being replaced by "*".
 export async function getMerklePathFromWhatsOnChainTsc(txid: string, chain: sdk.Chain, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
 ```
 
-See also: [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathresult), [WalletServices](#interface-walletservices)
+See also: [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [WalletServices](./client.md#interface-walletservices)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5529,7 +5546,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function getRawTxFromWhatsOnChain(txid: string, chain: sdk.Chain): Promise<sdk.GetRawTxResult> 
 ```
 
-See also: [Chain](#type-chain), [GetRawTxResult](#interface-getrawtxresult)
+See also: [Chain](./client.md#type-chain), [GetRawTxResult](./client.md#interface-getrawtxresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5542,7 +5559,7 @@ Gets the next sync chunk of updated data from un-remoted storage (could be using
 export async function getSyncChunk(storage: StorageReader, args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> 
 ```
 
-See also: [RequestSyncChunkArgs](#interface-requestsyncchunkargs), [StorageReader](#class-storagereader), [SyncChunk](#interface-syncchunk)
+See also: [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReader](./storage.md#class-storagereader), [SyncChunk](./client.md#interface-syncchunk)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5553,7 +5570,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function getTaalArcServiceConfig(chain: sdk.Chain, apiKey: string): ArcServiceConfig 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [Chain](#type-chain)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [Chain](./client.md#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5564,7 +5581,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function getUtxoStatusFromWhatsOnChain(output: string, chain: sdk.Chain, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> 
 ```
 
-See also: [Chain](#type-chain), [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult)
+See also: [Chain](./client.md#type-chain), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5600,7 +5617,7 @@ When the transaction already exists, the description is updated. The isOutgoing 
 export async function internalizeAction(wallet: Wallet, auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [Wallet](#class-wallet)
+See also: [AuthId](./client.md#interface-authid), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5636,7 +5653,7 @@ When the transaction already exists, the description is updated. The isOutgoing 
 export async function internalizeAction(storage: StorageProvider, auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider)
+See also: [AuthId](./client.md#interface-authid), [StorageProvider](./storage.md#class-storageprovider)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5656,7 +5673,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function listCertificates(storage: StorageProvider, auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ListCertificatesResult> 
 ```
 
-See also: [AuthId](#interface-authid), [StorageProvider](#class-storageprovider), [ValidListCertificatesArgs](#interface-validlistcertificatesargs)
+See also: [AuthId](./client.md#interface-authid), [StorageProvider](./storage.md#class-storageprovider), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5679,6 +5696,8 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function makeAtomicBeef(tx: Transaction, beef: number[] | Beef): number[] 
 ```
 
+See also: [Transaction](./storage-tables.md#interface-transaction)
+
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
@@ -5697,7 +5716,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function makeErrorResult(error: sdk.WalletError, miner: ArcServiceConfig, beef: number[], txids: string[], dd?: ArcMinerPostBeefDataApi): sdk.PostBeefResult 
 ```
 
-See also: [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi), [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult), [WalletError](#class-walleterror)
+See also: [ArcMinerPostBeefDataApi](./services.md#interface-arcminerpostbeefdataapi), [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult), [WalletError](./client.md#class-walleterror)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5708,7 +5727,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function makeGetMerklePathFromTaalARC(config: ArcServiceConfig): sdk.GetMerklePathService 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [GetMerklePathService](#type-getmerklepathservice)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [GetMerklePathService](./client.md#type-getmerklepathservice)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5719,7 +5738,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function makePostBeefResult(dd: ArcMinerPostBeefDataApi, miner: ArcServiceConfig, beef: number[], txids: string[]): sdk.PostBeefResult 
 ```
 
-See also: [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi), [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult)
+See also: [ArcMinerPostBeefDataApi](./services.md#interface-arcminerpostbeefdataapi), [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5730,7 +5749,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function makePostBeefToTaalARC(config: ArcServiceConfig): sdk.PostBeefService 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefService](#type-postbeefservice)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefService](./client.md#type-postbeefservice)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5741,7 +5760,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function makePostTxsToTaalARC(config: ArcServiceConfig): sdk.PostTxsService 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsService](#type-posttxsservice)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostTxsService](./client.md#type-posttxsservice)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5782,7 +5801,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function parseTxScriptOffsets(rawTx: number[]): TxScriptOffsets 
 ```
 
-See also: [TxScriptOffsets](#interface-txscriptoffsets)
+See also: [TxScriptOffsets](./client.md#interface-txscriptoffsets)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5805,7 +5824,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function postBeefToArcMiner(beef: Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5816,7 +5835,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function postBeefToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostBeefResult](#interface-postbeefresult), [WalletServices](#interface-walletservices)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult), [WalletServices](./client.md#interface-walletservices)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5827,7 +5846,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
 ```
 
-See also: [ArcServiceConfig](#interface-arcserviceconfig), [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface-walletservices)
+See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostTxsResult](./client.md#interface-posttxsresult), [WalletServices](./client.md#interface-walletservices)
 
 Argument Details
 
@@ -5843,7 +5862,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function processAction(prior: PendingSignAction | undefined, wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidProcessActionArgs): Promise<SendWithResult[] | undefined> 
 ```
 
-See also: [AuthId](#interface-authid), [PendingSignAction](#interface-pendingsignaction), [ValidProcessActionArgs](#interface-validprocessactionargs), [Wallet](#class-wallet)
+See also: [AuthId](./client.md#interface-authid), [PendingSignAction](./client.md#interface-pendingsignaction), [ValidProcessActionArgs](./client.md#interface-validprocessactionargs), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5854,7 +5873,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function processAction(storage: StorageProvider, auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> 
 ```
 
-See also: [AuthId](#interface-authid), [StorageProcessActionArgs](#interface-storageprocessactionargs), [StorageProcessActionResults](#interface-storageprocessactionresults), [StorageProvider](#class-storageprovider)
+See also: [AuthId](./client.md#interface-authid), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvider](./storage.md#class-storageprovider)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5865,7 +5884,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function proveCertificate(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidProveCertificateArgs): Promise<ProveCertificateResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ValidProveCertificateArgs](#interface-validprovecertificateargs), [Wallet](#class-wallet)
+See also: [AuthId](./client.md#interface-authid), [ValidProveCertificateArgs](./client.md#interface-validprovecertificateargs), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5933,7 +5952,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function signAction(wallet: Wallet, auth: sdk.AuthId, vargs: sdk.ValidSignActionArgs): Promise<SignActionResult> 
 ```
 
-See also: [AuthId](#interface-authid), [ValidSignActionArgs](#interface-validsignactionargs), [Wallet](#class-wallet)
+See also: [AuthId](./client.md#interface-authid), [ValidSignActionArgs](./client.md#interface-validsignactionargs), [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6005,7 +6024,7 @@ export function toBinaryBaseBlockHeader(header: sdk.BaseBlockHeader): number[] {
 }
 ```
 
-See also: [BaseBlockHeader](#interface-baseblockheader), [asArray](#function-asarray)
+See also: [BaseBlockHeader](./client.md#interface-baseblockheader), [asArray](./client.md#function-asarray)
 
 Returns
 
@@ -6020,7 +6039,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function toWalletNetwork(chain: Chain): WalletNetwork 
 ```
 
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6091,7 +6110,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
 ```
 
-See also: [BsvExchangeRate](#interface-bsvexchangerate)
+See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6102,7 +6121,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function updateChaintracksFiatExchangeRates(targetCurrencies: string[], options: sdk.WalletServicesOptions): Promise<sdk.FiatExchangeRates> 
 ```
 
-See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOptions](#interface-walletservicesoptions)
+See also: [FiatExchangeRates](./client.md#interface-fiatexchangerates), [WalletServicesOptions](./client.md#interface-walletservicesoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6113,7 +6132,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function updateExchangeratesapi(targetCurrencies: string[], options: sdk.WalletServicesOptions): Promise<sdk.FiatExchangeRates> 
 ```
 
-See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOptions](#interface-walletservicesoptions)
+See also: [FiatExchangeRates](./client.md#interface-fiatexchangerates), [WalletServicesOptions](./client.md#interface-walletservicesoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6124,7 +6143,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateAbortActionArgs(args: AbortActionArgs): ValidAbortActionArgs 
 ```
 
-See also: [ValidAbortActionArgs](#interface-validabortactionargs)
+See also: [ValidAbortActionArgs](./client.md#interface-validabortactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6135,7 +6154,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export async function validateAcquireCertificateArgs(args: AcquireCertificateArgs): Promise<ValidAcquireCertificateArgs> 
 ```
 
-See also: [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs)
+See also: [ValidAcquireCertificateArgs](./client.md#interface-validacquirecertificateargs)
 
 Argument Details
 
@@ -6151,7 +6170,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateAcquireDirectCertificateArgs(args: AcquireCertificateArgs): ValidAcquireDirectCertificateArgs 
 ```
 
-See also: [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs)
+See also: [ValidAcquireDirectCertificateArgs](./client.md#interface-validacquiredirectcertificateargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6162,7 +6181,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateAcquireIssuanceCertificateArgs(args: AcquireCertificateArgs): ValidAcquireIssuanceCertificateArgs 
 ```
 
-See also: [ValidAcquireIssuanceCertificateArgs](#interface-validacquireissuancecertificateargs)
+See also: [ValidAcquireIssuanceCertificateArgs](./client.md#interface-validacquireissuancecertificateargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6173,7 +6192,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateBasketInsertion(args?: BasketInsertion): ValidBasketInsertion | undefined 
 ```
 
-See also: [ValidBasketInsertion](#interface-validbasketinsertion)
+See also: [ValidBasketInsertion](./client.md#interface-validbasketinsertion)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6184,7 +6203,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateCreateActionArgs(args: CreateActionArgs): ValidCreateActionArgs 
 ```
 
-See also: [ValidCreateActionArgs](#interface-validcreateactionargs)
+See also: [ValidCreateActionArgs](./client.md#interface-validcreateactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6195,7 +6214,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateCreateActionInput(i: CreateActionInput): ValidCreateActionInput 
 ```
 
-See also: [ValidCreateActionInput](#interface-validcreateactioninput)
+See also: [ValidCreateActionInput](./client.md#interface-validcreateactioninput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6211,7 +6230,7 @@ Convert string outpoints to `{ txid: string, vout: number }`
 export function validateCreateActionOptions(options?: CreateActionOptions): ValidCreateActionOptions 
 ```
 
-See also: [ValidCreateActionOptions](#interface-validcreateactionoptions)
+See also: [ValidCreateActionOptions](./client.md#interface-validcreateactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6222,7 +6241,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateCreateActionOutput(o: CreateActionOutput): ValidCreateActionOutput 
 ```
 
-See also: [ValidCreateActionOutput](#interface-validcreateactionoutput)
+See also: [ValidCreateActionOutput](./client.md#interface-validcreateactionoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6233,7 +6252,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateDiscoverByAttributesArgs(args: DiscoverByAttributesArgs): ValidDiscoverByAttributesArgs 
 ```
 
-See also: [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs)
+See also: [ValidDiscoverByAttributesArgs](./client.md#interface-validdiscoverbyattributesargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6244,7 +6263,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateDiscoverByIdentityKeyArgs(args: DiscoverByIdentityKeyArgs): ValidDiscoverByIdentityKeyArgs 
 ```
 
-See also: [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs)
+See also: [ValidDiscoverByIdentityKeyArgs](./client.md#interface-validdiscoverbyidentitykeyargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6255,7 +6274,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateGenerateChangeSdkParams(params: GenerateChangeSdkParams) 
 ```
 
-See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams)
+See also: [GenerateChangeSdkParams](./storage.md#interface-generatechangesdkparams)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6269,7 +6288,7 @@ export function validateGenerateChangeSdkResult(params: GenerateChangeSdkParams,
 } 
 ```
 
-See also: [GenerateChangeSdkParams](#interface-generatechangesdkparams), [GenerateChangeSdkResult](#interface-generatechangesdkresult)
+See also: [GenerateChangeSdkParams](./storage.md#interface-generatechangesdkparams), [GenerateChangeSdkResult](./storage.md#interface-generatechangesdkresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6289,7 +6308,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateInternalizeActionArgs(args: InternalizeActionArgs): ValidInternalizeActionArgs 
 ```
 
-See also: [ValidInternalizeActionArgs](#interface-validinternalizeactionargs)
+See also: [ValidInternalizeActionArgs](./client.md#interface-validinternalizeactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6300,7 +6319,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateInternalizeOutput(args: InternalizeOutput): ValidInternalizeOutput 
 ```
 
-See also: [ValidInternalizeOutput](#interface-validinternalizeoutput)
+See also: [ValidInternalizeOutput](./client.md#interface-validinternalizeoutput)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6311,7 +6330,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateListActionsArgs(args: ListActionsArgs): ValidListActionsArgs 
 ```
 
-See also: [ValidListActionsArgs](#interface-validlistactionsargs)
+See also: [ValidListActionsArgs](./client.md#interface-validlistactionsargs)
 
 Argument Details
 
@@ -6347,7 +6366,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateListCertificatesArgs(args: ListCertificatesArgs): ValidListCertificatesArgs 
 ```
 
-See also: [ValidListCertificatesArgs](#interface-validlistcertificatesargs)
+See also: [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6358,7 +6377,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateListOutputsArgs(args: ListOutputsArgs): ValidListOutputsArgs 
 ```
 
-See also: [ValidListOutputsArgs](#interface-validlistoutputsargs)
+See also: [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs)
 
 Argument Details
 
@@ -6439,7 +6458,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateProveCertificateArgs(args: ProveCertificateArgs): ValidProveCertificateArgs 
 ```
 
-See also: [ValidProveCertificateArgs](#interface-validprovecertificateargs)
+See also: [ValidProveCertificateArgs](./client.md#interface-validprovecertificateargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6450,7 +6469,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateRelinquishCertificateArgs(args: RelinquishCertificateArgs): ValidRelinquishCertificateArgs 
 ```
 
-See also: [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs)
+See also: [ValidRelinquishCertificateArgs](./client.md#interface-validrelinquishcertificateargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6461,7 +6480,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateRelinquishOutputArgs(args: RelinquishOutputArgs): ValidRelinquishOutputArgs 
 ```
 
-See also: [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs)
+See also: [ValidRelinquishOutputArgs](./client.md#interface-validrelinquishoutputargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6481,7 +6500,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateScriptHash(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): string 
 ```
 
-See also: [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat)
+See also: [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6501,7 +6520,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateSignActionArgs(args: SignActionArgs): ValidSignActionArgs 
 ```
 
-See also: [ValidSignActionArgs](#interface-validsignactionargs)
+See also: [ValidSignActionArgs](./client.md#interface-validsignactionargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6517,7 +6536,7 @@ Convert string outpoints to `{ txid: string, vout: number }`
 export function validateSignActionOptions(options?: SignActionOptions): ValidSignActionOptions 
 ```
 
-See also: [ValidSignActionOptions](#interface-validsignactionoptions)
+See also: [ValidSignActionOptions](./client.md#interface-validsignactionoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6528,7 +6547,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateStorageFeeModel(v?: sdk.StorageFeeModel): sdk.StorageFeeModel 
 ```
 
-See also: [StorageFeeModel](#interface-storagefeemodel)
+See also: [StorageFeeModel](./client.md#interface-storagefeemodel)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6548,7 +6567,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export function validateWalletPayment(args?: WalletPayment): ValidWalletPayment | undefined 
 ```
 
-See also: [ValidWalletPayment](#interface-validwalletpayment)
+See also: [ValidWalletPayment](./client.md#interface-validwalletpayment)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6565,7 +6584,7 @@ export function varUintSize(val: number): 1 | 3 | 5 | 9 {
 }
 ```
 
-See also: [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter)
+See also: [WERR_INVALID_PARAMETER](./client.md#class-werr_invalid_parameter)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6741,7 +6760,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type GetMerklePathService = (txid: string, chain: sdk.Chain, services: WalletServices) => Promise<GetMerklePathResult>
 ```
 
-See also: [Chain](#type-chain), [GetMerklePathResult](#interface-getmerklepathresult), [WalletServices](#interface-walletservices)
+See also: [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [WalletServices](./client.md#interface-walletservices)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6752,7 +6771,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type GetRawTxService = (txid: string, chain: sdk.Chain) => Promise<GetRawTxResult>
 ```
 
-See also: [Chain](#type-chain), [GetRawTxResult](#interface-getrawtxresult)
+See also: [Chain](./client.md#type-chain), [GetRawTxResult](./client.md#interface-getrawtxresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6772,7 +6791,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type GetUtxoStatusService = (output: string, chain: sdk.Chain, outputFormat?: GetUtxoStatusOutputFormat) => Promise<GetUtxoStatusResult>
 ```
 
-See also: [Chain](#type-chain), [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat), [GetUtxoStatusResult](#interface-getutxostatusresult)
+See also: [Chain](./client.md#type-chain), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6796,7 +6815,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type MonitorStorage = WalletStorageManager
 ```
 
-See also: [WalletStorageManager](#class-walletstoragemanager)
+See also: [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6807,7 +6826,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type PostBeefService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostBeefResult>
 ```
 
-See also: [PostBeefResult](#interface-postbeefresult), [WalletServices](#interface-walletservices)
+See also: [PostBeefResult](./client.md#interface-postbeefresult), [WalletServices](./client.md#interface-walletservices)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6827,7 +6846,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type PostTxsService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
 ```
 
-See also: [PostTxsResult](#interface-posttxsresult), [WalletServices](#interface-walletservices)
+See also: [PostTxsResult](./client.md#interface-posttxsresult), [WalletServices](./client.md#interface-walletservices)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6923,7 +6942,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type UpdateFiatExchangeRateService = (targetCurrencies: string[], options: WalletServicesOptions) => Promise<FiatExchangeRates>
 ```
 
-See also: [FiatExchangeRates](#interface-fiatexchangerates), [WalletServicesOptions](#interface-walletservicesoptions)
+See also: [FiatExchangeRates](./client.md#interface-fiatexchangerates), [WalletServicesOptions](./client.md#interface-walletservicesoptions)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6956,7 +6975,7 @@ ProvenTxReqNonTerminalStatus: ProvenTxReqStatus[] = [
 ]
 ```
 
-See also: [ProvenTxReqStatus](#type-proventxreqstatus)
+See also: [ProvenTxReqStatus](./client.md#type-proventxreqstatus)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6971,7 +6990,7 @@ ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = [
 ]
 ```
 
-See also: [ProvenTxReqStatus](#type-proventxreqstatus)
+See also: [ProvenTxReqStatus](./client.md#type-proventxreqstatus)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

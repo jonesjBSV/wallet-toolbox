@@ -47,7 +47,7 @@ export interface MonitorDaemonSetup {
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [StorageKnexOptions](#interface-storageknexoptions), [StorageProvider](#class-storageprovider), [WalletServicesOptions](#interface-walletservicesoptions), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [Monitor](./monitor.md#class-monitor), [Services](./services.md#class-services), [StorageKnexOptions](./storage.md#interface-storageknexoptions), [StorageProvider](./storage.md#class-storageprovider), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -68,7 +68,7 @@ export interface MonitorOptions {
 }
 ```
 
-See also: [Chain](#type-chain), [MonitorStorage](#type-monitorstorage), [Services](#class-services)
+See also: [Chain](./client.md#type-chain), [MonitorStorage](./monitor.md#type-monitorstorage), [Services](./services.md#class-services)
 
 ###### Property msecsWaitPerMerkleProofServiceReq
 
@@ -112,7 +112,7 @@ export interface TaskPurgeParams extends sdk.PurgeParams {
 }
 ```
 
-See also: [PurgeParams](#interface-purgeparams)
+See also: [PurgeParams](./client.md#interface-purgeparams)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -186,7 +186,7 @@ export class Monitor {
 }
 ```
 
-See also: [BlockHeader](#interface-blockheader), [Chain](#type-chain), [MonitorOptions](#interface-monitoroptions), [MonitorStorage](#type-monitorstorage), [Services](#class-services), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
+See also: [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [MonitorOptions](./monitor.md#interface-monitoroptions), [MonitorStorage](./monitor.md#type-monitorstorage), [Services](./services.md#class-services), [TaskPurgeParams](./monitor.md#interface-taskpurgeparams), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property _otherTasks
 
@@ -195,7 +195,7 @@ _otherTasks can be run by runTask but not by scheduler.
 ```ts
 _otherTasks: WalletMonitorTask[] = []
 ```
-See also: [WalletMonitorTask](#class-walletmonitortask)
+See also: [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property _tasks
 
@@ -204,7 +204,7 @@ _tasks are typically run by the scheduler but may also be run by runTask.
 ```ts
 _tasks: WalletMonitorTask[] = []
 ```
-See also: [WalletMonitorTask](#class-walletmonitortask)
+See also: [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Method addDefaultTasks
 
@@ -233,7 +233,7 @@ Kicks processing 'unconfirmed' and 'unmined' request processing.
 ```ts
 processNewBlockHeader(header: BlockHeader): void 
 ```
-See also: [BlockHeader](#interface-blockheader)
+See also: [BlockHeader](./client.md#interface-blockheader)
 
 ###### Method processReorg
 
@@ -249,7 +249,7 @@ Coinbase transactions always become invalid.
 ```ts
 processReorg(depth: number, oldTip: BlockHeader, newTip: BlockHeader): void 
 ```
-See also: [BlockHeader](#interface-blockheader)
+See also: [BlockHeader](./client.md#interface-blockheader)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -271,7 +271,7 @@ export class MonitorDaemon {
 }
 ```
 
-See also: [MonitorDaemonSetup](#interface-monitordaemonsetup)
+See also: [MonitorDaemonSetup](./monitor.md#interface-monitordaemonsetup)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -306,7 +306,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -337,6 +337,7 @@ async getProofs(reqs: table.ProvenTxReq[], indent = 0, countsAsAttempt = false, 
     log: string;
 }> 
 ```
+See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq)
 
 Returns
 
@@ -370,7 +371,7 @@ export class TaskClock extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -395,7 +396,7 @@ export class TaskFailAbandoned extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -415,7 +416,7 @@ export class TaskNewHeader extends WalletMonitorTask {
 }
 ```
 
-See also: [BlockHeader](#interface-blockheader), [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [BlockHeader](./client.md#interface-blockheader), [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -434,7 +435,7 @@ export class TaskPurge extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [TaskPurgeParams](#interface-taskpurgeparams), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [TaskPurgeParams](./monitor.md#interface-taskpurgeparams), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -469,7 +470,7 @@ export class TaskReviewStatus extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Property checkNow
 
@@ -496,7 +497,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [ProvenTxReq](./storage-tables.md#interface-proventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 ###### Method processUnsent
 
@@ -517,6 +518,7 @@ Increments attempts if sending was attempted.
 ```ts
 async processUnsent(reqApis: table.ProvenTxReq[], indent = 0): Promise<string> 
 ```
+See also: [ProvenTxReq](./storage-tables.md#interface-proventxreq)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -534,7 +536,7 @@ export class TaskSyncWhenIdle extends WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [WalletMonitorTask](#class-walletmonitortask)
+See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -568,7 +570,7 @@ export abstract class WalletMonitorTask {
 }
 ```
 
-See also: [Monitor](#class-monitor), [MonitorStorage](#type-monitorstorage)
+See also: [Monitor](./monitor.md#class-monitor), [MonitorStorage](./monitor.md#type-monitorstorage)
 
 ###### Property lastRunMsecsSinceEpoch
 
@@ -611,7 +613,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export type MonitorStorage = WalletStorageManager
 ```
 
-See also: [WalletStorageManager](#class-walletstoragemanager)
+See also: [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

@@ -50,7 +50,7 @@ export interface SetupEnv {
 }
 ```
 
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 ###### Property chain
 
@@ -59,7 +59,7 @@ The chan being accessed: 'main' for mainnet, 'test' for 'testnet'.
 ```ts
 chain: sdk.Chain
 ```
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 ###### Property devKeys
 
@@ -126,7 +126,7 @@ export interface SetupWallet {
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [Monitor](./monitor.md#class-monitor), [Services](./services.md#class-services), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Property chain
 
@@ -135,7 +135,7 @@ The chain ('main' or 'test') which the wallet accesses.
 ```ts
 chain: sdk.Chain
 ```
-See also: [Chain](#type-chain)
+See also: [Chain](./client.md#type-chain)
 
 ###### Property identityKey
 
@@ -161,7 +161,7 @@ that speed up wallet operations and maintain data integrity.
 ```ts
 monitor: Monitor
 ```
-See also: [Monitor](#class-monitor)
+See also: [Monitor](./monitor.md#class-monitor)
 
 ###### Property rootKey
 
@@ -179,7 +179,7 @@ on the public network.
 ```ts
 services: Services
 ```
-See also: [Services](#class-services)
+See also: [Services](./services.md#class-services)
 
 ###### Property storage
 
@@ -189,7 +189,7 @@ accessed by the wallet.
 ```ts
 storage: WalletStorageManager
 ```
-See also: [WalletStorageManager](#class-walletstoragemanager)
+See also: [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Property wallet
 
@@ -203,7 +203,7 @@ components after construction may disrupt the normal operation of the wallet.
 ```ts
 wallet: Wallet
 ```
-See also: [Wallet](#class-wallet)
+See also: [Wallet](./client.md#class-wallet)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -230,7 +230,7 @@ export interface SetupWalletArgs {
 }
 ```
 
-See also: [SetupEnv](#interface-setupenv), [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [SetupEnv](./setup.md#interface-setupenv), [WalletStorageProvider](./client.md#interface-walletstorageprovider)
 
 ###### Property active
 
@@ -239,7 +239,7 @@ Optional. Active wallet storage. Can be added later.
 ```ts
 active?: sdk.WalletStorageProvider
 ```
-See also: [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [WalletStorageProvider](./client.md#interface-walletstorageprovider)
 
 ###### Property backups
 
@@ -248,7 +248,7 @@ Optional. One or more storage providers managed as backup destinations. Can be a
 ```ts
 backups?: sdk.WalletStorageProvider[]
 ```
-See also: [WalletStorageProvider](#interface-walletstorageprovider)
+See also: [WalletStorageProvider](./client.md#interface-walletstorageprovider)
 
 ###### Property env
 
@@ -257,7 +257,7 @@ Configuration "secrets" typically obtained by `Setup.makeEnv` and `Setup.getEnv`
 ```ts
 env: SetupEnv
 ```
-See also: [SetupEnv](#interface-setupenv)
+See also: [SetupEnv](./setup.md#interface-setupenv)
 
 ###### Property privKeyHex
 
@@ -290,7 +290,7 @@ export interface SetupWalletClient extends SetupWallet {
 }
 ```
 
-See also: [SetupWallet](#interface-setupwallet)
+See also: [SetupWallet](./setup.md#interface-setupwallet)
 
 ###### Property endpointUrl
 
@@ -316,7 +316,7 @@ export interface SetupWalletClientArgs extends SetupWalletArgs {
 }
 ```
 
-See also: [SetupWalletArgs](#interface-setupwalletargs)
+See also: [SetupWalletArgs](./setup.md#interface-setupwalletargs)
 
 ###### Property endpointUrl
 
@@ -348,7 +348,7 @@ export interface SetupWalletKnex extends SetupWallet {
 }
 ```
 
-See also: [Chain](#type-chain), [Monitor](#class-monitor), [Services](#class-services), [SetupWallet](#interface-setupwallet), [StorageKnex](#class-storageknex), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [Monitor](./monitor.md#class-monitor), [Services](./services.md#class-services), [SetupWallet](./setup.md#interface-setupwallet), [StorageKnex](./storage.md#class-storageknex), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -362,7 +362,7 @@ export interface SetupWalletKnexArgs extends SetupWalletArgs {
 }
 ```
 
-See also: [SetupWalletArgs](#interface-setupwalletargs)
+See also: [SetupWalletArgs](./setup.md#interface-setupwalletargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -375,7 +375,7 @@ export interface SetupWalletMySQLArgs extends SetupWalletArgs {
 }
 ```
 
-See also: [SetupWalletArgs](#interface-setupwalletargs)
+See also: [SetupWalletArgs](./setup.md#interface-setupwalletargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -389,7 +389,7 @@ export interface SetupWalletSQLiteArgs extends SetupWalletArgs {
 }
 ```
 
-See also: [SetupWalletArgs](#interface-setupwalletargs)
+See also: [SetupWalletArgs](./setup.md#interface-setupwalletargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -476,7 +476,7 @@ export abstract class Setup extends SetupClient {
 }
 ```
 
-See also: [SetupClient](#class-setupclient), [SetupWalletKnex](#interface-setupwalletknex), [SetupWalletKnexArgs](#interface-setupwalletknexargs), [SetupWalletMySQLArgs](#interface-setupwalletmysqlargs), [SetupWalletSQLiteArgs](#interface-setupwalletsqliteargs), [StorageKnex](#class-storageknex)
+See also: [SetupClient](./setup.md#class-setupclient), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [SetupWalletMySQLArgs](./setup.md#interface-setupwalletmysqlargs), [SetupWalletSQLiteArgs](./setup.md#interface-setupwalletsqliteargs), [StorageKnex](./storage.md#class-storageknex)
 
 ###### Method createWalletKnex
 
@@ -505,7 +505,7 @@ static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKne
     return r;
 }
 ```
-See also: [Setup](#class-setup), [SetupWalletKnex](#interface-setupwalletknex), [SetupWalletKnexArgs](#interface-setupwalletknexargs), [StorageKnex](#class-storageknex)
+See also: [Setup](./setup.md#class-setup), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [StorageKnex](./storage.md#class-storageknex)
 
 Argument Details
 
@@ -627,7 +627,7 @@ export abstract class SetupClient {
 }
 ```
 
-See also: [Chain](#type-chain), [KeyPairAddress](#type-keypairaddress), [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [ScriptTemplateUnlock](#interface-scripttemplateunlock), [Services](#class-services), [SetupEnv](#interface-setupenv), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [SetupWalletClient](#interface-setupwalletclient), [SetupWalletClientArgs](#interface-setupwalletclientargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#type-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Method createWallet
 
@@ -678,7 +678,7 @@ static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
     return r;
 }
 ```
-See also: [Monitor](#class-monitor), [PrivilegedKeyManager](#class-privilegedkeymanager), [Services](#class-services), [SetupWallet](#interface-setupwallet), [SetupWalletArgs](#interface-setupwalletargs), [Wallet](#class-wallet), [WalletStorageManager](#class-walletstoragemanager)
+See also: [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [Services](./services.md#class-services), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
 
 ###### Method getEnv
 
@@ -691,7 +691,7 @@ Access private keys through the `devKeys` object: `devKeys[identityKey]`
 ```ts
 static getEnv(chain: sdk.Chain): SetupEnv 
 ```
-See also: [Chain](#type-chain), [SetupEnv](#interface-setupenv)
+See also: [Chain](./client.md#type-chain), [SetupEnv](./setup.md#interface-setupenv)
 
 Returns
 
