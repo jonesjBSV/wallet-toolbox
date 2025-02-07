@@ -1,0 +1,241 @@
+import {
+  LockingScript,
+  PubKeyHex,
+  PushDrop,
+  Transaction,
+  Utils,
+  WalletInterface,
+  WalletProtocol
+} from '@bsv/sdk'
+
+export interface Certifier {
+  name: string
+  description: string
+  identityKey: PubKeyHex
+  trust: number
+  iconUrl?: string
+  baseURL?: string // ?
+}
+export interface TrustSettings {
+  trustLevel: number
+  trustedCertifiers: Certifier[]
+}
+export interface WalletTheme {
+  mode: string
+}
+export interface WalletSettings {
+  trustSettings: TrustSettings
+  theme?: WalletTheme
+}
+export interface WalletSettingsManagerConfig {
+  defaultSettings: WalletSettings
+}
+
+const PROTOCOL_ID: WalletProtocol = [2, 'wallet settings']
+const KEY_ID = '1'
+const SETTINGS_BASKET = 'wallet settings'
+const TOKEN_AMOUNT = 1
+const OUTPUT_INDEX = 0
+
+// Defaults can be overridden as needed
+export const DEFAULT_SETTINGS = {
+  trustSettings: {
+    trustLevel: 2,
+    trustedCertifiers: [
+      {
+        name: 'Babbage Trust Services',
+        description:
+          'Resolves identity information for Babbage-run APIs and Bitcoin infrastructure.',
+        iconUrl: 'https://projectbabbage.com/favicon.ico',
+        identityKey:
+          '028703956178067ea7ca405111f1ca698290a0112a3d7cf3d843e195bf58a7cfa6',
+        trust: 4
+      },
+      {
+        name: 'IdentiCert',
+        description: 'Certifies legal first and last name, and photos',
+        iconUrl: 'https://identicert.me/favicon.ico',
+        trust: 5,
+        identityKey:
+          '0295bf1c7842d14babf60daf2c733956c331f9dcb2c79e41f85fd1dda6a3fa4549'
+      },
+      {
+        name: 'SocialCert',
+        description: 'Certifies social media handles, phone numbers and emails',
+        iconUrl: 'https://socialcert.net/favicon.ico',
+        trust: 3,
+        identityKey:
+          '03285263f06139b66fb27f51cf8a92e9dd007c4c4b83876ad6c3e7028db450a4c2'
+      }
+    ]
+  },
+  theme: { mode: 'dark' }
+} as WalletSettings
+
+// Mapping of certifier names to their testnet identity keys
+const TESTNET_IDENTITY_KEYS: Record<string, string> = {
+  'Babbage Trust Services':
+    '03d0b36b5c98b000ec9ffed9a2cf005e279244edf6a19cf90545cdebe873162761',
+  IdentiCert:
+    '036dc48522aba1705afbb43df3c04dbd1da373b6154341a875bceaa2a3e7f21528',
+  SocialCert:
+    '02cf6cdf466951d8dfc9e7c9367511d0007ed6fba35ed42d425cc412fd6cfd4a17'
+}
+
+// Define defaults that can be imported for a testnet environment
+export const TESTNET_DEFAULT_SETTINGS: WalletSettings = {
+  ...DEFAULT_SETTINGS,
+  trustSettings: {
+    ...DEFAULT_SETTINGS.trustSettings,
+    trustedCertifiers: DEFAULT_SETTINGS.trustSettings.trustedCertifiers.map(
+      certifier => ({
+        ...certifier,
+        // Use the testnet key if provided, otherwise fallback to the default
+        identityKey:
+          TESTNET_IDENTITY_KEYS[certifier.name] || certifier.identityKey
+      })
+    )
+  }
+}
+
+/**
+ * Manages wallet settings
+ */
+export class WalletSettingsManager {
+  constructor(
+    private wallet: WalletInterface,
+    private config: WalletSettingsManagerConfig = {
+      defaultSettings: DEFAULT_SETTINGS
+    }
+  ) {}
+
+  /**
+   * Returns a user's wallet settings
+   *
+   * @returns - Wallet settings object
+   */
+  async get(): Promise<WalletSettings> {
+    // List outputs in the 'wallet-settings' basket
+    const results = await this.wallet.listOutputs({
+      basket: SETTINGS_BASKET,
+      include: 'locking scripts',
+      limit: 1 // There should only be one settings token
+    })
+
+    // Return defaults if no settings token is found
+    if (!results.outputs.length) {
+      return this.config.defaultSettings
+    }
+
+    const { fields } = PushDrop.decode(
+      LockingScript.fromHex(results.outputs[OUTPUT_INDEX].lockingScript!)
+    )
+    // Parse and return settings token
+    return JSON.parse(Utils.toUTF8(fields[0]))
+  }
+
+  /**
+   * Creates (or updates) the user's settings token.
+   *
+   * @param settings - The wallet settings to be stored.
+   */
+  async set(settings: WalletSettings): Promise<void> {
+    const pushdrop = new PushDrop(this.wallet)
+
+    // Build the new locking script with the updated settings JSON.
+    const lockingScript = await pushdrop.lock(
+      [Utils.toArray(JSON.stringify(settings), 'utf8')],
+      PROTOCOL_ID,
+      KEY_ID,
+      'self'
+    )
+
+    // Consume any existing token and create a new one with the new locking script.
+    await this.consumeToken(lockingScript)
+  }
+
+  /**
+   * Deletes the user's settings token.
+   */
+  async delete(): Promise<void> {
+    // Consume the token; if none exists, consumeToken simply returns.
+    await this.consumeToken()
+  }
+
+  /**
+   * Consumes an existing settings token.
+   * If a new locking script is provided, a new token is created with that script.
+   * Otherwise, the token is simply consumed (deleted).
+   *
+   * @param newLockingScript - Optional locking script for creating a new settings token.
+   * @returns {Promise<boolean>} - Returns false if no token was found; otherwise true.
+   */
+  private async consumeToken(
+    newLockingScript?: LockingScript
+  ): Promise<boolean> {
+    const pushdrop = new PushDrop(this.wallet)
+
+    // 1. List the existing token UTXO(s) for the settings basket.
+    const existingUtxos = await this.wallet.listOutputs({
+      basket: SETTINGS_BASKET,
+      limit: 1
+    })
+    if (!existingUtxos.outputs.length) {
+      // No token exists – nothing to consume.
+      return false
+    }
+
+    // 2. Prepare the token UTXO for consumption.
+    const tokenOutput = existingUtxos.outputs[OUTPUT_INDEX]
+    const inputToConsume = {
+      outpoint: tokenOutput.outpoint,
+      unlockingScriptLength: 73,
+      inputDescription: 'Consume old settings token',
+      lockingScript: tokenOutput.lockingScript
+    }
+
+    // 3. Build the outputs array: if a new locking script is provided, add an output.
+    const outputs = newLockingScript
+      ? [
+          {
+            satoshis: TOKEN_AMOUNT,
+            lockingScript: newLockingScript.toHex(),
+            outputDescription: 'Wallet settings token',
+            basket: SETTINGS_BASKET
+          }
+        ]
+      : []
+
+    // 4. Create a signable transaction action using the inputs and (optionally) outputs.
+    const { signableTransaction } = await this.wallet.createAction({
+      description: '',
+      inputs: [inputToConsume],
+      outputs
+    })
+    const tx = Transaction.fromBEEF(signableTransaction!.tx)
+
+    // 5. Build and sign the unlocking script for the token being consumed.
+    const unlocker = pushdrop.unlock(
+      PROTOCOL_ID,
+      KEY_ID,
+      'self',
+      'all',
+      false,
+      TOKEN_AMOUNT,
+      LockingScript.fromHex(tokenOutput.lockingScript!)
+    )
+    const unlockingScript = await unlocker.sign(tx, OUTPUT_INDEX)
+
+    // 6. Sign the transaction using our unlocking script.
+    await this.wallet.signAction({
+      reference: signableTransaction!.reference,
+      spends: {
+        [OUTPUT_INDEX]: {
+          unlockingScript: unlockingScript.toHex()
+        }
+      }
+    })
+
+    return true
+  }
+}

@@ -62,7 +62,8 @@ import {
   AuthFetch,
   verifyNonce,
   MasterCertificate,
-  Certificate
+  Certificate,
+  LookupResolver
 } from '@bsv/sdk'
 import {
   sdk,
@@ -76,7 +77,11 @@ import { proveCertificate } from './signer/methods/proveCertificate'
 import { createAction } from './signer/methods/createAction'
 import { signAction } from './signer/methods/signAction'
 import { internalizeAction } from './signer/methods/internalizeAction'
-import { ValidAcquireDirectCertificateArgs } from './sdk'
+import { WalletSettingsManager } from './WalletSettingsManager'
+import {
+  queryOverlay,
+  transformVerifiableCertificatesWithTrust
+} from './utility/identityUtils'
 
 export interface WalletArgs {
   chain: sdk.Chain
@@ -85,6 +90,8 @@ export interface WalletArgs {
   services?: sdk.WalletServices
   monitor?: Monitor
   privilegedKeyManager?: sdk.PrivilegedKeyManager
+  settingsManager?: WalletSettingsManager
+  lookupResolver?: LookupResolver
 }
 
 function isWalletSigner(args: WalletArgs | WalletSigner): args is WalletSigner {
@@ -95,6 +102,8 @@ export class Wallet implements WalletInterface, ProtoWallet {
   chain: sdk.Chain
   keyDeriver: KeyDeriver
   storage: WalletStorageManager
+  settingsManager: WalletSettingsManager
+  lookupResolver: LookupResolver
 
   services?: sdk.WalletServices
   monitor?: Monitor
@@ -146,6 +155,10 @@ export class Wallet implements WalletInterface, ProtoWallet {
         'storage',
         `authenticated as the same identityKey (${args.storage._authId.identityKey}) as the keyDeriver (${args.keyDeriver.identityKey}).`
       )
+
+    this.settingsManager =
+      args.settingsManager || new WalletSettingsManager(this)
+    this.lookupResolver = args.lookupResolver || new LookupResolver()
 
     this.chain = args.chain
     this.keyDeriver = args.keyDeriver
@@ -607,7 +620,22 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<DiscoverCertificatesResult> {
     sdk.validateOriginator(originator)
     this.validateAuthAndArgs(args, sdk.validateDiscoverByIdentityKeyArgs)
-    throw new Error('Method not implemented.')
+
+    const trustSettings = (await this.settingsManager.get()).trustSettings
+    const results = await queryOverlay(
+      {
+        identityKey: args.identityKey,
+        trustedCertifiers: trustSettings.trustedCertifiers
+      },
+      this.lookupResolver
+    )
+    if (!results) {
+      return {
+        totalCertificates: 0,
+        certificates: []
+      }
+    }
+    return transformVerifiableCertificatesWithTrust(trustSettings, results)
   }
 
   async discoverByAttributes(
@@ -616,7 +644,22 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<DiscoverCertificatesResult> {
     sdk.validateOriginator(originator)
     this.validateAuthAndArgs(args, sdk.validateDiscoverByAttributesArgs)
-    throw new Error('Method not implemented.')
+
+    const trustSettings = (await this.settingsManager.get()).trustSettings
+    const results = await queryOverlay(
+      {
+        identityKey: args.attributes,
+        trustedCertifiers: trustSettings.trustedCertifiers
+      },
+      this.lookupResolver
+    )
+    if (!results) {
+      return {
+        totalCertificates: 0,
+        certificates: []
+      }
+    }
+    return transformVerifiableCertificatesWithTrust(trustSettings, results)
   }
 
   //////////////////
