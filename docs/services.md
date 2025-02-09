@@ -10,7 +10,7 @@ To function properly, a wallet makes use of a variety of services provided by th
 2. Obtain block headers for proof validation.
 3. Obtain exchange rates for UI and fee calculations.
 
-These tasks are the responssibility of the [Services](#class-services) class.
+These tasks are the responsibility of the [Services](#class-services) class.
 
 [Return To Top](./README.md)
 
