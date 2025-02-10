@@ -63,8 +63,7 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
     lockerPubKey: string,
     sourceSatoshis?: number,
     lockingScript?: Script
-  ): ScriptTemplateUnlock
-  {
+  ): ScriptTemplateUnlock {
     const derivedPrivateKey = this.getKeyDeriver(unlockerPrivKey)
       .derivePrivateKey(brc29ProtocolID, this.getKeyID(), lockerPubKey)
       .toHex()

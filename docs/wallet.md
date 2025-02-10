@@ -5245,15 +5245,12 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
     getKeyID() 
     getKeyDeriver(privKey: PrivateKey | HexString): KeyDeriverApi 
     lock(lockerPrivKey: string, unlockerPubKey: string): LockingScript 
-    unlock(unlockerPrivKey: string, lockerPubKey: string, sourceSatoshis?: number, lockingScript?: Script): {
-        sign: (tx: Transaction, inputIndex: number) => Promise<UnlockingScript>;
-        estimateLength: (tx?: Transaction, inputIndex?: number) => Promise<number>;
-    } 
+    unlock(unlockerPrivKey: string, lockerPubKey: string, sourceSatoshis?: number, lockingScript?: Script): ScriptTemplateUnlock 
     unlockLength = 108;
 }
 ```
 
-See also: [ScriptTemplateParamsSABPPP](./client.md#interface-scripttemplateparamssabppp)
+See also: [ScriptTemplateParamsSABPPP](./client.md#interface-scripttemplateparamssabppp), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock)
 
 ###### Property unlockLength
 
@@ -5476,7 +5473,7 @@ export abstract class SetupClient {
         const address = pub.toAddress();
         return { privateKey: priv, publicKey: pub, address };
     }
-    static getLockP2PKH(address: string) {
+    static getLockP2PKH(address: string): LockingScript {
         const p2pkh = new P2PKH();
         const lock = p2pkh.lock(address);
         return lock;
@@ -7342,13 +7339,13 @@ The `WalletStorageManager` class delivers authentication checking storage access
 If manages multiple `StorageBase` derived storage services: one actice, the rest as backups.
 
 Of the storage services, one is 'active' at any one time.
-On startup, and whenever triggered by the wallet, `SignerStorage` runs a syncrhonization sequence:
+On startup, and whenever triggered by the wallet, `WalletStorageManager` runs a syncrhonization sequence:
 
 1. While synchronizing, all other access to storage is blocked waiting.
 2. The active service is confirmed, potentially triggering a resolution process if there is disagreement.
 3. Changes are pushed from the active storage service to each inactive, backup service.
 
-Some storage services do not support multiple writers. `SignerStorage` manages wait-blocking write requests
+Some storage services do not support multiple writers. `WalletStorageManager` manages wait-blocking write requests
 for these services.
 
 ```ts

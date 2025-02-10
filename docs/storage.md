@@ -3478,13 +3478,13 @@ The `WalletStorageManager` class delivers authentication checking storage access
 If manages multiple `StorageBase` derived storage services: one actice, the rest as backups.
 
 Of the storage services, one is 'active' at any one time.
-On startup, and whenever triggered by the wallet, `SignerStorage` runs a syncrhonization sequence:
+On startup, and whenever triggered by the wallet, `WalletStorageManager` runs a syncrhonization sequence:
 
 1. While synchronizing, all other access to storage is blocked waiting.
 2. The active service is confirmed, potentially triggering a resolution process if there is disagreement.
 3. Changes are pushed from the active storage service to each inactive, backup service.
 
-Some storage services do not support multiple writers. `SignerStorage` manages wait-blocking write requests
+Some storage services do not support multiple writers. `WalletStorageManager` manages wait-blocking write requests
 for these services.
 
 ```ts
