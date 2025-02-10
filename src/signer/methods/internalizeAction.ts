@@ -122,7 +122,7 @@ export async function internalizeAction(
         'tx',
         `valid AtomicBEEF with newest txid of ${txid}`
       )
-    const tx = btx.tx
+    const tx = btx.tx!
 
     /*
     for (const i of tx.inputs) {

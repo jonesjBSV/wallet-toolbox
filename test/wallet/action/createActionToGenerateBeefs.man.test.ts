@@ -217,7 +217,7 @@ async function createAndConsume(
     expect(st.reference).toBeTruthy()
     // const tx = Transaction.fromAtomicBEEF(st.tx) // Transaction doesn't support V2 Beef yet.
     const atomicBeef = bsv.Beef.fromBinary(st.tx)
-    const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
+    const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx!
     for (const input of tx.inputs) {
       expect(atomicBeef.findTxid(input.sourceTXID!)).toBeTruthy()
     }
@@ -273,7 +273,7 @@ async function createAndConsume(
     const st = cr.signableTransaction!
     expect(st.reference).toBeTruthy()
     const atomicBeef: bsv.Beef = bsv.Beef.fromBinary(st.tx)
-    const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
+    const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx!
 
     tx.inputs[0].unlockingScriptTemplate = unlock
     await tx.sign()
