@@ -5,6 +5,7 @@ import {
   CreateActionOutput,
   CreateActionResult,
   KeyDeriver,
+  LockingScript,
   P2PKH,
   PrivateKey,
   PublicKey,
@@ -19,6 +20,9 @@ import {
   Wallet,
   WalletStorageManager
 } from './index.client'
+
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 /**
  * The `SetupClient` class provides static setup functions to construct BRC-100 compatible
@@ -213,7 +217,7 @@ export abstract class SetupClient {
   /**
    * @publicbody
    */
-  static getLockP2PKH(address: string) {
+  static getLockP2PKH(address: string): LockingScript {
     const p2pkh = new P2PKH()
     const lock = p2pkh.lock(address)
     return lock

@@ -1,11 +1,15 @@
-import { HexString, KeyDeriver, KeyDeriverApi, WalletProtocol } from '@bsv/sdk'
 import { asBsvSdkPrivateKey, verifyTruthy } from './index.client'
 import {
+  HexString,
+  KeyDeriver,
+  KeyDeriverApi,
+  WalletProtocol,
+  ScriptTemplate,
+  ScriptTemplateUnlock,
   LockingScript,
   P2PKH,
   PrivateKey,
   Script,
-  ScriptTemplate,
   Transaction,
   UnlockingScript
 } from '@bsv/sdk'
@@ -59,10 +63,7 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
     lockerPubKey: string,
     sourceSatoshis?: number,
     lockingScript?: Script
-  ): {
-    sign: (tx: Transaction, inputIndex: number) => Promise<UnlockingScript>
-    estimateLength: (tx?: Transaction, inputIndex?: number) => Promise<number>
-  } {
+  ): ScriptTemplateUnlock {
     const derivedPrivateKey = this.getKeyDeriver(unlockerPrivKey)
       .derivePrivateKey(brc29ProtocolID, this.getKeyID(), lockerPubKey)
       .toHex()

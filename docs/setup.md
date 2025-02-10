@@ -662,7 +662,7 @@ export abstract class SetupClient {
         const address = pub.toAddress();
         return { privateKey: priv, publicKey: pub, address };
     }
-    static getLockP2PKH(address: string) {
+    static getLockP2PKH(address: string): LockingScript {
         const p2pkh = new P2PKH();
         const lock = p2pkh.lock(address);
         return lock;

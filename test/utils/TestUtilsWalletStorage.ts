@@ -1,4 +1,5 @@
 import {
+  Beef,
   CreateActionArgs,
   CreateActionOutput,
   CreateActionResult,
@@ -52,10 +53,8 @@ import {
 } from '../../src/index.all'
 
 import { Knex, knex as makeKnex } from 'knex'
-import { Beef } from '@bsv/sdk'
 
 import * as dotenv from 'dotenv'
-import { PrivilegedKeyManager, TransactionStatus } from '../../src/sdk'
 dotenv.config()
 
 const localMySqlConnection = process.env.LOCAL_MYSQL_CONNECTION || ''
@@ -172,7 +171,7 @@ export abstract class TestUtilsWalletStorage {
     expect(st.reference).toBeTruthy()
     // const tx = Transaction.fromAtomicBEEF(st.tx) // Transaction doesn't support V2 Beef yet.
     const atomicBeef = Beef.fromBinary(st.tx)
-    const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
+    const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx!
     for (const input of tx.inputs) {
       expect(atomicBeef.findTxid(input.sourceTXID!)).toBeTruthy()
     }
@@ -251,10 +250,10 @@ export abstract class TestUtilsWalletStorage {
     )
     const monitor = new Monitor(monopts)
     monitor.addDefaultTasks()
-    let privilegedKeyManager: PrivilegedKeyManager | undefined = undefined
+    let privilegedKeyManager: sdk.PrivilegedKeyManager | undefined = undefined
     if (args.privKeyHex) {
       const privKey = PrivateKey.fromString(args.privKeyHex)
-      privilegedKeyManager = new PrivilegedKeyManager(async () => privKey)
+      privilegedKeyManager = new sdk.PrivilegedKeyManager(async () => privKey)
     }
     const wallet = new Wallet({
       chain,
@@ -1210,7 +1209,7 @@ export abstract class TestUtilsWalletStorage {
             {
               txid: input.sourceOutpoint.split('.')[0],
               satoshis: input.sourceSatoshis,
-              status: 'confirmed' as TransactionStatus,
+              status: 'confirmed' as sdk.TransactionStatus,
               description: 'Generated transaction for input',
               lockTime: 0,
               version: 1,
@@ -1260,7 +1259,7 @@ export abstract class TestUtilsWalletStorage {
         {
           txid: `${action.txid}` || `tx_${action.satoshis}_${Date.now()}`,
           satoshis: action.satoshis,
-          status: action.status as TransactionStatus,
+          status: action.status as sdk.TransactionStatus,
           description: action.description,
           lockTime: action.lockTime,
           version: action.version,

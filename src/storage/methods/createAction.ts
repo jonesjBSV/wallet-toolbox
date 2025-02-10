@@ -701,12 +701,12 @@ async function validateRequiredInputs(
         if (proven) beef.mergeBump(new EntityProvenTx(proven).getMerklePath())
       }
       // btx is valid has parsed transaction data.
-      if (vout >= btx.tx.outputs.length)
+      if (vout >= btx.tx!.outputs.length)
         throw new sdk.WERR_INVALID_PARAMETER(
           `${txid}.${vout}`,
           'valid outpoint'
         )
-      const so = btx.tx.outputs[vout]
+      const so = btx.tx!.outputs[vout]
       input.satoshis = verifyTruthy(so.satoshis)
       input.lockingScript = so.lockingScript
     }
