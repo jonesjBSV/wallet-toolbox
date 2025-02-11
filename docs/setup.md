@@ -559,21 +559,21 @@ export abstract class SetupClient {
         const mainPrivKey2 = PrivateKey.fromRandom();
         const mainIdentityKey2 = mainPrivKey2.toPublicKey().toString();
         const log = `
-    # Add the following to .env file:
-    MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
-    TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
-    MY_TEST_IDENTITY = '${testIdentityKey1}'
-    MY_TEST_IDENTITY2 = '${testIdentityKey2}'
-    MY_MAIN_IDENTITY = '${mainIdentityKey1}'
-    MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
-    DEV_KEYS = '{
-        "${testIdentityKey1}": "${testPrivKey1.toString()}",
-        "${testIdentityKey2}": "${testPrivKey2.toString()}"
-        "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
-        "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
-    }'
-    MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
-    `;
+# .env file template for working with wallet-toolbox Setup functions.
+MY_TEST_IDENTITY = '${testIdentityKey1}'
+MY_TEST_IDENTITY2 = '${testIdentityKey2}'
+MY_MAIN_IDENTITY = '${mainIdentityKey1}'
+MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
+MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
+TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
+MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
+DEV_KEYS = '{
+    "${testIdentityKey1}": "${testPrivKey1.toString()}",
+    "${testIdentityKey2}": "${testPrivKey2.toString()}"
+    "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
+    "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
+}'
+`;
         console.log(log);
         return log;
     }
@@ -725,7 +725,7 @@ export abstract class SetupClient {
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [StorageClient](./storage.md#class-storageclient), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [WERR_INVALID_PARAMETER](./client.md#class-werr_invalid_parameter), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
+See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [Setup](./setup.md#class-setup), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [StorageClient](./storage.md#class-storageclient), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [WERR_INVALID_PARAMETER](./client.md#class-werr_invalid_parameter), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
 
 ###### Method createWallet
 
@@ -842,25 +842,26 @@ static makeEnv(): string {
     const mainPrivKey2 = PrivateKey.fromRandom();
     const mainIdentityKey2 = mainPrivKey2.toPublicKey().toString();
     const log = `
-    # Add the following to .env file:
-    MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
-    TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
-    MY_TEST_IDENTITY = '${testIdentityKey1}'
-    MY_TEST_IDENTITY2 = '${testIdentityKey2}'
-    MY_MAIN_IDENTITY = '${mainIdentityKey1}'
-    MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
-    DEV_KEYS = '{
-        "${testIdentityKey1}": "${testPrivKey1.toString()}",
-        "${testIdentityKey2}": "${testPrivKey2.toString()}"
-        "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
-        "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
-    }'
-    MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
-    `;
+# .env file template for working with wallet-toolbox Setup functions.
+MY_TEST_IDENTITY = '${testIdentityKey1}'
+MY_TEST_IDENTITY2 = '${testIdentityKey2}'
+MY_MAIN_IDENTITY = '${mainIdentityKey1}'
+MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
+MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
+TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
+MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
+DEV_KEYS = '{
+    "${testIdentityKey1}": "${testPrivKey1.toString()}",
+    "${testIdentityKey2}": "${testPrivKey2.toString()}"
+    "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
+    "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
+}'
+`;
     console.log(log);
     return log;
 }
 ```
+See also: [Setup](./setup.md#class-setup)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

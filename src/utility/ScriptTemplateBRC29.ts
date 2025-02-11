@@ -9,7 +9,7 @@ import {
   LockingScript,
   P2PKH,
   PrivateKey,
-  Script,
+  Script
 } from '@bsv/sdk'
 
 export const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
