@@ -16,7 +16,7 @@ import {
   sdk,
   verifyOne,
   verifyId,
-  ScriptTemplateSABPPP,
+  ScriptTemplateBRC29,
   randomBytesBase64,
   randomBytes,
   EntityProvenTxReq,
@@ -451,7 +451,7 @@ export function createWalletPaymentOutput(args: {
   derivationSuffix: string
   lockingScript: string
 } {
-  const t = new ScriptTemplateSABPPP({
+  const t = new ScriptTemplateBRC29({
     derivationPrefix: randomBytesBase64(8),
     derivationSuffix: randomBytesBase64(8),
     keyDeriver: new KeyDeriver(PrivateKey.fromString(args.fromRootKeyHex))
@@ -495,7 +495,7 @@ export async function createWalletPaymentAction(args: {
 }> {
   const { toIdentityKey, outputSatoshis, keyDeriver, wallet } = args
 
-  const t = new ScriptTemplateSABPPP({
+  const t = new ScriptTemplateBRC29({
     derivationPrefix: randomBytesBase64(8),
     derivationSuffix: randomBytesBase64(8),
     keyDeriver

@@ -10,7 +10,7 @@ import {
   makeAtomicBeef,
   PendingSignAction,
   PendingStorageInput,
-  ScriptTemplateSABPPP,
+  ScriptTemplateBRC29,
   sdk,
   verifyTruthy,
   Wallet
@@ -100,7 +100,7 @@ function makeChangeLock(
 ): Script {
   const derivationPrefix = dctr.derivationPrefix
   const derivationSuffix = verifyTruthy(out.derivationSuffix)
-  const sabppp = new ScriptTemplateSABPPP({
+  const sabppp = new ScriptTemplateBRC29({
     derivationPrefix,
     derivationSuffix,
     keyDeriver: wallet.keyDeriver
@@ -149,7 +149,7 @@ export async function completeSignedTransaction(
   // Insert SABPPP unlock templates for storage signed inputs
   /////////////////////
   for (const pdi of prior.pdi) {
-    const sabppp = new ScriptTemplateSABPPP({
+    const sabppp = new ScriptTemplateBRC29({
       derivationPrefix: pdi.derivationPrefix,
       derivationSuffix: pdi.derivationSuffix,
       keyDeriver: wallet.keyDeriver
@@ -321,7 +321,7 @@ function buildSignableTransaction(
       }
       tx.addInput(inputToAdd)
     } else {
-      // Type2: SABPPP protocol inputs which are signed using ScriptTemplateSABPPP.
+      // Type2: SABPPP protocol inputs which are signed using ScriptTemplateBRC29.
       if (storageInput.type !== 'P2PKH')
         throw new sdk.WERR_INVALID_PARAMETER(
           'type',
