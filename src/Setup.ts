@@ -21,6 +21,7 @@ import { SetupWallet, SetupWalletArgs, StorageKnex } from './index.all'
  *
  */
 export abstract class Setup extends SetupClient {
+
   /**
    * Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
    *
