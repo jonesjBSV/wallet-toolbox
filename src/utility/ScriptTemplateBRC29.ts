@@ -10,26 +10,24 @@ import {
   P2PKH,
   PrivateKey,
   Script,
-  Transaction,
-  UnlockingScript
 } from '@bsv/sdk'
 
-export interface ScriptTemplateParamsSABPPP {
+export const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
+
+export interface ScriptTemplateParamsBRC29 {
   derivationPrefix?: string
   derivationSuffix?: string
   keyDeriver: KeyDeriverApi
 }
 
-export const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
-
 /**
  * Simple Authenticated BSV P2PKH Payment Protocol
  * https://brc.dev/29
  */
-export class ScriptTemplateSABPPP implements ScriptTemplate {
+export class ScriptTemplateBRC29 implements ScriptTemplate {
   p2pkh: P2PKH
 
-  constructor(public params: ScriptTemplateParamsSABPPP) {
+  constructor(public params: ScriptTemplateParamsBRC29) {
     this.p2pkh = new P2PKH()
 
     verifyTruthy(params.derivationPrefix)
