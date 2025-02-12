@@ -69,14 +69,16 @@ import {
   toWalletNetwork,
   Monitor,
   WalletStorageManager,
-  WalletSigner
+  WalletSigner,
+  randomBytesBase64,
+  ScriptTemplateBRC29
 } from './index.client'
 import { acquireDirectCertificate } from './signer/methods/acquireDirectCertificate'
 import { proveCertificate } from './signer/methods/proveCertificate'
 import { createAction } from './signer/methods/createAction'
 import { signAction } from './signer/methods/signAction'
 import { internalizeAction } from './signer/methods/internalizeAction'
-import { ValidAcquireDirectCertificateArgs } from './sdk'
+import { maxPossibleSatoshis } from './storage/methods/generateChange'
 
 export interface WalletArgs {
   chain: sdk.Chain
@@ -768,6 +770,65 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<GetVersionResult> {
     sdk.validateOriginator(originator)
     return { version: 'wallet-brc100-1.0.0' }
+  }
+
+  /**
+   * Transfer all possible satoshis held by this wallet to `toWallet`.
+   * 
+   * @param toWallet wallet which will receive this wallet's satoshis.
+   */
+  async sweepTo(toWallet: Wallet): Promise<void> {
+
+    const derivationPrefix = randomBytesBase64(8)
+    const derivationSuffix = randomBytesBase64(8)
+    const keyDeriver = this.keyDeriver
+
+    const t = new ScriptTemplateBRC29({
+      derivationPrefix,
+      derivationSuffix,
+      keyDeriver
+    })
+
+    const label = 'sweep'
+
+    const satoshis = maxPossibleSatoshis
+
+    const car = await this.createAction({
+      outputs: [
+        {
+          lockingScript: t.lock(keyDeriver.rootKey.toString(), toWallet.identityKey).toHex(),
+          satoshis,
+          outputDescription: label,
+          tags: ['relinquish'],
+          customInstructions: JSON.stringify({
+            derivationPrefix,
+            derivationSuffix,
+            type: 'BRC29'
+          })
+        }
+      ],
+      options: {
+        randomizeOutputs: false,
+        acceptDelayedBroadcast: false
+      },
+      labels: [label],
+      description: label
+    })
+
+    const iar = await toWallet.internalizeAction({
+      tx: car.tx!,
+      outputs: [{
+        outputIndex: 0,
+        protocol: 'wallet payment',
+        paymentRemittance: {
+          derivationPrefix,
+          derivationSuffix,
+          senderIdentityKey: this.identityKey
+        }
+      }],
+      description: label,
+      labels: [label]
+    })
   }
 }
 

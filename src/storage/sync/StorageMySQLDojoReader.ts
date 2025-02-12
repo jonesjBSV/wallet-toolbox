@@ -298,7 +298,7 @@ export class StorageMySQLDojoReader extends StorageReader {
         spendable: !!d.spendable,
         change: d.providedBy !== 'you' && d.purpose === 'change',
         outputDescription: (d.description || '').trim(),
-        vout: verifyInteger(d.vout),
+        vout: verifyInteger(typeof d.vout !== 'number' ? 9999 : d.vout),
         satoshis: verifyInteger(d.amount),
         providedBy: verifyTruthy(d.providedBy || '')
           .trim()

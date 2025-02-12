@@ -35,7 +35,8 @@ import {
 import {
   generateChangeSdk,
   GenerateChangeSdkChangeInput,
-  GenerateChangeSdkParams
+  GenerateChangeSdkParams,
+  maxPossibleSatoshis
 } from './generateChange'
 
 export async function createAction(
@@ -109,8 +110,15 @@ export async function createAction(
     transactionId: newTx.transactionId!
   }
 
-  const { allocatedChange, changeOutputs, derivationPrefix } =
+  const { allocatedChange, changeOutputs, derivationPrefix, maxPossibleSatoshisAdjustment } =
     await fundNewTransactionSdk(storage, userId, vargs, ctx)
+  
+  if (maxPossibleSatoshisAdjustment) {
+    const a = maxPossibleSatoshisAdjustment
+    if (ctx.xoutputs[a.fixedOutputIndex].satoshis !== maxPossibleSatoshis)
+      throw new sdk.WERR_INTERNAL()
+    ctx.xoutputs[a.fixedOutputIndex].satoshis = a.satoshis
+  }
 
   // The satoshis of the transaction is the satoshis we get back in change minus the satoshis we spend.
   const satoshis =
@@ -767,6 +775,10 @@ async function fundNewTransactionSdk(
   allocatedChange: TableOutput[]
   changeOutputs: TableOutput[]
   derivationPrefix: string
+  maxPossibleSatoshisAdjustment?: {
+    fixedOutputIndex: number
+    satoshis: number
+  }
 }> {
   const params: GenerateChangeSdkParams = {
     fixedInputs: ctx.xinputs.map(xi => ({
@@ -891,7 +903,12 @@ async function fundNewTransactionSdk(
     allocatedChange: TableOutput[]
     changeOutputs: TableOutput[]
     derivationPrefix: string
+    maxPossibleSatoshisAdjustment?: {
+      fixedOutputIndex: number
+      satoshis: number
+    }
   } = {
+    maxPossibleSatoshisAdjustment: gcr.maxPossibleSatoshisAdjustment,
     allocatedChange: gcr.allocatedChangeInputs.map(i => outputs[i.outputId]),
     changeOutputs: gcr.changeOutputs.map(
       (o, i) =>

@@ -66,6 +66,58 @@ describe('Wallet sync tests', () => {
     done0 = true
   })
 
+  test.skip('0a sync production dojo to local MySQL', async () => {
+    console.log('Importing from production dojo to local MySQL productiondojotone')
+    const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
+    const rootKeyHex = env.devKeys[identityKeyTone]
+    const chain: sdk.Chain = 'main'
+    const connection = JSON.parse(process.env.MAIN_DOJO_CONNECTION || '')
+    const readerKnex = _tu.createMySQLFromConnection(connection)
+    const reader = new StorageMySQLDojoReader({ chain, knex: readerKnex })
+    const writer = await _tu.createMySQLTestWallet({
+      databaseName: 'productiondojotone',
+      chain: 'main',
+      rootKeyHex,
+      dropAll: true
+    })
+
+    const identityKey = writer.identityKey
+    await writer.storage.syncFromReader(
+      identityKey,
+      new StorageSyncReader({ identityKey }, reader)
+    )
+
+    await reader.destroy()
+    await writer.activeStorage.destroy()
+  })
+
+  test('0b sweep mysql dojo sync to new sqlite', async () => {
+    const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
+    const rootKeyHex = env.devKeys[identityKeyTone]
+    const chain: sdk.Chain = 'main'
+
+    const sweepFrom = await _tu.createMySQLTestWallet({
+      databaseName: 'productiondojotone',
+      chain: 'main',
+      rootKeyHex,
+    })
+
+    const sweepTo = await _tu.createSQLiteTestWallet({
+      filePath: '/Users/tone/Kz/tone42.sqlite',
+      databaseName: 'tone42',
+      chain: 'main',
+      rootKeyHex
+    })
+
+    //await sweepTo.activeStorage.updateProvenTxReq(2, { status: 'invalid' })
+    //await sweepTo.activeStorage.updateTransactionStatus('failed', 2)
+
+    await sweepFrom.wallet.sweepTo(sweepTo.wallet)
+
+    await sweepTo.wallet.destroy()
+    await sweepFrom.wallet.destroy()
+  })
+
   test('1 aggressively purge records from MySQL stagingdojotone', async () => {
     await waitFor0()
 
