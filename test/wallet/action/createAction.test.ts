@@ -35,33 +35,40 @@ describe('createAction test', () => {
   test('0_invalid_params', async () => {
     for (const { wallet } of ctxs) {
       {
-        const log = `\n${testName()}\n`
-        const args: CreateActionArgs = {
-          description: ''
-        }
-        // description is too short...
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
-          wallet.createAction(args)
-        )
-        args.description = 'five.'
-        // no outputs, inputs or sendWith
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
-          wallet.createAction(args)
-        )
-        args.options = { signAndProcess: false }
-        args.outputs = [
-          { satoshis: 42, lockingScript: 'fred', outputDescription: 'pay fred' }
+        const args: CreateActionArgs[] = [
+          // description is too short...
+          { description: '' },
+          // no outputs, inputs or sendWith
+          { description: '12345' },
+          // lockingScript must be hexadecimal
+          {
+            description: '12345',
+            outputs: [
+              {
+                satoshis: 42,
+                lockingScript: 'fred',
+                outputDescription: 'pay fred'
+              }
+            ]
+          },
+          // lockingScript must be even length
+          {
+            description: '12345',
+            outputs: [
+              {
+                satoshis: 42,
+                lockingScript: 'abc',
+                outputDescription: 'pay fred'
+              }
+            ]
+          }
         ]
-        // lockingScript must be hexadecimal
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
-          wallet.createAction(args)
-        )
-        args.outputs[0].lockingScript = 'fre'
-        // lockingScript must be even length
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
-          wallet.createAction(args)
-        )
-        if (!noLog) console.log(log)
+
+        for (const a of args) {
+          await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
+            wallet.createAction(a)
+          )
+        }
       }
     }
   })
@@ -137,7 +144,7 @@ describe('createAction test', () => {
         expect(st.reference).toBeTruthy()
         // const tx = Transaction.fromAtomicBEEF(st.tx) // Transaction doesn't support V2 Beef yet.
         const atomicBeef = Beef.fromBinary(st.tx)
-        const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
+        const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx!
         for (const input of tx.inputs) {
           expect(atomicBeef.findTxid(input.sourceTXID!)).toBeTruthy()
         }
@@ -194,7 +201,7 @@ describe('createAction test', () => {
         const st = cr.signableTransaction!
         expect(st.reference).toBeTruthy()
         const atomicBeef = Beef.fromBinary(st.tx)
-        const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx
+        const tx = atomicBeef.txs[atomicBeef.txs.length - 1].tx!
 
         tx.inputs[0].unlockingScriptTemplate = unlock
         await tx.sign()

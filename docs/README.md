@@ -2,13 +2,13 @@
 
 The documentation is split into various pages, each covering a set of related functionality. The pages are as follows:
 
-- [Getting Started](#getting-started) -
-- [Setup](./setup.md) —
-- [Wallet](./wallet.md) —
-- [Client](./client.md) —
-- [Storage](./storage.md) —
-- [Services](./services.md) —
-- [Monitor](./monitor.md) —
+- [Examples](https://bitcoin-sv.github.io/wallet-toolbox-examples/) - Getting started and specialized examples.
+- [Setup](./setup.md) — Classes supporting wallet setup, experimentation and customization.
+- [Wallet](./wallet.md) — Top level `Wallet` class and related APIs.
+- [Client](./client.md) — Browser deployment friendly toolbox subset.
+- [Storage](./storage.md) — Wallet data persistent storage classes and related APIs.
+- [Services](./services.md) — Support for abstracted external network services.
+- [Monitor](./monitor.md) — Background task manager for wallet action validation and processing.
 
 ## Swagger
 
@@ -76,4 +76,4 @@ const rw = await wallet.internalizeAction(args)
 console.log(rw.accepted)
 ```
 
-For a more detailed tutorial and advanced examples, check our [Documentation](#documentation).
+[Return to Top](#bsv-wallet-toolbox-api-documentation)

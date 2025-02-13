@@ -196,7 +196,7 @@ export async function postTxsToTaalArcMiner(
     for (const txid of txids) {
       const btx = beef.findTxid(txid)
       if (btx) {
-        const tx = btx.tx
+        const tx = btx.tx!
         for (const input of tx.inputs) {
           if (!input.sourceTXID || input.sourceTXID === '0'.repeat(64)) continue // all zero txid is a coinbase input.
           let itx = beef.findTxid(input.sourceTXID!)

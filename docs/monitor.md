@@ -8,7 +8,7 @@ To function properly, a wallet must be able to perform a number of house keeping
 1. Obtain and merge proofs when transactions are mined.
 1. Detect and propagate transactions that fail due to double-spend, reorgs, or other reasons.
 
-These tasks are the responssibility of the [Monitor](#class-monitor) class.
+These tasks are the responsibility of the [Monitor](#class-monitor) class.
 
 [Return To Top](./README.md)
 

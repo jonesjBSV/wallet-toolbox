@@ -2,38 +2,19 @@
 
 BSV BLOCKCHAIN | BRC100 Conforming Wallet, Wallet Storage and Wallet Signer Components
 
-The BSV Wallet Toolbox builds on the [SDK](https://bitcoin-sv.github.io/ts-sdk) to add support for:
-
-    - Persistent UTXO and transaction history management
-    - Standardized key derivation protocols.
-
-# Table of Contents
-
-- [Objective](#objective)
-- [Getting Started](#getting-started)
-- [Features \& Deliverables](#features--deliverables)
-- [Documentation](#documentation)
-- [Contribution Guidelines](#contribution-guidelines)
-- [Support \& Contacts](#support--contacts)
-- [License](#license)
-
 ## Objective
 
-The BSV Wallet Toolbox Project aims to support building sophisticated applications and services on the BSV Blockchain technology stack.
+The BSV Wallet Toolbox builds on the [SDK](https://bitcoin-sv.github.io/ts-sdk).
+
+It aims to support building sophisticated applications and services on the BSV Blockchain technology stack.
 
 By providing interlocking building blocks for persistent storage and protocol based key derivation, it serves as an essential toolbox for developers looking to build on the BSV Blockchain.
 
 ## Documentation
 
 [The Docs](https://bitcoin-sv.github.io/wallet-toolbox) are available here on Github pages.  
-[Example code](https://docs.bsvblockchain.org/guides/sdks/ts/examples) is available over on our gitbook.  
 
 The Toolbox is richly documented with code-level annotations. This should show up well within editors like VSCode.  
-
-
-## Features & Deliverables
-
-- **Feature1**: Summary of feature1.
 
 ## Contribution Guidelines
 

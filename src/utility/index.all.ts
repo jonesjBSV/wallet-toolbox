@@ -1,5 +1,5 @@
 export * from './stampLog'
-export * from './ScriptTemplateSABPPP'
+export * from './ScriptTemplateBRC29'
 export * from './parseTxScriptOffsets'
 export * from './tscProofToMerklePath'
 export * from './utilityHelpers'

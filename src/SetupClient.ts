@@ -1,18 +1,14 @@
 import {
   BEEF,
-  Beef,
   CreateActionArgs,
   CreateActionOptions,
   CreateActionOutput,
   CreateActionResult,
   KeyDeriver,
+  LockingScript,
   P2PKH,
   PrivateKey,
   PublicKey,
-  SignActionArgs,
-  SignActionResult,
-  Transaction,
-  UnlockingScript,
   WalletInterface
 } from '@bsv/sdk'
 import {
@@ -24,6 +20,9 @@ import {
   Wallet,
   WalletStorageManager
 } from './index.client'
+
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 /**
  * The `SetupClient` class provides static setup functions to construct BRC-100 compatible
@@ -44,7 +43,7 @@ export abstract class SetupClient {
    * Loading secrets from a .env file is intended only for experimentation and getting started.
    * Private keys should never be included directly in your source code.
    *
-   * @publicBody
+   * @publicbody
    */
   static makeEnv(): string {
     const testPrivKey1 = PrivateKey.fromRandom()
@@ -57,21 +56,21 @@ export abstract class SetupClient {
     const mainIdentityKey2 = mainPrivKey2.toPublicKey().toString()
 
     const log = `
-    # Add the following to .env file:
-    MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
-    TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
-    MY_TEST_IDENTITY = '${testIdentityKey1}'
-    MY_TEST_IDENTITY2 = '${testIdentityKey2}'
-    MY_MAIN_IDENTITY = '${mainIdentityKey1}'
-    MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
-    DEV_KEYS = '{
-        "${testIdentityKey1}": "${testPrivKey1.toString()}",
-        "${testIdentityKey2}": "${testPrivKey2.toString()}"
-        "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
-        "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
-    }'
-    MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
-    `
+# .env file template for working with wallet-toolbox Setup functions.
+MY_TEST_IDENTITY = '${testIdentityKey1}'
+MY_TEST_IDENTITY2 = '${testIdentityKey2}'
+MY_MAIN_IDENTITY = '${mainIdentityKey1}'
+MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
+MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
+TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
+MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
+DEV_KEYS = '{
+    "${testIdentityKey1}": "${testPrivKey1.toString()}",
+    "${testIdentityKey2}": "${testPrivKey2.toString()}"
+    "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
+    "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
+}'
+`
     console.log(log)
 
     return log
@@ -87,7 +86,7 @@ export abstract class SetupClient {
    * @param chain Which chain to use: 'test' or 'main'
    * @returns {SetupEnv} with configuration environment secrets used by `Setup` functions.
    *
-   * @publicBody
+   * @publicbody
    */
   static getEnv(chain: sdk.Chain): SetupEnv {
     // Identity keys of the lead maintainer of this repo...
@@ -180,7 +179,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static async createWalletClient(
     args: SetupWalletClientArgs
@@ -204,7 +203,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static getKeyPair(priv?: string | PrivateKey): KeyPairAddress {
     if (priv === undefined) priv = PrivateKey.fromRandom()
@@ -216,16 +215,16 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
-  static getLockP2PKH(address: string) {
+  static getLockP2PKH(address: string): LockingScript {
     const p2pkh = new P2PKH()
     const lock = p2pkh.lock(address)
     return lock
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static getUnlockP2PKH(
     priv: PrivateKey,
@@ -243,7 +242,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static createP2PKHOutputs(
     outputs: {
@@ -270,7 +269,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static async createP2PKHOutputsAction(
     wallet: WalletInterface,
@@ -310,7 +309,7 @@ export abstract class SetupClient {
   }
 
   /**
-   * @publicBody
+   * @publicbody
    */
   static async fundWalletFromP2PKHOutpoints(
     wallet: WalletInterface,
@@ -323,9 +322,9 @@ export abstract class SetupClient {
 }
 
 /**
- *
+ * A private key and associated public key and address.
  */
-export type KeyPairAddress = {
+export interface KeyPairAddress {
   privateKey: PrivateKey
   publicKey: PublicKey
   address: string

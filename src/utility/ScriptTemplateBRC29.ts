@@ -1,31 +1,33 @@
-import { HexString, KeyDeriver, KeyDeriverApi, WalletProtocol } from '@bsv/sdk'
 import { asBsvSdkPrivateKey, verifyTruthy } from './index.client'
 import {
+  HexString,
+  KeyDeriver,
+  KeyDeriverApi,
+  WalletProtocol,
+  ScriptTemplate,
+  ScriptTemplateUnlock,
   LockingScript,
   P2PKH,
   PrivateKey,
-  Script,
-  ScriptTemplate,
-  Transaction,
-  UnlockingScript
+  Script
 } from '@bsv/sdk'
 
-export interface ScriptTemplateParamsSABPPP {
+export const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
+
+export interface ScriptTemplateParamsBRC29 {
   derivationPrefix?: string
   derivationSuffix?: string
   keyDeriver: KeyDeriverApi
 }
 
-export const brc29ProtocolID: WalletProtocol = [2, '3241645161d8']
-
 /**
  * Simple Authenticated BSV P2PKH Payment Protocol
  * https://brc.dev/29
  */
-export class ScriptTemplateSABPPP implements ScriptTemplate {
+export class ScriptTemplateBRC29 implements ScriptTemplate {
   p2pkh: P2PKH
 
-  constructor(public params: ScriptTemplateParamsSABPPP) {
+  constructor(public params: ScriptTemplateParamsBRC29) {
     this.p2pkh = new P2PKH()
 
     verifyTruthy(params.derivationPrefix)
@@ -59,10 +61,7 @@ export class ScriptTemplateSABPPP implements ScriptTemplate {
     lockerPubKey: string,
     sourceSatoshis?: number,
     lockingScript?: Script
-  ): {
-    sign: (tx: Transaction, inputIndex: number) => Promise<UnlockingScript>
-    estimateLength: (tx?: Transaction, inputIndex?: number) => Promise<number>
-  } {
+  ): ScriptTemplateUnlock {
     const derivedPrivateKey = this.getKeyDeriver(unlockerPrivKey)
       .derivePrivateKey(brc29ProtocolID, this.getKeyID(), lockerPubKey)
       .toHex()

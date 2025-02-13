@@ -9,7 +9,7 @@ import {
 import {
   asBsvSdkScript,
   PendingSignAction,
-  ScriptTemplateSABPPP,
+  ScriptTemplateBRC29,
   sdk,
   Wallet
 } from '../../index.client'
@@ -92,7 +92,7 @@ export async function completeSignedTransaction(
   // Insert SABPPP unlock templates for wallet signed inputs
   /////////////////////
   for (const pdi of prior.pdi) {
-    const sabppp = new ScriptTemplateSABPPP({
+    const sabppp = new ScriptTemplateBRC29({
       derivationPrefix: pdi.derivationPrefix,
       derivationSuffix: pdi.derivationSuffix,
       keyDeriver: wallet.keyDeriver
