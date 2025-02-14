@@ -1,8 +1,47 @@
+import { HexString } from '@bsv/sdk'
 import { asArray, asString, sdk, validateScriptHash } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
 
-import axios from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import Whatsonchain from 'whatsonchain'
+
+function axiosClient(
+  chain: sdk.Chain,
+  apiKey: string
+): { client: AxiosInstance; config: AxiosRequestConfig<any> } {
+  const API_ROOT = 'https://api.whatsonchain.com/v1/bsv'
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+    'User-Agent': 'wallet-toolbox',
+    Authorization: `${apiKey}`
+  }
+
+  const config: AxiosRequestConfig<any> = {
+    headers
+  }
+
+  const client = axios.create({
+    baseURL: `${API_ROOT}/${chain}/`,
+    timeout: 30000,
+    headers
+  })
+
+  return { client, config }
+}
+
+export async function postRawTxToWhatsOnChain(
+  chain: sdk.Chain,
+  rawTx: HexString,
+  apiKey: string
+): Promise<AxiosResponse<any, any>> {
+  const { client, config } = axiosClient(chain, apiKey)
+
+  const r = await client.post('tx/raw', rawTx, config)
+
+  return r
+}
 
 /**
  * WhatOnChain.com has their own "hash/pos/R/L" proof format and a more TSC compliant proof format.
@@ -23,8 +62,9 @@ export async function getMerklePathFromWhatsOnChainTsc(
   const r: sdk.GetMerklePathResult = { name: 'WoCTsc' }
 
   try {
-    const url = `https://api.whatsonchain.com/v1/bsv/${chain}/tx/${txid}/proof/tsc`
-    let { data } = await axios.get(url)
+    const { client, config } = axiosClient(chain, '')
+    const url = `tx/${txid}/proof/tsc`
+    let { data } = await client.get(url, config)
     if (!data || data.length < 1) return r
 
     if (!data['target']) data = data[0]
@@ -59,7 +99,8 @@ export async function getRawTxFromWhatsOnChain(
   const r: sdk.GetRawTxResult = { name: 'WoC', txid: asString(txid) }
 
   try {
-    const url = `https://api.whatsonchain.com/v1/bsv/${chain}/tx/${txid}/hex`
+    const { client, config } = axiosClient(chain, '')
+    const url = `https://api.whatsonchain.com/v1/bsv/${chain}/tx/hash/${txid}`
     const { data } = await axios.get(url)
     if (!data) return r
 
