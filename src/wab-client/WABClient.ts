@@ -10,7 +10,7 @@
  *  - Delete user
  */
 import fetch from "node-fetch";
-import { AuthMethodInteractor } from "./authMethodInteractors/AuthMethodInteractor";
+import { AuthMethodInteractor } from "./auth-method-interactors/AuthMethodInteractor";
 import crypto from "crypto";
 
 export class WABClient {

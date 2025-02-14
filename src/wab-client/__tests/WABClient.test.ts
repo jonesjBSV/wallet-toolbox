@@ -1,5 +1,5 @@
-import { WABClient } from "../src/WABClient";
-import { TwilioPhoneInteractor } from "../src/authMethodInteractors/TwilioPhoneInteractor";
+import { WABClient } from "../WABClient";
+import { TwilioPhoneInteractor } from "../auth-method-interactors/TwilioPhoneInteractor";
 
 // This test suite requires the WAB server to be running on localhost:3000 or you can
 // spin up a test environment or mock server. For demonstration, we'll keep it simple.
