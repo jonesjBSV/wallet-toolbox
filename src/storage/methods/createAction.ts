@@ -110,9 +110,13 @@ export async function createAction(
     transactionId: newTx.transactionId!
   }
 
-  const { allocatedChange, changeOutputs, derivationPrefix, maxPossibleSatoshisAdjustment } =
-    await fundNewTransactionSdk(storage, userId, vargs, ctx)
-  
+  const {
+    allocatedChange,
+    changeOutputs,
+    derivationPrefix,
+    maxPossibleSatoshisAdjustment
+  } = await fundNewTransactionSdk(storage, userId, vargs, ctx)
+
   if (maxPossibleSatoshisAdjustment) {
     const a = maxPossibleSatoshisAdjustment
     if (ctx.xoutputs[a.fixedOutputIndex].satoshis !== maxPossibleSatoshis)

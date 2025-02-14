@@ -67,7 +67,9 @@ describe('Wallet sync tests', () => {
   })
 
   test.skip('0a sync production dojo to local MySQL', async () => {
-    console.log('Importing from production dojo to local MySQL productiondojotone')
+    console.log(
+      'Importing from production dojo to local MySQL productiondojotone'
+    )
     const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
     const rootKeyHex = env.devKeys[identityKeyTone]
     const chain: sdk.Chain = 'main'
@@ -99,7 +101,7 @@ describe('Wallet sync tests', () => {
     const sweepFrom = await _tu.createMySQLTestWallet({
       databaseName: 'productiondojotone',
       chain: 'main',
-      rootKeyHex,
+      rootKeyHex
     })
 
     const sweepTo = await _tu.createSQLiteTestWallet({

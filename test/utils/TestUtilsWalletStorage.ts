@@ -57,7 +57,7 @@ import { Knex, knex as makeKnex } from 'knex'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-const localMySqlConnection = process.env.LOCAL_MYSQL_CONNECTION || ''
+const localMySqlConnection = process.env.MYSQL_CONNECTION || ''
 
 export interface TuEnv {
   chain: sdk.Chain
@@ -291,7 +291,7 @@ export abstract class TestUtilsWalletStorage {
       chain: 'test',
       rootKeyHex: args.rootKeyHex
     })
-    args.endpointUrl ||= 'https://staging-dojo.babbage.systems'
+    args.endpointUrl ||= 'https://staging-storage.babbage.systems'
     const client = new StorageClient(wo.wallet, args.endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
     await wo.storage.makeAvailable()

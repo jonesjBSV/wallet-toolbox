@@ -185,14 +185,10 @@ DEV_KEYS = '{
     args: SetupWalletClientArgs
   ): Promise<SetupWalletClient> {
     const wo = await SetupClient.createWallet(args)
-    if (wo.chain === 'main')
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'chain',
-        `'test' for now, 'main' is not yet supported.`
-      )
 
     const endpointUrl =
-      args.endpointUrl || 'https://staging-dojo.babbage.systems'
+      args.endpointUrl || `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
+
     const client = new StorageClient(wo.wallet, endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
     await wo.storage.makeAvailable()

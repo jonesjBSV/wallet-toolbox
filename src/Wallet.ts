@@ -774,11 +774,10 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   /**
    * Transfer all possible satoshis held by this wallet to `toWallet`.
-   * 
+   *
    * @param toWallet wallet which will receive this wallet's satoshis.
    */
   async sweepTo(toWallet: Wallet): Promise<void> {
-
     const derivationPrefix = randomBytesBase64(8)
     const derivationSuffix = randomBytesBase64(8)
     const keyDeriver = this.keyDeriver
@@ -796,7 +795,9 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const car = await this.createAction({
       outputs: [
         {
-          lockingScript: t.lock(keyDeriver.rootKey.toString(), toWallet.identityKey).toHex(),
+          lockingScript: t
+            .lock(keyDeriver.rootKey.toString(), toWallet.identityKey)
+            .toHex(),
           satoshis,
           outputDescription: label,
           tags: ['relinquish'],
@@ -817,15 +818,17 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
     const iar = await toWallet.internalizeAction({
       tx: car.tx!,
-      outputs: [{
-        outputIndex: 0,
-        protocol: 'wallet payment',
-        paymentRemittance: {
-          derivationPrefix,
-          derivationSuffix,
-          senderIdentityKey: this.identityKey
+      outputs: [
+        {
+          outputIndex: 0,
+          protocol: 'wallet payment',
+          paymentRemittance: {
+            derivationPrefix,
+            derivationSuffix,
+            senderIdentityKey: this.identityKey
+          }
         }
-      }],
+      ],
       description: label,
       labels: [label]
     })

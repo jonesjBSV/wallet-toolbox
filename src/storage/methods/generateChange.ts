@@ -280,8 +280,11 @@ export async function generateChangeSdk(
 
     if (feeExcess() < 0 && vgcpr.hasMaxPossibleOutput !== undefined) {
       // Reduce the fixed output with satoshis of maxPossibleSatoshis to what will just fund the transaction...
-      if (fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis !== maxPossibleSatoshis)
-        throw new sdk.WERR_INTERNAL();
+      if (
+        fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis !==
+        maxPossibleSatoshis
+      )
+        throw new sdk.WERR_INTERNAL()
       fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis += feeExcess()
       r.maxPossibleSatoshisAdjustment = {
         fixedOutputIndex: vgcpr.hasMaxPossibleOutput,
@@ -474,8 +477,7 @@ export interface ValidateGenerateChangeSdkParamsResult {
 
 export function validateGenerateChangeSdkParams(
   params: GenerateChangeSdkParams
-) : ValidateGenerateChangeSdkParamsResult
-{
+): ValidateGenerateChangeSdkParamsResult {
   if (!Array.isArray(params.fixedInputs))
     throw new sdk.WERR_INVALID_PARAMETER('fixedInputs', 'an array of objects')
 
@@ -503,7 +505,10 @@ export function validateGenerateChangeSdkParams(
     )
     if (x.satoshis === maxPossibleSatoshis) {
       if (r.hasMaxPossibleOutput !== undefined)
-        throw new sdk.WERR_INVALID_PARAMETER(`fixedOutputs[${i}].satoshis`, `valid satoshis amount. Only one 'maxPossibleSatoshis' output allowed.`);
+        throw new sdk.WERR_INVALID_PARAMETER(
+          `fixedOutputs[${i}].satoshis`,
+          `valid satoshis amount. Only one 'maxPossibleSatoshis' output allowed.`
+        )
       r.hasMaxPossibleOutput = i
     }
   })
