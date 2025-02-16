@@ -61,18 +61,17 @@ const localMySqlConnection = process.env.MYSQL_CONNECTION || ''
 
 export interface TuEnv {
   chain: sdk.Chain
-  userId: number
   identityKey: string
-  mainTaalApiKey: string
-  testTaalApiKey: string
+  identityKey2: string
+  taalApiKey: string
   devKeys: Record<string, string>
-  noMySQL: boolean
+  runMySQL: boolean
   runSlowTests: boolean
   logTests: boolean
 }
 
 export abstract class TestUtilsWalletStorage {
-  static getEnv(chain: sdk.Chain) {
+  static getEnv(chain: sdk.Chain) : TuEnv {
     // Identity keys of the lead maintainer of this repo...
     const identityKey =
       (chain === 'main'
@@ -86,18 +85,19 @@ export abstract class TestUtilsWalletStorage {
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
     const runSlowTests = !!process.env.RUNSLOWTESTS
+    const mainTaalApiKey= verifyTruthy(
+        process.env.MAIN_TAAL_API_KEY || '',
+        `.env value for 'mainTaalApiKey' is required.`
+      )
+    const testTaalApiKey = verifyTruthy(
+        process.env.TEST_TAAL_API_KEY || '',
+        `.env value for 'testTaalApiKey' is required.`
+      )
     return {
       chain,
       identityKey,
       identityKey2,
-      mainTaalApiKey: verifyTruthy(
-        process.env.MAIN_TAAL_API_KEY || '',
-        `.env value for 'mainTaalApiKey' is required.`
-      ),
-      testTaalApiKey: verifyTruthy(
-        process.env.TEST_TAAL_API_KEY || '',
-        `.env value for 'testTaalApiKey' is required.`
-      ),
+      taalApiKey: chain === 'main' ? mainTaalApiKey : testTaalApiKey,
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
       runMySQL,
       runSlowTests,

@@ -22,7 +22,7 @@ import {
   makePostTxsToTaalARC
 } from './providers/arcServices'
 import {
-  getMerklePathFromWhatsOnChainTsc,
+  //getMerklePathFromWhatsOnChainTsc,
   getRawTxFromWhatsOnChain,
   getUtxoStatusFromWhatsOnChain,
   updateBsvExchangeRate
@@ -58,10 +58,15 @@ export class Services implements sdk.WalletServices {
         : optionsOrChain
 
     this.getMerklePathServices =
+      new ServiceCollection<sdk.GetMerklePathService>()
+        /*
+        .add({
+    this.getMerklePathServices =
       new ServiceCollection<sdk.GetMerklePathService>().add({
         name: 'WhatsOnChainTsc',
         service: getMerklePathFromWhatsOnChainTsc
       })
+        */
     //.add({ name: 'Taal', service: makeGetMerklePathFromTaalARC(getTaalArcServiceConfig(this.chain, this.options.taalApiKey!)) })
 
     this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>().add({

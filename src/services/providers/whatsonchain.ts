@@ -1,115 +1,248 @@
-import { HexString } from '@bsv/sdk'
+import { WhatsOnChain as SdkWhatsOnChain, HexString, WhatsOnChainConfig } from '@bsv/sdk'
 import { asArray, asString, sdk, validateScriptHash } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import Whatsonchain from 'whatsonchain'
 
-function axiosClient(
-  chain: sdk.Chain,
-  apiKey: string
-): { client: AxiosInstance; config: AxiosRequestConfig<any> } {
-  const API_ROOT = 'https://api.whatsonchain.com/v1/bsv'
 
-  const headers = {
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache',
-    'User-Agent': 'wallet-toolbox',
-    Authorization: `${apiKey}`
+export class WhatsOnChain extends SdkWhatsOnChain {
+
+  constructor(
+    chain: sdk.Chain = 'main',
+    config: WhatsOnChainConfig = {}
+  ) {
+    super(chain, config)
   }
 
-  const config: AxiosRequestConfig<any> = {
-    headers
+  async getRawTx(txid: string): Promise<string | undefined> {
+    const requestOptions = {
+      method: 'GET',
+      headers: this.getHttpHeaders()
+    }
+
+    const response = await this.httpClient.request<string>(
+      `${this.URL}/tx/${txid}/hex`,
+      requestOptions
+    )
+
+    if (response.status === 404 && response.statusText === 'Not Found')
+      return undefined
+
+    if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+      throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
+
+    return response.data
   }
 
-  const client = axios.create({
-    baseURL: `${API_ROOT}/${chain}/`,
-    timeout: 30000,
-    headers
-  })
+  async getRawTxResult(
+    txid: string,
+  ): Promise<sdk.GetRawTxResult> {
+    const r: sdk.GetRawTxResult = { name: 'WoC', txid: asString(txid) }
 
-  return { client, config }
-}
+    try {
+      const rawTxHex = await this.getRawTx(txid)
+      if (rawTxHex)
+        r.rawTx = asArray(rawTxHex)
+    } catch (err: unknown) {
+      r.error = sdk.WalletError.fromUnknown(err)
+    }
 
-export async function postRawTxToWhatsOnChain(
-  chain: sdk.Chain,
-  rawTx: HexString,
-  apiKey: string
-): Promise<AxiosResponse<any, any>> {
-  const { client, config } = axiosClient(chain, apiKey)
+    return r
+  }
 
-  const r = await client.post('tx/raw', rawTx, config)
+  /**
+   * @param rawTx raw transaction to broadcast as hex string
+   * @returns txid returned by transaction processor of transaction broadcast
+   */
+  async postRawTx(rawTx: HexString): Promise<string> {
+    const headers = this.getHttpHeaders()
+    headers['Content-Type'] = 'application/json'
+    headers['Accept'] = 'text/plain'
 
-  return r
-}
+    const requestOptions = {
+      method: 'POST',
+      headers,
+      data: { txhex: rawTx }
+    }
 
-/**
- * WhatOnChain.com has their own "hash/pos/R/L" proof format and a more TSC compliant proof format.
- *
- * The "/proof/tsc" endpoint is much closer to the TSC specification. It provides "index" directly and each node is just the provided hash value.
- * The "targetType" is unspecified and thus defaults to block header hash, requiring a Chaintracks lookup to get the merkleRoot...
- * Duplicate hash values are provided in full instead of being replaced by "*".
- *
- * @param txid
- * @param chain
- * @returns
- */
-export async function getMerklePathFromWhatsOnChainTsc(
-  txid: string,
-  chain: sdk.Chain,
-  services: sdk.WalletServices
-): Promise<sdk.GetMerklePathResult> {
-  const r: sdk.GetMerklePathResult = { name: 'WoCTsc' }
-
-  try {
-    const { client, config } = axiosClient(chain, '')
-    const url = `tx/${txid}/proof/tsc`
-    let { data } = await client.get(url, config)
-    if (!data || data.length < 1) return r
-
-    if (!data['target']) data = data[0]
-    const p = data
-    const header = await services.hashToHeader(p.target)
-    if (!header)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'blockhash',
-        'a valid on-chain block hash'
+    try {
+      const response = await this.httpClient.request<string>(
+        this.URL,
+        requestOptions
       )
-    const proof = { index: p.index, nodes: p.nodes, height: header.height }
-    r.merklePath = convertProofToMerklePath(txid, proof)
-    r.header = header
-  } catch (err: unknown) {
-    r.error = sdk.WalletError.fromUnknown(err)
+      if (response.ok) {
+        const txid = response.data
+        return txid
+      } else {
+        throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid rawTx. response status ${response.status} ${rawTx}`)
+      }
+    } catch (eu: unknown) {
+      const e = sdk.WalletError.fromUnknown(eu)
+      throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid rawTx. error ${e.code} ${e.message} ${rawTx}`)
+    }
   }
 
-  return r
+  /**
+   * @param txid
+   * @returns
+   */
+  async getMerklePath(
+    txid: string,
+    services: sdk.WalletServices
+  ): Promise<sdk.GetMerklePathResult> {
+    const r: sdk.GetMerklePathResult = { name: 'WoCTsc' }
+
+    try {
+      const requestOptions = {
+        method: 'GET',
+        headers: this.getHttpHeaders()
+      }
+
+      const response = await this.httpClient.request<WhatsOnChainTscProof | WhatsOnChainTscProof[]>(
+        `${this.URL}/tx/${txid}/proof/tsc`,
+        requestOptions
+      )
+
+      if (response.status === 404 && response.statusText === 'Not Found')
+        return r
+
+      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+        throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
+
+      if (!Array.isArray(response.data)) response.data = [response.data];
+
+      if (response.data.length != 1)
+        return r
+
+      const p = response.data[0]
+      const header = await services.hashToHeader(p.target)
+      if (header) {
+        const proof = { index: p.index, nodes: p.nodes, height: header.height }
+        r.merklePath = convertProofToMerklePath(txid, proof)
+        r.header = header
+      } else {
+        throw new sdk.WERR_INVALID_PARAMETER(
+          'blockhash',
+          'a valid on-chain block hash'
+        )
+      }
+    } catch (err: unknown) {
+      r.error = sdk.WalletError.fromUnknown(err)
+    }
+
+    return r
+  }
+
+  async updateBsvExchangeRate(
+    rate?: sdk.BsvExchangeRate,
+    updateMsecs?: number
+  ): Promise<sdk.BsvExchangeRate> {
+
+    if (rate) {
+      // Check if the rate we know is stale enough to update.
+      updateMsecs ||= 1000 * 60 * 15
+      if (new Date(Date.now() - updateMsecs) < rate.timestamp) return rate
+    }
+
+    const requestOptions = {
+      method: 'GET',
+      headers: this.getHttpHeaders()
+    }
+
+    const response = await this.httpClient.request<{ rate: number; time: number; currency: string }>(
+      `${this.URL}/exchangerate`,
+      requestOptions
+    )
+
+    if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+      throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
+
+    const wocrate = response.data
+    if (wocrate.currency !== 'USD') wocrate.rate = NaN
+
+    const newRate: sdk.BsvExchangeRate = {
+      timestamp: new Date(),
+      base: 'USD',
+      rate: wocrate.rate
+    }
+
+    return newRate
+  }
+
+  async getUtxoStatus(
+    output: string,
+    outputFormat?: sdk.GetUtxoStatusOutputFormat
+  ): Promise<sdk.GetUtxoStatusResult> {
+    const r: sdk.GetUtxoStatusResult = {
+      name: 'WoC',
+      status: 'error',
+      error: new sdk.WERR_INTERNAL(),
+      details: []
+    }
+
+    for (let retry = 0; ; retry++) {
+      let url: string = ''
+
+      try {
+        const scriptHash = validateScriptHash(output, outputFormat)
+
+        const requestOptions = {
+          method: 'GET',
+          headers: this.getHttpHeaders()
+        }
+
+        const response = await this.httpClient.request<WhatsOnChainUtxoStatus[]>(
+          `${this.URL}/script/${scriptHash}/unspent`,
+          requestOptions
+        )
+
+        if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+          throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
+
+        if (Array.isArray(response.data)) {
+          const data = response.data
+          if (data.length === 0) {
+            r.status = 'success'
+            r.error = undefined
+            r.isUtxo = false
+          } else {
+            r.status = 'success'
+            r.error = undefined
+            r.isUtxo = true
+            for (const s of data) {
+              r.details.push({
+                txid: s.tx_hash,
+                satoshis: s.value,
+                height: s.height,
+                index: s.tx_pos
+              })
+            }
+          }
+        } else {
+          throw new sdk.WERR_INTERNAL('data is not an array')
+        }
+
+        return r
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        if (e.code !== 'ECONNRESET' || retry > 2) {
+          r.error = new sdk.WERR_INTERNAL(
+            `service failure: ${url}, error: ${JSON.stringify(sdk.WalletError.fromUnknown(eu))}`
+          )
+          return r
+        }
+      }
+    }
+    return r
+  }
 }
 
-interface WhatsOnChainProofTsc {
+interface WhatsOnChainTscProof {
   index: number
-  txOrId: string
-  target: string
   nodes: string[]
-}
-
-export async function getRawTxFromWhatsOnChain(
-  txid: string,
-  chain: sdk.Chain
-): Promise<sdk.GetRawTxResult> {
-  const r: sdk.GetRawTxResult = { name: 'WoC', txid: asString(txid) }
-
-  try {
-    const { client, config } = axiosClient(chain, '')
-    const url = `https://api.whatsonchain.com/v1/bsv/${chain}/tx/hash/${txid}`
-    const { data } = await axios.get(url)
-    if (!data) return r
-
-    r.rawTx = asArray(data)
-  } catch (err: unknown) {
-    r.error = sdk.WalletError.fromUnknown(err)
-  }
-
-  return r
+  target: string
+  txOrId: string
 }
 
 interface WhatsOnChainUtxoStatus {
@@ -117,95 +250,4 @@ interface WhatsOnChainUtxoStatus {
   height: number
   tx_pos: number
   tx_hash: string
-}
-
-export async function getUtxoStatusFromWhatsOnChain(
-  output: string,
-  chain: sdk.Chain,
-  outputFormat?: sdk.GetUtxoStatusOutputFormat
-): Promise<sdk.GetUtxoStatusResult> {
-  const r: sdk.GetUtxoStatusResult = {
-    name: 'WoC',
-    status: 'error',
-    error: new sdk.WERR_INTERNAL(),
-    details: []
-  }
-
-  for (let retry = 0; ; retry++) {
-    let url: string = ''
-
-    try {
-      const scriptHash = validateScriptHash(output, outputFormat)
-
-      url = `https://api.whatsonchain.com/v1/bsv/${chain}/script/${scriptHash}/unspent`
-
-      const { data } = await axios.get(url)
-
-      if (Array.isArray(data)) {
-        if (data.length === 0) {
-          r.status = 'success'
-          r.error = undefined
-          r.isUtxo = false
-        } else {
-          r.status = 'success'
-          r.error = undefined
-          r.isUtxo = true
-          for (const s of <WhatsOnChainUtxoStatus[]>data) {
-            r.details.push({
-              txid: s.tx_hash,
-              satoshis: s.value,
-              height: s.height,
-              index: s.tx_pos
-            })
-          }
-        }
-      } else {
-        throw new sdk.WERR_INTERNAL('data is not an array')
-      }
-
-      return r
-    } catch (eu: unknown) {
-      const e = sdk.WalletError.fromUnknown(eu)
-      if (e.code !== 'ECONNRESET' || retry > 2) {
-        r.error = new sdk.WERR_INTERNAL(
-          `service failure: ${url}, error: ${JSON.stringify(sdk.WalletError.fromUnknown(eu))}`
-        )
-        return r
-      }
-    }
-  }
-  return r
-}
-
-interface WhatsOnChainScriptHistory {
-  fee?: number
-  height?: number
-  tx_hash: string
-}
-
-export async function updateBsvExchangeRate(
-  rate?: sdk.BsvExchangeRate,
-  updateMsecs?: number
-): Promise<sdk.BsvExchangeRate> {
-  if (rate) {
-    // Check if the rate we know is stale enough to update.
-    updateMsecs ||= 1000 * 60 * 15
-    if (new Date(Date.now() - updateMsecs) < rate.timestamp) return rate
-  }
-
-  // TODO: Expand to redundant services with caching...
-  const woc = new Whatsonchain()
-  const r = await woc.exchangeRate()
-  const wocrate = <{ rate: number; time: number; currency: string }>r
-  if (wocrate.currency !== 'USD') wocrate.rate = NaN
-
-  const newRate: sdk.BsvExchangeRate = {
-    timestamp: new Date(),
-    base: 'USD',
-    rate: wocrate.rate
-  }
-
-  //console.log(`new bsv rate=${JSON.stringify(newRate)}`)
-
-  return newRate
 }

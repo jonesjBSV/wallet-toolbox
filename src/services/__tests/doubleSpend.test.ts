@@ -2,8 +2,7 @@ import { Beef, KeyDeriver, P2PKH, PrivateKey, Transaction } from '@bsv/sdk'
 import { brc29ProtocolID, sdk } from '../../index.client'
 import { _tu } from '../../../test/utils/TestUtilsWalletStorage'
 import {
-  getRawTxFromWhatsOnChain,
-  postRawTxToWhatsOnChain
+  WhatsOnChain
 } from '../providers/whatsonchain'
 
 describe('doubleSpend tests', () => {
@@ -14,19 +13,13 @@ describe('doubleSpend tests', () => {
     const tx = await txThatDoubleSpends('main')
     const txid = tx.id('hex')
     console.log(txid)
-    const pr = await postRawTxToWhatsOnChain(
-      'main',
-      tx.toHex(),
-      env.mainTaalApiKey
-    )
-    expect(pr.status === 200)
-    expect(pr.statusText === 'OK')
+    const woc = new WhatsOnChain(env.chain, { apiKey: env.taalApiKey })
+    const txid2 = await woc.postRawTx(tx.toHex())
 
-    const gr2 = await getRawTxFromWhatsOnChain(
+    const gr2 = await woc.getRawTx(
       'a2d12c318cc46935b321f3199cc4e9eafd39e8ca6e73cc33d182f7ff64ffab19',
-      env.chain
     )
-    const gr = await getRawTxFromWhatsOnChain(txid, env.chain)
+    const gr = await woc.getRawTx(txid)
   })
 })
 
