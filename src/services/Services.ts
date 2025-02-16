@@ -22,10 +22,7 @@ import {
   makePostTxsToTaalARC
 } from './providers/arcServices'
 import {
-  //getMerklePathFromWhatsOnChainTsc,
-  getRawTxFromWhatsOnChain,
-  getUtxoStatusFromWhatsOnChain,
-  updateBsvExchangeRate
+  WhatsOnChain
 } from './providers/whatsonchain'
 import {
   updateChaintracksFiatExchangeRates,
@@ -38,6 +35,7 @@ export class Services implements sdk.WalletServices {
   }
 
   options: sdk.WalletServicesOptions
+  whatsonchain: WhatsOnChain
 
   getMerklePathServices: ServiceCollection<sdk.GetMerklePathService>
   getRawTxServices: ServiceCollection<sdk.GetRawTxService>
@@ -57,21 +55,17 @@ export class Services implements sdk.WalletServices {
         ? Services.createDefaultOptions(this.chain)
         : optionsOrChain
 
-    this.getMerklePathServices =
-      new ServiceCollection<sdk.GetMerklePathService>()
-        /*
-        .add({
+    this.whatsonchain = new WhatsOnChain(this.chain, { apiKey: this.options.taalApiKey })
+
     this.getMerklePathServices =
       new ServiceCollection<sdk.GetMerklePathService>().add({
-        name: 'WhatsOnChainTsc',
-        service: getMerklePathFromWhatsOnChainTsc
+        name: 'WhatsOnChain',
+        service: this.whatsonchain.getMerklePath
       })
-        */
-    //.add({ name: 'Taal', service: makeGetMerklePathFromTaalARC(getTaalArcServiceConfig(this.chain, this.options.taalApiKey!)) })
 
     this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>().add({
       name: 'WhatsOnChain',
-      service: getRawTxFromWhatsOnChain
+      service: this.whatsonchain.getRawTxResult
     })
 
     this.postTxsServices = new ServiceCollection<sdk.PostTxsService>().add({
@@ -91,7 +85,7 @@ export class Services implements sdk.WalletServices {
     this.getUtxoStatusServices =
       new ServiceCollection<sdk.GetUtxoStatusService>().add({
         name: 'WhatsOnChain',
-        service: getUtxoStatusFromWhatsOnChain
+        service: this.whatsonchain.getUtxoStatus
       })
 
     this.updateFiatExchangeRateServices =
@@ -113,7 +107,7 @@ export class Services implements sdk.WalletServices {
   }
 
   async getBsvExchangeRate(): Promise<number> {
-    this.options.bsvExchangeRate = await updateBsvExchangeRate(
+    this.options.bsvExchangeRate = await this.whatsonchain.updateBsvExchangeRate(
       this.options.bsvExchangeRate,
       this.options.bsvUpdateMsecs
     )
@@ -171,7 +165,7 @@ export class Services implements sdk.WalletServices {
     for (let retry = 0; retry < 2; retry++) {
       for (let tries = 0; tries < services.count; tries++) {
         const service = services.service
-        const r = await service(output, this.chain, outputFormat)
+        const r = await service(output, outputFormat)
         if (r.status === 'success') {
           r0 = r
           break
@@ -318,7 +312,7 @@ export class Services implements sdk.WalletServices {
 
     for (let tries = 0; tries < this.getMerklePathServices.count; tries++) {
       const service = this.getMerklePathServices.service
-      const r = await service(txid, this.chain, this)
+      const r = await service(txid, this)
       if (r.merklePath) {
         // If we have a proof, call it done.
         r0.merklePath = r.merklePath

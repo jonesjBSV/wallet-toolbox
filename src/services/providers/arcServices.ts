@@ -64,7 +64,7 @@ export function makePostBeefToTaalARC(
 export function makeGetMerklePathFromTaalARC(
   config: ArcServiceConfig
 ): sdk.GetMerklePathService {
-  return (txid: string, chain: sdk.Chain, services: sdk.WalletServices) => {
+  return (txid: string, services: sdk.WalletServices) => {
     return getMerklePathFromTaalARC(txid, config, services)
   }
 }

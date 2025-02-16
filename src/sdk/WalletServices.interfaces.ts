@@ -366,13 +366,11 @@ export interface BlockHeader extends BaseBlockHeader {
 
 export type GetUtxoStatusService = (
   output: string,
-  chain: sdk.Chain,
   outputFormat?: GetUtxoStatusOutputFormat
 ) => Promise<GetUtxoStatusResult>
 
 export type GetMerklePathService = (
   txid: string,
-  chain: sdk.Chain,
   services: WalletServices
 ) => Promise<GetMerklePathResult>
 
