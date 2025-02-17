@@ -120,34 +120,4 @@ describe('Wallet services tests', () => {
       }
     }
   })
-
-  test('6 postBeef', async () => {
-    for (const { chain, wallet, services } of ctxs) {
-      if (!wallet.services || !services)
-        throw new sdk.WERR_INTERNAL('test requires setup with services')
-      {
-        if (chain === 'main') {
-          const txid =
-            'b56ccf7dd0eb6bb0341cb92a2045d902106e4c2add0a4af057c85e9dfaaebddf'
-          const rawTx = await wallet.services.getRawTx(txid)
-          const mp = await wallet.services.getMerklePath(txid)
-          const beef = new Beef()
-          beef.mergeBump(mp.merklePath!)
-          beef.mergeRawTx(rawTx.rawTx!)
-          // Using postTxs as postBeef is problematic still...
-          const r = await wallet.services.postTxs(beef, [txid])
-          if (r[0].status === 'error') {
-            console.log(`
-${r[0].error?.message}
-${beef.toLogString()}
-${beef.toHex()}
-              `)
-          } else {
-            expect(r[0].txidResults[0].txid).toBe(txid)
-            expect(r[0].status).toBe('success')
-          }
-        }
-      }
-    }
-  })
 })

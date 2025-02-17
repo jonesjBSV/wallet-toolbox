@@ -13,19 +13,14 @@ import {
   wait
 } from '../index.client'
 import { ServiceCollection } from './ServiceCollection'
-
 import { createDefaultWalletServicesOptions } from './createDefaultWalletServicesOptions'
 import { ChaintracksChainTracker } from './chaintracker'
-import {
-  getTaalArcServiceConfig,
-  makePostBeefToTaalARC,
-  makePostTxsToTaalARC
-} from './providers/arcServices'
 import { WhatsOnChain } from './providers/WhatsOnChain'
 import {
   updateChaintracksFiatExchangeRates,
   updateExchangeratesapi
 } from './providers/echangeRates'
+import ARC from './providers/ARC'
 
 export class Services implements sdk.WalletServices {
   static createDefaultOptions(chain: sdk.Chain): sdk.WalletServicesOptions {
@@ -34,10 +29,10 @@ export class Services implements sdk.WalletServices {
 
   options: sdk.WalletServicesOptions
   whatsonchain: WhatsOnChain
+  arc: ARC
 
   getMerklePathServices: ServiceCollection<sdk.GetMerklePathService>
   getRawTxServices: ServiceCollection<sdk.GetRawTxService>
-  postTxsServices: ServiceCollection<sdk.PostTxsService>
   postBeefServices: ServiceCollection<sdk.PostBeefService>
   getUtxoStatusServices: ServiceCollection<sdk.GetUtxoStatusService>
   updateFiatExchangeRateServices: ServiceCollection<sdk.UpdateFiatExchangeRateService>
@@ -57,6 +52,8 @@ export class Services implements sdk.WalletServices {
       apiKey: this.options.taalApiKey
     })
 
+    this.arc = new ARC(this.options.arcUrl, this.options.arcConfig)
+
     this.getMerklePathServices =
       new ServiceCollection<sdk.GetMerklePathService>().add({
         name: 'WhatsOnChain',
@@ -68,18 +65,9 @@ export class Services implements sdk.WalletServices {
       service: this.whatsonchain.getRawTxResult.bind(this.whatsonchain)
     })
 
-    this.postTxsServices = new ServiceCollection<sdk.PostTxsService>().add({
-      name: 'TaalArcTxs',
-      service: makePostTxsToTaalARC(
-        getTaalArcServiceConfig(this.chain, this.options.taalApiKey!)
-      )
-    })
-
     this.postBeefServices = new ServiceCollection<sdk.PostBeefService>().add({
       name: 'TaalArcBeef',
-      service: makePostBeefToTaalARC(
-        getTaalArcServiceConfig(this.chain, this.options.taalApiKey!)
-      )
+      service: this.arc.postBeef.bind(this.arc)
     })
 
     this.getUtxoStatusServices =
@@ -138,9 +126,6 @@ export class Services implements sdk.WalletServices {
   get getRawTxsCount() {
     return this.getRawTxServices.count
   }
-  get postTxsServicesCount() {
-    return this.postTxsServices.count
-  }
   get postBeefServicesCount() {
     return this.postBeefServices.count
   }
@@ -180,25 +165,6 @@ export class Services implements sdk.WalletServices {
   }
 
   /**
-   * The beef must contain at least each rawTx for each txid.
-   * Some services may require input transactions as well.
-   * These will be fetched if missing, greatly extending the service response time.
-   * @param beef
-   * @param txids
-   * @returns
-   */
-  async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> {
-    const rs = await Promise.all(
-      this.postTxsServices.allServices.map(async service => {
-        const r = await service(beef, txids, this)
-        return r
-      })
-    )
-
-    return rs
-  }
-
-  /**
    *
    * @param beef
    * @param chain
@@ -207,15 +173,10 @@ export class Services implements sdk.WalletServices {
   async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> {
     let rs = await Promise.all(
       this.postBeefServices.allServices.map(async service => {
-        const r = await service(beef, txids, this)
+        const r = await service(beef, txids)
         return r
       })
     )
-
-    if (rs.every(r => r.status !== 'success')) {
-      rs = await this.postTxs(beef, txids)
-    }
-
     return rs
   }
 

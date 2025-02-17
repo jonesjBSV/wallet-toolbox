@@ -1,8 +1,4 @@
-import {
-  WhatsOnChain as SdkWhatsOnChain,
-  HexString,
-  WhatsOnChainConfig
-} from '@bsv/sdk'
+import { HexString, WhatsOnChainConfig } from '@bsv/sdk'
 import {
   asArray,
   asString,
@@ -11,9 +7,10 @@ import {
   wait
 } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
+import SdkWhatsOnChain from './SdkWhatsOnChain'
 
 /**
- * 
+ *
  */
 export class WhatsOnChain extends SdkWhatsOnChain {
   constructor(chain: sdk.Chain = 'main', config: WhatsOnChainConfig = {}) {

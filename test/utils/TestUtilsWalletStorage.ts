@@ -1705,18 +1705,6 @@ function mockPostServices(
           return Promise.resolve([r])
         }
       )
-    services.postTxs = jest
-      .fn()
-      .mockImplementation(
-        (beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
-          const r: sdk.PostBeefResult = {
-            name: 'mock',
-            status: 'success',
-            txidResults: txids.map(txid => ({ txid, status }))
-          }
-          return Promise.resolve([r])
-        }
-      )
   }
 }
 

@@ -1,4 +1,5 @@
 import {
+  ArcConfig,
   Beef,
   Transaction as BsvTransaction,
   ChainTracker,
@@ -97,15 +98,6 @@ export interface WalletServices {
    * @param chain
    * @returns
    */
-  postTxs(beef: Beef, txids: string[]): Promise<PostTxsResult[]>
-
-  /**
-   *
-   * @param beef
-   * @param txids
-   * @param chain
-   * @returns
-   */
   postBeef(beef: Beef, txids: string[]): Promise<PostBeefResult[]>
 
   /**
@@ -168,6 +160,8 @@ export interface WalletServicesOptions {
   exchangeratesapiKey?: string
   chaintracksFiatExchangeRatesUrl?: string
   chaintracks?: ChaintracksServiceClient
+  arcUrl: string
+  arcConfig: ArcConfig
 }
 
 /**
@@ -401,8 +395,7 @@ export type PostTxsService = (
 
 export type PostBeefService = (
   beef: Beef,
-  txids: string[],
-  services: WalletServices
+  txids: string[]
 ) => Promise<PostBeefResult>
 
 export type UpdateFiatExchangeRateService = (

@@ -1,6 +1,15 @@
-import { Broadcaster, BroadcastFailure, BroadcastResponse, defaultHttpClient, HexString, HttpClient, HttpClientRequestOptions, Random, Transaction, Utils } from "@bsv/sdk"
-import { doubleSha256BE, sdk } from "../../index.client"
-import { error } from "console"
+import {
+  Beef,
+  BEEF_V1,
+  BEEF_V2,
+  defaultHttpClient,
+  HexString,
+  HttpClient,
+  HttpClientRequestOptions,
+  Random,
+  Utils
+} from '@bsv/sdk'
+import { doubleSha256BE, sdk } from '../../index.client'
 
 /** Configuration options for the ARC broadcaster. */
 export interface ArcConfig {
@@ -106,9 +115,27 @@ export default class ARC {
     return headers
   }
 
-  async postRawTx(rawTx: HexString): Promise<sdk.PostTxResultForTxid> {
-
-    const txid = Utils.toHex(doubleSha256BE(Utils.toArray(rawTx, 'hex')))
+  /**
+   * The ARC '/v1/tx' endpoint, as of 2025-02-17 supports all of the following hex string formats:
+   *   1. Single serialized raw transaction.
+   *   2. Single EF serialized raw transaction (untested).
+   *   3. V1 serialized Beef (results returned reflect only the last transaction in the beef)
+   *
+   * The ARC '/v1/tx' endpoint, as of 2025-02-17 DOES NOT support the following hex string formats:
+   *   1. V2 serialized Beef
+   *
+   * @param rawTx
+   * @param txids
+   * @returns
+   */
+  async postRawTx(
+    rawTx: HexString,
+    txids?: string[]
+  ): Promise<sdk.PostTxResultForTxid> {
+    let txid = Utils.toHex(doubleSha256BE(Utils.toArray(rawTx, 'hex')))
+    if (txids) {
+      txid = txids.slice(-1)[0]
+    }
 
     const requestOptions: HttpClientRequestOptions = {
       method: 'POST',
@@ -118,11 +145,10 @@ export default class ARC {
 
     const r: sdk.PostTxResultForTxid = {
       txid,
-      status: "success"
+      status: 'success'
     }
 
     try {
-
       const response = await this.httpClient.request<ArcResponse>(
         `${this.URL}/v1/tx`,
         requestOptions
@@ -139,12 +165,14 @@ export default class ARC {
           r.competingTxs = competingTxs
         }
       } else {
-
         r.status = 'error'
         const ed: sdk.PostTxResultForTxidError = {}
         r.data = ed
         const st = typeof response.status
-        ed.status = st === 'number' || st === 'string' ? response.status.toString() : 'ERR_UNKNOWN'
+        ed.status =
+          st === 'number' || st === 'string'
+            ? response.status.toString()
+            : 'ERR_UNKNOWN'
 
         let d = response.data
         if (d && typeof d === 'string') {
@@ -160,61 +188,83 @@ export default class ARC {
           if (typeof ed.detail !== 'string') ed.detail = undefined
         }
       }
-
     } catch (eu: unknown) {
-        const e = sdk.WalletError.fromUnknown(eu)
-        r.status = 'error'
-        r.data = `${e.code} ${e.message}`
+      const e = sdk.WalletError.fromUnknown(eu)
+      r.status = 'error'
+      r.data = `${e.code} ${e.message}`
     }
 
     return r
   }
 
   /**
-   * Broadcasts multiple transactions via ARC.
-   * Handles mixed responses where some transactions succeed and others fail.
+   * ARC does not natively support a postBeef end-point aware of multiple txids of interest in the Beef.
    *
-   * @param {Transaction[]} txs - Array of transactions to be broadcasted.
-   * @returns {Promise<Array<object>>} A promise that resolves to an array of objects.
+   * It does process multiple new transactions, however, which allows results for all txids of interest
+   * to be collected by the `/v1/tx/${txid}` endpoint.
+   *
+   * @param beef
+   * @param txids
+   * @returns
    */
-  async broadcastMany(txs: Transaction[]): Promise<object[]> {
-    const rawTxs = txs.map((tx) => {
-      try {
-        return { rawTx: tx.toHexEF() }
-    } catch (eu: unknown) {
-        const e = sdk.WalletError.fromUnknown(eu)
-        if (
-          e.message ===
-          'All inputs must have source transactions when serializing to EF format'
-        ) {
-          return { rawTx: tx.toHex() }
-        }
-        throw eu
-      }
-    })
+  async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> {
+    if (beef.version === BEEF_V2 && beef.txs.every(btx => !btx.isTxidOnly)) {
+      beef.version = BEEF_V1
+    }
 
+    const beefHex = beef.toHex()
+
+    const prtr = await this.postRawTx(beefHex, txids)
+
+    const r: sdk.PostBeefResult = {
+      name: 'ARC',
+      status: prtr.status,
+      txidResults: [prtr]
+    }
+
+    for (const txid of txids) {
+      if (prtr.txid === txid) continue
+      const tr: sdk.PostTxResultForTxid = {
+        txid,
+        status: 'success'
+      }
+      const dr = await this.getTxData(txid)
+      if (dr.txid !== txid) {
+        tr.status = 'error'
+        tr.data = 'internal error'
+      } else if (
+        dr.txStatus === 'SEEN_ON_NETWORK' ||
+        dr.txStatus === 'STORED'
+      ) {
+        tr.data = dr.txStatus
+      } else {
+        tr.status = 'error'
+        tr.data = dr
+      }
+      r.txidResults.push(tr)
+      if (r.status === 'success' && tr.status === 'error') r.status = 'error'
+    }
+
+    return r
+  }
+
+  /**
+   * This seems to only work for recently submitted txids...but that's all we need to complete postBeef!
+   * @param txid
+   * @returns
+   */
+  async getTxData(txid: string): Promise<ArcMinerGetTxData> {
     const requestOptions: HttpClientRequestOptions = {
-      method: 'POST',
-      headers: this.requestHeaders(),
-      data: rawTxs
+      method: 'GET',
+      headers: this.requestHeaders()
     }
 
-    try {
-      const response = await this.httpClient.request<object[]>(
-        `${this.URL}/v1/txs`,
-        requestOptions
-      )
+    const response = await this.httpClient.request<ArcMinerGetTxData>(
+      `${this.URL}/v1/tx/${txid}`,
+      requestOptions
+    )
 
-      return response.data as object[]
-    } catch (eu: unknown) {
-        const e = sdk.WalletError.fromUnknown(eu)
-      const errorResponse: BroadcastFailure = {
-        status: 'error',
-        code: '500',
-        description: typeof e.message === 'string' ? e.message : 'Internal Server Error'
-      }
-      return txs.map(() => errorResponse)
-    }
+    return response.data
   }
 }
 
@@ -223,4 +273,17 @@ interface ArcResponse {
   extraInfo: string
   txStatus: string
   competingTxs?: string[]
+}
+
+export interface ArcMinerGetTxData {
+  status: number // 200
+  title: string // OK
+  blockHash: string
+  blockHeight: number
+  competingTxs: null | string[]
+  extraInfo: string
+  merklePath: string
+  timestamp: string // ISO Z
+  txid: string
+  txStatus: string // 'SEEN_IN_ORPHAN_MEMPOOL'
 }

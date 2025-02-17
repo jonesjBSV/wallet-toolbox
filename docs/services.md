@@ -23,16 +23,80 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | |
 | --- |
+| [ArcConfig](#interface-arcconfig) |
 | [ArcMinerGetTxData](#interface-arcminergettxdata) |
-| [ArcMinerPostBeefDataApi](#interface-arcminerpostbeefdataapi) |
-| [ArcMinerPostTxsData](#interface-arcminerposttxsdata) |
-| [ArcServiceConfig](#interface-arcserviceconfig) |
 | [ExchangeRatesIoApi](#interface-exchangeratesioapi) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
 
+##### Interface: ArcConfig
+
+Configuration options for the ARC broadcaster.
+
+```ts
+export interface ArcConfig {
+    apiKey?: string;
+    httpClient?: HttpClient;
+    deploymentId?: string;
+    callbackUrl?: string;
+    callbackToken?: string;
+    headers?: Record<string, string>;
+}
+```
+
+###### Property apiKey
+
+Authentication token for the ARC API
+
+```ts
+apiKey?: string
+```
+
+###### Property callbackToken
+
+default access token for notification callback endpoint. It will be used as a Authorization header for the http callback
+
+```ts
+callbackToken?: string
+```
+
+###### Property callbackUrl
+
+notification callback endpoint for proofs and double spend notification
+
+```ts
+callbackUrl?: string
+```
+
+###### Property deploymentId
+
+Deployment id used annotating api calls in XDeployment-ID header - this value will be randomly generated if not set
+
+```ts
+deploymentId?: string
+```
+
+###### Property headers
+
+additional headers to be attached to all tx submissions.
+
+```ts
+headers?: Record<string, string>
+```
+
+###### Property httpClient
+
+The HTTP client used to make requests to the ARC API.
+
+```ts
+httpClient?: HttpClient
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: ArcMinerGetTxData
 
 ```ts
@@ -47,62 +111,6 @@ export interface ArcMinerGetTxData {
     timestamp: string;
     txid: string;
     txStatus: string;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Interface: ArcMinerPostBeefDataApi
-
-```ts
-export interface ArcMinerPostBeefDataApi {
-    status: number;
-    title: string;
-    blockHash?: string;
-    blockHeight?: number;
-    competingTxs?: null;
-    extraInfo: string;
-    merklePath?: string;
-    timestamp?: string;
-    txid?: string;
-    txStatus?: string;
-    type?: string;
-    detail?: string;
-    instance?: string;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Interface: ArcMinerPostTxsData
-
-```ts
-export interface ArcMinerPostTxsData {
-    status: number;
-    title: string;
-    blockHash: string;
-    blockHeight: number;
-    competingTxs: null | string[];
-    extraInfo: string;
-    merklePath: string;
-    timestamp: string;
-    txid: string;
-    txStatus: string;
-}
-```
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Interface: ArcServiceConfig
-
-```ts
-export interface ArcServiceConfig {
-    name: string;
-    url: string;
-    arcConfig: ArcConfig;
 }
 ```
 
@@ -128,6 +136,8 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | |
 | --- |
+| [ARC](#class-arc) |
+| [SdkWhatsOnChain](#class-sdkwhatsonchain) |
 | [ServiceCollection](#class-servicecollection) |
 | [Services](#class-services) |
 | [WhatsOnChain](#class-whatsonchain) |
@@ -136,6 +146,134 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
+##### Class: ARC
+
+Represents an ARC transaction broadcaster.
+
+```ts
+export default class ARC {
+    readonly URL: string;
+    readonly apiKey: string | undefined;
+    readonly deploymentId: string;
+    readonly callbackUrl: string | undefined;
+    readonly callbackToken: string | undefined;
+    readonly headers: Record<string, string> | undefined;
+    constructor(URL: string, config?: ArcConfig);
+    constructor(URL: string, apiKey?: string);
+    constructor(URL: string, config?: string | ArcConfig) 
+    async postRawTx(rawTx: HexString, txids?: string[]): Promise<sdk.PostTxResultForTxid> 
+    async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
+    async getTxData(txid: string): Promise<ArcMinerGetTxData> 
+}
+```
+
+See also: [ArcConfig](./services.md#interface-arcconfig), [ArcMinerGetTxData](./services.md#interface-arcminergettxdata), [PostBeefResult](./client.md#interface-postbeefresult), [PostTxResultForTxid](./client.md#interface-posttxresultfortxid)
+
+###### Constructor
+
+Constructs an instance of the ARC broadcaster.
+
+```ts
+constructor(URL: string, config?: ArcConfig)
+```
+See also: [ArcConfig](./services.md#interface-arcconfig)
+
+Argument Details
+
++ **URL**
+  + The URL endpoint for the ARC API.
++ **config**
+  + Configuration options for the ARC broadcaster.
+
+###### Constructor
+
+Constructs an instance of the ARC broadcaster.
+
+```ts
+constructor(URL: string, apiKey?: string)
+```
+
+Argument Details
+
++ **URL**
+  + The URL endpoint for the ARC API.
++ **apiKey**
+  + The API key used for authorization with the ARC API.
+
+###### Method getTxData
+
+This seems to only work for recently submitted txids...but that's all we need to complete postBeef!
+
+```ts
+async getTxData(txid: string): Promise<ArcMinerGetTxData> 
+```
+See also: [ArcMinerGetTxData](./services.md#interface-arcminergettxdata)
+
+###### Method postBeef
+
+ARC does not natively support a postBeef end-point aware of multiple txids of interest in the Beef.
+
+It does process multiple new transactions, however, which allows results for all txids of interest
+to be collected by the `/v1/tx/${txid}` endpoint.
+
+```ts
+async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
+```
+See also: [PostBeefResult](./client.md#interface-postbeefresult)
+
+###### Method postRawTx
+
+The ARC '/v1/tx' endpoint, as of 2025-02-17 supports all of the following hex string formats:
+  1. Single serialized raw transaction.
+  2. Single EF serialized raw transaction (untested).
+  3. V1 serialized Beef (results returned reflect only the last transaction in the beef)
+
+The ARC '/v1/tx' endpoint, as of 2025-02-17 DOES NOT support the following hex string formats:
+  1. V2 serialized Beef
+
+```ts
+async postRawTx(rawTx: HexString, txids?: string[]): Promise<sdk.PostTxResultForTxid> 
+```
+See also: [PostTxResultForTxid](./client.md#interface-posttxresultfortxid)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: SdkWhatsOnChain
+
+Represents a chain tracker based on What's On Chain .
+
+```ts
+export default class SdkWhatsOnChain implements ChainTracker {
+    readonly network: string;
+    readonly apiKey: string;
+    protected readonly URL: string;
+    protected readonly httpClient: HttpClient;
+    constructor(network: "main" | "test" | "stn" = "main", config: WhatsOnChainConfig = {}) 
+    async isValidRootForHeight(root: string, height: number): Promise<boolean> 
+    async currentHeight(): Promise<number> 
+    protected getHttpHeaders(): Record<string, string> 
+}
+```
+
+###### Constructor
+
+Constructs an instance of the WhatsOnChain ChainTracker.
+
+```ts
+constructor(network: "main" | "test" | "stn" = "main", config: WhatsOnChainConfig = {}) 
+```
+
+Argument Details
+
++ **network**
+  + The BSV network to use when calling the WhatsOnChain API.
++ **config**
+  + Configuration options for the WhatsOnChain ChainTracker.
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Class: ServiceCollection
 
 ```ts
@@ -175,9 +313,9 @@ export class Services implements sdk.WalletServices {
     static createDefaultOptions(chain: sdk.Chain): sdk.WalletServicesOptions 
     options: sdk.WalletServicesOptions;
     whatsonchain: WhatsOnChain;
+    arc: ARC;
     getMerklePathServices: ServiceCollection<sdk.GetMerklePathService>;
     getRawTxServices: ServiceCollection<sdk.GetRawTxService>;
-    postTxsServices: ServiceCollection<sdk.PostTxsService>;
     postBeefServices: ServiceCollection<sdk.PostBeefService>;
     getUtxoStatusServices: ServiceCollection<sdk.GetUtxoStatusService>;
     updateFiatExchangeRateServices: ServiceCollection<sdk.UpdateFiatExchangeRateService>;
@@ -188,11 +326,9 @@ export class Services implements sdk.WalletServices {
     async getFiatExchangeRate(currency: "USD" | "GBP" | "EUR", base?: "USD" | "GBP" | "EUR"): Promise<number> 
     get getProofsCount() 
     get getRawTxsCount() 
-    get postTxsServicesCount() 
     get postBeefServicesCount() 
     get getUtxoStatsCount() 
     async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, useNext?: boolean): Promise<sdk.GetUtxoStatusResult> 
-    async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
     async getRawTx(txid: string, useNext?: boolean): Promise<sdk.GetRawTxResult> 
     async invokeChaintracksWithRetry<R>(method: () => Promise<R>): Promise<R> 
@@ -206,18 +342,7 @@ export class Services implements sdk.WalletServices {
 }
 ```
 
-See also: [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [PostTxsResult](./client.md#interface-posttxsresult), [PostTxsService](./client.md#type-posttxsservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
-
-###### Method postTxs
-
-The beef must contain at least each rawTx for each txid.
-Some services may require input transactions as well.
-These will be fetched if missing, greatly extending the service response time.
-
-```ts
-async postTxs(beef: Beef, txids: string[]): Promise<sdk.PostTxsResult[]> 
-```
-See also: [PostTxsResult](./client.md#interface-posttxsresult)
+See also: [ARC](./services.md#class-arc), [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -237,7 +362,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 }
 ```
 
-See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [WalletServices](./client.md#interface-walletservices)
+See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [SdkWhatsOnChain](./services.md#class-sdkwhatsonchain), [WalletServices](./client.md#interface-walletservices)
 
 ###### Method getRawTx
 
@@ -279,21 +404,31 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 #### Functions
 
-| | |
-| --- | --- |
-| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [makePostTxsToTaalARC](#function-makeposttxstotaalarc) |
-| [getExchangeRatesIo](#function-getexchangeratesio) | [postBeefToArcMiner](#function-postbeeftoarcminer) |
-| [getMerklePathFromTaalARC](#function-getmerklepathfromtaalarc) | [postBeefToTaalArcMiner](#function-postbeeftotaalarcminer) |
-| [getTaalArcServiceConfig](#function-gettaalarcserviceconfig) | [postTxsToTaalArcMiner](#function-posttxstotaalarcminer) |
-| [makeErrorResult](#function-makeerrorresult) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) |
-| [makeGetMerklePathFromTaalARC](#function-makegetmerklepathfromtaalarc) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) |
-| [makePostBeefResult](#function-makepostbeefresult) | [updateExchangeratesapi](#function-updateexchangeratesapi) |
-| [makePostBeefToTaalARC](#function-makepostbeeftotaalarc) | [validateScriptHash](#function-validatescripthash) |
+| |
+| --- |
+| [arcDefaultUrl](#function-arcdefaulturl) |
+| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) |
+| [getExchangeRatesIo](#function-getexchangeratesio) |
+| [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) |
+| [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) |
+| [updateExchangeratesapi](#function-updateexchangeratesapi) |
+| [validateScriptHash](#function-validatescripthash) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
 
+##### Function: arcDefaultUrl
+
+```ts
+export function arcDefaultUrl(chain: sdk.Chain): string 
+```
+
+See also: [Chain](./client.md#type-chain)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Function: createDefaultWalletServicesOptions
 
 ```ts
@@ -312,121 +447,6 @@ export async function getExchangeRatesIo(key: string): Promise<ExchangeRatesIoAp
 ```
 
 See also: [ExchangeRatesIoApi](./services.md#interface-exchangeratesioapi)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: getMerklePathFromTaalARC
-
-```ts
-export async function getMerklePathFromTaalARC(txid: string, config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [WalletServices](./client.md#interface-walletservices)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: getTaalArcServiceConfig
-
-```ts
-export function getTaalArcServiceConfig(chain: sdk.Chain, apiKey: string): ArcServiceConfig 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [Chain](./client.md#type-chain)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: makeErrorResult
-
-```ts
-export function makeErrorResult(error: sdk.WalletError, miner: ArcServiceConfig, beef: number[], txids: string[], dd?: ArcMinerPostBeefDataApi): sdk.PostBeefResult 
-```
-
-See also: [ArcMinerPostBeefDataApi](./services.md#interface-arcminerpostbeefdataapi), [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult), [WalletError](./client.md#class-walleterror)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: makeGetMerklePathFromTaalARC
-
-```ts
-export function makeGetMerklePathFromTaalARC(config: ArcServiceConfig): sdk.GetMerklePathService 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [GetMerklePathService](./client.md#type-getmerklepathservice)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: makePostBeefResult
-
-```ts
-export function makePostBeefResult(dd: ArcMinerPostBeefDataApi, miner: ArcServiceConfig, beef: number[], txids: string[]): sdk.PostBeefResult 
-```
-
-See also: [ArcMinerPostBeefDataApi](./services.md#interface-arcminerpostbeefdataapi), [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: makePostBeefToTaalARC
-
-```ts
-export function makePostBeefToTaalARC(config: ArcServiceConfig): sdk.PostBeefService 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefService](./client.md#type-postbeefservice)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: makePostTxsToTaalARC
-
-```ts
-export function makePostTxsToTaalARC(config: ArcServiceConfig): sdk.PostTxsService 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostTxsService](./client.md#type-posttxsservice)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: postBeefToArcMiner
-
-```ts
-export async function postBeefToArcMiner(beef: Beef | number[], txids: string[], config: ArcServiceConfig): Promise<sdk.PostBeefResult> 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: postBeefToTaalArcMiner
-
-```ts
-export async function postBeefToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostBeefResult> 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostBeefResult](./client.md#interface-postbeefresult), [WalletServices](./client.md#interface-walletservices)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: postTxsToTaalArcMiner
-
-```ts
-export async function postTxsToTaalArcMiner(beef: Beef, txids: string[], config: ArcServiceConfig, services: sdk.WalletServices): Promise<sdk.PostTxsResult> 
-```
-
-See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [PostTxsResult](./client.md#interface-posttxsresult), [WalletServices](./client.md#interface-walletservices)
-
-Argument Details
-
-+ **txs**
-  + All transactions must have source transactions. Will just source locking scripts and satoshis do?? toHexEF() is used.
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

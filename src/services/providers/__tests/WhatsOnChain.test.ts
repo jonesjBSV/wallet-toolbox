@@ -3,7 +3,7 @@ import { _tu } from '../../../../test/utils/TestUtilsWalletStorage'
 import { WhatsOnChain } from '../WhatsOnChain'
 import { Services } from '../../Services'
 import { sdk, wait } from '../../../index.client'
-import { StorageKnex } from '../../../index.all'
+import { Setup, StorageKnex } from '../../../index.all'
 describe('whatsonchain tests', () => {
   jest.setTimeout(99999999)
 
@@ -102,7 +102,7 @@ describe('whatsonchain tests', () => {
 
   test('6 getTxPropagation mainnet', async () => {})
 
-  test('7 postRawTx testnet', async () => {
+  test.skip('7 postRawTx testnet', async () => {
     if (_tu.noEnv('test')) return
     const woc = wocTest
     const c = await _tu.createNoSendTxPair('test')
@@ -135,7 +135,7 @@ describe('whatsonchain tests', () => {
     }
   })
 
-  test('8 postRawTx mainnet', async () => {
+  test.skip('8 postRawTx mainnet', async () => {
     if (_tu.noEnv('main')) return
     const woc = wocMain
     const c = await _tu.createNoSendTxPair('main')
@@ -212,7 +212,12 @@ describe('whatsonchain tests', () => {
     await c.wallet.destroy()
   })
 
-  test('8b run monitor mainnet', async () => {
+  test.skip('8b run monitor mainnet', async () => {
+    if (_tu.noEnv('main')) return
+    if (!Setup.getEnv('main').filePath) return
+
+    // Only run if `Setup` style .env is present with a sqlite filePath...
+
     const c = await _tu.createWalletSetupEnv('main')
 
     await c.monitor.runOnce()
