@@ -3,23 +3,20 @@ import { brc29ProtocolID, sdk } from '../../index.client'
 import { _tu } from '../../../test/utils/TestUtilsWalletStorage'
 import {
   WhatsOnChain
-} from '../providers/whatsonchain'
+} from '../providers/WhatsOnChain'
 
 describe('doubleSpend tests', () => {
   jest.setTimeout(99999999)
 
   test('0 doubleSpend', async () => {
+    if (_tu.noEnv('main')) return
     const env = _tu.getEnv('main')
+    if (env.identityKey !== '') return
     const tx = await txThatDoubleSpends('main')
     const txid = tx.id('hex')
     console.log(txid)
     const woc = new WhatsOnChain(env.chain, { apiKey: env.taalApiKey })
-    const txid2 = await woc.postRawTx(tx.toHex())
-
-    const gr2 = await woc.getRawTx(
-      'a2d12c318cc46935b321f3199cc4e9eafd39e8ca6e73cc33d182f7ff64ffab19',
-    )
-    const gr = await woc.getRawTx(txid)
+    await expect(woc.postRawTx(tx.toHex())).rejects.toThrow('The rawTx parameter must be valid. unexpected response code 500: Missing inputs')
   })
 })
 

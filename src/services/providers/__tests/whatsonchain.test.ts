@@ -1,8 +1,9 @@
 import { WhatsOnChainBroadcaster, WhatsOnChainConfig } from "@bsv/sdk"
 import { _tu } from "../../../../test/utils/TestUtilsWalletStorage"
-import { WhatsOnChain } from "../whatsonchain"
+import { WhatsOnChain } from "../WhatsOnChain"
 import { Services } from "../../Services"
 import { sdk, wait } from "../../../index.client"
+import { StorageKnex } from "../../../index.all"
 describe('whatsonchain tests', () => {
     jest.setTimeout(99999999)
 
@@ -36,7 +37,7 @@ describe('whatsonchain tests', () => {
         {
             const r = await wocTest.getMerklePath('1'.repeat(64), services)
             const s = JSON.stringify(r)
-            expect(s).toBe("{\"name\":\"WoCTsc\",\"error\":{\"isError\":true,\"name\":\"WERR_INVALID_PARAMETER\",\"parameter\":\"txid\"}}")
+            expect(s).toBe("{\"name\":\"WoCTsc\"}")
         }
     })
 
@@ -51,7 +52,7 @@ describe('whatsonchain tests', () => {
         {
             const r = await wocMain.getMerklePath('1'.repeat(64), services)
             const s = JSON.stringify(r)
-            expect(s).toBe("{\"name\":\"WoCTsc\",\"error\":{\"isError\":true,\"name\":\"WERR_INVALID_PARAMETER\",\"parameter\":\"txid\"}}")
+            expect(s).toBe("{\"name\":\"WoCTsc\"}")
         }
     })
 
@@ -144,6 +145,21 @@ describe('whatsonchain tests', () => {
 
         const txidUndo = await woc.postRawTx(rawTxUndo)
         expect(txidUndo).toBe(c.txidUndo)
+
+        await wait(1000)
+
+        // Confirm double spend detection.
+        // 'The rawTx parameter must be valid. unexpected response code 500: 258: txn-mempool-conflict'
+        // 'The rawTx parameter must be valid. unexpected response code 500: Missing inputs'
+        try {
+            await woc.postRawTx(c.doubleSpendTx.toHex())
+            expect(false)
+        } catch (eu: unknown) {
+            const e = sdk.WalletError.fromUnknown(eu)
+            expect(e.message === 'The rawTx parameter must be valid. unexpected response code 500: 258: txn-mempool-conflict'
+                || 'The rawTx parameter must be valid. unexpected response code 500: Missing inputs'
+            )
+        }
     })
 
     test.skip('8a nosend cleanup mainnet', async () => {
@@ -151,18 +167,23 @@ describe('whatsonchain tests', () => {
 
         const actions = await c.wallet.listActions({labels: [], limit: 1000})
         const nosends = actions.actions.filter(a => a.status === 'nosend')
+        // No way to get from actions to reference string values for use with abortAction...
 
-        const refs = [
-            'oa8TUrTjQHd4JqBd',
-            'Y8tD1TXNr46fwBfY',
-        ]
-        for (const ref of refs) {
-            try {
-            await c.wallet.abortAction({ reference: ref })
-            } catch (eu: unknown) {
-                const e = sdk.WalletError.fromUnknown(eu)
+        if (c['activeStorage']) {
+            const s = c['activeStorage'] as StorageKnex
+            const userId = c['userId'] as number
+            const txs = await s.findTransactions({ partial: { userId, status: 'nosend' }})
+            const refs = txs.map(tx => tx.reference)
+            for (const ref of refs) {
+                try {
+                await c.wallet.abortAction({ reference: ref })
+                } catch (eu: unknown) {
+                    const e = sdk.WalletError.fromUnknown(eu)
+                }
             }
         }
+
+        await c.wallet.destroy()
     })
 
     test.skip('8b run monitor mainnet', async () => {

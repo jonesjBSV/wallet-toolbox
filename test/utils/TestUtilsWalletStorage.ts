@@ -11,6 +11,7 @@ import {
   SatoshiValue,
   SignActionArgs,
   SignActionResult,
+  Transaction,
   Utils,
   WalletAction,
   WalletActionInput,
@@ -1437,15 +1438,20 @@ export abstract class TestUtilsWalletStorage {
    * Both created transactions are left with status 'noSend'.
    * This allows the transactions to either be broadcast by an external party,
    * or they may be aborted.
+   * 
+   * `doubleSpendTx` should only be used for double spend testing.
+   * It attempts to forward the txidDo input, which should already have been reclaimed by txidUndo, to a random private key output.
+   * 
    * @param wallet the wallet that will create both transactions, or Chain and createWalletEnv is used to create a wallet.
    * @param satoshis amount of new output created and consumed. Defaults to 41.
-   * @returns { txidDo: string, txidUndo: string, beef: Beef }
+   * @returns { txidDo: string, txidUndo: string, beef: Beef, doubleSpendTx: transaction }
   */
   static async createNoSendTxPair(wallet: Wallet | sdk.Chain, satoshis = 41)
   : Promise<{
     txidDo: string,
     txidUndo: string,
-    beef: Beef
+    beef: Beef,
+    doubleSpendTx: Transaction
   }> {
     let destroyWallet = false
     if (wallet === 'main' || wallet === 'test') {
@@ -1531,10 +1537,27 @@ export abstract class TestUtilsWalletStorage {
     if (destroyWallet)
       await wallet.destroy()
 
+    const doubleSpendTx = new Transaction()
+    const sourceTXID = txidDo
+    const sourceOutputIndex = 0
+    const sourceSatoshis = satoshis
+    doubleSpendTx.addInput({
+      sourceOutputIndex,
+      sourceTXID,
+      sourceTransaction: beef.findAtomicTransaction(sourceTXID),
+      unlockingScriptTemplate: unlock
+    })
+    doubleSpendTx.addOutput({
+      satoshis: sourceSatoshis - 10,
+      lockingScript: new P2PKH().lock(PrivateKey.fromRandom().toAddress())
+    })
+    await doubleSpendTx.sign()
+
     return {
       txidDo,
       txidUndo,
-      beef
+      beef,
+      doubleSpendTx
     }
   }
 }

@@ -23,7 +23,7 @@ import {
 } from './providers/arcServices'
 import {
   WhatsOnChain
-} from './providers/whatsonchain'
+} from './providers/WhatsOnChain'
 import {
   updateChaintracksFiatExchangeRates,
   updateExchangeratesapi

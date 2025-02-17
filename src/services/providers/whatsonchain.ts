@@ -51,18 +51,25 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       headers
     }
 
-    const response = await this.httpClient.request<string>(
-      `${this.URL}/tx/${txid}/hex`,
-      requestOptions
-    )
+    for (let retry = 0; retry < 2; retry++) {
+      const response = await this.httpClient.request<string>(
+        `${this.URL}/tx/${txid}/hex`,
+        requestOptions
+      )
+      if (response.statusText === 'Too Many Requests' && retry < 2) {
+        await wait(2000)
+        continue
+      }
 
-    if (response.status === 404 && response.statusText === 'Not Found')
-      return undefined
+      if (response.status === 404 && response.statusText === 'Not Found')
+        return undefined
 
-    if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
-      throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
+      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+        throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
 
-    return response.data
+      return response.data
+    }
+    throw new sdk.WERR_INTERNAL()
   }
 
   async getRawTxResult(
@@ -110,7 +117,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           const txid = response.data
           return txid
         } else {
-          throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid rawTx. response status ${response.status} ${rawTx}`)
+          if (typeof response.data === 'string')
+            throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid. ${response.data}`)
+          else
+            throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid. ${response.status} ${response.statusText}`)
         }
       } catch (eu: unknown) {
         if (eu instanceof sdk.WERR_INVALID_PARAMETER)
@@ -132,46 +142,59 @@ export class WhatsOnChain extends SdkWhatsOnChain {
   ): Promise<sdk.GetMerklePathResult> {
     const r: sdk.GetMerklePathResult = { name: 'WoCTsc' }
 
-    try {
-      const headers = this.getHttpHeaders()
-      const requestOptions = {
-        method: 'GET',
-        headers
-      }
-
-      const response = await this.httpClient.request<WhatsOnChainTscProof | WhatsOnChainTscProof[]>(
-        `${this.URL}/tx/${txid}/proof/tsc`,
-        requestOptions
-      )
-
-      if (response.status === 404 && response.statusText === 'Not Found')
-        return r
-
-      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
-        throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
-
-      if (!Array.isArray(response.data)) response.data = [response.data];
-
-      if (response.data.length != 1)
-        return r
-
-      const p = response.data[0]
-      const header = await services.hashToHeader(p.target)
-      if (header) {
-        const proof = { index: p.index, nodes: p.nodes, height: header.height }
-        r.merklePath = convertProofToMerklePath(txid, proof)
-        r.header = header
-      } else {
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'blockhash',
-          'a valid on-chain block hash'
-        )
-      }
-    } catch (err: unknown) {
-      r.error = sdk.WalletError.fromUnknown(err)
+    const headers = this.getHttpHeaders()
+    const requestOptions = {
+      method: 'GET',
+      headers
     }
 
-    return r
+    for (let retry = 0; retry < 2; retry++) {
+      try {
+
+        const response = await this.httpClient.request<WhatsOnChainTscProof | WhatsOnChainTscProof[]>(
+          `${this.URL}/tx/${txid}/proof/tsc`,
+          requestOptions
+        )
+        if (response.statusText === 'Too Many Requests' && retry < 2) {
+          await wait(2000)
+          continue
+        }
+
+        if (response.status === 404 && response.statusText === 'Not Found')
+          return r
+
+        if (!response.ok || response.status !== 200 || response.statusText !== 'OK')
+          throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
+
+        if (!response.data) {
+          // Unmined, proof not yet available.
+          return r
+        }
+
+        if (!Array.isArray(response.data)) response.data = [response.data];
+
+        if (response.data.length != 1)
+          return r
+
+        const p = response.data[0]
+        const header = await services.hashToHeader(p.target)
+        if (header) {
+          const proof = { index: p.index, nodes: p.nodes, height: header.height }
+          r.merklePath = convertProofToMerklePath(txid, proof)
+          r.header = header
+        } else {
+          throw new sdk.WERR_INVALID_PARAMETER(
+            'blockhash',
+            'a valid on-chain block hash'
+          )
+        }
+      } catch (err: unknown) {
+        r.error = sdk.WalletError.fromUnknown(err)
+      }
+      return r
+    }
+    throw new sdk.WERR_INTERNAL()
+
   }
 
   async updateBsvExchangeRate(
@@ -190,24 +213,31 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       headers: this.getHttpHeaders()
     }
 
-    const response = await this.httpClient.request<{ rate: number; time: number; currency: string }>(
-      `${this.URL}/exchangerate`,
-      requestOptions
-    )
+    for (let retry = 0; retry < 2; retry++) {
+      const response = await this.httpClient.request<{ rate: number; time: number; currency: string }>(
+        `${this.URL}/exchangerate`,
+        requestOptions
+      )
+      if (response.statusText === 'Too Many Requests' && retry < 2) {
+        await wait(2000)
+        continue
+      }
 
-    if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
-      throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
+      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+        throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
 
-    const wocrate = response.data
-    if (wocrate.currency !== 'USD') wocrate.rate = NaN
+      const wocrate = response.data
+      if (wocrate.currency !== 'USD') wocrate.rate = NaN
 
-    const newRate: sdk.BsvExchangeRate = {
-      timestamp: new Date(),
-      base: 'USD',
-      rate: wocrate.rate
+      const newRate: sdk.BsvExchangeRate = {
+        timestamp: new Date(),
+        base: 'USD',
+        rate: wocrate.rate
+      }
+
+      return newRate
     }
-
-    return newRate
+    throw new sdk.WERR_INTERNAL()
   }
 
   async getUtxoStatus(
@@ -236,6 +266,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           `${this.URL}/script/${scriptHash}/unspent`,
           requestOptions
         )
+        if (response.statusText === 'Too Many Requests' && retry < 2) {
+          await wait(2000)
+          continue
+        }
 
         if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
           throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
@@ -274,7 +308,6 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         }
       }
     }
-    return r
   }
 }
 
