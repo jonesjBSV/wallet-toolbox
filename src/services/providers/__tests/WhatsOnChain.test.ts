@@ -1,6 +1,6 @@
 import { WhatsOnChainBroadcaster, WhatsOnChainConfig } from '@bsv/sdk'
 import { _tu } from '../../../../test/utils/TestUtilsWalletStorage'
-import { WhatsOnChain } from '../aWhatsOnChain'
+import { WhatsOnChain } from '../WhatsOnChain'
 import { Services } from '../../Services'
 import { sdk, wait } from '../../../index.client'
 import { StorageKnex } from '../../../index.all'

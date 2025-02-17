@@ -21,7 +21,7 @@ import {
   makePostBeefToTaalARC,
   makePostTxsToTaalARC
 } from './providers/arcServices'
-import { WhatsOnChain } from './providers/aWhatsOnChain'
+import { WhatsOnChain } from './providers/WhatsOnChain'
 import {
   updateChaintracksFiatExchangeRates,
   updateExchangeratesapi
