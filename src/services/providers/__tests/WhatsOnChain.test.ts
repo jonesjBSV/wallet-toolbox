@@ -103,7 +103,7 @@ describe('whatsonchain tests', () => {
   test('6 getTxPropagation mainnet', async () => {})
 
   test('7 postRawTx testnet', async () => {
-    if (_tu.noEnv('main')) return
+    if (_tu.noEnv('test')) return
     const woc = wocTest
     const c = await _tu.createNoSendTxPair('test')
 

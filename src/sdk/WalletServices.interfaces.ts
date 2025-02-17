@@ -230,11 +230,25 @@ export interface PostTxResultForTxid {
    */
   alreadyKnown?: boolean
 
+  /**
+   * service indicated this broadcast double spends at least one input
+   * `competingTxs` may be an array of txids that were first seen spends of at least one input.
+   */
+  doubleSpend?: boolean
+
   blockHash?: string
   blockHeight?: number
   merklePath?: MerklePath
 
-  data?: object
+  competingTxs?: string[]
+
+  data?: object | string | PostTxResultForTxidError
+}
+
+export interface PostTxResultForTxidError {
+  status?: string
+  detail?: string
+  more?: object
 }
 
 export interface PostBeefResult extends PostTxsResult {}
