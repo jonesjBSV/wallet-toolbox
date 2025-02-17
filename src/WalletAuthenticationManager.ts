@@ -2,11 +2,19 @@ import {
   CWIStyleWalletManager,
   UMPTokenInteractor,
   OverlayUMPTokenInteractor
-} from "./CWIStyleWalletManager";
-import { PrivilegedKeyManager } from "./sdk/PrivilegedKeyManager";
-import { WalletInterface, Random, Utils, Transaction, RPuzzle, PrivateKey, BigNumber } from "@bsv/sdk";
-import { WABClient } from "./wab-client/WABClient";
-import { AuthMethodInteractor } from "./wab-client/auth-method-interactors/AuthMethodInteractor";
+} from './CWIStyleWalletManager'
+import { PrivilegedKeyManager } from './sdk/PrivilegedKeyManager'
+import {
+  WalletInterface,
+  Random,
+  Utils,
+  Transaction,
+  RPuzzle,
+  PrivateKey,
+  BigNumber
+} from '@bsv/sdk'
+import { WABClient } from './wab-client/WABClient'
+import { AuthMethodInteractor } from './wab-client/auth-method-interactors/AuthMethodInteractor'
 
 /**
  * WalletAuthenticationManager
@@ -15,9 +23,9 @@ import { AuthMethodInteractor } from "./wab-client/auth-method-interactors/AuthM
  * with a WABClient for user authentication flows (e.g. Twilio phone).
  */
 export class WalletAuthenticationManager extends CWIStyleWalletManager {
-  private wabClient: WABClient;                       // instance of WABClient
-  private authMethod?: AuthMethodInteractor;          // chosen AuthMethod interactor
-  private tempPresentationKey?: string;                 // for temporary persistence between auth steps
+  private wabClient: WABClient // instance of WABClient
+  private authMethod?: AuthMethodInteractor // chosen AuthMethod interactor
+  private tempPresentationKey?: string // for temporary persistence between auth steps
 
   constructor(
     adminOriginator: string,
@@ -47,7 +55,9 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
         wallet: WalletInterface,
         adminOriginator: string
       ) => {
-        const faucetResultJSON = await this.wabClient.requestFaucet(Utils.toHex(presentationKey))
+        const faucetResultJSON = await this.wabClient.requestFaucet(
+          Utils.toHex(presentationKey)
+        )
         if (!faucetResultJSON.k || !faucetResultJSON.tx) {
           throw new Error('Invalid')
         }
@@ -90,10 +100,10 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
         })
       },
       stateSnapshot
-    );
+    )
 
-    this.wabClient = wabClient;
-    this.authMethod = authMethod;
+    this.wabClient = wabClient
+    this.authMethod = authMethod
   }
 
   /**
@@ -101,7 +111,7 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
    * in case the user changes their mind or picks a new method in the UI.
    */
   public setAuthMethod(method: AuthMethodInteractor) {
-    this.authMethod = method;
+    this.authMethod = method
   }
 
   /**
@@ -110,7 +120,7 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
    */
   public async startAuth(payload: any): Promise<void> {
     if (!this.authMethod) {
-      throw new Error("No AuthMethod selected in WalletAuthenticationManager");
+      throw new Error('No AuthMethod selected in WalletAuthenticationManager')
     }
     this.tempPresentationKey = this.generateTemporaryPresentationKey()
 
@@ -122,10 +132,10 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
       // But we do need some placeholder key for the 'startAuth' call:
       this.tempPresentationKey,
       payload
-    );
+    )
 
     if (!startRes.success) {
-      throw new Error(startRes.message || "Failed to start WAB auth method");
+      throw new Error(startRes.message || 'Failed to start WAB auth method')
     }
   }
 
@@ -134,7 +144,9 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
    */
   public async completeAuth(payload: any): Promise<void> {
     if (!this.authMethod || !this.tempPresentationKey) {
-      throw new Error("No AuthMethod selected in WalletAuthenticationManager or startAuth has yet to be called.");
+      throw new Error(
+        'No AuthMethod selected in WalletAuthenticationManager or startAuth has yet to be called.'
+      )
     }
 
     // Unser the temp presentation key early (for security)
@@ -145,27 +157,27 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
       this.authMethod,
       tempKey,
       payload
-    );
+    )
 
     if (!result.success || !result.presentationKey) {
-      throw new Error(result.message || "Failed to complete WAB auth");
+      throw new Error(result.message || 'Failed to complete WAB auth')
     }
 
     // We now have the final 256-bit key in hex from the WAB
-    const presentationKeyHex = result.presentationKey;
-    const presentationKeyBytes = Utils.toArray(presentationKeyHex, "hex");
+    const presentationKeyHex = result.presentationKey
+    const presentationKeyBytes = Utils.toArray(presentationKeyHex, 'hex')
 
     // Provide this presentation key to the underlying CWI logic:
     // This sets 'this.presentationKey' and determines if it's a new or existing user
     // based on whether a UMP token exists on chain.  We'll do "presentation-key-and-password"
     // for new user flows, for example, or user might choose "presentation-key-and-recovery-key" if we wanted.
     // Either way, WAB has now done its job and we are off to base-layer CWI logic at this point!
-    await this.providePresentationKey(presentationKeyBytes);
+    await this.providePresentationKey(presentationKeyBytes)
   }
 
   private generateTemporaryPresentationKey(): string {
     // For the 'startAuth' call, we can generate a random 32 bytes → 64 hex chars.
-    const randomBytes = Random(32); // array of length 32
-    return Utils.toHex(randomBytes);
+    const randomBytes = Random(32) // array of length 32
+    return Utils.toHex(randomBytes)
   }
 }
