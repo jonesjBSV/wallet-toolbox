@@ -87,7 +87,7 @@ export function verifyTruthy<T>(
   v: T | null | undefined,
   description?: string
 ): T {
-  if (v == null)
+  if (!v)
     throw new sdk.WERR_INTERNAL(description ?? 'A truthy value is required.')
   return v
 }
