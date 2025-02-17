@@ -1,15 +1,17 @@
-import { sdk } from '../index.client'
+import { randomBytesHex, sdk } from '../index.client'
 import { ChaintracksServiceClient } from './chaintracker'
 
 export function createDefaultWalletServicesOptions(
   chain: sdk.Chain
 ): sdk.WalletServicesOptions {
+  const taalApiKey =
+    chain === 'main'
+      ? 'mainnet_9596de07e92300c6287e4393594ae39c' // no plan
+      : 'testnet_0e6cf72133b43ea2d7861da2a38684e3' // personal "starter" key
+
   const o: sdk.WalletServicesOptions = {
     chain,
-    taalApiKey:
-      chain === 'main'
-        ? 'mainnet_9596de07e92300c6287e4393594ae39c' // Tone's key, no plan
-        : 'testnet_0e6cf72133b43ea2d7861da2a38684e3', // Tone's personal "starter" key
+    taalApiKey,
     bsvExchangeRate: {
       timestamp: new Date('2023-12-13'),
       base: 'USD',
@@ -32,7 +34,18 @@ export function createDefaultWalletServicesOptions(
     chaintracks: new ChaintracksServiceClient(
       chain,
       `https://npm-registry.babbage.systems:${chain === 'main' ? 8084 : 8083}`
-    )
+    ),
+    arcUrl: arcDefaultUrl(chain),
+    arcConfig: {
+      apiKey: taalApiKey,
+      deploymentId: `wallet-toolbox-${randomBytesHex(16)}`
+    }
   }
   return o
+}
+
+export function arcDefaultUrl(chain: sdk.Chain): string {
+  const url =
+    chain === 'main' ? 'https://api.taal.com/arc' : 'https://arc-test.taal.com'
+  return url
 }

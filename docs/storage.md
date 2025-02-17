@@ -34,9 +34,9 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TableCertificate](#interface-tablecertificate) | [TableTxLabel](#interface-tabletxlabel) |
 | [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TableCertificateField](#interface-tablecertificatefield) | [TableTxLabelMap](#interface-tabletxlabelmap) |
 | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [TableCertificateX](#interface-tablecertificatex) | [TableUser](#interface-tableuser) |
-| [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TableCommission](#interface-tablecommission) | [WalletStorageServerOptions](#interface-walletstorageserveroptions) |
-| [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TableMonitorEvent](#interface-tablemonitorevent) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
-| [ProvenTxFromTxidResult](#interface-proventxfromtxidresult) | [TableOutput](#interface-tableoutput) |  |
+| [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TableCommission](#interface-tablecommission) | [ValidateGenerateChangeSdkParamsResult](#interface-validategeneratechangesdkparamsresult) |
+| [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TableMonitorEvent](#interface-tablemonitorevent) | [WalletStorageServerOptions](#interface-walletstorageserveroptions) |
+| [ProvenTxFromTxidResult](#interface-proventxfromtxidresult) | [TableOutput](#interface-tableoutput) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
 | [ProvenTxReqHistory](#interface-proventxreqhistory) | [TableOutputBasket](#interface-tableoutputbasket) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -227,6 +227,10 @@ export interface GenerateChangeSdkResult {
     size: number;
     fee: number;
     satsPerKb: number;
+    maxPossibleSatoshisAdjustment?: {
+        fixedOutputIndex: number;
+        satoshis: number;
+    };
 }
 ```
 
@@ -1105,6 +1109,17 @@ Typically 66 hex digits.
 
 ```ts
 identityKey: string
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: ValidateGenerateChangeSdkParamsResult
+
+```ts
+export interface ValidateGenerateChangeSdkParamsResult {
+    hasMaxPossibleOutput?: number;
+}
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -3956,10 +3971,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ##### Function: validateGenerateChangeSdkParams
 
 ```ts
-export function validateGenerateChangeSdkParams(params: GenerateChangeSdkParams) 
+export function validateGenerateChangeSdkParams(params: GenerateChangeSdkParams): ValidateGenerateChangeSdkParamsResult 
 ```
 
-See also: [GenerateChangeSdkParams](./storage.md#interface-generatechangesdkparams)
+See also: [GenerateChangeSdkParams](./storage.md#interface-generatechangesdkparams), [ValidateGenerateChangeSdkParamsResult](./storage.md#interface-validategeneratechangesdkparamsresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4051,6 +4066,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | |
 | --- |
+| [maxPossibleSatoshis](#variable-maxpossiblesatoshis) |
 | [outputColumnsWithoutLockingScript](#variable-outputcolumnswithoutlockingscript) |
 | [transactionColumnsWithoutRawTx](#variable-transactioncolumnswithoutrawtx) |
 
@@ -4058,6 +4074,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ---
 
+##### Variable: maxPossibleSatoshis
+
+```ts
+maxPossibleSatoshis = 2099999999999999
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Variable: outputColumnsWithoutLockingScript
 
 ```ts
