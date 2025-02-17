@@ -1,5 +1,5 @@
 import { WhatsOnChain as SdkWhatsOnChain, HexString, WhatsOnChainConfig } from '@bsv/sdk'
-import { asArray, asString, sdk, validateScriptHash } from '../../index.client'
+import { asArray, asString, sdk, validateScriptHash, wait } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
@@ -15,10 +15,40 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     super(chain, config)
   }
 
-  async getRawTx(txid: string): Promise<string | undefined> {
+  /**
+   * 2025-02-16 throwing internal server error 500.
+   * @param txid 
+   * @returns 
+   */
+  async getTxPropagation(txid: string): Promise<number> {
     const requestOptions = {
       method: 'GET',
       headers: this.getHttpHeaders()
+    }
+
+    const response = await this.httpClient.request<string>(
+      `${this.URL}/tx/hash/${txid}/propagation`,
+      requestOptions
+    )
+
+    if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+      throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
+
+    return 0
+  }
+
+  /**
+   * May return undefined for unmined transactions that are in the mempool.
+   * @param txid 
+   * @returns raw transaction as hex string or undefined if txid not found in mined block.
+   */
+  async getRawTx(txid: string): Promise<string | undefined> {
+    const headers = this.getHttpHeaders()
+    headers['Cache-Control'] = 'no-cache'
+
+    const requestOptions = {
+      method: 'GET',
+      headers
     }
 
     const response = await this.httpClient.request<string>(
@@ -66,21 +96,30 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       data: { txhex: rawTx }
     }
 
-    try {
-      const response = await this.httpClient.request<string>(
-        this.URL,
-        requestOptions
-      )
-      if (response.ok) {
-        const txid = response.data
-        return txid
-      } else {
-        throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid rawTx. response status ${response.status} ${rawTx}`)
+    for (let retry = 0; retry < 2; retry++) {
+      try {
+        const response = await this.httpClient.request<string>(
+          `${this.URL}/tx/raw`,
+          requestOptions
+        )
+        if (response.statusText === 'Too Many Requests' && retry < 2) {
+          await wait(2000)
+          continue
+        }
+        if (response.ok) {
+          const txid = response.data
+          return txid
+        } else {
+          throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid rawTx. response status ${response.status} ${rawTx}`)
+        }
+      } catch (eu: unknown) {
+        if (eu instanceof sdk.WERR_INVALID_PARAMETER)
+          throw eu;
+        const e = sdk.WalletError.fromUnknown(eu)
+        throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid rawTx. error ${e.code} ${e.message} ${rawTx}`)
       }
-    } catch (eu: unknown) {
-      const e = sdk.WalletError.fromUnknown(eu)
-      throw new sdk.WERR_INVALID_PARAMETER('rawTx', `valid rawTx. error ${e.code} ${e.message} ${rawTx}`)
     }
+    throw new sdk.WERR_INTERNAL()
   }
 
   /**
@@ -94,9 +133,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     const r: sdk.GetMerklePathResult = { name: 'WoCTsc' }
 
     try {
+      const headers = this.getHttpHeaders()
       const requestOptions = {
         method: 'GET',
-        headers: this.getHttpHeaders()
+        headers
       }
 
       const response = await this.httpClient.request<WhatsOnChainTscProof | WhatsOnChainTscProof[]>(

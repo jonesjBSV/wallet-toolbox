@@ -2,6 +2,7 @@ import { WhatsOnChainBroadcaster, WhatsOnChainConfig } from "@bsv/sdk"
 import { _tu } from "../../../../test/utils/TestUtilsWalletStorage"
 import { WhatsOnChain } from "../whatsonchain"
 import { Services } from "../../Services"
+import { sdk, wait } from "../../../index.client"
 describe('whatsonchain tests', () => {
     jest.setTimeout(99999999)
 
@@ -14,14 +15,14 @@ describe('whatsonchain tests', () => {
         const rawTx = await wocTest.getRawTx('7e5b797b86abd31a654bf296900d6cb14d04ef0811568ff4675494af2d92166b')
         expect(rawTx === '010000000158EED5DBBB7E2F7D70C79A11B9B61AABEECFA5A7CEC679BEDD00F42C48A4BD45010000006B483045022100AE8BB45498A40E2AC797775C405C108168804CD84E8C09A9D42D280D18EDDB6D022024863BFAAC5FF3C24CA65E2F3677EDA092BC3CC5D2EFABA73264B8FF55CF416B412102094AAF520E14E1C4D68496822800BCC7D3B3B26CA368E004A2CB70B398D82FACFFFFFFFF0203000000000000007421020A624B72B34BC192851C5D8890926BBB70B31BC10FDD4E3BC6534E41B1C81B93AC03010203030405064630440220013B4984F4054C2FBCD2F448AB896CCA5C4E234BF765B0C7FB27EDE572A7F7DA02201A5C8D0D023F94C209046B9A2B96B2882C5E43B72D8115561DF8C07442010EEA6D7592090000000000001976A9146511FCE2F7EF785A2102142FBF381AD1291C918688AC00000000')
 
-        expect(wocTest.getRawTx('1'.repeat(64)) === undefined)
+        expect(await wocTest.getRawTx('1'.repeat(64))).toBeUndefined()
     })
 
     test('1 getRawTx mainnet', async () => {
         const rawTx = await wocMain.getRawTx('d9978ffc6676523208f7b33bebf1b176388bbeace2c7ef67ce35c2eababa1805')
         expect(rawTx === '0100000001026A66A5F724EB490A55E0E08553286F08AD57E92C4BF34B5C44EA6BC0A49828020000006B483045022100C3D9A5ACA30C1F2E1A54532162E7AFE5AA69150E4C06D760414A16D1EA1BABD602205E0D9191838B0911A1E7328554A2B22EFAA80CF52B15FBA37C3046A0996C7AAD412103FA3CF488CA98D9F2DB91843F36BAF6BE39F6C947976C02394602D09FBC5F4CF4FFFFFFFF0210270000000000001976A91444C04354E88975C4BEF30CFE89D300CC7659F7E588AC96BC0000000000001976A9149A53E5CF5F1876924D98A8B35CA0BC693618682488AC00000000')
 
-        expect(wocMain.getRawTx('1'.repeat(64)) === undefined)
+        expect(await wocMain.getRawTx('1'.repeat(64))).toBeUndefined()
     })
 
     test('2 getMerklePath testnet', async () => {
@@ -61,5 +62,114 @@ describe('whatsonchain tests', () => {
             expect(r.rate).toBeGreaterThan(0)
             expect(r.timestamp).toBeTruthy()
         }
+    })
+
+    test('5 getTxPropagation testnet', async () => {
+        return
+        // throwing internal server error 500 when tested.
+        const count = await wocTest.getTxPropagation('7e5b797b86abd31a654bf296900d6cb14d04ef0811568ff4675494af2d92166b')
+        expect(count > 0)
+
+        expect(await wocTest.getTxPropagation('1'.repeat(64)) === 0)
+    })
+
+    test('6 getTxPropagation mainnet', async () => {
+    })
+
+    test('7 postRawTx testnet', async () => {
+        if (_tu.noEnv('main')) return
+        const woc = wocTest
+        const c = await _tu.createNoSendTxPair('test')
+
+        const rawTxDo = c.beef.findTxid(c.txidDo)!.tx!.toHex()
+        const rawTxUndo = c.beef.findTxid(c.txidUndo)!.tx!.toHex()
+
+        const txidDo = await woc.postRawTx(rawTxDo)
+        expect(txidDo).toBe(c.txidDo)
+
+        await wait(1000)
+
+        const txidUndo = await woc.postRawTx(rawTxUndo)
+        expect(txidUndo).toBe(c.txidUndo)
+    })
+
+    test.skip('7a nosend cleanup testnet', async () => {
+        const c = await _tu.createWalletSetupEnv('test')
+
+        const actions = await c.wallet.listActions({labels: [], limit: 1000})
+        const nosends = actions.actions.filter(a => a.status === 'nosend')
+
+        const refs = [
+            'yUfgNVaFcBNyP2Xv',
+        ]
+        for (const ref of refs) {
+            try {
+            await c.wallet.abortAction({ reference: ref })
+            } catch (eu: unknown) {
+                const e = sdk.WalletError.fromUnknown(eu)
+            }
+        }
+
+    })
+
+    test('8 postRawTx mainnet', async () => {
+        if (_tu.noEnv('main')) return
+        const woc = wocMain
+        const c = await _tu.createNoSendTxPair('main')
+
+        const rawTxDo = c.beef.findTxid(c.txidDo)!.tx!.toHex()
+        const rawTxUndo = c.beef.findTxid(c.txidUndo)!.tx!.toHex()
+
+        const txidDo = await woc.postRawTx(rawTxDo)
+        expect(txidDo).toBe(c.txidDo)
+
+        /*
+        try {
+            // This method is broken as of 2025-02-16
+            const count = await woc.getTxPropagation(txidDo)
+        } catch {}
+        // getRawTx returns undefined for unmined transactions, sometimes.
+        let rawTx = await woc.getRawTx(txidDo)
+        let i = 0
+        while (!rawTx) {
+            console.log(`${i++} waiting for WhatsOnChain to acknowledge new transaction exists.`)
+            await wait(5000)
+            rawTx = await woc.getRawTx(txidDo)
+        }
+        expect(rawTx).toBe(rawTxDo)
+        */
+
+        // allow for propagation...
+        await wait(1000)
+
+        const txidUndo = await woc.postRawTx(rawTxUndo)
+        expect(txidUndo).toBe(c.txidUndo)
+    })
+
+    test.skip('8a nosend cleanup mainnet', async () => {
+        const c = await _tu.createWalletSetupEnv('main')
+
+        const actions = await c.wallet.listActions({labels: [], limit: 1000})
+        const nosends = actions.actions.filter(a => a.status === 'nosend')
+
+        const refs = [
+            'oa8TUrTjQHd4JqBd',
+            'Y8tD1TXNr46fwBfY',
+        ]
+        for (const ref of refs) {
+            try {
+            await c.wallet.abortAction({ reference: ref })
+            } catch (eu: unknown) {
+                const e = sdk.WalletError.fromUnknown(eu)
+            }
+        }
+    })
+
+    test.skip('8b run monitor mainnet', async () => {
+        const c = await _tu.createWalletSetupEnv('main')
+
+        await c.monitor.runOnce()
+
+        await c.wallet.destroy()
     })
 })

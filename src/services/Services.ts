@@ -60,12 +60,12 @@ export class Services implements sdk.WalletServices {
     this.getMerklePathServices =
       new ServiceCollection<sdk.GetMerklePathService>().add({
         name: 'WhatsOnChain',
-        service: this.whatsonchain.getMerklePath
+        service: this.whatsonchain.getMerklePath.bind(this.whatsonchain)
       })
 
     this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>().add({
       name: 'WhatsOnChain',
-      service: this.whatsonchain.getRawTxResult
+      service: this.whatsonchain.getRawTxResult.bind(this.whatsonchain)
     })
 
     this.postTxsServices = new ServiceCollection<sdk.PostTxsService>().add({
@@ -85,7 +85,7 @@ export class Services implements sdk.WalletServices {
     this.getUtxoStatusServices =
       new ServiceCollection<sdk.GetUtxoStatusService>().add({
         name: 'WhatsOnChain',
-        service: this.whatsonchain.getUtxoStatus
+        service: this.whatsonchain.getUtxoStatus.bind(this.whatsonchain)
       })
 
     this.updateFiatExchangeRateServices =

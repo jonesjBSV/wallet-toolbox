@@ -49,7 +49,9 @@ import {
   TableCertificate,
   TableCertificateField,
   TableOutputTagMap,
-  TableOutputTag
+  TableOutputTag,
+  ScriptTemplateBRC29,
+  Setup
 } from '../../src/index.all'
 
 import { Knex, knex as makeKnex } from 'knex'
@@ -71,6 +73,20 @@ export interface TuEnv {
 }
 
 export abstract class TestUtilsWalletStorage {
+
+  /**
+   * @param chain 
+   * @returns true if there is no valid .env for chain
+   */
+  static noEnv(chain: sdk.Chain) : boolean {
+    try {
+      _tu.getEnv(chain)
+      return false
+    } catch {
+      return true
+    }
+  }
+
   static getEnv(chain: sdk.Chain) : TuEnv {
     // Identity keys of the lead maintainer of this repo...
     const identityKey =
@@ -93,6 +109,7 @@ export abstract class TestUtilsWalletStorage {
         process.env.TEST_TAAL_API_KEY || '',
         `.env value for 'testTaalApiKey' is required.`
       )
+    verifyTruthy(identityKey)
     return {
       chain,
       identityKey,
@@ -281,17 +298,15 @@ export abstract class TestUtilsWalletStorage {
     endpointUrl?: string
     chain?: sdk.Chain
   }): Promise<TestWalletOnly> {
-    if (args.chain === 'main')
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'chain',
-        `'test' for now, 'main' is not yet supported.`
-      )
-
+    args.chain ||= 'test'
     const wo = await _tu.createWalletOnly({
-      chain: 'test',
+      chain: args.chain,
       rootKeyHex: args.rootKeyHex
     })
-    args.endpointUrl ||= 'https://staging-storage.babbage.systems'
+    args.endpointUrl ||= args.chain === 'main'
+      ? 'https://storage.babbage.systems'
+      : 'https://staging-storage.babbage.systems'
+
     const client = new StorageClient(wo.wallet, args.endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
     await wo.storage.makeAvailable()
@@ -1224,7 +1239,7 @@ export abstract class TestUtilsWalletStorage {
 
           // Need to convert
           const lockingScriptValue = input.sourceLockingScript
-            ? hexStringToNumberArray(input.sourceLockingScript)
+            ? Utils.toArray(input.sourceLockingScript, 'hex')
             : undefined
 
           prevOutput = await _tu.insertTestOutput(
@@ -1394,6 +1409,132 @@ export abstract class TestUtilsWalletStorage {
             return r
           }
         )
+    }
+  }
+
+  static async createWalletSetupEnv(chain: sdk.Chain) : Promise<TestWalletOnly> {
+    const env = Setup.getEnv(chain)
+    const rootKeyHex = env.devKeys[env.identityKey]
+
+    if (env.filePath) {
+      return await _tu.createSQLiteTestWallet({
+        filePath: env.filePath,
+        databaseName: 'setupEnvWallet',
+        chain,
+        rootKeyHex
+      })
+    }
+
+    return await _tu.createTestWalletWithStorageClient({
+      chain,
+      rootKeyHex
+    })
+
+  }
+
+  /**
+   * Create a pair of transacitons that cancel out, other than the transaciton fees.
+   * Both created transactions are left with status 'noSend'.
+   * This allows the transactions to either be broadcast by an external party,
+   * or they may be aborted.
+   * @param wallet the wallet that will create both transactions, or Chain and createWalletEnv is used to create a wallet.
+   * @param satoshis amount of new output created and consumed. Defaults to 41.
+   * @returns { txidDo: string, txidUndo: string, beef: Beef }
+  */
+  static async createNoSendTxPair(wallet: Wallet | sdk.Chain, satoshis = 41)
+  : Promise<{
+    txidDo: string,
+    txidUndo: string,
+    beef: Beef
+  }> {
+    let destroyWallet = false
+    if (wallet === 'main' || wallet === 'test') {
+      wallet = (await _tu.createWalletSetupEnv(wallet)).wallet
+      destroyWallet = true
+    }
+
+    const derivationPrefix = randomBytesBase64(8)
+    const derivationSuffix = randomBytesBase64(8)
+    const keyDeriver = wallet.keyDeriver
+
+    const t = new ScriptTemplateBRC29({
+      derivationPrefix,
+      derivationSuffix,
+      keyDeriver
+    })
+
+    let label = 'doTxPair'
+    const car = await wallet.createAction({
+      outputs: [
+        {
+          lockingScript: t.lock(keyDeriver.rootKey.toString(), wallet.identityKey).toHex(),
+          satoshis,
+          outputDescription: label,
+          customInstructions: JSON.stringify({
+            derivationPrefix,
+            derivationSuffix,
+            type: 'BRC29'
+          })
+        }
+      ],
+      options: {
+        randomizeOutputs: false,
+        noSend: true
+      },
+      description: label
+    })
+
+    const beef = Beef.fromBinary(car.tx!)
+    const txidDo = car.txid!
+    const outpoint = `${car.txid!}.0`
+
+    const unlock = t.unlock(keyDeriver.rootKey.toString(), wallet.identityKey, satoshis)
+
+    label = 'undoTxPair'
+
+    const car2 = await wallet.createAction({
+      inputBEEF: beef.toBinary(),
+      inputs: [
+        {
+          outpoint,
+          unlockingScriptLength: t.unlockLength,
+          inputDescription: label
+        }
+      ],
+      description: label,
+      options: {
+        noSend: true,
+        noSendChange: car.noSendChange
+      }
+    })
+
+    const st = car2.signableTransaction!
+    const stBeef = Beef.fromBinary(st.tx)
+    const tx = wallet.beef.findAtomicTransaction(stBeef.txs.slice(-1)[0].txid)!
+    tx.inputs[0].unlockingScriptTemplate = unlock
+    await tx.sign()
+    const unlockingScript = tx.inputs[0].unlockingScript!.toHex()
+
+    const signArgs: SignActionArgs = {
+      reference: st.reference,
+      spends: { 0: { unlockingScript } },
+      options: {
+        noSend: true
+      }
+    }
+
+    const sar = await wallet.signAction(signArgs)
+
+    beef.mergeBeef(sar.tx!)
+    const txidUndo = sar.txid!
+
+    if (destroyWallet)
+      await wallet.destroy()
+
+    return {
+      txidDo,
+      txidUndo,
+      beef
     }
   }
 }
@@ -2178,13 +2319,4 @@ export async function logInput(
 
 export function logBasket(basket: TableOutputBasket): string {
   return `\n-- Basket --\nName: ${basket.name}\n`
-}
-
-export function hexStringToNumberArray(hexString: string): number[] {
-  const sanitizedHex = hexString.replace(/[^a-fA-F0-9]/g, '')
-  const result: number[] = []
-  for (let i = 0; i < sanitizedHex.length; i += 2) {
-    result.push(parseInt(sanitizedHex.substr(i, 2), 16))
-  }
-  return result
 }
