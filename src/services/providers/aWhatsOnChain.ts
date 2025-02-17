@@ -12,6 +12,9 @@ import {
 } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
 
+/**
+ * 
+ */
 export class WhatsOnChain extends SdkWhatsOnChain {
   constructor(chain: sdk.Chain = 'main', config: WhatsOnChainConfig = {}) {
     super(chain, config)

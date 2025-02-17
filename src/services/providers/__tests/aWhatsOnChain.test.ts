@@ -1,6 +1,6 @@
 import { WhatsOnChainBroadcaster, WhatsOnChainConfig } from '@bsv/sdk'
 import { _tu } from '../../../../test/utils/TestUtilsWalletStorage'
-import { WhatsOnChain } from '../WhatsOnChain'
+import { WhatsOnChain } from '../aWhatsOnChain'
 import { Services } from '../../Services'
 import { sdk, wait } from '../../../index.client'
 import { StorageKnex } from '../../../index.all'
@@ -212,7 +212,7 @@ describe('whatsonchain tests', () => {
     await c.wallet.destroy()
   })
 
-  test.skip('8b run monitor mainnet', async () => {
+  test('8b run monitor mainnet', async () => {
     const c = await _tu.createWalletSetupEnv('main')
 
     await c.monitor.runOnce()
