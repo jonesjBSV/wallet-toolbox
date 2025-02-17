@@ -1,11 +1,20 @@
 import { sdk, validateStorageFeeModel } from '../../index.client'
 
+/**
+ * An output of this satoshis amount will be adjusted to the largest fundable amount.
+ */
+export const maxPossibleSatoshis = 2099999999999999
+
 export interface GenerateChangeSdkResult {
   allocatedChangeInputs: GenerateChangeSdkChangeInput[]
   changeOutputs: GenerateChangeSdkChangeOutput[]
   size: number
   fee: number
   satsPerKb: number
+  maxPossibleSatoshisAdjustment?: {
+    fixedOutputIndex: number
+    satoshis: number
+  }
 }
 
 /**
@@ -38,7 +47,7 @@ export async function generateChangeSdk(
 
   // eslint-disable-next-line no-useless-catch
   try {
-    validateGenerateChangeSdkParams(params)
+    const vgcpr = validateGenerateChangeSdkParams(params)
 
     const satsPerKb = params.feeModel.value || 0
 
@@ -269,6 +278,20 @@ export async function generateChangeSdk(
      */
     await fundTransaction()
 
+    if (feeExcess() < 0 && vgcpr.hasMaxPossibleOutput !== undefined) {
+      // Reduce the fixed output with satoshis of maxPossibleSatoshis to what will just fund the transaction...
+      if (
+        fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis !==
+        maxPossibleSatoshis
+      )
+        throw new sdk.WERR_INTERNAL()
+      fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis += feeExcess()
+      r.maxPossibleSatoshisAdjustment = {
+        fixedOutputIndex: vgcpr.hasMaxPossibleOutput,
+        satoshis: fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis
+      }
+    }
+
     /**
      * Trigger an account funding event if we don't have enough to cover this transaction.
      */
@@ -448,11 +471,18 @@ export interface GenerateChangeSdkChangeOutput {
   lockingScriptLength: number
 }
 
+export interface ValidateGenerateChangeSdkParamsResult {
+  hasMaxPossibleOutput?: number
+}
+
 export function validateGenerateChangeSdkParams(
   params: GenerateChangeSdkParams
-) {
+): ValidateGenerateChangeSdkParamsResult {
   if (!Array.isArray(params.fixedInputs))
     throw new sdk.WERR_INVALID_PARAMETER('fixedInputs', 'an array of objects')
+
+  const r: ValidateGenerateChangeSdkParamsResult = {}
+
   params.fixedInputs.forEach((x, i) => {
     sdk.validateSatoshis(x.satoshis, `fixedInputs[${i}].satoshis`)
     sdk.validateInteger(
@@ -473,6 +503,14 @@ export function validateGenerateChangeSdkParams(
       undefined,
       0
     )
+    if (x.satoshis === maxPossibleSatoshis) {
+      if (r.hasMaxPossibleOutput !== undefined)
+        throw new sdk.WERR_INVALID_PARAMETER(
+          `fixedOutputs[${i}].satoshis`,
+          `valid satoshis amount. Only one 'maxPossibleSatoshis' output allowed.`
+        )
+      r.hasMaxPossibleOutput = i
+    }
   })
 
   params.feeModel = validateStorageFeeModel(params.feeModel)
@@ -492,6 +530,8 @@ export function validateGenerateChangeSdkParams(
     params.changeUnlockingScriptLength,
     `changeUnlockingScriptLength`
   )
+
+  return r
 }
 
 export interface GenerateChangeSdkStorageChange

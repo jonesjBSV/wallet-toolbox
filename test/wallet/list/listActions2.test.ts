@@ -1,12 +1,9 @@
-//@ts-nocheck
 import * as bsv from '@bsv/sdk'
 import { sdk, StorageProvider } from '../../../src/index.client'
 import {
   _tu,
   expectToThrowWERR,
-  hexStringToNumberArray,
   MockData,
-  TestSetup2,
   TestWalletNoSetup
 } from '../../utils/TestUtilsWalletStorage'
 
@@ -57,7 +54,7 @@ describe('listActions2 single action tests', () => {
   beforeEach(async () => {
     ctxs = []
     const args = {
-      chain: 'test',
+      chain: <sdk.Chain>'test',
       mockData,
       databaseName: testName(),
       rootKeyHex: '2'.repeat(64),
@@ -743,7 +740,7 @@ describe('listActions2 single action tests', () => {
         vout: 2,
         outputDescription: 'new description',
         basketId: 1,
-        lockingScript: hexStringToNumberArray('0123456789abcdef')
+        lockingScript: bsv.Utils.toArray('0123456789abcdef', 'hex')
       })
       await storage.updateOutputTag(2, { tag: 'new tag' })
       await storage.updateOutputTagMap(1, 2, {})
@@ -773,7 +770,7 @@ describe('listActions2 single action tests', () => {
         vout: 2,
         outputDescription: 'new description',
         basketId: 1,
-        lockingScript: hexStringToNumberArray('0123456789abcdef')
+        lockingScript: bsv.Utils.toArray('0123456789abcdef', 'hex')
       })
       await storage.updateOutputTag(2, { tag: 'new tag' })
       await storage.updateOutputTagMap(1, 2, {})
@@ -1243,7 +1240,7 @@ describe('listActions2 two action tests', () => {
   beforeEach(async () => {
     ctxs = []
     const args = {
-      chain: 'test',
+      chain: <sdk.Chain>'test',
       mockData,
       databaseName: testName(),
       rootKeyHex: '2'.repeat(64),

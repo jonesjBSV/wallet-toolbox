@@ -60,6 +60,7 @@ export interface SetupEnv {
     chain: sdk.Chain;
     identityKey: string;
     identityKey2: string;
+    filePath: string | undefined;
     taalApiKey: string;
     devKeys: Record<string, string>;
     mySQLConnection: string;
@@ -83,6 +84,14 @@ A map of public keys (identity keys, hex strings) to private keys (hex strings).
 
 ```ts
 devKeys: Record<string, string>
+```
+
+###### Property filePath
+
+Filepath to sqlite file to be used for identityKey wallet.
+
+```ts
+filePath: string | undefined
 ```
 
 ###### Property identityKey
@@ -584,6 +593,9 @@ DEV_KEYS = '{
         const identityKey2 = chain === "main"
             ? process.env.MY_MAIN_IDENTITY2
             : process.env.MY_TEST_IDENTITY2;
+        const filePath = chain === "main"
+            ? process.env.MY_MAIN_FILEPATH
+            : process.env.MY_TEST_FILEPATH;
         const DEV_KEYS = process.env.DEV_KEYS || "{}";
         const mySQLConnection = process.env.MYSQL_CONNECTION || "{}";
         const taalApiKey = verifyTruthy(chain === "main"
@@ -595,6 +607,7 @@ DEV_KEYS = '{
             chain,
             identityKey,
             identityKey2,
+            filePath,
             taalApiKey,
             devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
             mySQLConnection
@@ -642,9 +655,8 @@ DEV_KEYS = '{
     }
     static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> {
         const wo = await SetupClient.createWallet(args);
-        if (wo.chain === "main")
-            throw new sdk.WERR_INVALID_PARAMETER("chain", `'test' for now, 'main' is not yet supported.`);
-        const endpointUrl = args.endpointUrl || "https://staging-dojo.babbage.systems";
+        const endpointUrl = args.endpointUrl ||
+            `https://${args.env.chain !== "main" ? "staging-" : ""}storage.babbage.systems`;
         const client = new StorageClient(wo.wallet, endpointUrl);
         await wo.storage.addWalletStorageProvider(client);
         await wo.storage.makeAvailable();
@@ -725,7 +737,7 @@ DEV_KEYS = '{
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [Setup](./setup.md#class-setup), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [StorageClient](./storage.md#class-storageclient), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [WERR_INVALID_PARAMETER](./client.md#class-werr_invalid_parameter), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
+See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [Setup](./setup.md#class-setup), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [StorageClient](./storage.md#class-storageclient), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
 
 ###### Method createWallet
 
@@ -794,6 +806,9 @@ static getEnv(chain: sdk.Chain): SetupEnv {
     const identityKey2 = chain === "main"
         ? process.env.MY_MAIN_IDENTITY2
         : process.env.MY_TEST_IDENTITY2;
+    const filePath = chain === "main"
+        ? process.env.MY_MAIN_FILEPATH
+        : process.env.MY_TEST_FILEPATH;
     const DEV_KEYS = process.env.DEV_KEYS || "{}";
     const mySQLConnection = process.env.MYSQL_CONNECTION || "{}";
     const taalApiKey = verifyTruthy(chain === "main"
@@ -805,6 +820,7 @@ static getEnv(chain: sdk.Chain): SetupEnv {
         chain,
         identityKey,
         identityKey2,
+        filePath,
         taalApiKey,
         devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
         mySQLConnection

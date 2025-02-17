@@ -100,7 +100,6 @@ describe('ProvenTx class method tests', () => {
       getHeight: async () => height,
       getBsvExchangeRate: async () => 0,
       getFiatExchangeRate: async () => 1,
-      postTxs: async () => [],
       postBeef: async () => [],
       getUtxoStatus: async () => ({
         name: 'mock-service',

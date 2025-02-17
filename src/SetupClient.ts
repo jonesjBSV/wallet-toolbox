@@ -98,6 +98,10 @@ DEV_KEYS = '{
       chain === 'main'
         ? process.env.MY_MAIN_IDENTITY2
         : process.env.MY_TEST_IDENTITY2
+    const filePath =
+      chain === 'main'
+        ? process.env.MY_MAIN_FILEPATH
+        : process.env.MY_TEST_FILEPATH
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const mySQLConnection = process.env.MYSQL_CONNECTION || '{}'
     const taalApiKey = verifyTruthy(
@@ -116,6 +120,7 @@ DEV_KEYS = '{
       chain,
       identityKey,
       identityKey2,
+      filePath,
       taalApiKey,
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
       mySQLConnection
@@ -185,14 +190,11 @@ DEV_KEYS = '{
     args: SetupWalletClientArgs
   ): Promise<SetupWalletClient> {
     const wo = await SetupClient.createWallet(args)
-    if (wo.chain === 'main')
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'chain',
-        `'test' for now, 'main' is not yet supported.`
-      )
 
     const endpointUrl =
-      args.endpointUrl || 'https://staging-dojo.babbage.systems'
+      args.endpointUrl ||
+      `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
+
     const client = new StorageClient(wo.wallet, endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
     await wo.storage.makeAvailable()
@@ -350,6 +352,10 @@ export interface SetupEnv {
    * A secondary identity key (public key), used to test exchanges with other users.
    */
   identityKey2: string
+  /**
+   * Filepath to sqlite file to be used for identityKey wallet.
+   */
+  filePath: string | undefined
   /**
    * A vaild TAAL API key for use by `Services`
    */

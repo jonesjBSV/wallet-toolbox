@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { StorageClient } from '../../../src/index.all'
+import { sdk, StorageClient } from '../../../src/index.all'
 import { _tu, TestWalletOnly } from '../../utils/TestUtilsWalletStorage'
 
 /**
@@ -32,17 +32,17 @@ describe('walletStorageClient test', () => {
     {
       const client = new StorageClient(
         wallet,
-        'https://staging-dojo.babbage.systems'
+        'https://staging-storage.babbage.systems'
       )
       await storage.addWalletStorageProvider(client)
       await storage.updateBackups()
     }
   })
 
-  test('2 create storage client wallet', async () => {
+  test('2 create storage client backup for test wallet', async () => {
     const ctx = await _tu.createTestWalletWithStorageClient({
       rootKeyHex: '1'.repeat(64),
-      endpointUrl: 'https://staging-dojo.babbage.systems'
+      endpointUrl: 'https://staging-storage.babbage.systems'
     })
     ctxs.push(ctx)
     const { wallet, storage } = ctx
@@ -50,6 +50,32 @@ describe('walletStorageClient test', () => {
     {
       const auth = await storage.getAuth()
       expect(auth.userId).toBeTruthy()
+    }
+  })
+
+  test('3 create storage client backup for main wallet', async () => {
+    const filePath = process.env.MY_MAIN_FILEPATH
+    const identityKey = process.env.MY_MAIN_IDENTITY || ''
+    const rootKeyHex = env.devKeys[identityKey]
+    expect(filePath && identityKey && rootKeyHex)
+
+    const chain: sdk.Chain = 'main'
+
+    const main = await _tu.createSQLiteTestWallet({
+      filePath,
+      databaseName: 'tone42',
+      chain,
+      rootKeyHex
+    })
+    ctxs.push(main)
+
+    {
+      const client = new StorageClient(
+        main.wallet,
+        'https://storage.babbage.systems'
+      )
+      await main.storage.addWalletStorageProvider(client)
+      await main.storage.updateBackups()
     }
   })
 })
