@@ -74,12 +74,11 @@ export interface TuEnv {
 }
 
 export abstract class TestUtilsWalletStorage {
-
   /**
-   * @param chain 
+   * @param chain
    * @returns true if there is no valid .env for chain
    */
-  static noEnv(chain: sdk.Chain) : boolean {
+  static noEnv(chain: sdk.Chain): boolean {
     try {
       _tu.getEnv(chain)
       return false
@@ -88,7 +87,7 @@ export abstract class TestUtilsWalletStorage {
     }
   }
 
-  static getEnv(chain: sdk.Chain) : TuEnv {
+  static getEnv(chain: sdk.Chain): TuEnv {
     // Identity keys of the lead maintainer of this repo...
     const identityKey =
       (chain === 'main'
@@ -102,14 +101,14 @@ export abstract class TestUtilsWalletStorage {
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
     const runSlowTests = !!process.env.RUNSLOWTESTS
-    const mainTaalApiKey= verifyTruthy(
-        process.env.MAIN_TAAL_API_KEY || '',
-        `.env value for 'mainTaalApiKey' is required.`
-      )
+    const mainTaalApiKey = verifyTruthy(
+      process.env.MAIN_TAAL_API_KEY || '',
+      `.env value for 'mainTaalApiKey' is required.`
+    )
     const testTaalApiKey = verifyTruthy(
-        process.env.TEST_TAAL_API_KEY || '',
-        `.env value for 'testTaalApiKey' is required.`
-      )
+      process.env.TEST_TAAL_API_KEY || '',
+      `.env value for 'testTaalApiKey' is required.`
+    )
     verifyTruthy(identityKey)
     return {
       chain,
@@ -304,9 +303,10 @@ export abstract class TestUtilsWalletStorage {
       chain: args.chain,
       rootKeyHex: args.rootKeyHex
     })
-    args.endpointUrl ||= args.chain === 'main'
-      ? 'https://storage.babbage.systems'
-      : 'https://staging-storage.babbage.systems'
+    args.endpointUrl ||=
+      args.chain === 'main'
+        ? 'https://storage.babbage.systems'
+        : 'https://staging-storage.babbage.systems'
 
     const client = new StorageClient(wo.wallet, args.endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
@@ -1413,7 +1413,7 @@ export abstract class TestUtilsWalletStorage {
     }
   }
 
-  static async createWalletSetupEnv(chain: sdk.Chain) : Promise<TestWalletOnly> {
+  static async createWalletSetupEnv(chain: sdk.Chain): Promise<TestWalletOnly> {
     const env = Setup.getEnv(chain)
     const rootKeyHex = env.devKeys[env.identityKey]
 
@@ -1430,7 +1430,6 @@ export abstract class TestUtilsWalletStorage {
       chain,
       rootKeyHex
     })
-
   }
 
   /**
@@ -1438,19 +1437,21 @@ export abstract class TestUtilsWalletStorage {
    * Both created transactions are left with status 'noSend'.
    * This allows the transactions to either be broadcast by an external party,
    * or they may be aborted.
-   * 
+   *
    * `doubleSpendTx` should only be used for double spend testing.
    * It attempts to forward the txidDo input, which should already have been reclaimed by txidUndo, to a random private key output.
-   * 
+   *
    * @param wallet the wallet that will create both transactions, or Chain and createWalletEnv is used to create a wallet.
    * @param satoshis amount of new output created and consumed. Defaults to 41.
    * @returns { txidDo: string, txidUndo: string, beef: Beef, doubleSpendTx: transaction }
-  */
-  static async createNoSendTxPair(wallet: Wallet | sdk.Chain, satoshis = 41)
-  : Promise<{
-    txidDo: string,
-    txidUndo: string,
-    beef: Beef,
+   */
+  static async createNoSendTxPair(
+    wallet: Wallet | sdk.Chain,
+    satoshis = 41
+  ): Promise<{
+    txidDo: string
+    txidUndo: string
+    beef: Beef
     doubleSpendTx: Transaction
   }> {
     let destroyWallet = false
@@ -1473,7 +1474,9 @@ export abstract class TestUtilsWalletStorage {
     const car = await wallet.createAction({
       outputs: [
         {
-          lockingScript: t.lock(keyDeriver.rootKey.toString(), wallet.identityKey).toHex(),
+          lockingScript: t
+            .lock(keyDeriver.rootKey.toString(), wallet.identityKey)
+            .toHex(),
           satoshis,
           outputDescription: label,
           customInstructions: JSON.stringify({
@@ -1494,7 +1497,11 @@ export abstract class TestUtilsWalletStorage {
     const txidDo = car.txid!
     const outpoint = `${car.txid!}.0`
 
-    const unlock = t.unlock(keyDeriver.rootKey.toString(), wallet.identityKey, satoshis)
+    const unlock = t.unlock(
+      keyDeriver.rootKey.toString(),
+      wallet.identityKey,
+      satoshis
+    )
 
     label = 'undoTxPair'
 
@@ -1534,8 +1541,7 @@ export abstract class TestUtilsWalletStorage {
     beef.mergeBeef(sar.tx!)
     const txidUndo = sar.txid!
 
-    if (destroyWallet)
-      await wallet.destroy()
+    if (destroyWallet) await wallet.destroy()
 
     const doubleSpendTx = new Transaction()
     const sourceTXID = txidDo

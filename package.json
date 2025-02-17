@@ -36,8 +36,7 @@
     "axios": "^0.29.0",
     "express": "^4.21.2",
     "knex": "^3.1.0",
-    "mysql2": "^3.12.0",
-    "whatsonchain": "^0.3.0"
+    "mysql2": "^3.12.0"
   },
   "devDependencies": {
     "@types/diff": "^6.0.0",

@@ -130,6 +130,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | --- |
 | [ServiceCollection](#class-servicecollection) |
 | [Services](#class-services) |
+| [WhatsOnChain](#class-whatsonchain) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -173,6 +174,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export class Services implements sdk.WalletServices {
     static createDefaultOptions(chain: sdk.Chain): sdk.WalletServicesOptions 
     options: sdk.WalletServicesOptions;
+    whatsonchain: WhatsOnChain;
     getMerklePathServices: ServiceCollection<sdk.GetMerklePathService>;
     getRawTxServices: ServiceCollection<sdk.GetRawTxService>;
     postTxsServices: ServiceCollection<sdk.PostTxsService>;
@@ -204,7 +206,7 @@ export class Services implements sdk.WalletServices {
 }
 ```
 
-See also: [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [PostTxsResult](./client.md#interface-posttxsresult), [PostTxsService](./client.md#type-posttxsservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions)
+See also: [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [PostTxsResult](./client.md#interface-posttxsresult), [PostTxsService](./client.md#type-posttxsservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
 
 ###### Method postTxs
 
@@ -220,20 +222,73 @@ See also: [PostTxsResult](./client.md#interface-posttxsresult)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Class: WhatsOnChain
+
+```ts
+export class WhatsOnChain extends SdkWhatsOnChain {
+    constructor(chain: sdk.Chain = "main", config: WhatsOnChainConfig = {}) 
+    async getTxPropagation(txid: string): Promise<number> 
+    async getRawTx(txid: string): Promise<string | undefined> 
+    async getRawTxResult(txid: string): Promise<sdk.GetRawTxResult> 
+    async postRawTx(rawTx: HexString): Promise<string> 
+    async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
+    async updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
+    async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> 
+}
+```
+
+See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [WalletServices](./client.md#interface-walletservices)
+
+###### Method getRawTx
+
+May return undefined for unmined transactions that are in the mempool.
+
+```ts
+async getRawTx(txid: string): Promise<string | undefined> 
+```
+
+Returns
+
+raw transaction as hex string or undefined if txid not found in mined block.
+
+###### Method getTxPropagation
+
+2025-02-16 throwing internal server error 500.
+
+```ts
+async getTxPropagation(txid: string): Promise<number> 
+```
+
+###### Method postRawTx
+
+```ts
+async postRawTx(rawTx: HexString): Promise<string> 
+```
+
+Returns
+
+txid returned by transaction processor of transaction broadcast
+
+Argument Details
+
++ **rawTx**
+  + raw transaction to broadcast as hex string
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 #### Functions
 
 | | |
 | --- | --- |
-| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [makePostBeefToTaalARC](#function-makepostbeeftotaalarc) |
-| [getExchangeRatesIo](#function-getexchangeratesio) | [makePostTxsToTaalARC](#function-makeposttxstotaalarc) |
-| [getMerklePathFromTaalARC](#function-getmerklepathfromtaalarc) | [postBeefToArcMiner](#function-postbeeftoarcminer) |
-| [getMerklePathFromWhatsOnChainTsc](#function-getmerklepathfromwhatsonchaintsc) | [postBeefToTaalArcMiner](#function-postbeeftotaalarcminer) |
-| [getRawTxFromWhatsOnChain](#function-getrawtxfromwhatsonchain) | [postTxsToTaalArcMiner](#function-posttxstotaalarcminer) |
-| [getTaalArcServiceConfig](#function-gettaalarcserviceconfig) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) |
-| [getUtxoStatusFromWhatsOnChain](#function-getutxostatusfromwhatsonchain) | [updateBsvExchangeRate](#function-updatebsvexchangerate) |
-| [makeErrorResult](#function-makeerrorresult) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) |
-| [makeGetMerklePathFromTaalARC](#function-makegetmerklepathfromtaalarc) | [updateExchangeratesapi](#function-updateexchangeratesapi) |
-| [makePostBeefResult](#function-makepostbeefresult) | [validateScriptHash](#function-validatescripthash) |
+| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [makePostTxsToTaalARC](#function-makeposttxstotaalarc) |
+| [getExchangeRatesIo](#function-getexchangeratesio) | [postBeefToArcMiner](#function-postbeeftoarcminer) |
+| [getMerklePathFromTaalARC](#function-getmerklepathfromtaalarc) | [postBeefToTaalArcMiner](#function-postbeeftotaalarcminer) |
+| [getTaalArcServiceConfig](#function-gettaalarcserviceconfig) | [postTxsToTaalArcMiner](#function-posttxstotaalarcminer) |
+| [makeErrorResult](#function-makeerrorresult) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) |
+| [makeGetMerklePathFromTaalARC](#function-makegetmerklepathfromtaalarc) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) |
+| [makePostBeefResult](#function-makepostbeefresult) | [updateExchangeratesapi](#function-updateexchangeratesapi) |
+| [makePostBeefToTaalARC](#function-makepostbeeftotaalarc) | [validateScriptHash](#function-validatescripthash) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -272,34 +327,6 @@ See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [GetMerk
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-##### Function: getMerklePathFromWhatsOnChainTsc
-
-WhatOnChain.com has their own "hash/pos/R/L" proof format and a more TSC compliant proof format.
-
-The "/proof/tsc" endpoint is much closer to the TSC specification. It provides "index" directly and each node is just the provided hash value.
-The "targetType" is unspecified and thus defaults to block header hash, requiring a Chaintracks lookup to get the merkleRoot...
-Duplicate hash values are provided in full instead of being replaced by "*".
-
-```ts
-export async function getMerklePathFromWhatsOnChainTsc(txid: string, chain: sdk.Chain, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
-```
-
-See also: [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [WalletServices](./client.md#interface-walletservices)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: getRawTxFromWhatsOnChain
-
-```ts
-export async function getRawTxFromWhatsOnChain(txid: string, chain: sdk.Chain): Promise<sdk.GetRawTxResult> 
-```
-
-See also: [Chain](./client.md#type-chain), [GetRawTxResult](./client.md#interface-getrawtxresult)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ##### Function: getTaalArcServiceConfig
 
 ```ts
@@ -307,17 +334,6 @@ export function getTaalArcServiceConfig(chain: sdk.Chain, apiKey: string): ArcSe
 ```
 
 See also: [ArcServiceConfig](./services.md#interface-arcserviceconfig), [Chain](./client.md#type-chain)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: getUtxoStatusFromWhatsOnChain
-
-```ts
-export async function getUtxoStatusFromWhatsOnChain(output: string, chain: sdk.Chain, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> 
-```
-
-See also: [Chain](./client.md#type-chain), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -441,17 +457,6 @@ See also: [BaseBlockHeader](./client.md#interface-baseblockheader), [asArray](./
 Returns
 
 80 byte array
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Function: updateBsvExchangeRate
-
-```ts
-export async function updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
-```
-
-See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

@@ -192,7 +192,8 @@ DEV_KEYS = '{
     const wo = await SetupClient.createWallet(args)
 
     const endpointUrl =
-      args.endpointUrl || `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
+      args.endpointUrl ||
+      `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
 
     const client = new StorageClient(wo.wallet, endpointUrl)
     await wo.storage.addWalletStorageProvider(client)

@@ -1,9 +1,7 @@
 import { Beef, KeyDeriver, P2PKH, PrivateKey, Transaction } from '@bsv/sdk'
 import { brc29ProtocolID, sdk } from '../../index.client'
 import { _tu } from '../../../test/utils/TestUtilsWalletStorage'
-import {
-  WhatsOnChain
-} from '../providers/WhatsOnChain'
+import { WhatsOnChain } from '../providers/WhatsOnChain'
 
 describe('doubleSpend tests', () => {
   jest.setTimeout(99999999)
@@ -16,7 +14,9 @@ describe('doubleSpend tests', () => {
     const txid = tx.id('hex')
     console.log(txid)
     const woc = new WhatsOnChain(env.chain, { apiKey: env.taalApiKey })
-    await expect(woc.postRawTx(tx.toHex())).rejects.toThrow('The rawTx parameter must be valid. unexpected response code 500: Missing inputs')
+    await expect(woc.postRawTx(tx.toHex())).rejects.toThrow(
+      'The rawTx parameter must be valid. unexpected response code 500: Missing inputs'
+    )
   })
 })
 

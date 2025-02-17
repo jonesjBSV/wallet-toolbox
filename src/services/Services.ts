@@ -21,9 +21,7 @@ import {
   makePostBeefToTaalARC,
   makePostTxsToTaalARC
 } from './providers/arcServices'
-import {
-  WhatsOnChain
-} from './providers/WhatsOnChain'
+import { WhatsOnChain } from './providers/WhatsOnChain'
 import {
   updateChaintracksFiatExchangeRates,
   updateExchangeratesapi
@@ -55,7 +53,9 @@ export class Services implements sdk.WalletServices {
         ? Services.createDefaultOptions(this.chain)
         : optionsOrChain
 
-    this.whatsonchain = new WhatsOnChain(this.chain, { apiKey: this.options.taalApiKey })
+    this.whatsonchain = new WhatsOnChain(this.chain, {
+      apiKey: this.options.taalApiKey
+    })
 
     this.getMerklePathServices =
       new ServiceCollection<sdk.GetMerklePathService>().add({
@@ -107,10 +107,11 @@ export class Services implements sdk.WalletServices {
   }
 
   async getBsvExchangeRate(): Promise<number> {
-    this.options.bsvExchangeRate = await this.whatsonchain.updateBsvExchangeRate(
-      this.options.bsvExchangeRate,
-      this.options.bsvUpdateMsecs
-    )
+    this.options.bsvExchangeRate =
+      await this.whatsonchain.updateBsvExchangeRate(
+        this.options.bsvExchangeRate,
+        this.options.bsvUpdateMsecs
+      )
     return this.options.bsvExchangeRate.rate
   }
 
