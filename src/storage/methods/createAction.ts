@@ -27,6 +27,7 @@ import {
   TableTransaction,
   validateStorageFeeModel,
   verifyId,
+  verifyInteger,
   verifyNumber,
   verifyOne,
   verifyOneOrNone,
@@ -455,7 +456,7 @@ async function createNewOutputs(
     }
 
     const ro: sdk.StorageCreateTransactionSdkOutput = {
-      vout: verifyTruthy(o.vout),
+      vout: verifyInteger(o.vout),
       satoshis: verifyTruthy(o.satoshis),
       lockingScript: !o.lockingScript ? '' : asString(o.lockingScript),
       providedBy: verifyTruthy(o.providedBy) as sdk.StorageProvidedBy,

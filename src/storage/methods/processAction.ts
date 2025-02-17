@@ -24,6 +24,7 @@ import {
   TxScriptOffsets,
   validateStorageFeeModel,
   verifyId,
+  verifyInteger,
   verifyNumber,
   verifyOne,
   verifyOneOrNone,
@@ -359,7 +360,7 @@ async function validateCommitNewTxToStorageArgs(
   // outputs spendable will be updated for change to true and all others to !!o.tracked when tx has been broadcast
   // MAX_OUTPUTSCRIPT_LENGTH is limit for scripts left in outputs table
   for (const o of vargs.outputOutputs) {
-    const vout = verifyTruthy(o.vout)
+    const vout = verifyInteger(o.vout)
     const offset = vargs.txScriptOffsets.outputs[vout]
     const rawTxScript = asString(
       vargs.rawTx.slice(offset.offset, offset.offset + offset.length)

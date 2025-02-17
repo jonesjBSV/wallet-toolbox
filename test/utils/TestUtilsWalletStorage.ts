@@ -74,18 +74,6 @@ export interface TuEnv {
 }
 
 export abstract class TestUtilsWalletStorage {
-  /**
-   * @param chain
-   * @returns true if there is no valid .env for chain
-   */
-  static noEnv(chain: sdk.Chain): boolean {
-    try {
-      _tu.getEnv(chain)
-      return false
-    } catch {
-      return true
-    }
-  }
 
   static getEnv(chain: sdk.Chain): TuEnv {
     // Identity keys of the lead maintainer of this repo...
@@ -101,15 +89,8 @@ export abstract class TestUtilsWalletStorage {
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
     const runSlowTests = !!process.env.RUNSLOWTESTS
-    const mainTaalApiKey = verifyTruthy(
-      process.env.MAIN_TAAL_API_KEY || '',
-      `.env value for 'mainTaalApiKey' is required.`
-    )
-    const testTaalApiKey = verifyTruthy(
-      process.env.TEST_TAAL_API_KEY || '',
-      `.env value for 'testTaalApiKey' is required.`
-    )
-    verifyTruthy(identityKey)
+    const mainTaalApiKey = process.env.MAIN_TAAL_API_KEY || ''
+    const testTaalApiKey = process.env.TEST_TAAL_API_KEY || ''
     return {
       chain,
       identityKey,

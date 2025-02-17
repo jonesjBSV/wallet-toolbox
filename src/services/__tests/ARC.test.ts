@@ -3,6 +3,7 @@ import { sdk, wait } from '../../index.client'
 import ARC from '../providers/ARC'
 import { BeefTx } from '@bsv/sdk'
 import { arcDefaultUrl } from '../createDefaultWalletServicesOptions'
+import { Setup } from '../../index.all'
 
 describe('ARC tests', () => {
   jest.setTimeout(99999999)
@@ -37,7 +38,7 @@ describe('ARC tests', () => {
 })
 
 async function postBeefTest(chain: sdk.Chain, arc: ARC): Promise<string> {
-  if (_tu.noEnv(chain)) return 'skipped'
+  if (Setup.noEnv(chain)) return 'skipped'
   const c = await _tu.createNoSendTxPair(chain)
 
   const txids = [c.txidDo, c.txidUndo]
@@ -72,7 +73,7 @@ async function postBeefTest(chain: sdk.Chain, arc: ARC): Promise<string> {
 }
 
 async function postRawTxTest(chain: sdk.Chain, arc: ARC): Promise<void> {
-  if (_tu.noEnv(chain)) return
+  if (Setup.noEnv(chain)) return
   const c = await _tu.createNoSendTxPair(chain)
 
   const rawTxDo = c.beef.findTxid(c.txidDo)!.tx!.toHex()

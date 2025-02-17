@@ -103,7 +103,7 @@ describe('whatsonchain tests', () => {
   test('6 getTxPropagation mainnet', async () => {})
 
   test.skip('7 postRawTx testnet', async () => {
-    if (_tu.noEnv('test')) return
+    if (Setup.noEnv('test')) return
     const woc = wocTest
     const c = await _tu.createNoSendTxPair('test')
 
@@ -136,7 +136,7 @@ describe('whatsonchain tests', () => {
   })
 
   test.skip('8 postRawTx mainnet', async () => {
-    if (_tu.noEnv('main')) return
+    if (Setup.noEnv('main')) return
     const woc = wocMain
     const c = await _tu.createNoSendTxPair('main')
 
@@ -213,7 +213,7 @@ describe('whatsonchain tests', () => {
   })
 
   test.skip('8b run monitor mainnet', async () => {
-    if (_tu.noEnv('main')) return
+    if (Setup.noEnv('main')) return
     if (!Setup.getEnv('main').filePath) return
 
     // Only run if `Setup` style .env is present with a sqlite filePath...

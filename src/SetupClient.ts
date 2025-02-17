@@ -35,6 +35,20 @@ dotenv.config()
  *
  */
 export abstract class SetupClient {
+
+  /**
+   * @param chain
+   * @returns true if .env is not valid for chain
+   */
+  static noEnv(chain: sdk.Chain): boolean {
+    try {
+      SetupClient.getEnv(chain)
+      return false
+    } catch {
+      return true
+    }
+  }
+
   /**
    * Creates content for .env file with some private keys, identity keys, sample API keys, and sample MySQL connection string.
    *

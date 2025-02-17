@@ -1,19 +1,20 @@
-import { Beef, BeefTx } from '@bsv/sdk'
-import { sdk, Services } from '../../index.client'
+import { BeefTx } from '@bsv/sdk'
+import { Services } from '../../index.client'
 import { _tu } from '../../../test/utils/TestUtilsWalletStorage'
+import { Setup } from '../../index.all'
 
 describe('postBeef service tests', () => {
   jest.setTimeout(99999999)
 
   test('0 postBeef mainnet', async () => {
-    if (_tu.noEnv('main')) return
+    if (Setup.noEnv('main')) return
     const options = Services.createDefaultOptions('main')
     const services = new Services(options)
     await postBeefTest(services)
   })
 
   test('1 postBeef testnet', async () => {
-    if (_tu.noEnv('test')) return
+    if (Setup.noEnv('test')) return
     const options = Services.createDefaultOptions('test')
     const services = new Services(options)
     await postBeefTest(services)
@@ -22,7 +23,7 @@ describe('postBeef service tests', () => {
 
 async function postBeefTest(services: Services) {
   const chain = services.chain
-  if (_tu.noEnv(chain)) return
+  if (Setup.noEnv(chain)) return
   const c = await _tu.createNoSendTxPair(chain)
 
   const txids = [c.txidDo, c.txidUndo]
