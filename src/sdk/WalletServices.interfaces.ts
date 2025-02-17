@@ -1,4 +1,5 @@
 import {
+  ArcConfig,
   Beef,
   Transaction as BsvTransaction,
   ChainTracker,
@@ -97,15 +98,6 @@ export interface WalletServices {
    * @param chain
    * @returns
    */
-  postTxs(beef: Beef, txids: string[]): Promise<PostTxsResult[]>
-
-  /**
-   *
-   * @param beef
-   * @param txids
-   * @param chain
-   * @returns
-   */
   postBeef(beef: Beef, txids: string[]): Promise<PostBeefResult[]>
 
   /**
@@ -168,6 +160,8 @@ export interface WalletServicesOptions {
   exchangeratesapiKey?: string
   chaintracksFiatExchangeRatesUrl?: string
   chaintracks?: ChaintracksServiceClient
+  arcUrl: string
+  arcConfig: ArcConfig
 }
 
 /**
@@ -230,11 +224,25 @@ export interface PostTxResultForTxid {
    */
   alreadyKnown?: boolean
 
+  /**
+   * service indicated this broadcast double spends at least one input
+   * `competingTxs` may be an array of txids that were first seen spends of at least one input.
+   */
+  doubleSpend?: boolean
+
   blockHash?: string
   blockHeight?: number
   merklePath?: MerklePath
 
-  data?: object
+  competingTxs?: string[]
+
+  data?: object | string | PostTxResultForTxidError
+}
+
+export interface PostTxResultForTxidError {
+  status?: string
+  detail?: string
+  more?: object
 }
 
 export interface PostBeefResult extends PostTxsResult {}
@@ -366,13 +374,11 @@ export interface BlockHeader extends BaseBlockHeader {
 
 export type GetUtxoStatusService = (
   output: string,
-  chain: sdk.Chain,
   outputFormat?: GetUtxoStatusOutputFormat
 ) => Promise<GetUtxoStatusResult>
 
 export type GetMerklePathService = (
   txid: string,
-  chain: sdk.Chain,
   services: WalletServices
 ) => Promise<GetMerklePathResult>
 
@@ -389,8 +395,7 @@ export type PostTxsService = (
 
 export type PostBeefService = (
   beef: Beef,
-  txids: string[],
-  services: WalletServices
+  txids: string[]
 ) => Promise<PostBeefResult>
 
 export type UpdateFiatExchangeRateService = (
