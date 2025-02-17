@@ -74,7 +74,6 @@ export interface TuEnv {
 }
 
 export abstract class TestUtilsWalletStorage {
-
   static getEnv(chain: sdk.Chain): TuEnv {
     // Identity keys of the lead maintainer of this repo...
     const identityKey =

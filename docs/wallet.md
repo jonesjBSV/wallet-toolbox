@@ -5538,6 +5538,7 @@ It serves as a starting point for experimentation and customization.
 
 ```ts
 export abstract class SetupClient {
+    static noEnv(chain: sdk.Chain): boolean 
     static makeEnv(): string {
         const testPrivKey1 = PrivateKey.fromRandom();
         const testIdentityKey1 = testPrivKey1.toPublicKey().toString();
@@ -5858,6 +5859,17 @@ DEV_KEYS = '{
 }
 ```
 See also: [Setup](./setup.md#class-setup)
+
+###### Method noEnv
+
+```ts
+static noEnv(chain: sdk.Chain): boolean 
+```
+See also: [Chain](./client.md#type-chain)
+
+Returns
+
+true if .env is not valid for chain
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

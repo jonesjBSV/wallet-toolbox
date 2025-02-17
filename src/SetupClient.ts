@@ -35,7 +35,6 @@ dotenv.config()
  *
  */
 export abstract class SetupClient {
-
   /**
    * @param chain
    * @returns true if .env is not valid for chain
