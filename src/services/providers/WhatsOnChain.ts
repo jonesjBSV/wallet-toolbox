@@ -131,7 +131,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
       if (delay) {
         // For multiple txids, give WoC time to propagate each one.
-        await wait(1000)
+        await wait(3000)
       }
       delay = true
 
