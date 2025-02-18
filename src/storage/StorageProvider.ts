@@ -185,12 +185,20 @@ export abstract class StorageProvider
 
     const r = await this.transaction(async trx => {
       let tx = verifyOneOrNone(
-        await this.findTransactions({ partial: { reference: args.reference, userId: auth.userId }, noRawTx: true, trx })
+        await this.findTransactions({
+          partial: { reference: args.reference, userId: auth.userId },
+          noRawTx: true,
+          trx
+        })
       )
       if (!tx && args.reference.length === 64) {
         // reference may also be a txid
         tx = verifyOneOrNone(
-          await this.findTransactions({ partial: { txid: args.reference, userId: auth.userId }, noRawTx: true, trx })
+          await this.findTransactions({
+            partial: { txid: args.reference, userId: auth.userId },
+            noRawTx: true,
+            trx
+          })
         )
       }
       const unAbortableStatus: sdk.TransactionStatus[] = [
