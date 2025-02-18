@@ -107,8 +107,7 @@ async function outputPushDrop(
       randomizeOutputs: false,
       // This example prefers to immediately wait for the new transaction to be broadcast to the network.
       // Typically, most production applications benefit from performance gains when broadcasts are handled in the background.
-      //acceptDelayedBroadcast: false
-      noSend: true
+      acceptDelayedBroadcast: false
     },
     labels: [label],
     description: label
@@ -133,8 +132,6 @@ ${beef.toHex()}
 ${beef.toLogString()}
 `)
 
-  await setup.wallet.abortAction({ reference: car.txid! })
-  
   // Return the bits and pieces of the new output created.
   return {
     beef,
