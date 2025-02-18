@@ -656,6 +656,11 @@ export class Wallet implements WalletInterface, ProtoWallet {
         throw new sdk.WERR_INTERNAL(
           'atomicTxid does not match txid of last AtomicBEEF transaction'
         )
+      // Merge the inputBEEF into the beef going back to the user for lockingScripts.
+      if (vargs.inputBEEF) {
+        ab.mergeBeef(vargs.inputBEEF)
+        r.signableTransaction.tx = ab.toBinaryAtomic(ab.atomicTxid)
+      }
       // Remove the new, partially constructed transaction from beef as it will never be a valid transaction.
       ab.txs.slice(ab.txs.length - 1)
       this.beef.mergeBeefFromParty(this.storageParty, ab)
