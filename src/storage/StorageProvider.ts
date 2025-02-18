@@ -12,7 +12,8 @@ import {
   ListCertificatesResult,
   TrustSelf,
   RelinquishCertificateArgs,
-  RelinquishOutputArgs
+  RelinquishOutputArgs,
+  AbortActionArgs
 } from '@bsv/sdk'
 import {
   asArray,
@@ -177,12 +178,21 @@ export abstract class StorageProvider
 
   async abortAction(
     auth: sdk.AuthId,
-    args: Partial<TableTransaction>
+    args: AbortActionArgs
   ): Promise<AbortActionResult> {
+    if (!auth.userId)
+      throw new sdk.WERR_INVALID_PARAMETER('auth.userId', 'valid')
+
     const r = await this.transaction(async trx => {
-      const tx = verifyOneOrNone(
-        await this.findTransactions({ partial: args, noRawTx: true, trx })
+      let tx = verifyOneOrNone(
+        await this.findTransactions({ partial: { reference: args.reference, userId: auth.userId }, noRawTx: true, trx })
       )
+      if (!tx && args.reference.length === 64) {
+        // reference may also be a txid
+        tx = verifyOneOrNone(
+          await this.findTransactions({ partial: { txid: args.reference, userId: auth.userId }, noRawTx: true, trx })
+        )
+      }
       const unAbortableStatus: sdk.TransactionStatus[] = [
         'completed',
         'failed',
