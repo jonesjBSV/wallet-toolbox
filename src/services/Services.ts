@@ -60,12 +60,17 @@ export class Services implements sdk.WalletServices {
         service: this.whatsonchain.getMerklePath.bind(this.whatsonchain)
       })
 
-    this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>()
-    .add({ name: 'WhatsOnChain', service: this.whatsonchain.getRawTxResult.bind(this.whatsonchain) })
+    this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>().add({
+      name: 'WhatsOnChain',
+      service: this.whatsonchain.getRawTxResult.bind(this.whatsonchain)
+    })
 
     this.postBeefServices = new ServiceCollection<sdk.PostBeefService>()
-    .add({ name: 'TaalArcBeef', service: this.arc.postBeef.bind(this.arc) })
-    .add({ name: 'WhatsOnChain', service: this.whatsonchain.postBeef.bind(this.whatsonchain) })
+      .add({ name: 'TaalArcBeef', service: this.arc.postBeef.bind(this.arc) })
+      .add({
+        name: 'WhatsOnChain',
+        service: this.whatsonchain.postBeef.bind(this.whatsonchain)
+      })
 
     this.getUtxoStatusServices =
       new ServiceCollection<sdk.GetUtxoStatusService>().add({

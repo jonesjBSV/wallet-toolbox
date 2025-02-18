@@ -113,7 +113,6 @@ export class WhatsOnChain extends SdkWhatsOnChain {
    * @returns
    */
   async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> {
-
     const r: sdk.PostBeefResult = {
       name: 'WoC',
       status: 'success',
