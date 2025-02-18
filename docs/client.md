@@ -4043,23 +4043,23 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | | | |
 | --- | --- | --- |
 | [ARC](#class-arc) | [PrivilegedKeyManager](#class-privilegedkeymanager) | [WERR_BAD_REQUEST](#class-werr_bad_request) |
-| [CertOps](#class-certops) | [ScriptTemplateBRC29](#class-scripttemplatebrc29) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) |
-| [EntityBase](#class-entitybase) | [SdkWhatsOnChain](#class-sdkwhatsonchain) | [WERR_INTERNAL](#class-werr_internal) |
-| [EntityCertificate](#class-entitycertificate) | [ServiceCollection](#class-servicecollection) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |
-| [EntityCertificateField](#class-entitycertificatefield) | [Services](#class-services) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |
-| [EntityCommission](#class-entitycommission) | [SetupClient](#class-setupclient) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
-| [EntityOutput](#class-entityoutput) | [StorageClient](#class-storageclient) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
-| [EntityOutputBasket](#class-entityoutputbasket) | [StorageProvider](#class-storageprovider) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
-| [EntityOutputTag](#class-entityoutputtag) | [StorageReader](#class-storagereader) | [WERR_NOT_ACTIVE](#class-werr_not_active) |
-| [EntityOutputTagMap](#class-entityoutputtagmap) | [StorageReaderWriter](#class-storagereaderwriter) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
-| [EntityProvenTx](#class-entityproventx) | [StorageSyncReader](#class-storagesyncreader) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
-| [EntityProvenTxReq](#class-entityproventxreq) | [TaskCheckForProofs](#class-taskcheckforproofs) | [Wallet](#class-wallet) |
-| [EntitySyncState](#class-entitysyncstate) | [TaskClock](#class-taskclock) | [WalletError](#class-walleterror) |
-| [EntityTransaction](#class-entitytransaction) | [TaskFailAbandoned](#class-taskfailabandoned) | [WalletMonitorTask](#class-walletmonitortask) |
-| [EntityTxLabel](#class-entitytxlabel) | [TaskNewHeader](#class-tasknewheader) | [WalletSigner](#class-walletsigner) |
-| [EntityTxLabelMap](#class-entitytxlabelmap) | [TaskPurge](#class-taskpurge) | [WalletStorageManager](#class-walletstoragemanager) |
-| [EntityUser](#class-entityuser) | [TaskReviewStatus](#class-taskreviewstatus) | [WhatsOnChain](#class-whatsonchain) |
-| [MergeEntity](#class-mergeentity) | [TaskSendWaiting](#class-tasksendwaiting) |  |
+| [CertOps](#class-certops) | [ScriptTemplateBRC29](#class-scripttemplatebrc29) | [WERR_BROADCAST_UNAVAILABLE](#class-werr_broadcast_unavailable) |
+| [EntityBase](#class-entitybase) | [SdkWhatsOnChain](#class-sdkwhatsonchain) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) |
+| [EntityCertificate](#class-entitycertificate) | [ServiceCollection](#class-servicecollection) | [WERR_INTERNAL](#class-werr_internal) |
+| [EntityCertificateField](#class-entitycertificatefield) | [Services](#class-services) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |
+| [EntityCommission](#class-entitycommission) | [SetupClient](#class-setupclient) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |
+| [EntityOutput](#class-entityoutput) | [StorageClient](#class-storageclient) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
+| [EntityOutputBasket](#class-entityoutputbasket) | [StorageProvider](#class-storageprovider) | [WERR_MISSING_PARAMETER](#class-werr_missing_parameter) |
+| [EntityOutputTag](#class-entityoutputtag) | [StorageReader](#class-storagereader) | [WERR_NETWORK_CHAIN](#class-werr_network_chain) |
+| [EntityOutputTagMap](#class-entityoutputtagmap) | [StorageReaderWriter](#class-storagereaderwriter) | [WERR_NOT_ACTIVE](#class-werr_not_active) |
+| [EntityProvenTx](#class-entityproventx) | [StorageSyncReader](#class-storagesyncreader) | [WERR_NOT_IMPLEMENTED](#class-werr_not_implemented) |
+| [EntityProvenTxReq](#class-entityproventxreq) | [TaskCheckForProofs](#class-taskcheckforproofs) | [WERR_UNAUTHORIZED](#class-werr_unauthorized) |
+| [EntitySyncState](#class-entitysyncstate) | [TaskClock](#class-taskclock) | [Wallet](#class-wallet) |
+| [EntityTransaction](#class-entitytransaction) | [TaskFailAbandoned](#class-taskfailabandoned) | [WalletError](#class-walleterror) |
+| [EntityTxLabel](#class-entitytxlabel) | [TaskNewHeader](#class-tasknewheader) | [WalletMonitorTask](#class-walletmonitortask) |
+| [EntityTxLabelMap](#class-entitytxlabelmap) | [TaskPurge](#class-taskpurge) | [WalletSigner](#class-walletsigner) |
+| [EntityUser](#class-entityuser) | [TaskReviewStatus](#class-taskreviewstatus) | [WalletStorageManager](#class-walletstoragemanager) |
+| [MergeEntity](#class-mergeentity) | [TaskSendWaiting](#class-tasksendwaiting) | [WhatsOnChain](#class-whatsonchain) |
 | [Monitor](#class-monitor) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -7101,6 +7101,21 @@ The request is invalid.
 
 ```ts
 export class WERR_BAD_REQUEST extends WalletError {
+    constructor(message?: string) 
+}
+```
+
+See also: [WalletError](./client.md#class-walleterror)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: WERR_BROADCAST_UNAVAILABLE
+
+Unable to broadcast transaction at this time.
+
+```ts
+export class WERR_BROADCAST_UNAVAILABLE extends WalletError {
     constructor(message?: string) 
 }
 ```
