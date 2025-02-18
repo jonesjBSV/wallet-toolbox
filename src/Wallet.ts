@@ -663,6 +663,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
       this.beef.mergeBeefFromParty(this.storageParty, r.tx)
     }
 
+    if (!vargs.options.acceptDelayedBroadcast
+       && r.sendWithResults
+       && r.sendWithResults.length === 1
+       && r.sendWithResults[0].status === 'failed')
+       throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+
     return r
   }
 
@@ -677,6 +683,13 @@ export class Wallet implements WalletInterface, ProtoWallet {
       sdk.validateSignActionArgs
     )
     const r = await signAction(this, auth, vargs)
+
+    if (!vargs.options.acceptDelayedBroadcast
+       && r.sendWithResults
+       && r.sendWithResults.length === 1
+       && r.sendWithResults[0].status === 'failed')
+       throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+
     return r
   }
 
