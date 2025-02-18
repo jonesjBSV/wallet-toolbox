@@ -355,6 +355,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     async getTxPropagation(txid: string): Promise<number> 
     async getRawTx(txid: string): Promise<string | undefined> 
     async getRawTxResult(txid: string): Promise<sdk.GetRawTxResult> 
+    async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
     async postRawTx(rawTx: HexString): Promise<string> 
     async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
     async updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
@@ -362,7 +363,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 }
 ```
 
-See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [SdkWhatsOnChain](./services.md#class-sdkwhatsonchain), [WalletServices](./client.md#interface-walletservices)
+See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [PostBeefResult](./client.md#interface-postbeefresult), [SdkWhatsOnChain](./services.md#class-sdkwhatsonchain), [WalletServices](./client.md#interface-walletservices)
 
 ###### Method getRawTx
 
@@ -383,6 +384,17 @@ raw transaction as hex string or undefined if txid not found in mined block.
 ```ts
 async getTxPropagation(txid: string): Promise<number> 
 ```
+
+###### Method postBeef
+
+WhatsOnChain does not natively support a postBeef end-point aware of multiple txids of interest in the Beef.
+
+Send rawTx in `txids` order from beef.
+
+```ts
+async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
+```
+See also: [PostBeefResult](./client.md#interface-postbeefresult)
 
 ###### Method postRawTx
 
