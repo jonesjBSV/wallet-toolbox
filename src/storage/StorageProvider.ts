@@ -183,19 +183,25 @@ export abstract class StorageProvider
     if (!auth.userId)
       throw new sdk.WERR_INVALID_PARAMETER('auth.userId', 'valid')
 
+    const userId = auth.userId
+    let reference: string | undefined = args.reference
+    let txid: string | undefined = undefined
+
     const r = await this.transaction(async trx => {
       let tx = verifyOneOrNone(
         await this.findTransactions({
-          partial: { reference: args.reference, userId: auth.userId },
+          partial: { reference, userId },
           noRawTx: true,
           trx
         })
       )
       if (!tx && args.reference.length === 64) {
         // reference may also be a txid
+        txid = reference
+        reference = undefined
         tx = verifyOneOrNone(
           await this.findTransactions({
-            partial: { txid: args.reference, userId: auth.userId },
+            partial: { txid, userId },
             noRawTx: true,
             trx
           })
@@ -219,8 +225,8 @@ export abstract class StorageProvider
       await this.updateTransactionStatus(
         'failed',
         tx.transactionId,
-        undefined,
-        args.reference,
+        userId,
+        reference,
         trx
       )
       if (tx.txid) {
