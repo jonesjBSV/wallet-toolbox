@@ -5,6 +5,7 @@ describe('pushdrop example tests', () => {
   jest.setTimeout(99999999)
 
   test('0 pushdrop', async () => {
+    if (Setup.noEnv('main')) return
     await transferPushDrop()
   })
 })
