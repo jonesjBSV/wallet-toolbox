@@ -5556,10 +5556,10 @@ MY_MAIN_IDENTITY = '${mainIdentityKey1}'
 MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
 MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
 TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
-MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
+MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"your_password","database":"your_database", "timezone": "Z"}'
 DEV_KEYS = '{
     "${testIdentityKey1}": "${testPrivKey1.toString()}",
-    "${testIdentityKey2}": "${testPrivKey2.toString()}"
+    "${testIdentityKey2}": "${testPrivKey2.toString()}",
     "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
     "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
 }'
@@ -5846,10 +5846,10 @@ MY_MAIN_IDENTITY = '${mainIdentityKey1}'
 MY_MAIN_IDENTITY2 = '${mainIdentityKey2}'
 MAIN_TAAL_API_KEY='mainnet_9596de07e92300c6287e4393594ae39c'
 TEST_TAAL_API_KEY='testnet_0e6cf72133b43ea2d7861da2a38684e3'
-MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"<your_password>","database":"<your_database>", "timezone": "Z"}'
+MYSQL_CONNECTION='{"port":3306,"host":"127.0.0.1","user":"root","password":"your_password","database":"your_database", "timezone": "Z"}'
 DEV_KEYS = '{
     "${testIdentityKey1}": "${testPrivKey1.toString()}",
-    "${testIdentityKey2}": "${testPrivKey2.toString()}"
+    "${testIdentityKey2}": "${testPrivKey2.toString()}",
     "${mainIdentityKey1}": "${mainPrivKey1.toString()}",
     "${mainIdentityKey2}": "${mainPrivKey2.toString()}"
 }'
