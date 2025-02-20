@@ -175,48 +175,300 @@ export interface UMPTokenInteractor {
   ) => Promise<OutpointString>
 }
 
+import {
+  UMPTokenInteractor,
+  UMPToken
+} from './CWIStyleWalletManager' // or wherever UMPTokenInteractor & UMPToken are declared
+import {
+  WalletInterface,
+  OriginatorDomainNameStringUnder250Bytes,
+  LookupAnswer,
+  LookupQuestion,
+  LookupResolver,
+  PushDrop,
+  Transaction,
+  CreateActionInput,
+  OutpointString,
+  Utils,
+  LockingScript
+} from '@bsv/sdk'
+import { SHIPBroadcaster } from '@bsv/sdk/dist/overlay/SHIPCast.js' // or wherever SHIPBroadcaster is actually imported from
+
+/**
+ * @class OverlayUMPTokenInteractor
+ *
+ * A concrete implementation of the UMPTokenInteractor interface that interacts
+ * with Overlay Services and the UMP (User Management Protocol) topic. This class
+ * is responsible for:
+ *
+ * 1) Locating UMP tokens via overlay lookups (ls_users).
+ * 2) Creating and publishing new or updated UMP token outputs on-chain under
+ *    the "tm_users" topic.
+ * 3) Consuming (spending) an old token if provided.
+ */
 export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
-  static fieldMap = {
-    passwordSalt: 0,
-    passwordPresentationPrimary: 1,
-    passwordRecoveryPrimary: 2,
-    presentationRecoveryPrimary: 3,
-    passwordPrimaryPrivileged: 4,
-    presentationRecoveryPrivileged: 5,
-    presentationHash: 6,
-    recoveryHash: 7,
-    presentationKeyEncrypted: 8,
-    passwordKeyEncrypted: 9,
-    recoveryKeyEncrypted: 10
-  }
-  resolver: LookupResolver
-  broadcaster: Broadcaster
-  constructor(
-    broadcaster: Broadcaster = new SHIPCast(['tm_ump']),
-    resolver: LookupResolver = new LookupResolver()
-  ) {
-    this.broadcaster = broadcaster
+  /**
+   * A `LookupResolver` instance used to query overlay networks.
+   */
+  private resolver: LookupResolver
+
+  /**
+   * A SHIP broadcaster that can be used to publish updated UMP tokens
+   * under the `tm_users` topic to overlay service peers.
+   */
+  private broadcaster: SHIPBroadcaster
+
+  /**
+   * Construct a new OverlayUMPTokenInteractor.
+   *
+   * @param resolver     A LookupResolver instance for performing overlay queries (ls_users).
+   * @param broadcaster  A SHIPBroadcaster instance for sharing new or updated tokens across the `tm_users` overlay.
+   */
+  constructor(resolver: LookupResolver = new LookupResolver(), broadcaster: SHIPBroadcaster = new SHIPBroadcaster(['tm_users'])) {
     this.resolver = resolver
+    this.broadcaster = broadcaster
   }
-  async findByPresentationKeyHash(
-    hash: number[]
-  ): Promise<UMPToken | undefined> {
-    const results = await this.resolver.query({
-      service: 'ls_ump',
-      query: {
-        presentationHash: Utils.toHex(hash)
-      }
-    })
-    return this.parseResults(results)
+
+  /**
+   * Finds a UMP token on-chain by the given presentation key hash, if it exists.
+   * Uses the ls_users overlay service to perform the lookup.
+   *
+   * @param hash The 32-byte SHA-256 hash of the presentation key.
+   * @returns A UMPToken object (including currentOutpoint) if found, otherwise undefined.
+   */
+  public async findByPresentationKeyHash(hash: number[]): Promise<UMPToken | undefined> {
+    // Query ls_users for the given presentationHash
+    const question: LookupQuestion = {
+      service: 'ls_users',
+      query: { presentationHash: Utils.toHex(hash) }
+    }
+    const answer = await this.resolver.query(question)
+    return this.parseLookupAnswer(answer)
   }
-  async findByRecoveryKeyHash(hash: number[]): Promise<UMPToken | undefined> {
-    const results = await this.resolver.query({
-      service: 'ls_ump',
-      query: {
-        recoveryHash: Utils.toHex(hash)
+
+  /**
+   * Finds a UMP token on-chain by the given recovery key hash, if it exists.
+   * Uses the ls_users overlay service to perform the lookup.
+   *
+   * @param hash The 32-byte SHA-256 hash of the recovery key.
+   * @returns A UMPToken object (including currentOutpoint) if found, otherwise undefined.
+   */
+  public async findByRecoveryKeyHash(hash: number[]): Promise<UMPToken | undefined> {
+    const question: LookupQuestion = {
+      service: 'ls_users',
+      query: { recoveryHash: Utils.toHex(hash) }
+    }
+    const answer = await this.resolver.query(question)
+    return this.parseLookupAnswer(answer)
+  }
+
+  /**
+   * Creates or updates (replaces) a UMP token on-chain. If `oldTokenToConsume` is provided,
+   * it is spent in the same transaction that creates the new token output. The new token is
+   * then broadcast and published under the `tm_users` topic using a SHIP broadcast, ensuring
+   * overlay participants see the updated token.
+   *
+   * @param wallet            The wallet used to build and sign the transaction.
+   * @param adminOriginator   The domain/FQDN of the administrative originator (wallet operator).
+   * @param token             The new UMPToken to create on-chain.
+   * @param oldTokenToConsume Optionally, an existing token to consume/spend in the same transaction.
+   * @returns The outpoint of the newly created UMP token (e.g. "abcd1234...ef.0").
+   */
+  public async buildAndSend(
+    wallet: WalletInterface,
+    adminOriginator: OriginatorDomainNameStringUnder250Bytes,
+    token: UMPToken,
+    oldTokenToConsume?: UMPToken
+  ): Promise<OutpointString> {
+    // 1) Construct the data fields for the new UMP token in the same
+    //    11-field order used by the UMP protocol's PushDrop definition.
+    const fields: number[][] = new Array(11)
+
+    // See: UMP field ordering
+    //  0 => passwordSalt
+    //  1 => passwordPresentationPrimary
+    //  2 => passwordRecoveryPrimary
+    //  3 => presentationRecoveryPrimary
+    //  4 => passwordPrimaryPrivileged
+    //  5 => presentationRecoveryPrivileged
+    //  6 => presentationHash
+    //  7 => recoveryHash
+    //  8 => presentationKeyEncrypted
+    //  9 => passwordKeyEncrypted
+    // 10 => recoveryKeyEncrypted
+
+    fields[0] = token.passwordSalt
+    fields[1] = token.passwordPresentationPrimary
+    fields[2] = token.passwordRecoveryPrimary
+    fields[3] = token.presentationRecoveryPrimary
+    fields[4] = token.passwordPrimaryPrivileged
+    fields[5] = token.presentationRecoveryPrivileged
+    fields[6] = token.presentationHash
+    fields[7] = token.recoveryHash
+    fields[8] = token.presentationKeyEncrypted
+    fields[9] = token.passwordKeyEncrypted
+    fields[10] = token.recoveryKeyEncrypted
+
+    // 2) Create a PushDrop script referencing these fields, locked with the admin key (for easy revocation).
+    const script = await new PushDrop(wallet).lock(
+      fields,
+      [2, 'admin user-management token'], // protocolID
+      '1', // keyID
+      'self', // counterparty
+      /*forSelf=*/ true,
+      /*includeSignature=*/ true
+    )
+
+    // 3) Prepare the createAction call. If oldTokenToConsume is provided, we gather the outpoint.
+    const inputs: CreateActionInput[] = []
+    let inputToken: { beef: number[]; outputIndex: number } | undefined
+    if (oldTokenToConsume?.currentOutpoint) {
+      inputs.push({
+        outpoint: oldTokenToConsume.currentOutpoint,
+        unlockingScriptLength: 73, // typical signature length
+        inputDescription: 'Consume old UMP token'
+      })
+      inputToken = await this.findByOutpoint(oldTokenToConsume.currentOutpoint)
+    }
+
+    const outputs = [
+      {
+        lockingScript: script.toHex(),
+        satoshis: 1,
+        outputDescription: 'New UMP token output'
       }
-    })
-    return this.parseResults(results)
+    ]
+
+    // 4) Build the partial transaction via createAction.
+    const createResult = await wallet.createAction(
+      {
+        description: oldTokenToConsume
+          ? 'Renew UMP token (consume old, create new)'
+          : 'Create new UMP token',
+        inputs,
+        outputs,
+        inputBEEF: inputToken?.beef
+      },
+      adminOriginator
+    )
+
+    // If the transaction is fully processed by the wallet (some wallets might do signAndProcess automatically),
+    // we retrieve the final TXID from the result.
+    if (!createResult.signableTransaction) {
+      const finalTxid = createResult.txid || (createResult.tx
+        ? Transaction.fromAtomicBEEF(createResult.tx).id('hex')
+        : undefined)
+      if (!finalTxid) {
+        throw new Error('No signableTransaction and no final TX found.')
+      }
+      // Now broadcast to `tm_users` using SHIP
+      const broadcastTx = Transaction.fromAtomicBEEF(createResult.tx!)
+      await this.broadcaster.broadcast(broadcastTx)
+      return `${finalTxid}.0`
+    }
+
+    // 5) If oldTokenToConsume is present, we must sign the input referencing it.
+    //    (If there's no old token, there's nothing to sign for the input.)
+    let finalTxid = ''
+    const reference = createResult.signableTransaction.reference
+    const partialTx = Transaction.fromBEEF(createResult.signableTransaction.tx)
+
+    if (oldTokenToConsume?.currentOutpoint) {
+      // Unlock the old token with a matching PushDrop unlocker
+      const unlocker = new PushDrop(wallet).unlock(
+        [2, 'admin user-management token'],
+        '1',
+        'self'
+      )
+      const unlockingScript = await unlocker.sign(partialTx, 0)
+
+      // Provide it to the wallet
+      const signResult = await wallet.signAction(
+        {
+          reference,
+          spends: {
+            0: {
+              unlockingScript: unlockingScript.toHex()
+            }
+          }
+        },
+        adminOriginator
+      )
+      finalTxid = signResult.txid || (signResult.tx
+        ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
+        : '')
+      if (!finalTxid) {
+        throw new Error('Could not finalize transaction for renewed UMP token.')
+      }
+      // 6) Broadcast to `tm_users`
+      const finalAtomicTx = signResult.tx
+      const broadcastTx = Transaction.fromAtomicBEEF(finalAtomicTx!)
+      await this.broadcaster.broadcast(broadcastTx)
+      return `${finalTxid}.0`
+    } else {
+      // Fallbaack
+      const signResult = await wallet.signAction({ reference, spends: {} }, adminOriginator)
+      finalTxid = signResult.txid || (signResult.tx
+        ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
+        : '')
+      if (!finalTxid) {
+        throw new Error('Failed to finalize new UMP token transaction.')
+      }
+      const finalAtomicTx = signResult.tx
+      const broadcastTx = Transaction.fromAtomicBEEF(finalAtomicTx!)
+      await this.broadcaster.broadcast(broadcastTx)
+      return `${finalTxid}.0`
+    }
+  }
+
+  /**
+   * Attempts to parse a LookupAnswer from the UMP lookup service. If successful,
+   * extracts the token fields from the resulting transaction and constructs
+   * a UMPToken object.
+   *
+   * @param answer The LookupAnswer returned by a query to ls_users.
+   * @returns The parsed UMPToken or `undefined` if none found/decodable.
+   */
+  private parseLookupAnswer(answer: LookupAnswer): UMPToken | undefined {
+    if (answer.type !== 'output-list') {
+      return undefined
+    }
+    if (!answer.outputs || answer.outputs.length === 0) {
+      return undefined
+    }
+
+    // We expect only one relevant UMP token in most queries, so let's parse the first.
+    // If multiple are returned, we can parse the first. 
+    const { beef, outputIndex } = answer.outputs[0]
+    try {
+      const tx = Transaction.fromBEEF(beef)
+      const outpoint = `${tx.id('hex')}.${outputIndex}`
+
+      const decoded = PushDrop.decode(tx.outputs[outputIndex].lockingScript)
+
+      // Expecting 11 fields for UMP
+      if (!decoded.fields || decoded.fields.length < 11) return undefined
+
+      // Build the UMP token from these fields, preserving outpoint
+      const t: UMPToken = {
+        passwordSalt: decoded.fields[0],
+        passwordPresentationPrimary: decoded.fields[1],
+        passwordRecoveryPrimary: decoded.fields[2],
+        presentationRecoveryPrimary: decoded.fields[3],
+        passwordPrimaryPrivileged: decoded.fields[4],
+        presentationRecoveryPrivileged: decoded.fields[5],
+        presentationHash: decoded.fields[6],
+        recoveryHash: decoded.fields[7],
+        presentationKeyEncrypted: decoded.fields[8],
+        passwordKeyEncrypted: decoded.fields[9],
+        recoveryKeyEncrypted: decoded.fields[10],
+        currentOutpoint: outpoint
+      }
+      return t
+    } catch (e) {
+      // If we fail to parse or decode, return undefined
+      return undefined
+    }
   }
 
   /**
@@ -240,210 +492,6 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       return undefined
     }
     return results.outputs[0]
-  }
-  /**
-   * Creates or updates a UMP token on-chain. If oldTokenToConsume is provided,
-   * this method will spend that old token output (thus invalidating it) in the same
-   * transaction that creates the new token output. The resulting outpoint for the
-   * new token is returned.
-   *
-   * @param wallet            The wallet used for funding and signing the transaction.
-   * @param adminOriginator   The domain of the administrative originator (e.g. 'example.com').
-   * @param token             The new UMP token data to store on-chain.
-   * @param oldTokenToConsume (Optional) An existing UMP token to consume/spend in the same tx.
-   *
-   * @returns The outpoint string (`txid.index`) of the newly created UMP token output.
-   */
-  public async buildAndSend(
-    wallet: WalletInterface,
-    adminOriginator: OriginatorDomainNameStringUnder250Bytes,
-    token: UMPToken,
-    oldTokenToConsume?: UMPToken
-  ): Promise<OutpointString> {
-    // 1) Build an array of fields in the correct order.
-    const fields: number[][] = new Array(11)
-    fields[OverlayUMPTokenInteractor.fieldMap.passwordSalt] = token.passwordSalt
-    fields[OverlayUMPTokenInteractor.fieldMap.passwordPresentationPrimary] =
-      token.passwordPresentationPrimary
-    fields[OverlayUMPTokenInteractor.fieldMap.passwordRecoveryPrimary] =
-      token.passwordRecoveryPrimary
-    fields[OverlayUMPTokenInteractor.fieldMap.presentationRecoveryPrimary] =
-      token.presentationRecoveryPrimary
-    fields[OverlayUMPTokenInteractor.fieldMap.passwordPrimaryPrivileged] =
-      token.passwordPrimaryPrivileged
-    fields[OverlayUMPTokenInteractor.fieldMap.presentationRecoveryPrivileged] =
-      token.presentationRecoveryPrivileged
-    fields[OverlayUMPTokenInteractor.fieldMap.presentationHash] =
-      token.presentationHash
-    fields[OverlayUMPTokenInteractor.fieldMap.recoveryHash] = token.recoveryHash
-    fields[OverlayUMPTokenInteractor.fieldMap.presentationKeyEncrypted] =
-      token.presentationKeyEncrypted
-    fields[OverlayUMPTokenInteractor.fieldMap.passwordKeyEncrypted] =
-      token.passwordKeyEncrypted
-    fields[OverlayUMPTokenInteractor.fieldMap.recoveryKeyEncrypted] =
-      token.recoveryKeyEncrypted
-
-    // 2) Build a PushDrop locking script that references these fields.
-    const script = await new PushDrop(wallet).lock(
-      fields,
-      [2, 'admin user-management token'],
-      '1',
-      'self',
-      true,
-      true
-    )
-
-    // 3) Construct a createAction() call with one output:
-    //    If oldTokenToConsume is provided, we add an input for it.
-    const inputs: CreateActionInput[] = []
-    let inputToken: { beef: number[]; outputIndex: number } | undefined
-    if (oldTokenToConsume?.currentOutpoint) {
-      const [txid, voutStr] = oldTokenToConsume.currentOutpoint.split('.')
-      const vout = parseInt(voutStr, 10)
-
-      inputs.push({
-        outpoint: `${txid}.${vout}`,
-        unlockingScriptLength: 73, // typical sig length ~ 72, we allow 73
-        inputDescription: 'Consume old UMP token'
-      })
-      inputToken = await this.findByOutpoint(oldTokenToConsume.currentOutpoint)
-    }
-
-    const outputs = [
-      {
-        lockingScript: script.toHex(),
-        satoshis: 1,
-        outputDescription: 'UMP token'
-      }
-    ]
-
-    // 5) Attempt to create the transaction. This gives us a signableTransaction if we had an input, otherwise we are done.
-    const createResult = await wallet.createAction(
-      {
-        description: oldTokenToConsume
-          ? 'Renew UMP token (consume old, create new)'
-          : 'Create new UMP token',
-        inputs,
-        outputs,
-        inputBEEF: inputToken?.beef
-      },
-      adminOriginator // The originator must be the admin domain.
-    )
-
-    // If the wallet has fully finalized the transaction then just return the new outpoint.
-    if (!createResult.signableTransaction) {
-      let finalTXID = createResult.txid // or .id('hex')
-      if (!finalTXID) {
-        if (createResult.tx) {
-          const tx = Transaction.fromAtomicBEEF(createResult.tx)
-          finalTXID = tx.id('hex')
-        }
-      }
-      if (!finalTXID) {
-        throw new Error(
-          'No signableTransaction and no finalizedTransaction found'
-        )
-      }
-      return `${finalTXID}.0`
-    }
-
-    // 5) If there was an old token to consume, we must sign its input.
-    //    We'll parse the signableTransaction BEEF, construct an unlocking script with
-    //    `PushDrop.unlock(...)`, and call `signAction`.
-    let reference = createResult.signableTransaction.reference
-    const partialTx = Transaction.fromBEEF(createResult.signableTransaction.tx)
-
-    // We'll use the same “protocolID” etc. we used in .lock()
-    const unlocker = new PushDrop(wallet).unlock(
-      [2, 'admin user-management token'],
-      '1',
-      'self'
-    )
-
-    // The old token's input is index 0 if it's the first (and only) input we appended:
-    const unlockingScript = await unlocker.sign(partialTx, 0)
-
-    // 7) Now we pass that unlockingScript to signAction:
-    const signResult = await wallet.signAction(
-      {
-        reference,
-        spends: {
-          0: {
-            unlockingScript: unlockingScript.toHex()
-          }
-        }
-      },
-      adminOriginator
-    )
-    let finalTXID = signResult.txid // or .id('hex')
-    if (!finalTXID) {
-      if (signResult.tx) {
-        const tx = Transaction.fromAtomicBEEF(signResult.tx)
-        finalTXID = tx.id('hex')
-      }
-    }
-    if (!finalTXID) {
-      throw new Error('Could not get TXID for UMP tokeen broadcast.')
-    }
-    return `${finalTXID}.0`
-  }
-  private parseResults(results: LookupAnswer): UMPToken | undefined {
-    if (results.type !== 'output-list') {
-      return undefined
-    }
-    if (!results.outputs.length) {
-      return undefined
-    }
-    try {
-      const tx = Transaction.fromBEEF(results.outputs[0].beef)
-      const decoded = PushDrop.decode(
-        tx.outputs[results.outputs[0].outputIndex].lockingScript
-      )
-      const token: UMPToken = {
-        passwordSalt:
-          decoded.fields[OverlayUMPTokenInteractor.fieldMap.passwordSalt],
-        passwordPresentationPrimary:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.passwordPresentationPrimary
-          ],
-        passwordRecoveryPrimary:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.passwordRecoveryPrimary
-          ],
-        presentationRecoveryPrimary:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.presentationRecoveryPrimary
-          ],
-        passwordPrimaryPrivileged:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.passwordPrimaryPrivileged
-          ],
-        presentationRecoveryPrivileged:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.presentationRecoveryPrivileged
-          ],
-        presentationHash:
-          decoded.fields[OverlayUMPTokenInteractor.fieldMap.presentationHash],
-        recoveryHash:
-          decoded.fields[OverlayUMPTokenInteractor.fieldMap.recoveryHash],
-        presentationKeyEncrypted:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.presentationKeyEncrypted
-          ],
-        recoveryKeyEncrypted:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.recoveryKeyEncrypted
-          ],
-        passwordKeyEncrypted:
-          decoded.fields[
-            OverlayUMPTokenInteractor.fieldMap.passwordKeyEncrypted
-          ],
-        currentOutpoint: `${tx.id('hex')}.${results.outputs[0].outputIndex}`
-      }
-      return token
-    } catch (e) {
-      return undefined
-    }
   }
 }
 
