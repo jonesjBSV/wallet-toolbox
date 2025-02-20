@@ -36,6 +36,18 @@ export class WERR_INVALID_OPERATION extends WalletError {
 }
 
 /**
+ * Unable to broadcast transaction at this time.
+ */
+export class WERR_BROADCAST_UNAVAILABLE extends WalletError {
+  constructor(message?: string) {
+    super(
+      'WERR_BROADCAST_UNAVAILABLE',
+      `Unable to broadcast transaction at this time.`
+    )
+  }
+}
+
+/**
  * The ${parameter} parameter is invalid.
  *
  * This is an example of an error object with a custom property `parameter` and templated `message`.

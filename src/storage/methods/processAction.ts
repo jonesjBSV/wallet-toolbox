@@ -73,9 +73,7 @@ export async function processAction(
     args.isDelayed
   )
 
-  if (args.isSendWith) {
-    r.sendWithResults = swr
-  }
+  r.sendWithResults = swr
 
   stampLog(args.log, `end storage processActionSdk`)
 

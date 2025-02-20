@@ -1,4 +1,4 @@
-import { HexString, WhatsOnChainConfig } from '@bsv/sdk'
+import { Beef, HexString, Utils, WhatsOnChainConfig } from '@bsv/sdk'
 import {
   asArray,
   asString,
@@ -98,6 +98,56 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       if (rawTxHex) r.rawTx = asArray(rawTxHex)
     } catch (err: unknown) {
       r.error = sdk.WalletError.fromUnknown(err)
+    }
+
+    return r
+  }
+
+  /**
+   * WhatsOnChain does not natively support a postBeef end-point aware of multiple txids of interest in the Beef.
+   *
+   * Send rawTx in `txids` order from beef.
+   *
+   * @param beef
+   * @param txids
+   * @returns
+   */
+  async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> {
+    const r: sdk.PostBeefResult = {
+      name: 'WoC',
+      status: 'success',
+      txidResults: []
+    }
+
+    let delay = false
+
+    for (const txid of txids) {
+      const tr: sdk.PostTxResultForTxid = {
+        txid,
+        status: 'success'
+      }
+
+      const rawTx = Utils.toHex(beef.findTxid(txid)!.rawTx!)
+
+      if (delay) {
+        // For multiple txids, give WoC time to propagate each one.
+        await wait(3000)
+      }
+      delay = true
+
+      try {
+        const wocTxid = await this.postRawTx(rawTx)
+        if (txid !== wocTxid) {
+          tr.status = 'error'
+          tr.data = `woc returned txid ${wocTxid}, expected ${txid}`
+        }
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        tr.status = 'error'
+        tr.data = `exception ${e.code} ${e.message}`
+      }
+
+      r.txidResults.push(tr)
     }
 
     return r

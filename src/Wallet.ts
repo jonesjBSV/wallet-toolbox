@@ -700,12 +700,25 @@ export class Wallet implements WalletInterface, ProtoWallet {
         throw new sdk.WERR_INTERNAL(
           'atomicTxid does not match txid of last AtomicBEEF transaction'
         )
+      // Merge the inputBEEF into the beef going back to the user for lockingScripts.
+      if (vargs.inputBEEF) {
+        ab.mergeBeef(vargs.inputBEEF)
+        r.signableTransaction.tx = ab.toBinaryAtomic(ab.atomicTxid)
+      }
       // Remove the new, partially constructed transaction from beef as it will never be a valid transaction.
       ab.txs.slice(ab.txs.length - 1)
       this.beef.mergeBeefFromParty(this.storageParty, ab)
     } else if (r.tx) {
       this.beef.mergeBeefFromParty(this.storageParty, r.tx)
     }
+
+    if (
+      !vargs.options.acceptDelayedBroadcast &&
+      r.sendWithResults &&
+      r.sendWithResults.length === 1 &&
+      r.sendWithResults[0].status === 'failed'
+    )
+      throw new sdk.WERR_BROADCAST_UNAVAILABLE()
 
     return r
   }
@@ -721,6 +734,15 @@ export class Wallet implements WalletInterface, ProtoWallet {
       sdk.validateSignActionArgs
     )
     const r = await signAction(this, auth, vargs)
+
+    if (
+      !vargs.options.acceptDelayedBroadcast &&
+      r.sendWithResults &&
+      r.sendWithResults.length === 1 &&
+      r.sendWithResults[0].status === 'failed'
+    )
+      throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+
     return r
   }
 
