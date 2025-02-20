@@ -1826,7 +1826,7 @@ Extension `SetupWalletSQLiteArgs` used by `createWalletSQLite` to construct a `S
 export interface SetupWalletArgs {
     env: SetupEnv;
     rootKeyHex?: string;
-    privKeyHex?: string;
+    privilegedKeyGetter?: () => Promise<PrivateKey>;
     active?: sdk.WalletStorageProvider;
     backups?: sdk.WalletStorageProvider[];
 }
@@ -1861,13 +1861,13 @@ env: SetupEnv
 ```
 See also: [SetupEnv](./setup.md#interface-setupenv)
 
-###### Property privKeyHex
+###### Property privilegedKeyGetter
 
-Optional. The privileged private key used to initialize the `PrivilegedKeyManager`.
+Optional. The privileged private key getter used to initialize the `PrivilegedKeyManager`.
 Defaults to undefined.
 
 ```ts
-privKeyHex?: string
+privilegedKeyGetter?: () => Promise<PrivateKey>
 ```
 
 ###### Property rootKeyHex
@@ -5605,15 +5605,13 @@ DEV_KEYS = '{
             await storage.makeAvailable();
         const serviceOptions = Services.createDefaultOptions(chain);
         serviceOptions.taalApiKey = args.env.taalApiKey;
-        const services = new Services(chain);
+        const services = new Services(serviceOptions);
         const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services);
         const monitor = new Monitor(monopts);
         monitor.addDefaultTasks();
-        let privilegedKeyManager: sdk.PrivilegedKeyManager | undefined = undefined;
-        if (args.privKeyHex) {
-            const privKey = PrivateKey.fromString(args.privKeyHex);
-            privilegedKeyManager = new sdk.PrivilegedKeyManager(async () => privKey);
-        }
+        const privilegedKeyManager = args.privilegedKeyGetter
+            ? new sdk.PrivilegedKeyManager(args.privilegedKeyGetter)
+            : undefined;
         const wallet = new Wallet({
             chain,
             keyDeriver,
@@ -5634,6 +5632,12 @@ DEV_KEYS = '{
         };
         return r;
     }
+    static async createWalletClientNoEnv(args: {
+        chain: sdk.Chain;
+        rootKeyHex: string;
+        storageUrl?: string;
+        privilegedKeyGetter?: () => Promise<PrivateKey>;
+    }): Promise<Wallet> 
     static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> {
         const wo = await SetupClient.createWallet(args);
         const endpointUrl = args.endpointUrl ||
@@ -5739,15 +5743,13 @@ static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
         await storage.makeAvailable();
     const serviceOptions = Services.createDefaultOptions(chain);
     serviceOptions.taalApiKey = args.env.taalApiKey;
-    const services = new Services(chain);
+    const services = new Services(serviceOptions);
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services);
     const monitor = new Monitor(monopts);
     monitor.addDefaultTasks();
-    let privilegedKeyManager: sdk.PrivilegedKeyManager | undefined = undefined;
-    if (args.privKeyHex) {
-        const privKey = PrivateKey.fromString(args.privKeyHex);
-        privilegedKeyManager = new sdk.PrivilegedKeyManager(async () => privKey);
-    }
+    const privilegedKeyManager = args.privilegedKeyGetter
+        ? new sdk.PrivilegedKeyManager(args.privilegedKeyGetter)
+        : undefined;
     const wallet = new Wallet({
         chain,
         keyDeriver,
@@ -5770,6 +5772,31 @@ static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
 }
 ```
 See also: [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [Services](./services.md#class-services), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+
+###### Method createWalletClientNoEnv
+
+Setup a new `Wallet` without requiring a .env file.
+
+```ts
+static async createWalletClientNoEnv(args: {
+    chain: sdk.Chain;
+    rootKeyHex: string;
+    storageUrl?: string;
+    privilegedKeyGetter?: () => Promise<PrivateKey>;
+}): Promise<Wallet> 
+```
+See also: [Chain](./client.md#type-chain), [Wallet](./client.md#class-wallet)
+
+Argument Details
+
++ **args.chain**
+  + 'main' or 'test'
++ **args.rootKeyHex**
+  + Root private key for wallet's key deriver.
++ **args.storageUrl**
+  + Optional. `StorageClient` and `chain` compatible endpoint URL.
++ **args.privilegedKeyGetter**
+  + Optional. Method that will return the privileged `PrivateKey`, on demand.
 
 ###### Method getEnv
 

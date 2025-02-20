@@ -162,7 +162,7 @@ DEV_KEYS = '{
     if (storage.stores.length > 0) await storage.makeAvailable()
     const serviceOptions = Services.createDefaultOptions(chain)
     serviceOptions.taalApiKey = args.env.taalApiKey
-    const services = new Services(chain)
+    const services = new Services(serviceOptions)
     const monopts = Monitor.createDefaultWalletMonitorOptions(
       chain,
       storage,
@@ -170,11 +170,9 @@ DEV_KEYS = '{
     )
     const monitor = new Monitor(monopts)
     monitor.addDefaultTasks()
-    let privilegedKeyManager: sdk.PrivilegedKeyManager | undefined = undefined
-    if (args.privKeyHex) {
-      const privKey = PrivateKey.fromString(args.privKeyHex)
-      privilegedKeyManager = new sdk.PrivilegedKeyManager(async () => privKey)
-    }
+    const privilegedKeyManager = args.privilegedKeyGetter
+      ? new sdk.PrivilegedKeyManager(args.privilegedKeyGetter)
+      : undefined
     const wallet = new Wallet({
       chain,
       keyDeriver,
@@ -194,6 +192,44 @@ DEV_KEYS = '{
       wallet
     }
     return r
+  }
+
+  /**
+   * Setup a new `Wallet` without requiring a .env file.
+   *
+   * @param args.chain - 'main' or 'test'
+   * @param args.rootKeyHex  - Root private key for wallet's key deriver.
+   * @param args.storageUrl - Optional. `StorageClient` and `chain` compatible endpoint URL.
+   * @param args.privilegedKeyGetter - Optional. Method that will return the privileged `PrivateKey`, on demand.
+   */
+  static async createWalletClientNoEnv(args: {
+    chain: sdk.Chain
+    rootKeyHex: string
+    storageUrl?: string
+    privilegedKeyGetter?: () => Promise<PrivateKey>
+  }): Promise<Wallet> {
+    const chain = args.chain
+    const endpointUrl =
+      args.storageUrl ||
+      `https://${args.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
+    const rootKey = PrivateKey.fromHex(args.rootKeyHex)
+    const keyDeriver = new KeyDeriver(rootKey)
+    const storage = new WalletStorageManager(keyDeriver.identityKey)
+    const services = new Services(chain)
+    const privilegedKeyManager = args.privilegedKeyGetter
+      ? new sdk.PrivilegedKeyManager(args.privilegedKeyGetter)
+      : undefined
+    const wallet = new Wallet({
+      chain,
+      keyDeriver,
+      storage,
+      services,
+      privilegedKeyManager
+    })
+    const client = new StorageClient(wallet, endpointUrl)
+    await storage.addWalletStorageProvider(client)
+    await storage.makeAvailable()
+    return wallet
   }
 
   /**
@@ -406,10 +442,10 @@ export interface SetupWalletArgs {
    */
   rootKeyHex?: string
   /**
-   * Optional. The privileged private key used to initialize the `PrivilegedKeyManager`.
+   * Optional. The privileged private key getter used to initialize the `PrivilegedKeyManager`.
    * Defaults to undefined.
    */
-  privKeyHex?: string
+  privilegedKeyGetter?: () => Promise<PrivateKey>
   /**
    * Optional. Active wallet storage. Can be added later.
    */
