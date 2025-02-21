@@ -4,7 +4,6 @@ import {
   StartAuthResponse,
   CompleteAuthResponse
 } from './AuthMethodInteractor'
-import fetch from 'node-fetch'
 
 /**
  * TwilioPhoneInteractor

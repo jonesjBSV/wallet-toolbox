@@ -9,7 +9,6 @@
  *  - Request faucet
  *  - Delete user
  */
-import fetch from 'node-fetch'
 import { AuthMethodInteractor } from './auth-method-interactors/AuthMethodInteractor'
 import crypto from 'crypto'
 
