@@ -277,6 +277,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
 
   async destroy(): Promise<void> {
+    if (this.stores.length < 1) return
     return await this.runAsWriter(async writer => {
       for (const store of this.stores) await store.destroy()
     })

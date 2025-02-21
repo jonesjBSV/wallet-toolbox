@@ -42,9 +42,9 @@ export async function backupToSQLite(setup: SetupWallet, filePath?: string, data
   filePath ||= `backup_${setup.identityKey}.sqlite`
   databaseName ||= `${setup.identityKey} backup`
   
-  const { activeStorage: backup, storage, wallet } = await Setup.createWalletSQLite({
+  const backup = await Setup.createStorageKnex({
     env,
-    filePath,
+    knex: Setup.createSQLiteKnex(filePath),
     databaseName,
     rootKeyHex: setup.keyDeriver.rootKey.toHex()
   })
