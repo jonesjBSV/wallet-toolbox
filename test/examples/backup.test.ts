@@ -5,6 +5,7 @@ dotenv.config()
 describe('backup example tests', () => {
   jest.setTimeout(99999999)
 
+  test('0', () => {})
   if (Setup.noEnv('test')) return
   const env = Setup.getEnv('test')
 
