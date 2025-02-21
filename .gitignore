@@ -32,5 +32,6 @@ tmp
 
 out
 out-client
-test/wallet/list/listOutputsbob*.test.ts
 test.db
+backup_*.sqlite
+
