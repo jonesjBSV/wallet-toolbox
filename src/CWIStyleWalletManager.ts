@@ -206,7 +206,10 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    * @param resolver     A LookupResolver instance for performing overlay queries (ls_users).
    * @param broadcaster  A SHIPBroadcaster instance for sharing new or updated tokens across the `tm_users` overlay.
    */
-  constructor(resolver: LookupResolver = new LookupResolver(), broadcaster: SHIPBroadcaster = new SHIPBroadcaster(['tm_users'])) {
+  constructor(
+    resolver: LookupResolver = new LookupResolver(),
+    broadcaster: SHIPBroadcaster = new SHIPBroadcaster(['tm_users'])
+  ) {
     this.resolver = resolver
     this.broadcaster = broadcaster
   }
@@ -218,7 +221,9 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    * @param hash The 32-byte SHA-256 hash of the presentation key.
    * @returns A UMPToken object (including currentOutpoint) if found, otherwise undefined.
    */
-  public async findByPresentationKeyHash(hash: number[]): Promise<UMPToken | undefined> {
+  public async findByPresentationKeyHash(
+    hash: number[]
+  ): Promise<UMPToken | undefined> {
     // Query ls_users for the given presentationHash
     const question = {
       service: 'ls_users',
@@ -235,7 +240,9 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    * @param hash The 32-byte SHA-256 hash of the recovery key.
    * @returns A UMPToken object (including currentOutpoint) if found, otherwise undefined.
    */
-  public async findByRecoveryKeyHash(hash: number[]): Promise<UMPToken | undefined> {
+  public async findByRecoveryKeyHash(
+    hash: number[]
+  ): Promise<UMPToken | undefined> {
     const question = {
       service: 'ls_users',
       query: { recoveryHash: Utils.toHex(hash) }
@@ -337,9 +344,11 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
     // If the transaction is fully processed by the wallet (some wallets might do signAndProcess automatically),
     // we retrieve the final TXID from the result.
     if (!createResult.signableTransaction) {
-      const finalTxid = createResult.txid || (createResult.tx
-        ? Transaction.fromAtomicBEEF(createResult.tx).id('hex')
-        : undefined)
+      const finalTxid =
+        createResult.txid ||
+        (createResult.tx
+          ? Transaction.fromAtomicBEEF(createResult.tx).id('hex')
+          : undefined)
       if (!finalTxid) {
         throw new Error('No signableTransaction and no final TX found.')
       }
@@ -376,9 +385,11 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
         },
         adminOriginator
       )
-      finalTxid = signResult.txid || (signResult.tx
-        ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
-        : '')
+      finalTxid =
+        signResult.txid ||
+        (signResult.tx
+          ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
+          : '')
       if (!finalTxid) {
         throw new Error('Could not finalize transaction for renewed UMP token.')
       }
@@ -389,10 +400,15 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       return `${finalTxid}.0`
     } else {
       // Fallbaack
-      const signResult = await wallet.signAction({ reference, spends: {} }, adminOriginator)
-      finalTxid = signResult.txid || (signResult.tx
-        ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
-        : '')
+      const signResult = await wallet.signAction(
+        { reference, spends: {} },
+        adminOriginator
+      )
+      finalTxid =
+        signResult.txid ||
+        (signResult.tx
+          ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
+          : '')
       if (!finalTxid) {
         throw new Error('Failed to finalize new UMP token transaction.')
       }
@@ -420,7 +436,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
     }
 
     // We expect only one relevant UMP token in most queries, so let's parse the first.
-    // If multiple are returned, we can parse the first. 
+    // If multiple are returned, we can parse the first.
     const { beef, outputIndex } = answer.outputs[0]
     try {
       const tx = Transaction.fromBEEF(beef)

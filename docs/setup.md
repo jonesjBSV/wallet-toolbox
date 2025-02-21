@@ -421,15 +421,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 #### Classes
 
-| |
-| --- |
-| [Setup](#class-setup) |
-| [SetupClient](#class-setupclient) |
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-
 ##### Class: Setup
 
 The 'Setup` class provides static setup functions to construct BRC-100 compatible
@@ -437,127 +428,8 @@ wallets in a variety of configurations.
 
 It serves as a starting point for experimentation and customization.
 
-`SetupClient` references only browser compatible code including storage via `StorageClient`.
-`Setup` extends `SetupClient` adding database storage via `Knex` and `StorageKnex`.
-
 ```ts
-export abstract class Setup extends SetupClient {
-    static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
-        const wo = await Setup.createWallet(args);
-        const activeStorage = new StorageKnex({
-            chain: wo.chain,
-            knex: args.knex,
-            commissionSatoshis: 0,
-            commissionPubKeyHex: undefined,
-            feeModel: { model: "sat/kb", value: 1 }
-        });
-        await activeStorage.migrate(args.databaseName, wo.identityKey);
-        await activeStorage.makeAvailable();
-        await wo.storage.addWalletStorageProvider(activeStorage);
-        const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
-        const userId = user.userId;
-        const r: SetupWalletKnex = {
-            ...wo,
-            activeStorage,
-            userId
-        };
-        return r;
-    }
-    static createSQLiteKnex(filename: string): Knex {
-        const config: Knex.Config = {
-            client: "sqlite3",
-            connection: { filename },
-            useNullAsDefault: true
-        };
-        const knex = makeKnex(config);
-        return knex;
-    }
-    static createMySQLKnex(connection: string, database?: string): Knex {
-        const c: Knex.MySql2ConnectionConfig = JSON.parse(connection);
-        if (database) {
-            c.database = database;
-        }
-        const config: Knex.Config = {
-            client: "mysql2",
-            connection: c,
-            useNullAsDefault: true,
-            pool: { min: 0, max: 7, idleTimeoutMillis: 15000 }
-        };
-        const knex = makeKnex(config);
-        return knex;
-    }
-    static async createWalletMySQL(args: SetupWalletMySQLArgs): Promise<SetupWalletKnex> {
-        return await this.createWalletKnex({
-            ...args,
-            knex: Setup.createMySQLKnex(args.env.mySQLConnection, args.databaseName)
-        });
-    }
-    static async createWalletSQLite(args: SetupWalletSQLiteArgs): Promise<SetupWalletKnex> {
-        return await this.createWalletKnex({
-            ...args,
-            knex: Setup.createSQLiteKnex(args.filePath)
-        });
-    }
-}
-```
-
-See also: [SetupClient](./setup.md#class-setupclient), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [SetupWalletMySQLArgs](./setup.md#interface-setupwalletmysqlargs), [SetupWalletSQLiteArgs](./setup.md#interface-setupwalletsqliteargs), [StorageKnex](./storage.md#class-storageknex)
-
-###### Method createWalletKnex
-
-Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
-
-```ts
-static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
-    const wo = await Setup.createWallet(args);
-    const activeStorage = new StorageKnex({
-        chain: wo.chain,
-        knex: args.knex,
-        commissionSatoshis: 0,
-        commissionPubKeyHex: undefined,
-        feeModel: { model: "sat/kb", value: 1 }
-    });
-    await activeStorage.migrate(args.databaseName, wo.identityKey);
-    await activeStorage.makeAvailable();
-    await wo.storage.addWalletStorageProvider(activeStorage);
-    const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
-    const userId = user.userId;
-    const r: SetupWalletKnex = {
-        ...wo,
-        activeStorage,
-        userId
-    };
-    return r;
-}
-```
-See also: [Setup](./setup.md#class-setup), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [StorageKnex](./storage.md#class-storageknex)
-
-Argument Details
-
-+ **args.knex**
-  + `Knex` object configured for either MySQL or SQLite database access.
-Schema will be created and migrated as needed.
-For MySQL, a schema corresponding to databaseName must exist with full access permissions.
-+ **args.databaseName**
-  + Name for this storage. For MySQL, the schema name within the MySQL instance.
-+ **args.chain**
-  + Which chain this wallet is on: 'main' or 'test'. Defaults to 'test'.
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Class: SetupClient
-
-The `SetupClient` class provides static setup functions to construct BRC-100 compatible
-wallets in a variety of configurations.
-
-It serves as a starting point for experimentation and customization.
-
-`SetupClient` references only browser compatible code including storage via `StorageClient`.
-`Setup` extends `SetupClient` adding database storage via `Knex` and `StorageKnex`.
-
-```ts
-export abstract class SetupClient {
+export abstract class Setup {
     static noEnv(chain: sdk.Chain): boolean 
     static makeEnv(): string {
         const testPrivKey1 = PrivateKey.fromRandom();
@@ -659,7 +531,7 @@ DEV_KEYS = '{
         privilegedKeyGetter?: () => Promise<PrivateKey>;
     }): Promise<Wallet> 
     static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> {
-        const wo = await SetupClient.createWallet(args);
+        const wo = await Setup.createWallet(args);
         const endpointUrl = args.endpointUrl ||
             `https://${args.env.chain !== "main" ? "staging-" : ""}storage.babbage.systems`;
         const client = new StorageClient(wo.wallet, endpointUrl);
@@ -686,7 +558,7 @@ DEV_KEYS = '{
     }
     static getUnlockP2PKH(priv: PrivateKey, satoshis: number): sdk.ScriptTemplateUnlock {
         const p2pkh = new P2PKH();
-        const lock = SetupClient.getLockP2PKH(SetupClient.getKeyPair(priv).address);
+        const lock = Setup.getLockP2PKH(Setup.getKeyPair(priv).address);
         const unlock = p2pkh.unlock(priv, "all", false, satoshis, lock);
         return unlock;
     }
@@ -705,7 +577,7 @@ DEV_KEYS = '{
                 basket: o.basket,
                 tags: o.tags,
                 satoshis: o.satoshis,
-                lockingScript: SetupClient.getLockP2PKH(o.address).toHex(),
+                lockingScript: Setup.getLockP2PKH(o.address).toHex(),
                 outputDescription: o.outputDescription || `p2pkh ${i}`
             });
         }
@@ -721,7 +593,7 @@ DEV_KEYS = '{
         cr: CreateActionResult;
         outpoints: string[] | undefined;
     }> {
-        const os = SetupClient.createP2PKHOutputs(outputs);
+        const os = Setup.createP2PKHOutputs(outputs);
         const createArgs: CreateActionArgs = {
             description: `createP2PKHOutputs`,
             outputs: os,
@@ -739,10 +611,66 @@ DEV_KEYS = '{
     }
     static async fundWalletFromP2PKHOutpoints(wallet: WalletInterface, outpoints: string[], p2pkhKey: KeyPairAddress, inputBEEF?: BEEF) {
     }
+    static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
+        const wo = await Setup.createWallet(args);
+        const activeStorage = new StorageKnex({
+            chain: wo.chain,
+            knex: args.knex,
+            commissionSatoshis: 0,
+            commissionPubKeyHex: undefined,
+            feeModel: { model: "sat/kb", value: 1 }
+        });
+        await activeStorage.migrate(args.databaseName, wo.identityKey);
+        await activeStorage.makeAvailable();
+        await wo.storage.addWalletStorageProvider(activeStorage);
+        const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
+        const userId = user.userId;
+        const r: SetupWalletKnex = {
+            ...wo,
+            activeStorage,
+            userId
+        };
+        return r;
+    }
+    static createSQLiteKnex(filename: string): Knex {
+        const config: Knex.Config = {
+            client: "sqlite3",
+            connection: { filename },
+            useNullAsDefault: true
+        };
+        const knex = makeKnex(config);
+        return knex;
+    }
+    static createMySQLKnex(connection: string, database?: string): Knex {
+        const c: Knex.MySql2ConnectionConfig = JSON.parse(connection);
+        if (database) {
+            c.database = database;
+        }
+        const config: Knex.Config = {
+            client: "mysql2",
+            connection: c,
+            useNullAsDefault: true,
+            pool: { min: 0, max: 7, idleTimeoutMillis: 15000 }
+        };
+        const knex = makeKnex(config);
+        return knex;
+    }
+    static async createWalletMySQL(args: SetupWalletMySQLArgs): Promise<SetupWalletKnex> {
+        return await this.createWalletKnex({
+            ...args,
+            knex: Setup.createMySQLKnex(args.env.mySQLConnection, args.databaseName)
+        });
+    }
+    static async createWalletSQLite(args: SetupWalletSQLiteArgs): Promise<SetupWalletKnex> {
+        return await this.createWalletKnex({
+            ...args,
+            knex: Setup.createSQLiteKnex(args.filePath)
+        });
+    }
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [Setup](./setup.md#class-setup), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [StorageClient](./storage.md#class-storageclient), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
+See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [SetupWalletMySQLArgs](./setup.md#interface-setupwalletmysqlargs), [SetupWalletSQLiteArgs](./setup.md#interface-setupwalletsqliteargs), [StorageClient](./storage.md#class-storageclient), [StorageKnex](./storage.md#class-storageknex), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
 
 ###### Method createWallet
 
@@ -817,6 +745,46 @@ Argument Details
   + Optional. `StorageClient` and `chain` compatible endpoint URL.
 + **args.privilegedKeyGetter**
   + Optional. Method that will return the privileged `PrivateKey`, on demand.
+
+###### Method createWalletKnex
+
+Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
+
+```ts
+static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
+    const wo = await Setup.createWallet(args);
+    const activeStorage = new StorageKnex({
+        chain: wo.chain,
+        knex: args.knex,
+        commissionSatoshis: 0,
+        commissionPubKeyHex: undefined,
+        feeModel: { model: "sat/kb", value: 1 }
+    });
+    await activeStorage.migrate(args.databaseName, wo.identityKey);
+    await activeStorage.makeAvailable();
+    await wo.storage.addWalletStorageProvider(activeStorage);
+    const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
+    const userId = user.userId;
+    const r: SetupWalletKnex = {
+        ...wo,
+        activeStorage,
+        userId
+    };
+    return r;
+}
+```
+See also: [Setup](./setup.md#class-setup), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [StorageKnex](./storage.md#class-storageknex)
+
+Argument Details
+
++ **args.knex**
+  + `Knex` object configured for either MySQL or SQLite database access.
+Schema will be created and migrated as needed.
+For MySQL, a schema corresponding to databaseName must exist with full access permissions.
++ **args.databaseName**
+  + Name for this storage. For MySQL, the schema name within the MySQL instance.
++ **args.chain**
+  + Which chain this wallet is on: 'main' or 'test'. Defaults to 'test'.
 
 ###### Method getEnv
 
