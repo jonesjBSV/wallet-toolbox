@@ -8,12 +8,12 @@ describe('backup example tests', () => {
     if (Setup.noEnv('test')) return
     const env = Setup.getEnv('test')
 
-    test('1 backup bob', async () => {
-      await backupWalletClient(env, process.env.BOB_TEST_IDENTITY || '')
+    test('1 backup MY_TEST_IDENTITY', async () => {
+      await backupWalletClient(env, process.env.MY_TEST_IDENTITY || '')
     })
 
-    test('2 backup bob2', async () => {
-      await backupWalletClient(env, process.env.BOB2_TEST_IDENTITY || '')
+    test('2 backup MY_TEST_IDENTITY2', async () => {
+      await backupWalletClient(env, process.env.MY_TEST_IDENTITY2 || '')
     })
 })
 
