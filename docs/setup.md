@@ -613,15 +613,7 @@ DEV_KEYS = '{
     }
     static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
         const wo = await Setup.createWallet(args);
-        const activeStorage = new StorageKnex({
-            chain: wo.chain,
-            knex: args.knex,
-            commissionSatoshis: 0,
-            commissionPubKeyHex: undefined,
-            feeModel: { model: "sat/kb", value: 1 }
-        });
-        await activeStorage.migrate(args.databaseName, wo.identityKey);
-        await activeStorage.makeAvailable();
+        const activeStorage = await Setup.createStorageKnex(args);
         await wo.storage.addWalletStorageProvider(activeStorage);
         const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
         const userId = user.userId;
@@ -632,6 +624,7 @@ DEV_KEYS = '{
         };
         return r;
     }
+    static async createStorageKnex(args: SetupWalletKnexArgs): Promise<StorageKnex> 
     static createSQLiteKnex(filename: string): Knex {
         const config: Knex.Config = {
             client: "sqlite3",
@@ -671,6 +664,17 @@ DEV_KEYS = '{
 ```
 
 See also: [Chain](./client.md#type-chain), [KeyPairAddress](./setup.md#interface-keypairaddress), [Monitor](./monitor.md#class-monitor), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [ScriptTemplateUnlock](./client.md#interface-scripttemplateunlock), [Services](./services.md#class-services), [SetupEnv](./setup.md#interface-setupenv), [SetupWallet](./setup.md#interface-setupwallet), [SetupWalletArgs](./setup.md#interface-setupwalletargs), [SetupWalletClient](./setup.md#interface-setupwalletclient), [SetupWalletClientArgs](./setup.md#interface-setupwalletclientargs), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [SetupWalletMySQLArgs](./setup.md#interface-setupwalletmysqlargs), [SetupWalletSQLiteArgs](./setup.md#interface-setupwalletsqliteargs), [StorageClient](./storage.md#class-storageclient), [StorageKnex](./storage.md#class-storageknex), [WERR_INVALID_OPERATION](./client.md#class-werr_invalid_operation), [Wallet](./client.md#class-wallet), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [verifyTruthy](./client.md#function-verifytruthy)
+
+###### Method createStorageKnex
+
+```ts
+static async createStorageKnex(args: SetupWalletKnexArgs): Promise<StorageKnex> 
+```
+See also: [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [StorageKnex](./storage.md#class-storageknex)
+
+Returns
+
+- `Knex` based storage provider for a wallet. May be used for either active storage or backup storage.
 
 ###### Method createWallet
 
@@ -753,15 +757,7 @@ Adds `Knex` based storage to a `Wallet` configured by `Setup.createWalletOnly`
 ```ts
 static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
     const wo = await Setup.createWallet(args);
-    const activeStorage = new StorageKnex({
-        chain: wo.chain,
-        knex: args.knex,
-        commissionSatoshis: 0,
-        commissionPubKeyHex: undefined,
-        feeModel: { model: "sat/kb", value: 1 }
-    });
-    await activeStorage.migrate(args.databaseName, wo.identityKey);
-    await activeStorage.makeAvailable();
+    const activeStorage = await Setup.createStorageKnex(args);
     await wo.storage.addWalletStorageProvider(activeStorage);
     const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey);
     const userId = user.userId;
@@ -773,7 +769,7 @@ static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKne
     return r;
 }
 ```
-See also: [Setup](./setup.md#class-setup), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs), [StorageKnex](./storage.md#class-storageknex)
+See also: [Setup](./setup.md#class-setup), [SetupWalletKnex](./setup.md#interface-setupwalletknex), [SetupWalletKnexArgs](./setup.md#interface-setupwalletknexargs)
 
 Argument Details
 
