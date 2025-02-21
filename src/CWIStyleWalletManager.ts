@@ -62,7 +62,8 @@ import {
   Transaction,
   PushDrop,
   SHIPBroadcaster as SHIPCast,
-  CreateActionInput
+  CreateActionInput,
+  SHIPBroadcaster
 } from '@bsv/sdk'
 import { PrivilegedKeyManager } from './sdk/PrivilegedKeyManager'
 
@@ -175,25 +176,6 @@ export interface UMPTokenInteractor {
   ) => Promise<OutpointString>
 }
 
-import {
-  UMPTokenInteractor,
-  UMPToken
-} from './CWIStyleWalletManager' // or wherever UMPTokenInteractor & UMPToken are declared
-import {
-  WalletInterface,
-  OriginatorDomainNameStringUnder250Bytes,
-  LookupAnswer,
-  LookupQuestion,
-  LookupResolver,
-  PushDrop,
-  Transaction,
-  CreateActionInput,
-  OutpointString,
-  Utils,
-  LockingScript
-} from '@bsv/sdk'
-import { SHIPBroadcaster } from '@bsv/sdk/dist/overlay/SHIPCast.js' // or wherever SHIPBroadcaster is actually imported from
-
 /**
  * @class OverlayUMPTokenInteractor
  *
@@ -238,7 +220,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    */
   public async findByPresentationKeyHash(hash: number[]): Promise<UMPToken | undefined> {
     // Query ls_users for the given presentationHash
-    const question: LookupQuestion = {
+    const question = {
       service: 'ls_users',
       query: { presentationHash: Utils.toHex(hash) }
     }
@@ -254,7 +236,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    * @returns A UMPToken object (including currentOutpoint) if found, otherwise undefined.
    */
   public async findByRecoveryKeyHash(hash: number[]): Promise<UMPToken | undefined> {
-    const question: LookupQuestion = {
+    const question = {
       service: 'ls_users',
       query: { recoveryHash: Utils.toHex(hash) }
     }
