@@ -299,7 +299,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
     fields[10] = token.recoveryKeyEncrypted
 
     // 2) Create a PushDrop script referencing these fields, locked with the admin key (for easy revocation).
-    const script = await new PushDrop(wallet).lock(
+    const script = await new PushDrop(wallet, adminOriginator).lock(
       fields,
       [2, 'admin user-management token'], // protocolID
       '1', // keyID
@@ -366,7 +366,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
 
     if (oldTokenToConsume?.currentOutpoint) {
       // Unlock the old token with a matching PushDrop unlocker
-      const unlocker = new PushDrop(wallet).unlock(
+      const unlocker = new PushDrop(wallet, adminOriginator).unlock(
         [2, 'admin user-management token'],
         '1',
         'self'
