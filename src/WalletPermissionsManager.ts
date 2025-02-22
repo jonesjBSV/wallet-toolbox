@@ -5,6 +5,7 @@ import {
   LockingScript,
   Transaction
 } from '@bsv/sdk'
+import { validateCreateActionArgs } from './sdk'
 
 ////// TODO: ADD SUPPORT FOR ADMIN COUNTERPARTIES BASED ON WALLET STORAGE
 ////// !!!!!!!! SECURITY-CRITICAL ADDITION — DO NOT USE UNTIL IMPLEMENTED.
@@ -2116,30 +2117,37 @@ export class WalletPermissionsManager implements WalletInterface {
      *    - If the user originally wanted signAndProcess (the default when undefined), we forcibly set it to false earlier, so check if we should now finalize it.
      *    - If the transaction still needs more signatures, we must return the signableTransaction.
      */
-    const userWantedImmediate = args.options?.signAndProcess !== false
-    const weOverrode =
-      modifiedOptions.signAndProcess === false &&
-      args.options?.signAndProcess !== false
-
-    // Check if all inputs already have valid unlockingScripts (no partial signatures needed)
-    const allInputsHaveScripts = tx.inputs.every(i => i.unlockingScript)
-
-    // If user wanted immediate broadcast and we forcibly suppressed it, we can finalize now by calling signAction with no additional scripts:
-    if (allInputsHaveScripts && userWantedImmediate && weOverrode) {
-      const signResult = await this.underlying.signAction(
-        { reference, spends: {}, options: args.options },
-        originator
-      )
-      // Merge signResult into createResult and remove signableTransaction:
-      return {
-        ...createResult,
-        ...signResult,
-        signableTransaction: undefined
-      }
+    const vargs = validateCreateActionArgs(args)
+    if (vargs.isSignAction) {
+      return createResult
     }
 
-    // Otherwise, return the partial transaction so the caller can do signAction.
-    return createResult
+    const signResult = await this.underlying.signAction(
+      { reference, spends: {}, options: args.options },
+      originator
+    )
+    // Merge signResult into createResult and remove signableTransaction:
+    return {
+      ...createResult,
+      ...signResult,
+      signableTransaction: undefined
+    }
+
+    // const userWantedImmediate = args.options?.signAndProcess !== false
+    // const weOverrode =
+    //   modifiedOptions.signAndProcess === false &&
+    //   args.options?.signAndProcess !== false
+
+    // // Check if all inputs already have valid unlockingScripts (no partial signatures needed)
+    const allInputsHaveScripts = tx.inputs.every(i => i.unlockingScript)
+
+    // // If user wanted immediate broadcast and we forcibly suppressed it, we can finalize now by calling signAction with no additional scripts:
+    // if (allInputsHaveScripts && userWantedImmediate && weOverrode) {
+
+    // }
+
+    // // Otherwise, return the partial transaction so the caller can do signAction.
+    // return createResult
   }
 
   public async signAction(

@@ -55,20 +55,22 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
         wallet: WalletInterface,
         adminOriginator: string
       ) => {
-        const faucetResultJSON = await this.wabClient.requestFaucet(
+        debugger
+        const { paymentData } = await this.wabClient.requestFaucet(
           Utils.toHex(presentationKey)
         )
-        if (!faucetResultJSON.k || !faucetResultJSON.tx) {
+        if (!paymentData.k || !paymentData.tx) {
           throw new Error('Invalid')
         }
-        const faucetTx = Transaction.fromBinary(faucetResultJSON.tx)
+        const tx = Transaction.fromAtomicBEEF(paymentData.tx as number[])
+        console.log(paymentData)
         const faucetRedeemTXCreationResult = await wallet.createAction(
           {
-            inputBEEF: faucetTx.toBEEF(),
+            inputBEEF: tx.toBEEF(),
             inputs: [
               {
-                outpoint: `${faucetTx.id('hex')}.0`,
-                unlockingScriptLength: 104,
+                outpoint: `${paymentData.txid}.0`,
+                unlockingScriptLength: 108,
                 inputDescription: 'Fund from faucet'
               }
             ],
@@ -82,14 +84,14 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
         const faucetRedemptionPuzzle = new RPuzzle()
         const randomRedemptionPrivateKey = PrivateKey.fromRandom()
         const faucetRedeemUnlocker = faucetRedemptionPuzzle.unlock(
-          new BigNumber(faucetResultJSON.k, 16),
+          new BigNumber(paymentData.k, 16),
           randomRedemptionPrivateKey
         )
         const faucetRedeemUnlockingScript = await faucetRedeemUnlocker.sign(
           faucetRedeemTX,
           0
         )
-        await wallet.signAction({
+        const signActionResult = await wallet.signAction({
           reference:
             faucetRedeemTXCreationResult.signableTransaction!.reference,
           spends: {
@@ -98,6 +100,7 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
             }
           }
         })
+        console.log('Sign action result:', signActionResult)
       },
       stateSnapshot
     )

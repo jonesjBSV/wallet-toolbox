@@ -854,6 +854,8 @@ export class CWIStyleWalletManager implements WalletInterface {
         )
       } catch (e) {
         // swallow error
+        // TODO: Implement better error handling
+        console.error(e)
       }
     }
 

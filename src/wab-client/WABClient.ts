@@ -13,7 +13,7 @@ import { AuthMethodInteractor } from './auth-method-interactors/AuthMethodIntera
 import crypto from 'crypto'
 
 export class WABClient {
-  constructor(private serverUrl: string) {}
+  constructor(private serverUrl: string) { }
 
   /**
    * Return the WAB server info
