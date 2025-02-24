@@ -238,7 +238,7 @@ export abstract class TestUtilsWalletStorage {
       args.active,
       args.backups
     )
-    if (storage.stores.length > 0) await storage.makeAvailable()
+    await storage.makeAvailable()
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(
       chain,
@@ -773,7 +773,8 @@ export abstract class TestUtilsWalletStorage {
       created_at: now,
       updated_at: now,
       userId: 0,
-      identityKey: identityKey || randomBytesHex(33)
+      identityKey: identityKey || randomBytesHex(33),
+      activeStorage: storage.getSettings().storageIdentityKey
     }
     await storage.insertUser(e)
     return e

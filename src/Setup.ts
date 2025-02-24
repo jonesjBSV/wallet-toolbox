@@ -157,7 +157,7 @@ DEV_KEYS = '{
       args.active,
       args.backups
     )
-    if (storage.stores.length > 0) await storage.makeAvailable()
+    await storage.makeAvailable()
     const serviceOptions = Services.createDefaultOptions(chain)
     serviceOptions.taalApiKey = args.env.taalApiKey
     const services = new Services(serviceOptions)

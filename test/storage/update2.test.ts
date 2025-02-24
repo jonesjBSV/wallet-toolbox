@@ -74,6 +74,7 @@ describe('update2 tests', () => {
 
     await storage.dropAllData()
     await storage.migrate('test setup', '1'.repeat(64))
+    await storage.makeAvailable()
     const setup = await _tu.createTestSetup1(storage)
 
     setups.push({ setup, storage })
@@ -540,7 +541,8 @@ describe('update2 tests', () => {
             userId: record.userId,
             identityKey: `mockUpdatedIdentityKey-${record[primaryKey]}`,
             created_at: new Date('2024-12-30T23:00:00Z'),
-            updated_at: new Date('2024-12-30T23:05:00Z')
+            updated_at: new Date('2024-12-30T23:05:00Z'),
+            activeStorage: storage.getSettings().storageIdentityKey
           }
           const updateResult = await storage.updateUser(
             record[primaryKey],
@@ -697,7 +699,8 @@ describe('update2 tests', () => {
         userId: 3,
         identityKey: '',
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
+        activeStorage: storage.getSettings().storageIdentityKey
       }
       try {
         const r = await storage.insertUser(initialRecord)

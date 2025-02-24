@@ -421,7 +421,8 @@ export class StorageMySQLDojoReader extends StorageReader {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         userId: verifyId(d.userId),
-        identityKey: verifyTruthy(d.identityKey)
+        identityKey: verifyTruthy(d.identityKey),
+        activeStorage: this.getSettings().storageIdentityKey
       }
       rs.push(r)
     }
