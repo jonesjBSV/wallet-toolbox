@@ -356,11 +356,12 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       // Now broadcast to `tm_users` using SHIP
       const broadcastTx = Transaction.fromAtomicBEEF(createResult.tx!)
       const facilitator = new HTTPSOverlayBroadcastFacilitator()
-      facilitator.send('https://users.bapp.dev/submit', {
+      const result = await facilitator.send('https://users.bapp.dev', {
         topics: ['tm_users'],
         beef: broadcastTx.toBEEF()
       })
-      // await this.broadcaster.broadcast(broadcastTx)
+      await this.broadcaster.broadcast(broadcastTx)
+      console.log('BROADCAST RESULT', result)
       return `${finalTxid}.0`
     }
 
