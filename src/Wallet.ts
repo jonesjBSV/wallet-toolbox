@@ -626,7 +626,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     throw new Error('Method not implemented.')
   }
 
-  verifyReturnedTxidOnly(beef: Beef) : Beef {
+  verifyReturnedTxidOnly(beef: Beef): Beef {
     if (this.returnTxidOnly) return beef
     for (const btx of beef.txs) {
       if (btx.isTxidOnly) {
@@ -636,17 +636,15 @@ export class Wallet implements WalletInterface, ProtoWallet {
       }
     }
     for (const btx of beef.txs) {
-      if (btx.isTxidOnly)
-        throw new sdk.WERR_INTERNAL()
+      if (btx.isTxidOnly) throw new sdk.WERR_INTERNAL()
     }
     return beef
   }
 
-  verifyReturnedTxidOnlyAtomicBEEF(beef: AtomicBEEF) : AtomicBEEF {
+  verifyReturnedTxidOnlyAtomicBEEF(beef: AtomicBEEF): AtomicBEEF {
     if (this.returnTxidOnly) return beef
     const b = Beef.fromBinary(beef)
-    if (!b.atomicTxid)
-        throw new sdk.WERR_INTERNAL()
+    if (!b.atomicTxid) throw new sdk.WERR_INTERNAL()
     return this.verifyReturnedTxidOnly(b).toBinaryAtomic(b.atomicTxid!)
   }
 
@@ -697,11 +695,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
       this.beef.mergeBeefFromParty(this.storageParty, r.tx)
     }
 
-    if (r.tx)
-      r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx);
+    if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 
     if (r.signableTransaction?.tx)
-      r.signableTransaction.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.signableTransaction.tx);
+      r.signableTransaction.tx = this.verifyReturnedTxidOnlyAtomicBEEF(
+        r.signableTransaction.tx
+      )
 
     if (
       !vargs.options.acceptDelayedBroadcast &&
@@ -734,8 +733,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     )
       throw new sdk.WERR_BROADCAST_UNAVAILABLE()
 
-    if (r.tx)
-      r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx);
+    if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 
     return r
   }
