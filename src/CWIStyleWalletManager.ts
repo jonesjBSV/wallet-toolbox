@@ -63,7 +63,8 @@ import {
   PushDrop,
   SHIPBroadcaster as SHIPCast,
   CreateActionInput,
-  SHIPBroadcaster
+  SHIPBroadcaster,
+  HTTPSOverlayBroadcastFacilitator
 } from '@bsv/sdk'
 import { PrivilegedKeyManager } from './sdk/PrivilegedKeyManager'
 
@@ -354,7 +355,12 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       }
       // Now broadcast to `tm_users` using SHIP
       const broadcastTx = Transaction.fromAtomicBEEF(createResult.tx!)
-      await this.broadcaster.broadcast(broadcastTx)
+      const facilitator = new HTTPSOverlayBroadcastFacilitator()
+      facilitator.send('https://users.bapp.dev/submit', {
+        topics: ['tm_users'],
+        beef: broadcastTx.toBEEF()
+      })
+      // await this.broadcaster.broadcast(broadcastTx)
       return `${finalTxid}.0`
     }
 
@@ -396,7 +402,11 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       // 6) Broadcast to `tm_users`
       const finalAtomicTx = signResult.tx
       const broadcastTx = Transaction.fromAtomicBEEF(finalAtomicTx!)
-      await this.broadcaster.broadcast(broadcastTx)
+      const facilitator = new HTTPSOverlayBroadcastFacilitator()
+      facilitator.send('https://users.bapp.dev/submit', {
+        topics: ['tm_users'],
+        beef: broadcastTx.toBEEF()
+      })
       return `${finalTxid}.0`
     } else {
       // Fallbaack
@@ -414,7 +424,11 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       }
       const finalAtomicTx = signResult.tx
       const broadcastTx = Transaction.fromAtomicBEEF(finalAtomicTx!)
-      await this.broadcaster.broadcast(broadcastTx)
+      const facilitator = new HTTPSOverlayBroadcastFacilitator()
+      facilitator.send('https://users.bapp.dev/submit', {
+        topics: ['tm_users'],
+        beef: broadcastTx.toBEEF()
+      })
       return `${finalTxid}.0`
     }
   }
