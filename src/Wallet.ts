@@ -62,7 +62,8 @@ import {
   AuthFetch,
   verifyNonce,
   MasterCertificate,
-  Certificate
+  Certificate,
+  AtomicBEEF
 } from '@bsv/sdk'
 import {
   sdk,
@@ -114,6 +115,10 @@ export class Wallet implements WalletInterface, ProtoWallet {
    * Over time, this allows an active wallet to drastically reduce the amount of data transmitted.
    */
   beef: BeefParty
+  /**
+   * If true, beefs returned to the user may contain txidOnly transactions.
+   */
+  returnTxidOnly: boolean = false
   trustSelf?: TrustSelf
   userParty: string
   proto: ProtoWallet
@@ -621,6 +626,30 @@ export class Wallet implements WalletInterface, ProtoWallet {
     throw new Error('Method not implemented.')
   }
 
+  verifyReturnedTxidOnly(beef: Beef) : Beef {
+    if (this.returnTxidOnly) return beef
+    for (const btx of beef.txs) {
+      if (btx.isTxidOnly) {
+        const tx = this.beef.findAtomicTransaction(btx.txid)
+        if (!tx) throw new sdk.WERR_INTERNAL()
+        beef.mergeTransaction(tx)
+      }
+    }
+    for (const btx of beef.txs) {
+      if (btx.isTxidOnly)
+        throw new sdk.WERR_INTERNAL()
+    }
+    return beef
+  }
+
+  verifyReturnedTxidOnlyAtomicBEEF(beef: AtomicBEEF) : AtomicBEEF {
+    if (this.returnTxidOnly) return beef
+    const b = Beef.fromBinary(beef)
+    if (!b.atomicTxid)
+        throw new sdk.WERR_INTERNAL()
+    return this.verifyReturnedTxidOnly(b).toBinaryAtomic(b.atomicTxid!)
+  }
+
   //////////////////
   // Actions
   //////////////////
@@ -668,6 +697,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
       this.beef.mergeBeefFromParty(this.storageParty, r.tx)
     }
 
+    if (r.tx)
+      r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx);
+
+    if (r.signableTransaction?.tx)
+      r.signableTransaction.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.signableTransaction.tx);
+
     if (
       !vargs.options.acceptDelayedBroadcast &&
       r.sendWithResults &&
@@ -698,6 +733,9 @@ export class Wallet implements WalletInterface, ProtoWallet {
       r.sendWithResults[0].status === 'failed'
     )
       throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+
+    if (r.tx)
+      r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx);
 
     return r
   }
