@@ -384,15 +384,7 @@ DEV_KEYS = '{
     args: SetupWalletKnexArgs
   ): Promise<SetupWalletKnex> {
     const wo = await Setup.createWallet(args)
-    const activeStorage = new StorageKnex({
-      chain: wo.chain,
-      knex: args.knex,
-      commissionSatoshis: 0,
-      commissionPubKeyHex: undefined,
-      feeModel: { model: 'sat/kb', value: 1 }
-    })
-    await activeStorage.migrate(args.databaseName, wo.identityKey)
-    await activeStorage.makeAvailable()
+    const activeStorage = await Setup.createStorageKnex(args)
     await wo.storage.addWalletStorageProvider(activeStorage)
     const { user, isNew } = await activeStorage.findOrInsertUser(wo.identityKey)
     const userId = user.userId
@@ -402,6 +394,27 @@ DEV_KEYS = '{
       userId
     }
     return r
+  }
+
+  /**
+   * @returns {StorageKnex} - `Knex` based storage provider for a wallet. May be used for either active storage or backup storage.
+   */
+  static async createStorageKnex(
+    args: SetupWalletKnexArgs
+  ): Promise<StorageKnex> {
+    // Create a temporary wallet setup to consistently resolve optional args.
+    const wo = await Setup.createWallet(args)
+    const storage = new StorageKnex({
+      chain: wo.chain,
+      knex: args.knex,
+      commissionSatoshis: 0,
+      commissionPubKeyHex: undefined,
+      feeModel: { model: 'sat/kb', value: 1 }
+    })
+    await storage.migrate(args.databaseName, wo.identityKey)
+    await storage.makeAvailable()
+    await wo.wallet.destroy()
+    return storage
   }
 
   /**
