@@ -403,10 +403,11 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       const finalAtomicTx = signResult.tx
       const broadcastTx = Transaction.fromAtomicBEEF(finalAtomicTx!)
       const facilitator = new HTTPSOverlayBroadcastFacilitator()
-      facilitator.send('https://users.bapp.dev/submit', {
+      const result = await facilitator.send('https://users.bapp.dev', {
         topics: ['tm_users'],
         beef: broadcastTx.toBEEF()
       })
+      console.log('BROADCAST RESULT', result)
       return `${finalTxid}.0`
     } else {
       // Fallbaack
