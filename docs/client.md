@@ -6647,6 +6647,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     monitor?: Monitor;
     identityKey: string;
     beef: BeefParty;
+    returnTxidOnly: boolean = false;
     trustSelf?: TrustSelf;
     userParty: string;
     proto: ProtoWallet;
@@ -6678,6 +6679,8 @@ export class Wallet implements WalletInterface, ProtoWallet {
     async proveCertificate(args: ProveCertificateArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<ProveCertificateResult> 
     async discoverByIdentityKey(args: DiscoverByIdentityKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
     async discoverByAttributes(args: DiscoverByAttributesArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<DiscoverCertificatesResult> 
+    verifyReturnedTxidOnly(beef: Beef): Beef 
+    verifyReturnedTxidOnlyAtomicBEEF(beef: AtomicBEEF): AtomicBEEF 
     async createAction(args: CreateActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateActionResult> 
     async signAction(args: SignActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<SignActionResult> 
     async abortAction(args: AbortActionArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AbortActionResult> 
@@ -6716,6 +6719,14 @@ For repeatability testing, set to an array of random numbers from [0..1).
 
 ```ts
 randomVals?: number[] = undefined
+```
+
+###### Property returnTxidOnly
+
+If true, beefs returned to the user may contain txidOnly transactions.
+
+```ts
+returnTxidOnly: boolean = false
 ```
 
 ###### Method getKnownTxids
