@@ -672,12 +672,14 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   verifyReturnedTxidOnly(beef: Beef): Beef {
     if (this.returnTxidOnly) return beef
-    for (const btx of beef.txs) {
-      if (btx.isTxidOnly) {
-        const tx = this.beef.findAtomicTransaction(btx.txid)
-        if (!tx) throw new sdk.WERR_INTERNAL()
-        beef.mergeTransaction(tx)
-      }
+    const onlyTxids = beef.txs
+      .filter(btx => btx.isTxidOnly)
+      .map(btx => btx.txid)
+    for (const txid of onlyTxids) {
+      const btx = beef.findTxid(txid)
+      const tx = this.beef.findAtomicTransaction(txid)
+      if (!tx) throw new sdk.WERR_INTERNAL()
+      beef.mergeTransaction(tx)
     }
     for (const btx of beef.txs) {
       if (btx.isTxidOnly) throw new sdk.WERR_INTERNAL()
