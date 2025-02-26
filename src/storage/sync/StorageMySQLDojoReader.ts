@@ -46,7 +46,10 @@ export interface StorageMySQLDojoReaderOptions extends StorageReaderOptions {
   knex: Knex
 }
 
-export class StorageMySQLDojoReader extends StorageReader {
+export class StorageMySQLDojoReader
+  extends StorageReader
+  implements sdk.WalletStorageSyncReader
+{
   knex: Knex
 
   constructor(options: StorageMySQLDojoReaderOptions) {

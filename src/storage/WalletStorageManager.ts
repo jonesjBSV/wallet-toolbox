@@ -504,7 +504,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async syncFromReader(
     identityKey: string,
-    reader: sdk.WalletStorageProvider,
+    reader: sdk.WalletStorageSyncReader,
     activeSync?: sdk.WalletStorageSync,
     log: string = ''
   ): Promise<{ inserts: number; updates: number; log: string }> {
