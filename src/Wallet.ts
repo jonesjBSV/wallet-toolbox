@@ -117,6 +117,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
    */
   beef: BeefParty
   /**
+   * If true, signableTransactions will include sourceTransaction for each input,
+   * including those that do not require signature and those that were also contained
+   * in the inputBEEF.
+   */
+  includeAllSourceTransactions: boolean = true
+  /**
    * If true, beefs returned to the user may contain txidOnly transactions.
    */
   returnTxidOnly: boolean = false
@@ -676,41 +682,18 @@ export class Wallet implements WalletInterface, ProtoWallet {
       args,
       sdk.validateCreateActionArgs
     )
+    vargs.includeAllSourceTransactions = this.includeAllSourceTransactions
     if (this.randomVals && this.randomVals.length > 1) {
       vargs.randomVals = [...this.randomVals]
     }
 
     const r = await createAction(this, auth, vargs)
 
-    if (r.signableTransaction) {
-      const st = r.signableTransaction
-      const ab = Beef.fromBinary(st.tx)
-      if (!ab.atomicTxid)
-        throw new sdk.WERR_INTERNAL(
-          'Missing atomicTxid in signableTransaction result'
-        )
-      if (ab.txs.length < 1 || ab.txs[ab.txs.length - 1].txid !== ab.atomicTxid)
-        throw new sdk.WERR_INTERNAL(
-          'atomicTxid does not match txid of last AtomicBEEF transaction'
-        )
-      // Merge the inputBEEF into the beef going back to the user for lockingScripts.
-      if (vargs.inputBEEF) {
-        ab.mergeBeef(vargs.inputBEEF)
-        r.signableTransaction.tx = ab.toBinaryAtomic(ab.atomicTxid)
-      }
-      // Remove the new, partially constructed transaction from beef as it will never be a valid transaction.
-      ab.txs.slice(ab.txs.length - 1)
-      this.beef.mergeBeefFromParty(this.storageParty, ab)
-    } else if (r.tx) {
+    if (r.tx) {
       this.beef.mergeBeefFromParty(this.storageParty, r.tx)
     }
 
     if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
-
-    if (r.signableTransaction?.tx)
-      r.signableTransaction.tx = this.verifyReturnedTxidOnlyAtomicBEEF(
-        r.signableTransaction.tx
-      )
 
     if (
       !vargs.options.acceptDelayedBroadcast &&
