@@ -113,8 +113,8 @@ export interface WalletStorageSync extends WalletStorageWriter {
 
   /**
    * Updagte the `activeStorage` property of the authenticated user by their `userId`.
-   * @param auth 
-   * @param newActiveStorageIdentityKey 
+   * @param auth
+   * @param newActiveStorageIdentityKey
    */
   setActive(
     auth: sdk.AuthId,

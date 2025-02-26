@@ -72,7 +72,8 @@ describe('Wallet sync tests', () => {
       'Importing from production dojo to local MySQL productiondojotone'
     )
     // production faucet key
-    const identityKey = '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // process.env.MY_MAIN_IDENTITY || ''
+    const identityKey =
+      '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // process.env.MY_MAIN_IDENTITY || ''
     const rootKeyHex = env.devKeys[identityKey]
     const chain: sdk.Chain = 'main'
     const connection = JSON.parse(process.env.MAIN_DOJO_CONNECTION || '')
@@ -96,7 +97,8 @@ describe('Wallet sync tests', () => {
 
   test.skip('0b sweep mysql dojo sync to new sqlite', async () => {
     const chain: sdk.Chain = 'main'
-    const identityKey = '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // prod faucet
+    const identityKey =
+      '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // prod faucet
     //const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
     const rootKeyHex = env.devKeys[identityKey]
 
@@ -221,5 +223,4 @@ describe('Wallet sync tests', () => {
 
     await c.wallet.destroy()
   })
-
 })

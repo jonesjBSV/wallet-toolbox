@@ -93,9 +93,15 @@ export class KnexMigrations implements MigrationSource<string> {
 
     migrations['2025-02-22-001 nonNULL activeStorage'] = {
       async up(knex) {
-        const storage = new StorageKnex({...StorageKnex.defaultOptions(), chain: <sdk.Chain>chain, knex})
+        const storage = new StorageKnex({
+          ...StorageKnex.defaultOptions(),
+          chain: <sdk.Chain>chain,
+          knex
+        })
         const settings = await storage.makeAvailable()
-        await knex.raw(`update users set activeStorage = '${settings.storageIdentityKey}' where activeStorage is NULL`)
+        await knex.raw(
+          `update users set activeStorage = '${settings.storageIdentityKey}' where activeStorage is NULL`
+        )
         await knex.schema.alterTable('users', table => {
           table.string('activeStorage').notNullable().alter()
         })

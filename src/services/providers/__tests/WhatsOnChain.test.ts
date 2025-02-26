@@ -230,7 +230,10 @@ describe('whatsonchain tests', () => {
     if (!Setup.getEnv('main').filePath) return
 
     const c = await _tu.createWalletSetupEnv('main')
-    const client = new StorageClient(c.wallet, 'https://storage.babbage.systems')
+    const client = new StorageClient(
+      c.wallet,
+      'https://storage.babbage.systems'
+    )
     await c.storage.addWalletStorageProvider(client)
     await c.storage.updateBackups()
 

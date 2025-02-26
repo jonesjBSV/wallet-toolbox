@@ -304,9 +304,7 @@ export class StorageMySQLDojoReader extends StorageReader {
           .trim()
           .toLowerCase()
           .replace('dojo', 'storage'),
-        purpose: (d.purpose || '')
-          .trim()
-          .toLowerCase(),
+        purpose: (d.purpose || '').trim().toLowerCase(),
         type: verifyTruthy(d.type).trim(),
         txid: nullToUndefined(d.txid),
         senderIdentityKey: verifyOptionalHexString(d.senderIdentityKey),
