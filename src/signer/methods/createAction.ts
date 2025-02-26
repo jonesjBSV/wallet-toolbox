@@ -1,4 +1,5 @@
 import {
+  Beef,
   CreateActionResult,
   SendWithResult,
   SignActionResult,
@@ -79,13 +80,28 @@ function makeSignableTransactionResult(
       : undefined,
     signableTransaction: {
       reference: prior.dcr.reference,
-      tx: makeAtomicBeef(prior.tx, prior.dcr.inputBeef)
+      tx: makeSignableTransactionBeef(prior.tx, prior.dcr.inputBeef)
     }
   }
 
   wallet.pendingSignActions[r.signableTransaction!.reference] = prior
 
   return r
+}
+
+function makeSignableTransactionBeef(
+  tx: Transaction,
+  inputBEEF: number[]
+): number[] {
+  for (const input of tx.inputs) {
+    if (!input.sourceTransaction)
+      throw new sdk.WERR_INTERNAL(
+        'Every signableTransaction input must have a sourceTransaction'
+      )
+  }
+  const beef = new Beef()
+  beef.mergeTransaction(tx)
+  return beef.toBinaryAtomic(tx.id('hex'))
 }
 
 /**
@@ -230,6 +246,8 @@ function buildSignableTransaction(
 } {
   const changeKeys = wallet.getClientChangeKeyPair()
 
+  const inputBeef = args.inputBEEF ? Beef.fromBinary(args.inputBEEF) : undefined
+
   const { inputs: storageInputs, outputs: storageOutputs } = dctr
 
   const tx = new Transaction(args.version, [], [], args.lockTime)
@@ -313,9 +331,15 @@ function buildSignableTransaction(
       const unlock = hasUnlock
         ? asBsvSdkScript(argsInput.unlockingScript!)
         : new Script()
+      const sourceTransaction = args.isSignAction
+        ? inputBeef?.findTxid(argsInput.outpoint.txid)?.tx
+        : undefined
       const inputToAdd: TransactionInput = {
         sourceTXID: argsInput.outpoint.txid,
         sourceOutputIndex: argsInput.outpoint.vout,
+        // Include the source transaction for access to the outputs locking script and output satoshis for user side fee calculation.
+        // TODO: Make this conditional to improve performance when user can supply locking scripts themselves.
+        sourceTransaction,
         unlockingScript: unlock,
         sequence: argsInput.sequenceNumber
       }
@@ -340,6 +364,9 @@ function buildSignableTransaction(
       const inputToAdd: TransactionInput = {
         sourceTXID: storageInput.sourceTxid,
         sourceOutputIndex: storageInput.sourceVout,
+        sourceTransaction: storageInput.sourceTransaction
+          ? Transaction.fromBinary(storageInput.sourceTransaction)
+          : undefined,
         unlockingScript: new Script(),
         sequence: 0xffffffff
       }
@@ -361,4 +388,15 @@ function buildSignableTransaction(
     pdi: pendingStorageInputs,
     log: ''
   }
+}
+
+function makeDummyTransactionForOutputSatoshis(
+  vout: number,
+  satoshis: number
+): Transaction {
+  const tx = new Transaction()
+  for (let i = 0; i < vout; i++)
+    tx.addOutput({ lockingScript: new Script(), satoshis: 0 })
+  tx.addOutput({ lockingScript: new Script(), satoshis })
+  return tx
 }

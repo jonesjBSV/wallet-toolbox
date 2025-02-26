@@ -268,12 +268,17 @@ async function createNewInputs(
         throw new sdk.WERR_INTERNAL(
           `vin ${vin} non-fixedInput without unlockLen`
         )
+      const sourceTransaction =
+        vargs.includeAllSourceTransactions && vargs.isSignAction
+          ? await storage.getRawTxOfKnownValidTransaction(o.txid!)
+          : undefined
       const ri: sdk.StorageCreateTransactionSdkInput = {
         vin,
         sourceTxid: o.txid!,
         sourceVout: o!.vout!,
         sourceSatoshis: o.satoshis!,
         sourceLockingScript: asString(o.lockingScript!),
+        sourceTransaction,
         unlockingScriptLength: unlockLen ? unlockLen : i!.unlockingScriptLength,
         providedBy:
           i && o.providedBy === 'storage'
