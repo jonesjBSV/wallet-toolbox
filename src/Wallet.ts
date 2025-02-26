@@ -63,7 +63,8 @@ import {
   verifyNonce,
   MasterCertificate,
   Certificate,
-  AtomicBEEF
+  AtomicBEEF,
+  BEEF
 } from '@bsv/sdk'
 import {
   sdk,
@@ -393,6 +394,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const r = await this.storage.listOutputs(vargs)
     if (r.BEEF) {
       this.beef.mergeBeefFromParty(this.storageParty, r.BEEF)
+      r.BEEF = this.verifyReturnedTxidOnlyBEEF(r.BEEF)
     }
     return r
   }
@@ -648,6 +650,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const b = Beef.fromBinary(beef)
     if (!b.atomicTxid) throw new sdk.WERR_INTERNAL()
     return this.verifyReturnedTxidOnly(b).toBinaryAtomic(b.atomicTxid!)
+  }
+
+  verifyReturnedTxidOnlyBEEF(beef: BEEF): BEEF {
+    if (this.returnTxidOnly) return beef
+    const b = Beef.fromBinary(beef)
+    return this.verifyReturnedTxidOnly(b).toBinary()
   }
 
   //////////////////
