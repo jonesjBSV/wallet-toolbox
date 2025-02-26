@@ -245,7 +245,7 @@ export interface StorageCreateTransactionSdkInput {
   sourceSatoshis: number
   sourceLockingScript: string
   /**
-   * 
+   *
    */
   sourceTransaction?: number[]
   unlockingScriptLength: number

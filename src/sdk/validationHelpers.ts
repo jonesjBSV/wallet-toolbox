@@ -437,7 +437,7 @@ export function validateCreateActionArgs(
     isNewTx: false,
     isSignAction: false,
     randomVals: undefined,
-    includeAllSourceTransactions: false,
+    includeAllSourceTransactions: false
   }
   vargs.isSendWith = vargs.options.sendWith.length > 0
   vargs.isNewTx = vargs.inputs.length > 0 || vargs.outputs.length > 0
