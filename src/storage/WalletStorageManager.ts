@@ -501,21 +501,76 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async syncFromReader(
     identityKey: string,
-    reader: StorageSyncReader
-  ): Promise<void> {
+    reader: sdk.WalletStorageProvider,
+    activeSync?: sdk.WalletStorageSync,
+    log: string = ''
+  ): Promise<{ inserts: number; updates: number; log: string }> {
     const auth = await this.getAuth()
     if (identityKey !== auth.identityKey) throw new sdk.WERR_UNAUTHORIZED()
 
     const readerSettings = await reader.makeAvailable()
 
-    return await this.runAsSync(async sync => {
+    let inserts = 0,
+      updates = 0
+
+    log = await this.runAsSync(async sync => {
       const writer = sync
       const writerSettings = this.getSettings()
 
-      let log = ''
-      let inserts = 0,
-        updates = 0
-      for (;;) {
+      log += `syncFromReader from ${readerSettings.storageName} to ${writerSettings.storageName}\n`
+
+      let i = -1
+      for (; ;) {
+        i++
+        const ss = await EntitySyncState.fromStorage(
+          writer,
+          identityKey,
+          readerSettings
+        )
+        const args = ss.makeRequestSyncChunkArgs(
+          identityKey,
+          writerSettings.storageIdentityKey
+        )
+        const chunk = await reader.getSyncChunk(args)
+        if (chunk.user) {
+          // Merging state from a reader cannot update activeStorage
+          chunk.user.activeStorage = this._active!.user!.activeStorage
+        }
+        const r = await writer.processSyncChunk(args, chunk)
+        inserts += r.inserts
+        updates += r.updates
+        log += `chunk ${i} inserted ${r.inserts} updated ${r.updates} ${r.maxUpdated_at}\n`
+        if (r.done) break
+      }
+      log += `syncFromReader complete: ${inserts} inserts, ${updates} updates\n`
+      return log
+    }, activeSync)
+
+    return { inserts, updates, log }
+  }
+
+  async syncToWriter(
+    auth: sdk.AuthId,
+    writer: sdk.WalletStorageProvider,
+    activeSync?: sdk.WalletStorageSync,
+    log: string = ''
+  ): Promise<{ inserts: number; updates: number; log: string }> {
+    const identityKey = auth.identityKey
+
+    const writerSettings = await writer.makeAvailable()
+
+    let inserts = 0,
+      updates = 0
+
+    log = await this.runAsSync(async sync => {
+      const reader = sync
+      const readerSettings = this.getSettings()
+
+      log += `syncToWriter to ${writerSettings.storageName} from ${readerSettings.storageName}\n`
+
+      let i = -1
+      for (; ;) {
+        i++
         const ss = await EntitySyncState.fromStorage(
           writer,
           identityKey,
@@ -529,12 +584,14 @@ export class WalletStorageManager implements sdk.WalletStorage {
         const r = await writer.processSyncChunk(args, chunk)
         inserts += r.inserts
         updates += r.updates
-        //log += `${r.maxUpdated_at} inserted ${r.inserts} updated ${r.updates}\n`
+        log += `chunk ${i} inserted ${r.inserts} updated ${r.updates} ${r.maxUpdated_at}\n`
         if (r.done) break
       }
-      //console.log(log)
-      console.log(`sync complete: ${inserts} inserts, ${updates} updates`)
-    })
+      log += `syncToWriter complete: ${inserts} inserts, ${updates} updates\n`
+      return log
+    }, activeSync)
+
+    return { inserts, updates, log }
   }
 
   async updateBackups(activeSync?: sdk.WalletStorageSync) {
@@ -546,45 +603,6 @@ export class WalletStorageManager implements sdk.WalletStorage {
     }, activeSync)
   }
 
-  async syncToWriter(
-    auth: sdk.AuthId,
-    writer: sdk.WalletStorageProvider,
-    activeSync?: sdk.WalletStorageSync
-  ): Promise<{ inserts: number; updates: number }> {
-    const identityKey = auth.identityKey
-
-    const writerSettings = await writer.makeAvailable()
-
-    return await this.runAsSync(async sync => {
-      const reader = sync
-      const readerSettings = this.getSettings()
-
-      let log = ''
-      let inserts = 0,
-        updates = 0
-      for (;;) {
-        const ss = await EntitySyncState.fromStorage(
-          writer,
-          identityKey,
-          readerSettings
-        )
-        const args = ss.makeRequestSyncChunkArgs(
-          identityKey,
-          writerSettings.storageIdentityKey
-        )
-        const chunk = await reader.getSyncChunk(args)
-        const r = await writer.processSyncChunk(args, chunk)
-        inserts += r.inserts
-        updates += r.updates
-        log += `${r.maxUpdated_at} inserted ${r.inserts} updated ${r.updates}\n`
-        if (r.done) break
-      }
-      //console.log(log)
-      //console.log(`sync complete: ${inserts} inserts, ${updates} updates`)
-      return { inserts, updates }
-    }, activeSync)
-  }
-
   /**
    * Updates backups and switches to new active storage provider from among current backup providers.
    * 
@@ -592,7 +610,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
    *
    * @param storageIdentityKey of current backup storage provider that is to become the new active provider.
    */
-  async setActive(storageIdentityKey: string): Promise<void> {
+  async setActive(storageIdentityKey: string): Promise<string> {
 
     if (!this.isAvailable()) await this.makeAvailable();
 
@@ -605,26 +623,59 @@ export class WalletStorageManager implements sdk.WalletStorage {
         'storageIdentityKey',
         `registered with this "WalletStorageManager". ${storageIdentityKey} does not match any managed store.`
       )
-    if (newActiveIndex === 0 && this.isActiveEnabled)
-      /** Setting the current active as the new active is a permitted no-op. */
-      return
+
 
     const auth = await this.getAuth()
     const newActive = this._stores[newActiveIndex]
     const newActiveStorageIdentityKey = newActive.settings!.storageIdentityKey
 
-    return await this.runAsSync(async sync => {
+    let log = `setActive to ${newActive.settings!.storageName}`
+
+    if (newActiveIndex === 0 && this.isActiveEnabled)
+      /** Setting the current active as the new active is a permitted no-op. */
+      return ` unchanged\n`
+    
+    log += '\n'
+
+    log = await this.runAsSync(async sync => {
+
+      // Handle case where new active is current active to resolve conflicts.
+      // And where new active is one of the current conflict actives.
+      this._conflictingActives!.push(this._active!)
+      // Remove the new active from conflicting actives and
+      // set new active as the conflicting active that matches the target `storageIdentityKey`
+      this._conflictingActives = this._conflictingActives!.filter(ca => {
+        const isNewActive = ca.settings!.storageIdentityKey === storageIdentityKey
+        if (isNewActive)
+          this._active = ca;
+        return !isNewActive
+      })
+
+      if (this._conflictingActives!.length > 0) {
+        // Merge state from conflicting actives into `_active`.
+        for (const conflict of this._conflictingActives) {
+          const sfr = await this.syncFromReader(auth.identityKey, conflict.storage, newActive.storage, log)
+          log += sfr.log
+        }
+        this._backups 
+      }
+
       await sync.setActive(auth, newActiveStorageIdentityKey)
-      await this.updateBackups(sync)
+      await this.updateBackups(newActive.storage)
       // swap stores...
       const oldActive = this._stores[0]
       this._stores[0] = this._stores[newActiveIndex]
       this._stores[newActiveIndex] = oldActive
+      // Update _authId
       this._authId = {
         ...this._authId,
         userId: undefined,
         isActive: undefined
       }
+
+      return log
     })
+
+    return log
   }
 }

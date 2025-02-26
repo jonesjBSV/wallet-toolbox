@@ -111,6 +111,11 @@ export interface WalletStorageSync extends WalletStorageWriter {
     storageName: string
   ): Promise<{ syncState: TableSyncState; isNew: boolean }>
 
+  /**
+   * Updagte the `activeStorage` property of the authenticated user by their `userId`.
+   * @param auth 
+   * @param newActiveStorageIdentityKey 
+   */
   setActive(
     auth: sdk.AuthId,
     newActiveStorageIdentityKey: string
