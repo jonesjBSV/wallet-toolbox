@@ -6484,7 +6484,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ##### Class: WERR_NOT_ACTIVE
 
-WalletStorageManager is not accessing user's active storage.
+WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.
 
 ```ts
 export class WERR_NOT_ACTIVE extends WalletError {
@@ -6826,7 +6826,6 @@ export class WalletStorageManager implements sdk.WalletStorage {
     _conflictingActives?: ManagedStorage[];
     _authId: sdk.AuthId;
     _services?: sdk.WalletServices;
-    _userIdentityKeyToId: Record<string, number> = {};
     _readerCount: number = 0;
     _writerCount: number = 0;
     _isSingleWriter: boolean = true;
@@ -6836,10 +6835,17 @@ export class WalletStorageManager implements sdk.WalletStorage {
     isStorageProvider(): boolean 
     isAvailable(): boolean 
     get isActiveEnabled(): boolean 
+    canMakeAvailable(): boolean 
     async makeAvailable(): Promise<TableSettings> 
     async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> 
     async getUserId(): Promise<number> 
     getActive(): sdk.WalletStorageProvider 
+    getActiveSettings(): TableSettings 
+    getActiveUser(): TableUser 
+    getActiveStore(): string 
+    getBackupStores(): string[] 
+    getConflictingStores(): string[] 
+    getAllStores(): string[] 
     async getActiveForWriter(): Promise<sdk.WalletStorageWriter> 
     async getActiveForReader(): Promise<sdk.WalletStorageReader> 
     async getActiveForSync(): Promise<sdk.WalletStorageSync> 
@@ -6890,6 +6896,47 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
 See also: [AuthId](./client.md#interface-authid), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvider](./storage.md#class-storageprovider), [TableCertificate](./storage.md#interface-tablecertificate), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableUser](./storage.md#interface-tableuser), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorage](./client.md#interface-walletstorage), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [WalletStorageReader](./client.md#interface-walletstoragereader), [WalletStorageSync](./client.md#interface-walletstoragesync), [WalletStorageSyncReader](./client.md#interface-walletstoragesyncreader), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
 
+###### Property _active
+
+The current active store which is only enabled if the store's user record activeStorage property matches its settings record storageIdentityKey property
+
+```ts
+_active?: ManagedStorage
+```
+
+###### Property _authId
+
+identityKey is always valid, userId and isActive are valid only if _isAvailable
+
+```ts
+_authId: sdk.AuthId
+```
+See also: [AuthId](./client.md#interface-authid)
+
+###### Property _backups
+
+Stores to which state is pushed by updateBackups.
+
+```ts
+_backups?: ManagedStorage[]
+```
+
+###### Property _conflictingActives
+
+Stores whose user record activeStorage property disagrees with the active store's user record activeStorage property.
+
+```ts
+_conflictingActives?: ManagedStorage[]
+```
+
+###### Property _isAvailable
+
+True if makeAvailable has been run and access to managed stores (active) is allowed
+
+```ts
+_isAvailable: boolean = false
+```
+
 ###### Property _isSingleWriter
 
 if true, allow only a single writer to proceed at a time.
@@ -6898,6 +6945,23 @@ queue the blocked requests so they get executed in order when released.
 ```ts
 _isSingleWriter: boolean = true
 ```
+
+###### Property _readerCount
+
+How many read access operations are pending
+
+```ts
+_readerCount: number = 0
+```
+
+###### Property _services
+
+Configured services if any. If valid, shared with stores (which may ignore it).
+
+```ts
+_services?: sdk.WalletServices
+```
+See also: [WalletServices](./client.md#interface-walletservices)
 
 ###### Property _storageProviderLocked
 
@@ -6908,6 +6972,14 @@ queue the blocked requests so they get executed in order when released.
 _storageProviderLocked: boolean = false
 ```
 
+###### Property _stores
+
+All configured stores including current active, backups, and conflicting actives.
+
+```ts
+_stores: ManagedStorage[] = []
+```
+
 ###### Property _syncLocked
 
 if true, allow no new reader or writers to proceed.
@@ -6916,6 +6988,24 @@ queue the blocked requests so they get executed in order when released.
 ```ts
 _syncLocked: boolean = false
 ```
+
+###### Property _writerCount
+
+How many write access operations are pending
+
+```ts
+_writerCount: number = 0
+```
+
+###### Method canMakeAvailable
+
+```ts
+canMakeAvailable(): boolean 
+```
+
+Returns
+
+true if at least one WalletStorageProvider has been added.
 
 ###### Method isActiveStorageProvider
 
@@ -6942,6 +7032,10 @@ See also: [TableSettings](./storage.md#interface-tablesettings)
 Returns
 
 from the active storage.
+
+Throws
+
+WERR_INVALID_PARAMETER if canMakeAvailable returns false.
 
 ###### Method runAsSync
 

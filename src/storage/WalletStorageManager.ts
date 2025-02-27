@@ -147,7 +147,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   /**
    * @returns true if at least one WalletStorageProvider has been added.
    */
-  canMakeAvailable() : boolean {
+  canMakeAvailable(): boolean {
     return this._stores.length > 0
   }
 
@@ -156,7 +156,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
    * any other async function can proceed.
    *
    * Runs through `_stores` validating all properties and partitioning across `_active`, `_backups`, `_conflictingActives`.
-   * 
+   *
    * @throws WERR_INVALID_PARAMETER if canMakeAvailable returns false.
    *
    * @returns {TableSettings} from the active storage.
@@ -218,7 +218,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
     return this._active!.settings!
   }
 
-  private verifyActive() : ManagedStorage {
+  private verifyActive(): ManagedStorage {
     if (!this._active || !this._isAvailable)
       throw new sdk.WERR_INVALID_OPERATION(
         'An active WalletStorageProvider must be added to this WalletStorageManager and makeAvailable must be called.'
@@ -732,14 +732,18 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
       for (const store of this._stores) {
         // Update all store's user records to reflect new active store
-        await store.storage.setActive({ identityKey, userId: store.user!.userId }, storageIdentityKey)
+        await store.storage.setActive(
+          { identityKey, userId: store.user!.userId },
+          storageIdentityKey
+        )
         // Update cached user.activeStorage of all stores
         store.user!.activeStorage = storageIdentityKey
         // Push state merged from all conflicting actives to all non-active stores.
         if (store.settings!.storageIdentityKey !== storageIdentityKey) {
           const stwr = await this.syncToWriter(
             { identityKey, userId: store.user!.userId, isActive: false },
-            store.storage, newActive.storage
+            store.storage,
+            newActive.storage
           )
           log += stwr.log
         }

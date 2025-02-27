@@ -119,7 +119,8 @@ export class WERR_NOT_ACTIVE extends WalletError {
   constructor(message?: string) {
     super(
       'WERR_NOT_ACTIVE',
-      message ?? `WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.`
+      message ??
+        `WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.`
     )
   }
 }

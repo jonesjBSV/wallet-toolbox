@@ -493,7 +493,8 @@ DEV_KEYS = '{
         const identityKey = rootKey.toPublicKey().toString();
         const keyDeriver = new KeyDeriver(rootKey);
         const storage = new WalletStorageManager(identityKey, args.active, args.backups);
-        await storage.makeAvailable();
+        if (storage.canMakeAvailable())
+            await storage.makeAvailable();
         const serviceOptions = Services.createDefaultOptions(chain);
         serviceOptions.taalApiKey = args.env.taalApiKey;
         const services = new Services(serviceOptions);
@@ -690,7 +691,8 @@ static async createWallet(args: SetupWalletArgs): Promise<SetupWallet> {
     const identityKey = rootKey.toPublicKey().toString();
     const keyDeriver = new KeyDeriver(rootKey);
     const storage = new WalletStorageManager(identityKey, args.active, args.backups);
-    await storage.makeAvailable();
+    if (storage.canMakeAvailable())
+        await storage.makeAvailable();
     const serviceOptions = Services.createDefaultOptions(chain);
     serviceOptions.taalApiKey = args.env.taalApiKey;
     const services = new Services(serviceOptions);
