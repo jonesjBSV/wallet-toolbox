@@ -109,7 +109,7 @@ export async function attemptToPostReqsToNetwork(
       const note = {
         what: 'postReqsToNetwork result',
         name: r.pbr.name,
-        result: d
+        result: JSON.stringify(d.data)
       }
       d.req.addHistoryNote(note)
     }
