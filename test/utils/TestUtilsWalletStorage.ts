@@ -238,7 +238,7 @@ export abstract class TestUtilsWalletStorage {
       args.active,
       args.backups
     )
-    await storage.makeAvailable()
+    if (storage.canMakeAvailable()) await storage.makeAvailable()
     const services = new Services(args.chain)
     const monopts = Monitor.createDefaultWalletMonitorOptions(
       chain,
@@ -316,7 +316,7 @@ export abstract class TestUtilsWalletStorage {
       feeModel: { model: 'sat/kb', value: 1 }
     })
     if (args.dropAll) await activeStorage.dropAllData()
-    await activeStorage.migrate(args.databaseName, wo.identityKey)
+    await activeStorage.migrate(args.databaseName, randomBytesHex(33))
     await activeStorage.makeAvailable()
     const setup = await args.insertSetup(activeStorage, wo.identityKey)
     await wo.storage.addWalletStorageProvider(activeStorage)
@@ -649,7 +649,7 @@ export abstract class TestUtilsWalletStorage {
       feeModel: { model: 'sat/kb', value: 1 }
     })
     if (useReader) await activeStorage.dropAllData()
-    await activeStorage.migrate(databaseName, identityKey)
+    await activeStorage.migrate(databaseName, randomBytesHex(33))
     await activeStorage.makeAvailable()
     const storage = new WalletStorageManager(identityKey, activeStorage)
     await storage.makeAvailable()
