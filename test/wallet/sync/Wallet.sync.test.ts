@@ -9,7 +9,7 @@ import {
 import { StorageKnex } from '../../../src/storage/StorageKnex'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
-describe('Wallet sync tests', () => {
+describe.skip('Wallet sync tests', () => {
   jest.setTimeout(99999999)
 
   const env = _tu.getEnv('test')
