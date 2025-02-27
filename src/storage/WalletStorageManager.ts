@@ -55,15 +55,41 @@ class ManagedStorage {
  * for these services.
  */
 export class WalletStorageManager implements sdk.WalletStorage {
+  /**
+   * All configured stores including current active, backups, and conflicting actives.
+   */
   _stores: ManagedStorage[] = []
+  /**
+   * True if makeAvailable has been run and access to managed stores (active) is allowed
+   */
   _isAvailable: boolean = false
+  /**
+   * The current active store which is only enabled if the store's user record activeStorage property matches its settings record storageIdentityKey property
+   */
   _active?: ManagedStorage
+  /**
+   * Stores to which state is pushed by updateBackups.
+   */
   _backups?: ManagedStorage[]
+  /**
+   * Stores whose user record activeStorage property disagrees with the active store's user record activeStorage property.
+   */
   _conflictingActives?: ManagedStorage[]
+  /**
+   * identityKey is always valid, userId and isActive are valid only if _isAvailable
+   */
   _authId: sdk.AuthId
+  /**
+   * Configured services if any. If valid, shared with stores (which may ignore it).
+   */
   _services?: sdk.WalletServices
-  _userIdentityKeyToId: Record<string, number> = {}
+  /**
+   * How many read access operations are pending
+   */
   _readerCount: number = 0
+  /**
+   * How many write access operations are pending
+   */
   _writerCount: number = 0
   /**
    * if true, allow only a single writer to proceed at a time.
@@ -626,9 +652,8 @@ export class WalletStorageManager implements sdk.WalletStorage {
         `registered with this "WalletStorageManager". ${storageIdentityKey} does not match any managed store.`
       )
 
-    const auth = await this.getAuth()
+    const identityKey = (await this.getAuth()).identityKey
     const newActive = this._stores[newActiveIndex]
-    const newActiveStorageIdentityKey = newActive.settings!.storageIdentityKey
 
     let log = `setActive to ${newActive.settings!.storageName}`
 
@@ -639,6 +664,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
     log += '\n'
 
     log = await this.runAsSync(async sync => {
+
       // Handle case where new active is current active to resolve conflicts.
       // And where new active is one of the current conflict actives.
       this._conflictingActives!.push(this._active!)
@@ -655,28 +681,28 @@ export class WalletStorageManager implements sdk.WalletStorage {
         // Merge state from conflicting actives into `_active`.
         for (const conflict of this._conflictingActives) {
           const sfr = await this.syncFromReader(
-            auth.identityKey,
+            identityKey,
             conflict.storage,
             newActive.storage,
             log
           )
           log += sfr.log
         }
-        this._backups
       }
 
-      await sync.setActive(auth, newActiveStorageIdentityKey)
-      await this.updateBackups(newActive.storage)
-      // swap stores...
-      const oldActive = this._stores[0]
-      this._stores[0] = this._stores[newActiveIndex]
-      this._stores[newActiveIndex] = oldActive
-      // Update _authId
-      this._authId = {
-        ...this._authId,
-        userId: undefined,
-        isActive: undefined
+      for (const store of this._stores) {
+        // Update all store's user records to reflect new active store
+        await store.storage.setActive({ identityKey }, storageIdentityKey)
+        // Update cached user.activeStorage of all stores
+        store.user!.activeStorage = storageIdentityKey
+        // Push state merged from all conflicting actives to all non-active stores.
+        if (store.settings!.storageIdentityKey !== storageIdentityKey) {
+          log += await this.syncToWriter({ identityKey, userId: store.user!.userId, isActive: false }, store.storage, newActive.storage)
+        }
       }
+
+      this._isAvailable = false
+      await this.makeAvailable()
 
       return log
     })
