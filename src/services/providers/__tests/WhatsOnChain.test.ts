@@ -2,7 +2,7 @@ import { WhatsOnChainBroadcaster, WhatsOnChainConfig } from '@bsv/sdk'
 import { _tu } from '../../../../test/utils/TestUtilsWalletStorage'
 import { WhatsOnChain } from '../WhatsOnChain'
 import { Services } from '../../Services'
-import { sdk, wait } from '../../../index.client'
+import { sdk, StorageClient, wait } from '../../../index.client'
 import { Setup, StorageKnex } from '../../../index.all'
 describe('whatsonchain tests', () => {
   jest.setTimeout(99999999)
@@ -221,6 +221,21 @@ describe('whatsonchain tests', () => {
     const c = await _tu.createWalletSetupEnv('main')
 
     await c.monitor.runOnce()
+
+    await c.wallet.destroy()
+  })
+
+  test.skip('8c backup to cloud', async () => {
+    if (Setup.noEnv('main')) return
+    if (!Setup.getEnv('main').filePath) return
+
+    const c = await _tu.createWalletSetupEnv('main')
+    const client = new StorageClient(
+      c.wallet,
+      'https://storage.babbage.systems'
+    )
+    await c.storage.addWalletStorageProvider(client)
+    await c.storage.updateBackups()
 
     await c.wallet.destroy()
   })

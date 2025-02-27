@@ -35,7 +35,7 @@ import { getSyncChunk } from './methods/getSyncChunk'
  * The ability to construct a properly configured instance of this class implies authentication.
  * As such there are no user specific authenticated access checks implied in the implementation of any of these methods.
  */
-export abstract class StorageReader implements sdk.StorageSyncReader {
+export abstract class StorageReader implements sdk.WalletStorageSyncReader {
   chain: sdk.Chain
   _settings?: TableSettings
   whenLastAccess?: Date

@@ -146,7 +146,8 @@ describe('SyncState class method tests', () => {
         userId: 1,
         identityKey: 'testIdentityKey',
         created_at: new Date(), // Add required property
-        updated_at: new Date() // Add required property
+        updated_at: new Date(), // Add required property
+        activeStorage: ''
       },
       provenTxs: [],
       provenTxReqs: [],

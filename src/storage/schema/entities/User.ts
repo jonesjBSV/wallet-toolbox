@@ -18,7 +18,7 @@ export class EntityUser extends EntityBase<TableUser> {
         created_at: now,
         updated_at: now,
         identityKey: '',
-        activeStorage: undefined
+        activeStorage: ''
       }
     )
   }
@@ -54,7 +54,7 @@ export class EntityUser extends EntityBase<TableUser> {
   get activeStorage() {
     return this.api.activeStorage
   }
-  set activeStorage(v: string | undefined) {
+  set activeStorage(v: string) {
     this.api.activeStorage = v
   }
 

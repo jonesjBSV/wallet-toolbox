@@ -113,13 +113,13 @@ export class WERR_UNAUTHORIZED extends WalletError {
 }
 
 /**
- * WalletStorageManager is not accessing user's active storage.
+ * WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.
  */
 export class WERR_NOT_ACTIVE extends WalletError {
   constructor(message?: string) {
     super(
       'WERR_NOT_ACTIVE',
-      message ?? `WalletStorageManager is not accessing user's active storage.`
+      message ?? `WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.`
     )
   }
 }

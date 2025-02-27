@@ -11,7 +11,7 @@ describe('StorageMySQLDojoReader tests', () => {
 
   const chain: sdk.Chain = 'test'
   const env = _tu.getEnv(chain)
-  let reader: sdk.StorageSyncReader
+  let reader: sdk.WalletStorageSyncReader
   let writer: StorageKnex
 
   beforeAll(async () => {

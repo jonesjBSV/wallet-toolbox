@@ -46,7 +46,10 @@ export interface StorageMySQLDojoReaderOptions extends StorageReaderOptions {
   knex: Knex
 }
 
-export class StorageMySQLDojoReader extends StorageReader {
+export class StorageMySQLDojoReader
+  extends StorageReader
+  implements sdk.WalletStorageSyncReader
+{
   knex: Knex
 
   constructor(options: StorageMySQLDojoReaderOptions) {
@@ -300,13 +303,11 @@ export class StorageMySQLDojoReader extends StorageReader {
         outputDescription: (d.description || '').trim(),
         vout: verifyInteger(typeof d.vout !== 'number' ? 9999 : d.vout),
         satoshis: verifyInteger(d.amount),
-        providedBy: verifyTruthy(d.providedBy || '')
+        providedBy: verifyTruthy(d.providedBy || 'you')
           .trim()
           .toLowerCase()
           .replace('dojo', 'storage'),
-        purpose: verifyTruthy(d.purpose || '')
-          .trim()
-          .toLowerCase(),
+        purpose: (d.purpose || '').trim().toLowerCase(),
         type: verifyTruthy(d.type).trim(),
         txid: nullToUndefined(d.txid),
         senderIdentityKey: verifyOptionalHexString(d.senderIdentityKey),
@@ -421,7 +422,8 @@ export class StorageMySQLDojoReader extends StorageReader {
         created_at: verifyTruthy(d.created_at),
         updated_at: verifyTruthy(d.updated_at),
         userId: verifyId(d.userId),
-        identityKey: verifyTruthy(d.identityKey)
+        identityKey: verifyTruthy(d.identityKey),
+        activeStorage: this.getSettings().storageIdentityKey
       }
       rs.push(r)
     }

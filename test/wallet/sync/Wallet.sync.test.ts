@@ -212,8 +212,6 @@ async function setActiveTwice(
     })
   ).rejects.toThrow('Result must exist and be unique.')
   if (backupWallet) {
-    expect(backupWallet?.storage.stores.length === 1)
-    expect(backupWallet?.storage.stores[0] === backup)
     await expect(
       backupWallet.relinquishOutput({
         basket: 'xyzzy',
