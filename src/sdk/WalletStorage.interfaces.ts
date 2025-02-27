@@ -257,6 +257,10 @@ export interface StorageCreateTransactionSdkInput {
   sourceVout: number
   sourceSatoshis: number
   sourceLockingScript: string
+  /**
+   *
+   */
+  sourceTransaction?: number[]
   unlockingScriptLength: number
   providedBy: StorageProvidedBy
   type: string

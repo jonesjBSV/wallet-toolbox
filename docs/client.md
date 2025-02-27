@@ -1637,6 +1637,7 @@ export interface StorageCreateTransactionSdkInput {
     sourceVout: number;
     sourceSatoshis: number;
     sourceLockingScript: string;
+    sourceTransaction?: number[];
     unlockingScriptLength: number;
     providedBy: StorageProvidedBy;
     type: string;
@@ -2817,10 +2818,21 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
     options: ValidCreateActionOptions;
     isSignAction: boolean;
     randomVals?: number[];
+    includeAllSourceTransactions: boolean;
 }
 ```
 
 See also: [ValidCreateActionInput](./client.md#interface-validcreateactioninput), [ValidCreateActionOptions](./client.md#interface-validcreateactionoptions), [ValidCreateActionOutput](./client.md#interface-validcreateactionoutput), [ValidProcessActionArgs](./client.md#interface-validprocessactionargs)
+
+###### Property includeAllSourceTransactions
+
+If true, signableTransactions will include sourceTransaction for each input,
+including those that do not require signature and those that were also contained
+in the inputBEEF.
+
+```ts
+includeAllSourceTransactions: boolean
+```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -6527,6 +6539,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     monitor?: Monitor;
     identityKey: string;
     beef: BeefParty;
+    includeAllSourceTransactions: boolean = true;
     returnTxidOnly: boolean = false;
     trustSelf?: TrustSelf;
     userParty: string;
@@ -6592,6 +6605,16 @@ Over time, this allows an active wallet to drastically reduce the amount of data
 
 ```ts
 beef: BeefParty
+```
+
+###### Property includeAllSourceTransactions
+
+If true, signableTransactions will include sourceTransaction for each input,
+including those that do not require signature and those that were also contained
+in the inputBEEF.
+
+```ts
+includeAllSourceTransactions: boolean = true
 ```
 
 ###### Property randomVals

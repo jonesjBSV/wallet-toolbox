@@ -404,6 +404,12 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
   // true if transaction creation completion will require a `signAction` call.
   isSignAction: boolean
   randomVals?: number[]
+  /**
+   * If true, signableTransactions will include sourceTransaction for each input,
+   * including those that do not require signature and those that were also contained
+   * in the inputBEEF.
+   */
+  includeAllSourceTransactions: boolean
 }
 
 export interface ValidSignActionArgs extends ValidProcessActionArgs {
@@ -430,7 +436,8 @@ export function validateCreateActionArgs(
     isNoSend: false,
     isNewTx: false,
     isSignAction: false,
-    randomVals: undefined
+    randomVals: undefined,
+    includeAllSourceTransactions: false
   }
   vargs.isSendWith = vargs.options.sendWith.length > 0
   vargs.isNewTx = vargs.inputs.length > 0 || vargs.outputs.length > 0

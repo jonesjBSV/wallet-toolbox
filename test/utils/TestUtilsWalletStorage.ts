@@ -1504,7 +1504,7 @@ export abstract class TestUtilsWalletStorage {
 
     const st = car2.signableTransaction!
     const stBeef = Beef.fromBinary(st.tx)
-    const tx = wallet.beef.findAtomicTransaction(stBeef.txs.slice(-1)[0].txid)!
+    const tx = stBeef.findAtomicTransaction(stBeef.txs.slice(-1)[0].txid)!
     tx.inputs[0].unlockingScriptTemplate = unlock
     await tx.sign()
     const unlockingScript = tx.inputs[0].unlockingScript!.toHex()
