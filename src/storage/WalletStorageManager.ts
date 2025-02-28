@@ -663,12 +663,14 @@ export class WalletStorageManager implements sdk.WalletStorage {
     return { inserts, updates, log }
   }
 
-  async updateBackups(activeSync?: sdk.WalletStorageSync) {
+  async updateBackups(activeSync?: sdk.WalletStorageSync) : Promise<string> {
     const auth = await this.getAuth(true)
     return await this.runAsSync(async sync => {
+      let log = ''
       for (const backup of this._backups!) {
-        await this.syncToWriter(auth, backup.storage, sync)
+        log += await this.syncToWriter(auth, backup.storage, sync)
       }
+      return log
     }, activeSync)
   }
 

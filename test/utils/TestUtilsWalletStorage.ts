@@ -75,9 +75,44 @@ export interface TuEnv {
    * file path to local sqlite file for identityKey
    */
   filePath?: string
+  /**
+   * identityKey for automated test wallet on this chain
+   */
+  testIdentityKey?: string
+  /**
+   * file path to local sqlite file for testIdentityKey
+   */
+  testFilePath?: string
 }
 
 export abstract class TestUtilsWalletStorage {
+
+  /**
+   * @param chain
+   * @returns true if .env is not valid for chain
+   */
+  static noEnv(chain: sdk.Chain): boolean {
+    try {
+      _tu.getEnv(chain)
+      return false
+    } catch {
+      return true
+    }
+  }
+
+  /**
+   * @param chain
+   * @returns true if .env is not valid for chain or testIdentityKey or testFilePath are undefined or empty.
+   */
+  static noTestEnv(chain: sdk.Chain): boolean {
+    try {
+      const env = _tu.getEnv(chain)
+      return !env.testIdentityKey || !env.testFilePath
+    } catch {
+      return true
+    }
+  }
+
   static getEnv(chain: sdk.Chain): TuEnv {
     // Identity keys of the lead maintainer of this repo...
     const identityKey =
@@ -92,6 +127,14 @@ export abstract class TestUtilsWalletStorage {
       (chain === 'main'
         ? process.env.MY_MAIN_IDENTITY2
         : process.env.MY_TEST_IDENTITY2) || ''
+    const testIdentityKey =
+      (chain === 'main'
+        ? process.env.TEST_MAIN_IDENTITY
+        : process.env.TEST_TEST_IDENTITY)
+    const testFilePath =
+      chain === 'main'
+        ? process.env.TEST_MAIN_FILEPATH
+        : process.env.TEST_TEST_FILEPATH
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
@@ -107,7 +150,9 @@ export abstract class TestUtilsWalletStorage {
       runMySQL,
       runSlowTests,
       logTests,
-      filePath
+      filePath,
+      testIdentityKey,
+      testFilePath
     }
   }
 
@@ -282,6 +327,79 @@ export abstract class TestUtilsWalletStorage {
     return r
   }
 
+  /**
+   * Creates a wallet with both local sqlite and cloud stores, the local store is left active.
+   * 
+   * Requires a valid .env file with chain matching testIdentityKey and testFilePath properties valid.
+   * 
+   * Verifies wallet has at least 1000 satoshis in at least 10 change utxos.
+   * 
+   * @param chain 
+   * 
+   * @returns {TestWalletNoSetup}
+   */
+  static async createTestWallet(chain: sdk.Chain): Promise<TestWalletNoSetup> {
+    const env = _tu.getEnv(chain)
+    if (!env.testIdentityKey || !env.testFilePath)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey and env.testFilePath', 'valid');
+
+    const databaseName = path.parse(env.testFilePath!).name
+    const rootKeyHex = env.devKeys[env.testIdentityKey!]
+    const setup = await _tu.createSQLiteTestWallet({
+      filePath: env.testFilePath!,
+      rootKeyHex,
+      databaseName,
+      chain
+    })
+    const localStorageIdentityKey = setup.storage.getActiveStore()
+
+    const endpointUrl =
+      chain === 'main'
+        ? 'https://storage.babbage.systems'
+        : 'https://staging-storage.babbage.systems'
+
+    const client = new StorageClient(setup.wallet, endpointUrl)
+    //await setup.wallet.storage.addWalletStorageProvider(client)
+
+    const backupName = `${databaseName}_backup`
+    const backupPath = env.testFilePath!.replace(databaseName, backupName)
+    const localBackup = new StorageKnex({
+      ...StorageKnex.defaultOptions(),
+      knex: _tu.createLocalSQLite(backupPath),
+      chain
+    })
+    await localBackup.migrate(backupName, randomBytesHex(33))
+    const backupSettings = await localBackup.makeAvailable()
+    await setup.wallet.storage.addWalletStorageProvider(localBackup)
+
+    const log = await setup.storage.setActive(localStorageIdentityKey)
+    console.log(log)
+
+    const basket = verifyOne(await setup.activeStorage.findOutputBaskets({
+      partial: { userId: setup.storage.getActiveUser().userId, name: 'default' }
+    }))
+    if (basket.minimumDesiredUTXOValue !== 3 || basket.numberOfDesiredUTXOs < 32) {
+      await setup.activeStorage.updateOutputBasket(basket.basketId, {
+        minimumDesiredUTXOValue: 3,
+        numberOfDesiredUTXOs: 32
+      })
+    }
+
+    const log2 = await setup.storage.updateBackups()
+    console.log(log2)
+
+    const balance = await setup.wallet.balance()
+
+    if (balance.total < 1000) {
+      throw new sdk.WERR_INSUFFICIENT_FUNDS(1000, 1000 - balance.total)
+    }
+    if (balance.utxos.length <= 10) {
+      throw new sdk.WERR_INVALID_PARAMETER('change utxos count', 'greater than 10')
+    }
+
+    return setup
+  }
+
   static async createTestWalletWithStorageClient(args: {
     rootKeyHex?: string
     endpointUrl?: string
@@ -299,7 +417,6 @@ export abstract class TestUtilsWalletStorage {
 
     const client = new StorageClient(wo.wallet, args.endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
-    await wo.storage.makeAvailable()
     return wo
   }
 
