@@ -6587,6 +6587,13 @@ export class Wallet implements WalletInterface, ProtoWallet {
     async getNetwork(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> 
     async getVersion(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> 
     async sweepTo(toWallet: Wallet): Promise<void> 
+    async balance(basket: string = "default"): Promise<{
+        total: number;
+        utxos: {
+            satoshis: number;
+            outpoint: string;
+        }[];
+    }> 
 }
 ```
 
@@ -6632,6 +6639,29 @@ If true, beefs returned to the user may contain txidOnly transactions.
 ```ts
 returnTxidOnly: boolean = false
 ```
+
+###### Method balance
+
+Uses `listOutputs` to iterate through all spendable outputs in the 'default' (change) basket.
+
+```ts
+async balance(basket: string = "default"): Promise<{
+    total: number;
+    utxos: {
+        satoshis: number;
+        outpoint: string;
+    }[];
+}> 
+```
+
+Returns
+
+: number, utxos: { satoshis: number, outpoint: string }[] }
+
+Argument Details
+
++ **basket**
+  + Optional. Defaults to 'default', the wallet change basket.
 
 ###### Method getKnownTxids
 
@@ -6890,7 +6920,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
         updates: number;
         log: string;
     }> 
-    async updateBackups(activeSync?: sdk.WalletStorageSync) 
+    async updateBackups(activeSync?: sdk.WalletStorageSync): Promise<string> 
     async setActive(storageIdentityKey: string): Promise<string> 
 }
 ```

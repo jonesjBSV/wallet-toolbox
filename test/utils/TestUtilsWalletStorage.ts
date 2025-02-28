@@ -86,7 +86,6 @@ export interface TuEnv {
 }
 
 export abstract class TestUtilsWalletStorage {
-
   /**
    * @param chain
    * @returns true if .env is not valid for chain
@@ -128,9 +127,9 @@ export abstract class TestUtilsWalletStorage {
         ? process.env.MY_MAIN_IDENTITY2
         : process.env.MY_TEST_IDENTITY2) || ''
     const testIdentityKey =
-      (chain === 'main'
+      chain === 'main'
         ? process.env.TEST_MAIN_IDENTITY
-        : process.env.TEST_TEST_IDENTITY)
+        : process.env.TEST_TEST_IDENTITY
     const testFilePath =
       chain === 'main'
         ? process.env.TEST_MAIN_FILEPATH
@@ -329,19 +328,22 @@ export abstract class TestUtilsWalletStorage {
 
   /**
    * Creates a wallet with both local sqlite and cloud stores, the local store is left active.
-   * 
+   *
    * Requires a valid .env file with chain matching testIdentityKey and testFilePath properties valid.
-   * 
+   *
    * Verifies wallet has at least 1000 satoshis in at least 10 change utxos.
-   * 
-   * @param chain 
-   * 
+   *
+   * @param chain
+   *
    * @returns {TestWalletNoSetup}
    */
   static async createTestWallet(chain: sdk.Chain): Promise<TestWalletNoSetup> {
     const env = _tu.getEnv(chain)
     if (!env.testIdentityKey || !env.testFilePath)
-      throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey and env.testFilePath', 'valid');
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'env.testIdentityKey and env.testFilePath',
+        'valid'
+      )
 
     const databaseName = path.parse(env.testFilePath!).name
     const rootKeyHex = env.devKeys[env.testIdentityKey!]
@@ -375,10 +377,18 @@ export abstract class TestUtilsWalletStorage {
     const log = await setup.storage.setActive(localStorageIdentityKey)
     console.log(log)
 
-    const basket = verifyOne(await setup.activeStorage.findOutputBaskets({
-      partial: { userId: setup.storage.getActiveUser().userId, name: 'default' }
-    }))
-    if (basket.minimumDesiredUTXOValue !== 3 || basket.numberOfDesiredUTXOs < 32) {
+    const basket = verifyOne(
+      await setup.activeStorage.findOutputBaskets({
+        partial: {
+          userId: setup.storage.getActiveUser().userId,
+          name: 'default'
+        }
+      })
+    )
+    if (
+      basket.minimumDesiredUTXOValue !== 3 ||
+      basket.numberOfDesiredUTXOs < 32
+    ) {
       await setup.activeStorage.updateOutputBasket(basket.basketId, {
         minimumDesiredUTXOValue: 3,
         numberOfDesiredUTXOs: 32
@@ -394,7 +404,10 @@ export abstract class TestUtilsWalletStorage {
       throw new sdk.WERR_INSUFFICIENT_FUNDS(1000, 1000 - balance.total)
     }
     if (balance.utxos.length <= 10) {
-      throw new sdk.WERR_INVALID_PARAMETER('change utxos count', 'greater than 10')
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'change utxos count',
+        'greater than 10'
+      )
     }
 
     return setup

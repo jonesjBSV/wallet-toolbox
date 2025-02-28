@@ -3558,7 +3558,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
         updates: number;
         log: string;
     }> 
-    async updateBackups(activeSync?: sdk.WalletStorageSync) 
+    async updateBackups(activeSync?: sdk.WalletStorageSync): Promise<string> 
     async setActive(storageIdentityKey: string): Promise<string> 
 }
 ```
