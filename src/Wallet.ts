@@ -891,9 +891,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
    * @param {string} basket - Optional. Defaults to 'default', the wallet change basket.
    * @returns { total: number, utxos: { satoshis: number, outpoint: string }[] }
    */
-  async balance(
-    basket: string = 'default'
-  ): Promise<{
+  async balance(basket: string = 'default'): Promise<{
     total: number
     utxos: { satoshis: number; outpoint: string }[]
   }> {
