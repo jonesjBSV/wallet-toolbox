@@ -71,6 +71,10 @@ export interface TuEnv {
   runMySQL: boolean
   runSlowTests: boolean
   logTests: boolean
+  /**
+   * file path to local sqlite file for identityKey
+   */
+  filePath?: string
 }
 
 export abstract class TestUtilsWalletStorage {
@@ -80,6 +84,10 @@ export abstract class TestUtilsWalletStorage {
       (chain === 'main'
         ? process.env.MY_MAIN_IDENTITY
         : process.env.MY_TEST_IDENTITY) || ''
+    const filePath =
+      (chain === 'main'
+        ? process.env.MY_MAIN_FILEPATH
+        : process.env.MY_TEST_FILEPATH)
     const identityKey2 =
       (chain === 'main'
         ? process.env.MY_MAIN_IDENTITY2
@@ -98,7 +106,8 @@ export abstract class TestUtilsWalletStorage {
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
       runMySQL,
       runSlowTests,
-      logTests
+      logTests,
+      filePath
     }
   }
 

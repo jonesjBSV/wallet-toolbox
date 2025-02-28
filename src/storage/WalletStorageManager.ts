@@ -179,7 +179,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
     let i = -1
     for (const store of this._stores) {
       i++
-      if (!store.isAvailable || !store.settings) {
+      if (!store.isAvailable || !store.settings || !store.user) {
         // Validate all ManagedStorage properties.
         store.settings = await store.storage.makeAvailable()
         const r = await store.storage.findOrInsertUser(this._authId.identityKey)
@@ -633,7 +633,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
     log = await this.runAsSync(async sync => {
       const reader = sync
-      const readerSettings = this.getSettings()
+      const readerSettings = reader.getSettings()
 
       log += `syncToWriter from ${readerSettings.storageName} to ${writerSettings.storageName}\n`
 
@@ -697,38 +697,43 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
     let log = `setActive to ${newActive.settings!.storageName}`
 
-    if (newActiveIndex === 0 && this.isActiveEnabled)
+    if (storageIdentityKey === this.getActiveStore() && this.isActiveEnabled)
       /** Setting the current active as the new active is a permitted no-op. */
-      return ` unchanged\n`
+      return log + ` unchanged\n`
 
     log += '\n'
 
     log += await this.runAsSync(async sync => {
       let log = ''
 
-      // Handle case where new active is current active to resolve conflicts.
-      // And where new active is one of the current conflict actives.
-      this._conflictingActives!.push(this._active!)
-      // Remove the new active from conflicting actives and
-      // set new active as the conflicting active that matches the target `storageIdentityKey`
-      this._conflictingActives = this._conflictingActives!.filter(ca => {
-        const isNewActive =
-          ca.settings!.storageIdentityKey === storageIdentityKey
-        if (isNewActive) this._active = ca
-        return !isNewActive
-      })
-
       if (this._conflictingActives!.length > 0) {
-        // Merge state from conflicting actives into `_active`.
+        // Handle case where new active is current active to resolve conflicts.
+        // And where new active is one of the current conflict actives.
+        this._conflictingActives!.push(this._active!)
+        // Remove the new active from conflicting actives and
+        // set new active as the conflicting active that matches the target `storageIdentityKey`
+        this._conflictingActives = this._conflictingActives!.filter(ca => {
+          const isNewActive =
+            ca.settings!.storageIdentityKey === storageIdentityKey
+          return !isNewActive
+        })
+
+        // Merge state from conflicting actives into `newActive`.
         for (const conflict of this._conflictingActives) {
-          const sfr = await this.syncFromReader(
-            identityKey,
-            conflict.storage,
-            newActive.storage
+          const sfr = await this.syncToWriter(
+            { identityKey, userId: newActive.user!.userId, isActive: false },
+            newActive.storage,
+            conflict.storage
           )
           log += sfr.log
         }
       }
+
+      // If there were conflicting actives,
+      // Push state merged from all merged actives into newActive to all stores other than the now single active.
+      // Otherwise,
+      // Push state from current active to all other stores.
+      const backupSource = this._conflictingActives!.length > 0 ? newActive : this._active!
 
       for (const store of this._stores) {
         // Update all store's user records to reflect new active store
@@ -738,12 +743,12 @@ export class WalletStorageManager implements sdk.WalletStorage {
         )
         // Update cached user.activeStorage of all stores
         store.user!.activeStorage = storageIdentityKey
-        // Push state merged from all conflicting actives to all non-active stores.
-        if (store.settings!.storageIdentityKey !== storageIdentityKey) {
+
+        if (store.settings!.storageIdentityKey !== backupSource.settings!.storageIdentityKey) {
           const stwr = await this.syncToWriter(
             { identityKey, userId: store.user!.userId, isActive: false },
             store.storage,
-            newActive.storage
+            backupSource.storage
           )
           log += stwr.log
         }
