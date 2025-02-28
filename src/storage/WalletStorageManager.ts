@@ -733,7 +733,8 @@ export class WalletStorageManager implements sdk.WalletStorage {
       // Push state merged from all merged actives into newActive to all stores other than the now single active.
       // Otherwise,
       // Push state from current active to all other stores.
-      const backupSource = this._conflictingActives!.length > 0 ? newActive : this._active!
+      const backupSource =
+        this._conflictingActives!.length > 0 ? newActive : this._active!
 
       for (const store of this._stores) {
         // Update all store's user records to reflect new active store
@@ -744,7 +745,10 @@ export class WalletStorageManager implements sdk.WalletStorage {
         // Update cached user.activeStorage of all stores
         store.user!.activeStorage = storageIdentityKey
 
-        if (store.settings!.storageIdentityKey !== backupSource.settings!.storageIdentityKey) {
+        if (
+          store.settings!.storageIdentityKey !==
+          backupSource.settings!.storageIdentityKey
+        ) {
           const stwr = await this.syncToWriter(
             { identityKey, userId: store.user!.userId, isActive: false },
             store.storage,

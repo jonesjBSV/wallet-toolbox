@@ -251,9 +251,7 @@ export async function inputPushDrop(
    */
   const st = car.signableTransaction!
   const beef = Beef.fromBinary(st.tx)
-  const tx = beef.findAtomicTransaction(
-    beef.txs.slice(-1)[0].txid
-  )!
+  const tx = beef.findAtomicTransaction(beef.txs.slice(-1)[0].txid)!
   tx.inputs[0].unlockingScriptTemplate = unlock
   await tx.sign()
   const unlockingScript = tx.inputs[0].unlockingScript!.toHex()

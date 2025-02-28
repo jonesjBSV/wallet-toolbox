@@ -115,10 +115,11 @@ async function setActiveTwice(
   } = ctx
 
   if (withBackupFirst) {
-    if (storageManager.isActiveEnabled)
-      await storageManager.updateBackups()
+    if (storageManager.isActiveEnabled) await storageManager.updateBackups()
     else
-      await expect(storageManager.updateBackups()).rejects.toThrow(`WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.`)
+      await expect(storageManager.updateBackups()).rejects.toThrow(
+        `WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.`
+      )
   }
 
   const backupIdentityKey = (await backup.makeAvailable()).storageIdentityKey
@@ -126,7 +127,7 @@ async function setActiveTwice(
     .storageIdentityKey
   expect(backupIdentityKey).not.toBe(originalIdentityKey)
 
-  const originalAuth = {...await storageManager.getAuth()}
+  const originalAuth = { ...(await storageManager.getAuth()) }
   expect(originalAuth.userId).toBe(originalUserId)
   const originalTransactions = await original.findTransactions({
     partial: { userId: originalAuth.userId }
@@ -204,7 +205,9 @@ async function setActiveTwice(
   now = Date.now()
 
   // sync back to original and make it active.
-  const log2 = await storageManager.setActive(original.getSettings().storageIdentityKey)
+  const log2 = await storageManager.setActive(
+    original.getSettings().storageIdentityKey
+  )
   console.log(log2)
 
   originalUserAfter = verifyTruthy(

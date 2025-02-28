@@ -85,9 +85,9 @@ export abstract class TestUtilsWalletStorage {
         ? process.env.MY_MAIN_IDENTITY
         : process.env.MY_TEST_IDENTITY) || ''
     const filePath =
-      (chain === 'main'
+      chain === 'main'
         ? process.env.MY_MAIN_FILEPATH
-        : process.env.MY_TEST_FILEPATH)
+        : process.env.MY_TEST_FILEPATH
     const identityKey2 =
       (chain === 'main'
         ? process.env.MY_MAIN_IDENTITY2
