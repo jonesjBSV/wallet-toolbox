@@ -91,6 +91,21 @@ export class KnexMigrations implements MigrationSource<string> {
       }
     }
 
+    migrations['2025-02-28-001 derivations to 200'] = {
+      async up(knex) {
+        await knex.schema.alterTable('outputs', table => {
+          table.string('derivationPrefix', 200).alter()
+          table.string('derivationSuffix', 200).alter()
+        })
+      },
+      async down(knex) {
+        await knex.schema.alterTable('outputs', table => {
+          table.string('derivationPrefix', 32).alter()
+          table.string('derivationSuffix', 32).alter()
+        })
+      }
+    }
+
     migrations['2025-02-22-001 nonNULL activeStorage'] = {
       async up(knex) {
         const storage = new StorageKnex({
