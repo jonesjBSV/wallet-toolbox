@@ -309,7 +309,7 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
   ): sdk.RequestSyncChunkArgs {
     const a: sdk.RequestSyncChunkArgs = {
       identityKey: forIdentityKey,
-      maxRoughSize: maxRoughSize || 20000000,
+      maxRoughSize: maxRoughSize || 10000000,
       maxItems: maxItems || 1000,
       offsets: [],
       since: this.when,

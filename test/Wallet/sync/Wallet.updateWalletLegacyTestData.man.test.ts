@@ -1,3 +1,4 @@
+import { Setup } from '../../../src'
 import { sdk, StorageSyncReader, wait } from '../../../src/index.client'
 import { TaskCheckForProofs } from '../../../src/monitor/tasks/TaskCheckForProofs'
 import { TaskClock } from '../../../src/monitor/tasks/TaskClock'
@@ -70,20 +71,21 @@ describe('Wallet sync tests', () => {
     console.log(
       'Importing from production dojo to local MySQL productiondojotone'
     )
-    const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
-    const rootKeyHex = env.devKeys[identityKeyTone]
+    // production faucet key
+    const identityKey =
+      '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // process.env.MY_MAIN_IDENTITY || ''
+    const rootKeyHex = env.devKeys[identityKey]
     const chain: sdk.Chain = 'main'
     const connection = JSON.parse(process.env.MAIN_DOJO_CONNECTION || '')
     const readerKnex = _tu.createMySQLFromConnection(connection)
     const reader = new StorageMySQLDojoReader({ chain, knex: readerKnex })
     const writer = await _tu.createMySQLTestWallet({
-      databaseName: 'productiondojotone',
+      databaseName: 'productiondojofaucet',
       chain: 'main',
       rootKeyHex,
       dropAll: true
     })
 
-    const identityKey = writer.identityKey
     await writer.storage.syncFromReader(
       identityKey,
       new StorageSyncReader({ identityKey }, reader)
@@ -93,21 +95,23 @@ describe('Wallet sync tests', () => {
     await writer.activeStorage.destroy()
   })
 
-  test('0b sweep mysql dojo sync to new sqlite', async () => {
-    const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
-    const rootKeyHex = env.devKeys[identityKeyTone]
+  test.skip('0b sweep mysql dojo sync to new sqlite', async () => {
     const chain: sdk.Chain = 'main'
+    const identityKey =
+      '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // prod faucet
+    //const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
+    const rootKeyHex = env.devKeys[identityKey]
 
     const sweepFrom = await _tu.createMySQLTestWallet({
-      databaseName: 'productiondojotone',
-      chain: 'main',
+      databaseName: 'productiondojofaucet',
+      chain,
       rootKeyHex
     })
 
     const sweepTo = await _tu.createSQLiteTestWallet({
       filePath: '/Users/tone/Kz/tone42.sqlite',
       databaseName: 'tone42',
-      chain: 'main',
+      chain,
       rootKeyHex
     })
 
@@ -120,7 +124,7 @@ describe('Wallet sync tests', () => {
     await sweepFrom.wallet.destroy()
   })
 
-  test('1 aggressively purge records from MySQL stagingdojotone', async () => {
+  test.skip('1 aggressively purge records from MySQL stagingdojotone', async () => {
     await waitFor0()
 
     const { monitor, activeStorage } = await _tu.createMySQLTestWallet({
@@ -148,7 +152,7 @@ describe('Wallet sync tests', () => {
     done1 = true
   })
 
-  test('2 sync pruned MySQL stagingdojotone to SQLite walletLegacyTestData', async () => {
+  test.skip('2 sync pruned MySQL stagingdojotone to SQLite walletLegacyTestData', async () => {
     await waitFor1()
     console.log(
       'syncing local MySQL stagingdojotone to local SQLite walletLegacyTestData in tmp folder'
@@ -180,7 +184,7 @@ describe('Wallet sync tests', () => {
     done2 = true
   })
 
-  test('3 sync pruned MySQL stagingdojotone to MySQL walletLegacyTestData', async () => {
+  test.skip('3 sync pruned MySQL stagingdojotone to MySQL walletLegacyTestData', async () => {
     await waitFor2()
     console.log(
       'syncing local MySQL stagingdojotone to local SQLite walletLegacyTestData in tmp folder'
@@ -205,5 +209,18 @@ describe('Wallet sync tests', () => {
 
     await reader.activeStorage.destroy()
     await writer.activeStorage.destroy()
+  })
+
+  test('8b run monitor mainnet', async () => {
+    if (Setup.noEnv('main')) return
+    if (!Setup.getEnv('main').filePath) return
+
+    // Only run if `Setup` style .env is present with a sqlite filePath...
+
+    const c = await _tu.createWalletSetupEnv('main')
+
+    await c.monitor.runOnce()
+
+    await c.wallet.destroy()
   })
 })

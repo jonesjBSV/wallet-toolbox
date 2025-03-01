@@ -12,5 +12,5 @@ export interface TableUser extends sdk.EntityTimeStamp {
   /**
    * The storageIdentityKey value of the active wallet storage.
    */
-  activeStorage?: string
+  activeStorage: string
 }

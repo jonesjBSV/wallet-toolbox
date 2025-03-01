@@ -13,6 +13,7 @@ import {
 } from '@bsv/sdk'
 import {
   Monitor,
+  randomBytesHex,
   sdk,
   Services,
   StorageClient,
@@ -157,7 +158,7 @@ DEV_KEYS = '{
       args.active,
       args.backups
     )
-    if (storage.stores.length > 0) await storage.makeAvailable()
+    if (storage.canMakeAvailable()) await storage.makeAvailable()
     const serviceOptions = Services.createDefaultOptions(chain)
     serviceOptions.taalApiKey = args.env.taalApiKey
     const services = new Services(serviceOptions)
@@ -411,7 +412,7 @@ DEV_KEYS = '{
       commissionPubKeyHex: undefined,
       feeModel: { model: 'sat/kb', value: 1 }
     })
-    await storage.migrate(args.databaseName, wo.identityKey)
+    await storage.migrate(args.databaseName, randomBytesHex(33))
     await storage.makeAvailable()
     await wo.wallet.destroy()
     return storage

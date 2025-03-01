@@ -1088,7 +1088,7 @@ export interface TableUser extends sdk.EntityTimeStamp {
     updated_at: Date;
     userId: number;
     identityKey: string;
-    activeStorage?: string;
+    activeStorage: string;
 }
 ```
 
@@ -1099,7 +1099,7 @@ See also: [EntityTimeStamp](./client.md#interface-entitytimestamp)
 The storageIdentityKey value of the active wallet storage.
 
 ```ts
-activeStorage?: string
+activeStorage: string
 ```
 
 ###### Property identityKey
@@ -2087,7 +2087,7 @@ export class EntityUser extends EntityBase<TableUser> {
     get identityKey() 
     set identityKey(v: string) 
     get activeStorage() 
-    set activeStorage(v: string | undefined) 
+    set activeStorage(v: string) 
     override get id(): number 
     override set id(v: number) 
     override get entityName(): string 
@@ -3270,7 +3270,7 @@ The ability to construct a properly configured instance of this class implies au
 As such there are no user specific authenticated access checks implied in the implementation of any of these methods.
 
 ```ts
-export abstract class StorageReader implements sdk.StorageSyncReader {
+export abstract class StorageReader implements sdk.WalletStorageSyncReader {
     chain: sdk.Chain;
     _settings?: TableSettings;
     whenLastAccess?: Date;
@@ -3319,7 +3319,7 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [DBType](./storage.md#type-dbtype), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindMonitorEventsArgs](./client.md#interface-findmonitoreventsargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [FindUsersArgs](./client.md#interface-findusersargs), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReaderOptions](./storage.md#interface-storagereaderoptions), [StorageSyncReader](./storage.md#class-storagesyncreader), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableCommission](./storage.md#interface-tablecommission), [TableMonitorEvent](./storage.md#interface-tablemonitorevent), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [TrxToken](./client.md#interface-trxtoken), [getSyncChunk](./storage.md#function-getsyncchunk)
+See also: [Chain](./client.md#type-chain), [DBType](./storage.md#type-dbtype), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindMonitorEventsArgs](./client.md#interface-findmonitoreventsargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [FindUsersArgs](./client.md#interface-findusersargs), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReaderOptions](./storage.md#interface-storagereaderoptions), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableCommission](./storage.md#interface-tablecommission), [TableMonitorEvent](./storage.md#interface-tablemonitorevent), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [TrxToken](./client.md#interface-trxtoken), [WalletStorageSyncReader](./client.md#interface-walletstoragesyncreader), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 ###### Method validateEntityDate
 
@@ -3457,31 +3457,15 @@ Constructed from an `auth` object that must minimally include the authenticated 
 and the `StorageBaseReader` to be protected.
 
 ```ts
-export class StorageSyncReader implements sdk.StorageSyncReader {
+export class StorageSyncReader implements sdk.WalletStorageSyncReader {
     constructor(public auth: sdk.AuthId, public storage: StorageReader) 
-    isAvailable(): boolean 
     async makeAvailable(): Promise<TableSettings> 
     destroy(): Promise<void> 
-    getSettings(): TableSettings 
     async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> 
-    async findUserByIdentityKey(key: string): Promise<TableUser | undefined> 
-    async findSyncStates(args: sdk.FindSyncStatesArgs): Promise<TableSyncState[]> 
-    async findCertificateFields(args: sdk.FindCertificateFieldsArgs): Promise<TableCertificateField[]> 
-    async findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]> 
-    async findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]> 
-    async findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]> 
-    async findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]> 
-    async findOutputTags(args: sdk.FindOutputTagsArgs): Promise<TableOutputTag[]> 
-    async findTransactions(args: sdk.FindTransactionsArgs): Promise<TableTransaction[]> 
-    async findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]> 
-    async getProvenTxsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTx[]> 
-    async getProvenTxReqsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTxReq[]> 
-    async getTxLabelMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableTxLabelMap[]> 
-    async getOutputTagMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableOutputTagMap[]> 
 }
 ```
 
-See also: [AuthId](./client.md#interface-authid), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReader](./storage.md#class-storagereader), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableCommission](./storage.md#interface-tablecommission), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [getSyncChunk](./storage.md#function-getsyncchunk)
+See also: [AuthId](./client.md#interface-authid), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReader](./storage.md#class-storagereader), [SyncChunk](./client.md#interface-syncchunk), [TableSettings](./storage.md#interface-tablesettings), [WalletStorageSyncReader](./client.md#interface-walletstoragesyncreader), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3504,10 +3488,13 @@ for these services.
 
 ```ts
 export class WalletStorageManager implements sdk.WalletStorage {
-    stores: sdk.WalletStorageProvider[] = [];
+    _stores: ManagedStorage[] = [];
+    _isAvailable: boolean = false;
+    _active?: ManagedStorage;
+    _backups?: ManagedStorage[];
+    _conflictingActives?: ManagedStorage[];
     _authId: sdk.AuthId;
     _services?: sdk.WalletServices;
-    _userIdentityKeyToId: Record<string, number> = {};
     _readerCount: number = 0;
     _writerCount: number = 0;
     _isSingleWriter: boolean = true;
@@ -3515,9 +3502,19 @@ export class WalletStorageManager implements sdk.WalletStorage {
     _storageProviderLocked: boolean = false;
     constructor(identityKey: string, active?: sdk.WalletStorageProvider, backups?: sdk.WalletStorageProvider[]) 
     isStorageProvider(): boolean 
-    async getUserId(): Promise<number> 
+    isAvailable(): boolean 
+    get isActiveEnabled(): boolean 
+    canMakeAvailable(): boolean 
+    async makeAvailable(): Promise<TableSettings> 
     async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> 
+    async getUserId(): Promise<number> 
     getActive(): sdk.WalletStorageProvider 
+    getActiveSettings(): TableSettings 
+    getActiveUser(): TableUser 
+    getActiveStore(): string 
+    getBackupStores(): string[] 
+    getConflictingStores(): string[] 
+    getAllStores(): string[] 
     async getActiveForWriter(): Promise<sdk.WalletStorageWriter> 
     async getActiveForReader(): Promise<sdk.WalletStorageReader> 
     async getActiveForSync(): Promise<sdk.WalletStorageSync> 
@@ -3527,12 +3524,10 @@ export class WalletStorageManager implements sdk.WalletStorage {
     async runAsSync<R>(sync: (active: sdk.WalletStorageSync) => Promise<R>, activeSync?: sdk.WalletStorageSync): Promise<R> 
     async runAsStorageProvider<R>(sync: (active: StorageProvider) => Promise<R>): Promise<R> 
     isActiveStorageProvider(): boolean 
-    isAvailable(): boolean 
     async addWalletStorageProvider(provider: sdk.WalletStorageProvider): Promise<void> 
     setServices(v: sdk.WalletServices) 
     getServices(): sdk.WalletServices 
     getSettings(): TableSettings 
-    async makeAvailable(): Promise<TableSettings> 
     async migrate(storageName: string, storageIdentityKey: string): Promise<string> 
     async destroy(): Promise<void> 
     async findOrInsertUser(identityKey: string): Promise<{
@@ -3553,17 +3548,63 @@ export class WalletStorageManager implements sdk.WalletStorage {
     async findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]> 
     async findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]> 
     async findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]> 
-    async syncFromReader(identityKey: string, reader: StorageSyncReader): Promise<void> 
-    async updateBackups(activeSync?: sdk.WalletStorageSync) 
-    async syncToWriter(auth: sdk.AuthId, writer: sdk.WalletStorageProvider, activeSync?: sdk.WalletStorageSync): Promise<{
+    async syncFromReader(identityKey: string, reader: sdk.WalletStorageSyncReader, activeSync?: sdk.WalletStorageSync, log: string = ""): Promise<{
         inserts: number;
         updates: number;
+        log: string;
     }> 
-    async setActive(storageIdentityKey: string): Promise<void> 
+    async syncToWriter(auth: sdk.AuthId, writer: sdk.WalletStorageProvider, activeSync?: sdk.WalletStorageSync, log: string = ""): Promise<{
+        inserts: number;
+        updates: number;
+        log: string;
+    }> 
+    async updateBackups(activeSync?: sdk.WalletStorageSync): Promise<string> 
+    async setActive(storageIdentityKey: string): Promise<string> 
 }
 ```
 
-See also: [AuthId](./client.md#interface-authid), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvider](./storage.md#class-storageprovider), [StorageSyncReader](./storage.md#class-storagesyncreader), [TableCertificate](./storage.md#interface-tablecertificate), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableUser](./storage.md#interface-tableuser), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorage](./client.md#interface-walletstorage), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [WalletStorageReader](./client.md#interface-walletstoragereader), [WalletStorageSync](./client.md#interface-walletstoragesync), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvider](./storage.md#class-storageprovider), [TableCertificate](./storage.md#interface-tablecertificate), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableUser](./storage.md#interface-tableuser), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorage](./client.md#interface-walletstorage), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [WalletStorageReader](./client.md#interface-walletstoragereader), [WalletStorageSync](./client.md#interface-walletstoragesync), [WalletStorageSyncReader](./client.md#interface-walletstoragesyncreader), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
+
+###### Property _active
+
+The current active store which is only enabled if the store's user record activeStorage property matches its settings record storageIdentityKey property
+
+```ts
+_active?: ManagedStorage
+```
+
+###### Property _authId
+
+identityKey is always valid, userId and isActive are valid only if _isAvailable
+
+```ts
+_authId: sdk.AuthId
+```
+See also: [AuthId](./client.md#interface-authid)
+
+###### Property _backups
+
+Stores to which state is pushed by updateBackups.
+
+```ts
+_backups?: ManagedStorage[]
+```
+
+###### Property _conflictingActives
+
+Stores whose user record activeStorage property disagrees with the active store's user record activeStorage property.
+
+```ts
+_conflictingActives?: ManagedStorage[]
+```
+
+###### Property _isAvailable
+
+True if makeAvailable has been run and access to managed stores (active) is allowed
+
+```ts
+_isAvailable: boolean = false
+```
 
 ###### Property _isSingleWriter
 
@@ -3574,6 +3615,23 @@ queue the blocked requests so they get executed in order when released.
 _isSingleWriter: boolean = true
 ```
 
+###### Property _readerCount
+
+How many read access operations are pending
+
+```ts
+_readerCount: number = 0
+```
+
+###### Property _services
+
+Configured services if any. If valid, shared with stores (which may ignore it).
+
+```ts
+_services?: sdk.WalletServices
+```
+See also: [WalletServices](./client.md#interface-walletservices)
+
 ###### Property _storageProviderLocked
 
 if true, allow no new reader or writers or sync to proceed.
@@ -3581,6 +3639,14 @@ queue the blocked requests so they get executed in order when released.
 
 ```ts
 _storageProviderLocked: boolean = false
+```
+
+###### Property _stores
+
+All configured stores including current active, backups, and conflicting actives.
+
+```ts
+_stores: ManagedStorage[] = []
 ```
 
 ###### Property _syncLocked
@@ -3592,6 +3658,24 @@ queue the blocked requests so they get executed in order when released.
 _syncLocked: boolean = false
 ```
 
+###### Property _writerCount
+
+How many write access operations are pending
+
+```ts
+_writerCount: number = 0
+```
+
+###### Method canMakeAvailable
+
+```ts
+canMakeAvailable(): boolean 
+```
+
+Returns
+
+true if at least one WalletStorageProvider has been added.
+
 ###### Method isActiveStorageProvider
 
 ```ts
@@ -3601,6 +3685,26 @@ isActiveStorageProvider(): boolean
 Returns
 
 true if the active `WalletStorageProvider` also implements `StorageProvider`
+
+###### Method makeAvailable
+
+This async function must be called after construction and before
+any other async function can proceed.
+
+Runs through `_stores` validating all properties and partitioning across `_active`, `_backups`, `_conflictingActives`.
+
+```ts
+async makeAvailable(): Promise<TableSettings> 
+```
+See also: [TableSettings](./storage.md#interface-tablesettings)
+
+Returns
+
+from the active storage.
+
+Throws
+
+WERR_INVALID_PARAMETER if canMakeAvailable returns false.
 
 ###### Method runAsSync
 
@@ -3620,8 +3724,10 @@ Argument Details
 
 Updates backups and switches to new active storage provider from among current backup providers.
 
+Also resolves conflicting actives.
+
 ```ts
-async setActive(storageIdentityKey: string): Promise<void> 
+async setActive(storageIdentityKey: string): Promise<string> 
 ```
 
 Argument Details

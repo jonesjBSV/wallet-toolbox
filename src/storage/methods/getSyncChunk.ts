@@ -27,8 +27,8 @@ export async function getSyncChunk(
   args: sdk.RequestSyncChunkArgs
 ): Promise<sdk.SyncChunk> {
   const r: sdk.SyncChunk = {
-    fromStorageIdentityKey: '',
-    toStorageIdentityKey: '',
+    fromStorageIdentityKey: args.fromStorageIdentityKey,
+    toStorageIdentityKey: args.toStorageIdentityKey,
     userIdentityKey: args.identityKey
   }
 

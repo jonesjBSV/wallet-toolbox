@@ -51,7 +51,8 @@ describe('User class method tests', () => {
       userId: 42,
       created_at: now,
       updated_at: now,
-      identityKey: 'testIdentityKey'
+      identityKey: 'testIdentityKey',
+      activeStorage: ''
     }
     const user = new EntityUser(apiObject)
 
@@ -91,7 +92,8 @@ describe('User class method tests', () => {
           userId: 2,
           identityKey: 'key1',
           created_at: new Date('2023-01-01'),
-          updated_at: new Date('2023-01-02')
+          updated_at: new Date('2023-01-02'),
+          activeStorage: ''
         })
         await ctx1.activeStorage.insertUser(user1.toApi())
 
@@ -100,7 +102,8 @@ describe('User class method tests', () => {
           userId: 3, // Different ID
           identityKey: 'key1', // Same key
           created_at: new Date('2023-01-01'),
-          updated_at: new Date('2023-01-02')
+          updated_at: new Date('2023-01-02'),
+          activeStorage: ''
         })
         await ctx2.activeStorage.insertUser(user2.toApi())
 
@@ -121,7 +124,8 @@ describe('User class method tests', () => {
           userId: 4,
           identityKey: 'key2',
           created_at: new Date('2023-01-01'),
-          updated_at: new Date('2023-01-02')
+          updated_at: new Date('2023-01-02'),
+          activeStorage: ''
         })
         await ctx1.activeStorage.insertUser(user1.toApi())
 
@@ -130,7 +134,8 @@ describe('User class method tests', () => {
           userId: 5, // Different ID
           identityKey: 'key3', // Different key
           created_at: new Date('2023-01-01'),
-          updated_at: new Date('2023-01-02')
+          updated_at: new Date('2023-01-02'),
+          activeStorage: ''
         })
         await ctx2.activeStorage.insertUser(user2.toApi())
 
@@ -172,7 +177,8 @@ describe('User class method tests', () => {
       userId: largeUserId,
       created_at: now,
       updated_at: now,
-      identityKey: longIdentityKey
+      identityKey: longIdentityKey,
+      activeStorage: ''
     }
     const user = new EntityUser(apiObject)
 

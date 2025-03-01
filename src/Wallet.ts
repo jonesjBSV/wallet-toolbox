@@ -928,6 +928,35 @@ export class Wallet implements WalletInterface, ProtoWallet {
       labels: [label]
     })
   }
+
+  /**
+   * Uses `listOutputs` to iterate through all spendable outputs in the 'default' (change) basket.
+   *
+   * @param {string} basket - Optional. Defaults to 'default', the wallet change basket.
+   * @returns { total: number, utxos: { satoshis: number, outpoint: string }[] }
+   */
+  async balance(basket: string = 'default'): Promise<{
+    total: number
+    utxos: { satoshis: number; outpoint: string }[]
+  }> {
+    let total = 0
+    const utxos: { satoshis: number; outpoint: string }[] = []
+    let offset = 0
+    for (;;) {
+      const change = await this.listOutputs({
+        basket,
+        limit: 1000,
+        offset
+      })
+      if (change.totalOutputs === 0) break
+      for (const o of change.outputs) {
+        total += o.satoshis
+        utxos.push({ satoshis: o.satoshis, outpoint: o.outpoint })
+      }
+      offset += change.outputs.length
+    }
+    return { total, utxos }
+  }
 }
 
 export interface PendingStorageInput {

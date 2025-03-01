@@ -14,60 +14,60 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [ArcConfig](#interface-arcconfig) | [PermissionToken](#interface-permissiontoken) | [TableSyncState](#interface-tablesyncstate) |
-| [ArcMinerGetTxData](#interface-arcminergettxdata) | [PermissionsManagerConfig](#interface-permissionsmanagerconfig) | [TableTransaction](#interface-tabletransaction) |
-| [AuthId](#interface-authid) | [PostBeefResult](#interface-postbeefresult) | [TableTxLabel](#interface-tabletxlabel) |
-| [AuthPayload](#interface-authpayload) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [TableTxLabelMap](#interface-tabletxlabelmap) |
-| [BaseBlockHeader](#interface-baseblockheader) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TableUser](#interface-tableuser) |
-| [BlockHeader](#interface-blockheader) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TaskPurgeParams](#interface-taskpurgeparams) |
-| [BsvExchangeRate](#interface-bsvexchangerate) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [TrustSettings](#interface-trustsettings) |
-| [CertOpsWallet](#interface-certopswallet) | [PostTxResultForTxidError](#interface-posttxresultfortxiderror) | [TrxToken](#interface-trxtoken) |
-| [Certifier](#interface-certifier) | [PostTxsResult](#interface-posttxsresult) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
-| [CommitNewTxResults](#interface-commitnewtxresults) | [ProcessSyncChunkResult](#interface-processsyncchunkresult) | [TxScriptOffsets](#interface-txscriptoffsets) |
-| [CompleteAuthResponse](#interface-completeauthresponse) | [ProvenOrRawTx](#interface-provenorrawtx) | [UMPToken](#interface-umptoken) |
-| [EntitySyncMap](#interface-entitysyncmap) | [ProvenTxFromTxidResult](#interface-proventxfromtxidresult) | [UMPTokenInteractor](#interface-umptokeninteractor) |
-| [EntityTimeStamp](#interface-entitytimestamp) | [ProvenTxReqHistory](#interface-proventxreqhistory) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
-| [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [ProvenTxReqHistorySummaryApi](#interface-proventxreqhistorysummaryapi) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
-| [ExtendedVerifiableCertificate](#interface-extendedverifiablecertificate) | [ProvenTxReqNotify](#interface-proventxreqnotify) | [ValidAbortActionArgs](#interface-validabortactionargs) |
-| [FiatExchangeRates](#interface-fiatexchangerates) | [PurgeParams](#interface-purgeparams) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
-| [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs) | [PurgeResults](#interface-purgeresults) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
-| [FindCertificatesArgs](#interface-findcertificatesargs) | [RequestSyncChunkArgs](#interface-requestsyncchunkargs) | [ValidAcquireIssuanceCertificateArgs](#interface-validacquireissuancecertificateargs) |
-| [FindCommissionsArgs](#interface-findcommissionsargs) | [ScriptTemplateParamsBRC29](#interface-scripttemplateparamsbrc29) | [ValidBasketInsertion](#interface-validbasketinsertion) |
-| [FindForUserSincePagedArgs](#interface-findforusersincepagedargs) | [ScriptTemplateUnlock](#interface-scripttemplateunlock) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
-| [FindMonitorEventsArgs](#interface-findmonitoreventsargs) | [StartAuthResponse](#interface-startauthresponse) | [ValidCreateActionInput](#interface-validcreateactioninput) |
-| [FindOutputBasketsArgs](#interface-findoutputbasketsargs) | [StorageCreateActionResult](#interface-storagecreateactionresult) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
-| [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs) | [StorageCreateTransactionSdkInput](#interface-storagecreatetransactionsdkinput) | [ValidCreateActionOutput](#interface-validcreateactionoutput) |
-| [FindOutputTagsArgs](#interface-findoutputtagsargs) | [StorageCreateTransactionSdkOutput](#interface-storagecreatetransactionsdkoutput) | [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs) |
-| [FindOutputsArgs](#interface-findoutputsargs) | [StorageFeeModel](#interface-storagefeemodel) | [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs) |
-| [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs) | [StorageGetBeefOptions](#interface-storagegetbeefoptions) | [ValidInternalizeActionArgs](#interface-validinternalizeactionargs) |
-| [FindProvenTxReqsArgs](#interface-findproventxreqsargs) | [StorageIdentity](#interface-storageidentity) | [ValidInternalizeOutput](#interface-validinternalizeoutput) |
-| [FindProvenTxsArgs](#interface-findproventxsargs) | [StorageInternalizeActionResult](#interface-storageinternalizeactionresult) | [ValidListActionsArgs](#interface-validlistactionsargs) |
-| [FindSincePagedArgs](#interface-findsincepagedargs) | [StorageProcessActionArgs](#interface-storageprocessactionargs) | [ValidListCertificatesArgs](#interface-validlistcertificatesargs) |
-| [FindSyncStatesArgs](#interface-findsyncstatesargs) | [StorageProcessActionResults](#interface-storageprocessactionresults) | [ValidListOutputsArgs](#interface-validlistoutputsargs) |
-| [FindTransactionsArgs](#interface-findtransactionsargs) | [StorageProvenOrReq](#interface-storageprovenorreq) | [ValidProcessActionArgs](#interface-validprocessactionargs) |
-| [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs) | [StorageProviderOptions](#interface-storageprovideroptions) | [ValidProcessActionOptions](#interface-validprocessactionoptions) |
-| [FindTxLabelsArgs](#interface-findtxlabelsargs) | [StorageReaderOptions](#interface-storagereaderoptions) | [ValidProveCertificateArgs](#interface-validprovecertificateargs) |
-| [FindUsersArgs](#interface-findusersargs) | [StorageReaderWriterOptions](#interface-storagereaderwriteroptions) | [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs) |
-| [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput) | [StorageSyncReader](#interface-storagesyncreader) | [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs) |
-| [GenerateChangeSdkChangeOutput](#interface-generatechangesdkchangeoutput) | [StorageSyncReaderOptions](#interface-storagesyncreaderoptions) | [ValidSignActionArgs](#interface-validsignactionargs) |
-| [GenerateChangeSdkInput](#interface-generatechangesdkinput) | [StorageSyncReaderWriter](#interface-storagesyncreaderwriter) | [ValidSignActionOptions](#interface-validsignactionoptions) |
-| [GenerateChangeSdkOutput](#interface-generatechangesdkoutput) | [SyncChunk](#interface-syncchunk) | [ValidWalletPayment](#interface-validwalletpayment) |
-| [GenerateChangeSdkParams](#interface-generatechangesdkparams) | [SyncError](#interface-syncerror) | [ValidWalletSignerArgs](#interface-validwalletsignerargs) |
-| [GenerateChangeSdkResult](#interface-generatechangesdkresult) | [SyncMap](#interface-syncmap) | [ValidateGenerateChangeSdkParamsResult](#interface-validategeneratechangesdkparamsresult) |
-| [GenerateChangeSdkStorageChange](#interface-generatechangesdkstoragechange) | [TableCertificate](#interface-tablecertificate) | [WalletArgs](#interface-walletargs) |
-| [GetMerklePathResult](#interface-getmerklepathresult) | [TableCertificateField](#interface-tablecertificatefield) | [WalletPermissionsManagerCallbacks](#interface-walletpermissionsmanagercallbacks) |
-| [GetRawTxResult](#interface-getrawtxresult) | [TableCertificateX](#interface-tablecertificatex) | [WalletServices](#interface-walletservices) |
-| [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TableCommission](#interface-tablecommission) | [WalletServicesOptions](#interface-walletservicesoptions) |
-| [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TableMonitorEvent](#interface-tablemonitorevent) | [WalletSettings](#interface-walletsettings) |
-| [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [TableOutput](#interface-tableoutput) | [WalletSettingsManagerConfig](#interface-walletsettingsmanagerconfig) |
-| [GetUtxoStatusResult](#interface-getutxostatusresult) | [TableOutputBasket](#interface-tableoutputbasket) | [WalletSigner](#interface-walletsigner) |
-| [KeyPair](#interface-keypair) | [TableOutputTag](#interface-tableoutputtag) | [WalletStorage](#interface-walletstorage) |
-| [MonitorOptions](#interface-monitoroptions) | [TableOutputTagMap](#interface-tableoutputtagmap) | [WalletStorageProvider](#interface-walletstorageprovider) |
-| [OutPoint](#interface-outpoint) | [TableOutputX](#interface-tableoutputx) | [WalletStorageReader](#interface-walletstoragereader) |
-| [Paged](#interface-paged) | [TableProvenTx](#interface-tableproventx) | [WalletStorageSync](#interface-walletstoragesync) |
-| [PendingSignAction](#interface-pendingsignaction) | [TableProvenTxReq](#interface-tableproventxreq) | [WalletStorageWriter](#interface-walletstoragewriter) |
-| [PendingStorageInput](#interface-pendingstorageinput) | [TableProvenTxReqDynamics](#interface-tableproventxreqdynamics) | [WalletTheme](#interface-wallettheme) |
-| [PermissionRequest](#interface-permissionrequest) | [TableSettings](#interface-tablesettings) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
+| [ArcConfig](#interface-arcconfig) | [PermissionToken](#interface-permissiontoken) | [TableTxLabel](#interface-tabletxlabel) |
+| [ArcMinerGetTxData](#interface-arcminergettxdata) | [PermissionsManagerConfig](#interface-permissionsmanagerconfig) | [TableTxLabelMap](#interface-tabletxlabelmap) |
+| [AuthId](#interface-authid) | [PostBeefResult](#interface-postbeefresult) | [TableUser](#interface-tableuser) |
+| [AuthPayload](#interface-authpayload) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [TaskPurgeParams](#interface-taskpurgeparams) |
+| [BaseBlockHeader](#interface-baseblockheader) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TrustSettings](#interface-trustsettings) |
+| [BlockHeader](#interface-blockheader) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TrxToken](#interface-trxtoken) |
+| [BsvExchangeRate](#interface-bsvexchangerate) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
+| [CertOpsWallet](#interface-certopswallet) | [PostTxResultForTxidError](#interface-posttxresultfortxiderror) | [TxScriptOffsets](#interface-txscriptoffsets) |
+| [Certifier](#interface-certifier) | [PostTxsResult](#interface-posttxsresult) | [UMPToken](#interface-umptoken) |
+| [CommitNewTxResults](#interface-commitnewtxresults) | [ProcessSyncChunkResult](#interface-processsyncchunkresult) | [UMPTokenInteractor](#interface-umptokeninteractor) |
+| [CompleteAuthResponse](#interface-completeauthresponse) | [ProvenOrRawTx](#interface-provenorrawtx) | [UpdateProvenTxReqWithNewProvenTxArgs](#interface-updateproventxreqwithnewproventxargs) |
+| [EntitySyncMap](#interface-entitysyncmap) | [ProvenTxFromTxidResult](#interface-proventxfromtxidresult) | [UpdateProvenTxReqWithNewProvenTxResult](#interface-updateproventxreqwithnewproventxresult) |
+| [EntityTimeStamp](#interface-entitytimestamp) | [ProvenTxReqHistory](#interface-proventxreqhistory) | [ValidAbortActionArgs](#interface-validabortactionargs) |
+| [ExchangeRatesIoApi](#interface-exchangeratesioapi) | [ProvenTxReqHistorySummaryApi](#interface-proventxreqhistorysummaryapi) | [ValidAcquireCertificateArgs](#interface-validacquirecertificateargs) |
+| [ExtendedVerifiableCertificate](#interface-extendedverifiablecertificate) | [ProvenTxReqNotify](#interface-proventxreqnotify) | [ValidAcquireDirectCertificateArgs](#interface-validacquiredirectcertificateargs) |
+| [FiatExchangeRates](#interface-fiatexchangerates) | [PurgeParams](#interface-purgeparams) | [ValidAcquireIssuanceCertificateArgs](#interface-validacquireissuancecertificateargs) |
+| [FindCertificateFieldsArgs](#interface-findcertificatefieldsargs) | [PurgeResults](#interface-purgeresults) | [ValidBasketInsertion](#interface-validbasketinsertion) |
+| [FindCertificatesArgs](#interface-findcertificatesargs) | [RequestSyncChunkArgs](#interface-requestsyncchunkargs) | [ValidCreateActionArgs](#interface-validcreateactionargs) |
+| [FindCommissionsArgs](#interface-findcommissionsargs) | [ScriptTemplateParamsBRC29](#interface-scripttemplateparamsbrc29) | [ValidCreateActionInput](#interface-validcreateactioninput) |
+| [FindForUserSincePagedArgs](#interface-findforusersincepagedargs) | [ScriptTemplateUnlock](#interface-scripttemplateunlock) | [ValidCreateActionOptions](#interface-validcreateactionoptions) |
+| [FindMonitorEventsArgs](#interface-findmonitoreventsargs) | [StartAuthResponse](#interface-startauthresponse) | [ValidCreateActionOutput](#interface-validcreateactionoutput) |
+| [FindOutputBasketsArgs](#interface-findoutputbasketsargs) | [StorageCreateActionResult](#interface-storagecreateactionresult) | [ValidDiscoverByAttributesArgs](#interface-validdiscoverbyattributesargs) |
+| [FindOutputTagMapsArgs](#interface-findoutputtagmapsargs) | [StorageCreateTransactionSdkInput](#interface-storagecreatetransactionsdkinput) | [ValidDiscoverByIdentityKeyArgs](#interface-validdiscoverbyidentitykeyargs) |
+| [FindOutputTagsArgs](#interface-findoutputtagsargs) | [StorageCreateTransactionSdkOutput](#interface-storagecreatetransactionsdkoutput) | [ValidInternalizeActionArgs](#interface-validinternalizeactionargs) |
+| [FindOutputsArgs](#interface-findoutputsargs) | [StorageFeeModel](#interface-storagefeemodel) | [ValidInternalizeOutput](#interface-validinternalizeoutput) |
+| [FindPartialSincePagedArgs](#interface-findpartialsincepagedargs) | [StorageGetBeefOptions](#interface-storagegetbeefoptions) | [ValidListActionsArgs](#interface-validlistactionsargs) |
+| [FindProvenTxReqsArgs](#interface-findproventxreqsargs) | [StorageIdentity](#interface-storageidentity) | [ValidListCertificatesArgs](#interface-validlistcertificatesargs) |
+| [FindProvenTxsArgs](#interface-findproventxsargs) | [StorageInternalizeActionResult](#interface-storageinternalizeactionresult) | [ValidListOutputsArgs](#interface-validlistoutputsargs) |
+| [FindSincePagedArgs](#interface-findsincepagedargs) | [StorageProcessActionArgs](#interface-storageprocessactionargs) | [ValidProcessActionArgs](#interface-validprocessactionargs) |
+| [FindSyncStatesArgs](#interface-findsyncstatesargs) | [StorageProcessActionResults](#interface-storageprocessactionresults) | [ValidProcessActionOptions](#interface-validprocessactionoptions) |
+| [FindTransactionsArgs](#interface-findtransactionsargs) | [StorageProvenOrReq](#interface-storageprovenorreq) | [ValidProveCertificateArgs](#interface-validprovecertificateargs) |
+| [FindTxLabelMapsArgs](#interface-findtxlabelmapsargs) | [StorageProviderOptions](#interface-storageprovideroptions) | [ValidRelinquishCertificateArgs](#interface-validrelinquishcertificateargs) |
+| [FindTxLabelsArgs](#interface-findtxlabelsargs) | [StorageReaderOptions](#interface-storagereaderoptions) | [ValidRelinquishOutputArgs](#interface-validrelinquishoutputargs) |
+| [FindUsersArgs](#interface-findusersargs) | [StorageReaderWriterOptions](#interface-storagereaderwriteroptions) | [ValidSignActionArgs](#interface-validsignactionargs) |
+| [GenerateChangeSdkChangeInput](#interface-generatechangesdkchangeinput) | [StorageSyncReaderOptions](#interface-storagesyncreaderoptions) | [ValidSignActionOptions](#interface-validsignactionoptions) |
+| [GenerateChangeSdkChangeOutput](#interface-generatechangesdkchangeoutput) | [SyncChunk](#interface-syncchunk) | [ValidWalletPayment](#interface-validwalletpayment) |
+| [GenerateChangeSdkInput](#interface-generatechangesdkinput) | [SyncError](#interface-syncerror) | [ValidWalletSignerArgs](#interface-validwalletsignerargs) |
+| [GenerateChangeSdkOutput](#interface-generatechangesdkoutput) | [SyncMap](#interface-syncmap) | [ValidateGenerateChangeSdkParamsResult](#interface-validategeneratechangesdkparamsresult) |
+| [GenerateChangeSdkParams](#interface-generatechangesdkparams) | [TableCertificate](#interface-tablecertificate) | [WalletArgs](#interface-walletargs) |
+| [GenerateChangeSdkResult](#interface-generatechangesdkresult) | [TableCertificateField](#interface-tablecertificatefield) | [WalletPermissionsManagerCallbacks](#interface-walletpermissionsmanagercallbacks) |
+| [GenerateChangeSdkStorageChange](#interface-generatechangesdkstoragechange) | [TableCertificateX](#interface-tablecertificatex) | [WalletServices](#interface-walletservices) |
+| [GetMerklePathResult](#interface-getmerklepathresult) | [TableCommission](#interface-tablecommission) | [WalletServicesOptions](#interface-walletservicesoptions) |
+| [GetRawTxResult](#interface-getrawtxresult) | [TableMonitorEvent](#interface-tablemonitorevent) | [WalletSettings](#interface-walletsettings) |
+| [GetReqsAndBeefDetail](#interface-getreqsandbeefdetail) | [TableOutput](#interface-tableoutput) | [WalletSettingsManagerConfig](#interface-walletsettingsmanagerconfig) |
+| [GetReqsAndBeefResult](#interface-getreqsandbeefresult) | [TableOutputBasket](#interface-tableoutputbasket) | [WalletSigner](#interface-walletsigner) |
+| [GetUtxoStatusDetails](#interface-getutxostatusdetails) | [TableOutputTag](#interface-tableoutputtag) | [WalletStorage](#interface-walletstorage) |
+| [GetUtxoStatusResult](#interface-getutxostatusresult) | [TableOutputTagMap](#interface-tableoutputtagmap) | [WalletStorageProvider](#interface-walletstorageprovider) |
+| [KeyPair](#interface-keypair) | [TableOutputX](#interface-tableoutputx) | [WalletStorageReader](#interface-walletstoragereader) |
+| [MonitorOptions](#interface-monitoroptions) | [TableProvenTx](#interface-tableproventx) | [WalletStorageSync](#interface-walletstoragesync) |
+| [OutPoint](#interface-outpoint) | [TableProvenTxReq](#interface-tableproventxreq) | [WalletStorageSyncReader](#interface-walletstoragesyncreader) |
+| [Paged](#interface-paged) | [TableProvenTxReqDynamics](#interface-tableproventxreqdynamics) | [WalletStorageWriter](#interface-walletstoragewriter) |
+| [PendingSignAction](#interface-pendingsignaction) | [TableSettings](#interface-tablesettings) | [WalletTheme](#interface-wallettheme) |
+| [PendingStorageInput](#interface-pendingstorageinput) | [TableSyncState](#interface-tablesyncstate) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
+| [PermissionRequest](#interface-permissionrequest) | [TableTransaction](#interface-tabletransaction) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2425,39 +2425,6 @@ See also: [StorageReaderOptions](./storage.md#interface-storagereaderoptions)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-##### Interface: StorageSyncReader
-
-This is the minimal interface required for a WalletStorageProvider to export data to another provider.
-
-```ts
-export interface StorageSyncReader {
-    isAvailable(): boolean;
-    makeAvailable(): Promise<TableSettings>;
-    destroy(): Promise<void>;
-    getSettings(): TableSettings;
-    findUserByIdentityKey(key: string): Promise<TableUser | undefined>;
-    findSyncStates(args: sdk.FindSyncStatesArgs): Promise<TableSyncState[]>;
-    findCertificateFields(args: sdk.FindCertificateFieldsArgs): Promise<TableCertificateField[]>;
-    findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]>;
-    findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]>;
-    findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]>;
-    findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]>;
-    findOutputTags(args: sdk.FindOutputTagsArgs): Promise<TableOutputTag[]>;
-    findTransactions(args: sdk.FindTransactionsArgs): Promise<TableTransaction[]>;
-    findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]>;
-    getProvenTxsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTx[]>;
-    getProvenTxReqsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTxReq[]>;
-    getTxLabelMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableTxLabelMap[]>;
-    getOutputTagMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableOutputTagMap[]>;
-    getSyncChunk(args: RequestSyncChunkArgs): Promise<SyncChunk>;
-}
-```
-
-See also: [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableCommission](./storage.md#interface-tablecommission), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [getSyncChunk](./storage.md#function-getsyncchunk)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
 ##### Interface: StorageSyncReaderOptions
 
 ```ts
@@ -2467,102 +2434,6 @@ export interface StorageSyncReaderOptions {
 ```
 
 See also: [Chain](./client.md#type-chain)
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Interface: StorageSyncReaderWriter
-
-This is the minimal interface required for a WalletStorageProvider to import and export data to another provider.
-
-```ts
-export interface StorageSyncReaderWriter extends sdk.StorageSyncReader {
-    getProvenOrRawTx(txid: string, trx?: sdk.TrxToken): Promise<sdk.ProvenOrRawTx>;
-    purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults>;
-    transaction<T>(scope: (trx: sdk.TrxToken) => Promise<T>, trx?: sdk.TrxToken): Promise<T>;
-    findOutputTagMaps(args: sdk.FindOutputTagMapsArgs): Promise<TableOutputTagMap[]>;
-    findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]>;
-    findProvenTxs(args: sdk.FindProvenTxsArgs): Promise<TableProvenTx[]>;
-    findTxLabelMaps(args: sdk.FindTxLabelMapsArgs): Promise<TableTxLabelMap[]>;
-    countOutputTagMaps(args: sdk.FindOutputTagMapsArgs): Promise<number>;
-    countProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<number>;
-    countProvenTxs(args: sdk.FindProvenTxsArgs): Promise<number>;
-    countTxLabelMaps(args: sdk.FindTxLabelMapsArgs): Promise<number>;
-    insertProvenTx(tx: TableProvenTx, trx?: sdk.TrxToken): Promise<number>;
-    insertProvenTxReq(tx: TableProvenTxReq, trx?: sdk.TrxToken): Promise<number>;
-    insertUser(user: TableUser, trx?: sdk.TrxToken): Promise<number>;
-    insertCertificate(certificate: TableCertificate, trx?: sdk.TrxToken): Promise<number>;
-    insertCertificateField(certificateField: TableCertificateField, trx?: sdk.TrxToken): Promise<void>;
-    insertOutputBasket(basket: TableOutputBasket, trx?: sdk.TrxToken): Promise<number>;
-    insertTransaction(tx: TableTransaction, trx?: sdk.TrxToken): Promise<number>;
-    insertCommission(commission: TableCommission, trx?: sdk.TrxToken): Promise<number>;
-    insertOutput(output: TableOutput, trx?: sdk.TrxToken): Promise<number>;
-    insertOutputTag(tag: TableOutputTag, trx?: sdk.TrxToken): Promise<number>;
-    insertOutputTagMap(tagMap: TableOutputTagMap, trx?: sdk.TrxToken): Promise<void>;
-    insertTxLabel(label: TableTxLabel, trx?: sdk.TrxToken): Promise<number>;
-    insertTxLabelMap(labelMap: TableTxLabelMap, trx?: sdk.TrxToken): Promise<void>;
-    insertSyncState(syncState: TableSyncState, trx?: sdk.TrxToken): Promise<number>;
-    updateCertificateField(certificateId: number, fieldName: string, update: Partial<TableCertificateField>, trx?: sdk.TrxToken): Promise<number>;
-    updateCertificate(id: number, update: Partial<TableCertificate>, trx?: sdk.TrxToken): Promise<number>;
-    updateCommission(id: number, update: Partial<TableCommission>, trx?: sdk.TrxToken): Promise<number>;
-    updateOutputBasket(id: number, update: Partial<TableOutputBasket>, trx?: sdk.TrxToken): Promise<number>;
-    updateOutput(id: number, update: Partial<TableOutput>, trx?: sdk.TrxToken): Promise<number>;
-    updateOutputTagMap(outputId: number, tagId: number, update: Partial<TableOutputTagMap>, trx?: sdk.TrxToken): Promise<number>;
-    updateOutputTag(id: number, update: Partial<TableOutputTag>, trx?: sdk.TrxToken): Promise<number>;
-    updateProvenTxReq(id: number | number[], update: Partial<TableProvenTxReq>, trx?: sdk.TrxToken): Promise<number>;
-    updateProvenTxReqDynamics(id: number, update: Partial<TableProvenTxReqDynamics>, trx?: sdk.TrxToken): Promise<number>;
-    updateProvenTxReqWithNewProvenTx(args: sdk.UpdateProvenTxReqWithNewProvenTxArgs): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult>;
-    updateProvenTx(id: number, update: Partial<TableProvenTx>, trx?: sdk.TrxToken): Promise<number>;
-    updateSyncState(id: number, update: Partial<TableSyncState>, trx?: sdk.TrxToken): Promise<number>;
-    updateTransaction(id: number | number[], update: Partial<TableTransaction>, trx?: sdk.TrxToken): Promise<number>;
-    updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: number, userId?: number, reference?: string, trx?: sdk.TrxToken): Promise<void>;
-    updateTransactionsStatus(transactionIds: number[], status: sdk.TransactionStatus): Promise<void>;
-    updateTxLabelMap(transactionId: number, txLabelId: number, update: Partial<TableTxLabelMap>, trx?: sdk.TrxToken): Promise<number>;
-    updateTxLabel(id: number, update: Partial<TableTxLabel>, trx?: sdk.TrxToken): Promise<number>;
-    updateUser(id: number, update: Partial<TableUser>, trx?: sdk.TrxToken): Promise<number>;
-    findCertificateById(id: number, trx?: sdk.TrxToken): Promise<TableCertificate | undefined>;
-    findCommissionById(id: number, trx?: sdk.TrxToken): Promise<TableCommission | undefined>;
-    findOutputById(id: number, trx?: sdk.TrxToken, noScript?: boolean): Promise<TableOutput | undefined>;
-    findOutputBasketById(id: number, trx?: sdk.TrxToken): Promise<TableOutputBasket | undefined>;
-    findProvenTxById(id: number, trx?: sdk.TrxToken | undefined): Promise<TableProvenTx | undefined>;
-    findProvenTxReqById(id: number, trx?: sdk.TrxToken | undefined): Promise<TableProvenTxReq | undefined>;
-    findSyncStateById(id: number, trx?: sdk.TrxToken): Promise<TableSyncState | undefined>;
-    findTransactionById(id: number, trx?: sdk.TrxToken, noRawTx?: boolean): Promise<TableTransaction | undefined>;
-    findTxLabelById(id: number, trx?: sdk.TrxToken): Promise<TableTxLabel | undefined>;
-    findOutputTagById(id: number, trx?: sdk.TrxToken): Promise<TableOutputTag | undefined>;
-    findUserById(id: number, trx?: sdk.TrxToken): Promise<TableUser | undefined>;
-    findOrInsertUser(identityKey: string, trx?: sdk.TrxToken): Promise<{
-        user: TableUser;
-        isNew: boolean;
-    }>;
-    findOrInsertTransaction(newTx: TableTransaction, trx?: sdk.TrxToken): Promise<{
-        tx: TableTransaction;
-        isNew: boolean;
-    }>;
-    findOrInsertOutputBasket(userId: number, name: string, trx?: sdk.TrxToken): Promise<TableOutputBasket>;
-    findOrInsertTxLabel(userId: number, label: string, trx?: sdk.TrxToken): Promise<TableTxLabel>;
-    findOrInsertTxLabelMap(transactionId: number, txLabelId: number, trx?: sdk.TrxToken): Promise<TableTxLabelMap>;
-    findOrInsertOutputTag(userId: number, tag: string, trx?: sdk.TrxToken): Promise<TableOutputTag>;
-    findOrInsertOutputTagMap(outputId: number, outputTagId: number, trx?: sdk.TrxToken): Promise<TableOutputTagMap>;
-    findOrInsertSyncStateAuth(auth: sdk.AuthId, storageIdentityKey: string, storageName: string): Promise<{
-        syncState: TableSyncState;
-        isNew: boolean;
-    }>;
-    findOrInsertProvenTxReq(newReq: TableProvenTxReq, trx?: sdk.TrxToken): Promise<{
-        req: TableProvenTxReq;
-        isNew: boolean;
-    }>;
-    findOrInsertProvenTx(newProven: TableProvenTx, trx?: sdk.TrxToken): Promise<{
-        proven: TableProvenTx;
-        isNew: boolean;
-    }>;
-    findUsers(args: sdk.FindUsersArgs): Promise<TableUser[]>;
-    tagOutput(partial: Partial<TableOutput>, tag: string, trx?: sdk.TrxToken): Promise<void>;
-    processSyncChunk(args: sdk.RequestSyncChunkArgs, chunk: sdk.SyncChunk): Promise<sdk.ProcessSyncChunkResult>;
-}
-```
-
-See also: [AuthId](./client.md#interface-authid), [FindOutputTagMapsArgs](./client.md#interface-findoutputtagmapsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [FindProvenTxsArgs](./client.md#interface-findproventxsargs), [FindTxLabelMapsArgs](./client.md#interface-findtxlabelmapsargs), [FindUsersArgs](./client.md#interface-findusersargs), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [ProvenOrRawTx](./client.md#interface-provenorrawtx), [PurgeParams](./client.md#interface-purgeparams), [PurgeResults](./client.md#interface-purgeresults), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageSyncReader](./storage.md#class-storagesyncreader), [SyncChunk](./client.md#interface-syncchunk), [TableCertificate](./storage.md#interface-tablecertificate), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCommission](./storage.md#interface-tablecommission), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableProvenTxReqDynamics](./storage.md#interface-tableproventxreqdynamics), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [TransactionStatus](./client.md#type-transactionstatus), [TrxToken](./client.md#interface-trxtoken), [UpdateProvenTxReqWithNewProvenTxArgs](./client.md#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](./client.md#interface-updateproventxreqwithnewproventxresult), [purgeData](./storage.md#function-purgedata)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3158,7 +3029,7 @@ export interface TableUser extends sdk.EntityTimeStamp {
     updated_at: Date;
     userId: number;
     identityKey: string;
-    activeStorage?: string;
+    activeStorage: string;
 }
 ```
 
@@ -3169,7 +3040,7 @@ See also: [EntityTimeStamp](./client.md#interface-entitytimestamp)
 The storageIdentityKey value of the active wallet storage.
 
 ```ts
-activeStorage?: string
+activeStorage: string
 ```
 
 ###### Property identityKey
@@ -4385,6 +4256,31 @@ export interface WalletStorageSync extends WalletStorageWriter {
 ```
 
 See also: [AuthId](./client.md#interface-authid), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [SyncChunk](./client.md#interface-syncchunk), [TableSyncState](./storage.md#interface-tablesyncstate), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [getSyncChunk](./storage.md#function-getsyncchunk)
+
+###### Method setActive
+
+Updagte the `activeStorage` property of the authenticated user by their `userId`.
+
+```ts
+setActive(auth: sdk.AuthId, newActiveStorageIdentityKey: string): Promise<number>
+```
+See also: [AuthId](./client.md#interface-authid)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: WalletStorageSyncReader
+
+This is the minimal interface required for a WalletStorageProvider to export data to another provider.
+
+```ts
+export interface WalletStorageSyncReader {
+    makeAvailable(): Promise<TableSettings>;
+    getSyncChunk(args: RequestSyncChunkArgs): Promise<SyncChunk>;
+}
+```
+
+See also: [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [SyncChunk](./client.md#interface-syncchunk), [TableSettings](./storage.md#interface-tablesettings), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -5862,7 +5758,7 @@ export class EntityUser extends EntityBase<TableUser> {
     get identityKey() 
     set identityKey(v: string) 
     get activeStorage() 
-    set activeStorage(v: string | undefined) 
+    set activeStorage(v: string) 
     override get id(): number 
     override set id(v: number) 
     override get entityName(): string 
@@ -7319,7 +7215,7 @@ The ability to construct a properly configured instance of this class implies au
 As such there are no user specific authenticated access checks implied in the implementation of any of these methods.
 
 ```ts
-export abstract class StorageReader implements sdk.StorageSyncReader {
+export abstract class StorageReader implements sdk.WalletStorageSyncReader {
     chain: sdk.Chain;
     _settings?: TableSettings;
     whenLastAccess?: Date;
@@ -7368,7 +7264,7 @@ export abstract class StorageReader implements sdk.StorageSyncReader {
 }
 ```
 
-See also: [Chain](./client.md#type-chain), [DBType](./storage.md#type-dbtype), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindMonitorEventsArgs](./client.md#interface-findmonitoreventsargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [FindUsersArgs](./client.md#interface-findusersargs), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReaderOptions](./storage.md#interface-storagereaderoptions), [StorageSyncReader](./storage.md#class-storagesyncreader), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableCommission](./storage.md#interface-tablecommission), [TableMonitorEvent](./storage.md#interface-tablemonitorevent), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [TrxToken](./client.md#interface-trxtoken), [getSyncChunk](./storage.md#function-getsyncchunk)
+See also: [Chain](./client.md#type-chain), [DBType](./storage.md#type-dbtype), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindMonitorEventsArgs](./client.md#interface-findmonitoreventsargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [FindUsersArgs](./client.md#interface-findusersargs), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReaderOptions](./storage.md#interface-storagereaderoptions), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableCommission](./storage.md#interface-tablecommission), [TableMonitorEvent](./storage.md#interface-tablemonitorevent), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [TrxToken](./client.md#interface-trxtoken), [WalletStorageSyncReader](./client.md#interface-walletstoragesyncreader), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 ###### Method validateEntityDate
 
@@ -7492,31 +7388,15 @@ Constructed from an `auth` object that must minimally include the authenticated 
 and the `StorageBaseReader` to be protected.
 
 ```ts
-export class StorageSyncReader implements sdk.StorageSyncReader {
+export class StorageSyncReader implements sdk.WalletStorageSyncReader {
     constructor(public auth: sdk.AuthId, public storage: StorageReader) 
-    isAvailable(): boolean 
     async makeAvailable(): Promise<TableSettings> 
     destroy(): Promise<void> 
-    getSettings(): TableSettings 
     async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> 
-    async findUserByIdentityKey(key: string): Promise<TableUser | undefined> 
-    async findSyncStates(args: sdk.FindSyncStatesArgs): Promise<TableSyncState[]> 
-    async findCertificateFields(args: sdk.FindCertificateFieldsArgs): Promise<TableCertificateField[]> 
-    async findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]> 
-    async findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]> 
-    async findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]> 
-    async findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]> 
-    async findOutputTags(args: sdk.FindOutputTagsArgs): Promise<TableOutputTag[]> 
-    async findTransactions(args: sdk.FindTransactionsArgs): Promise<TableTransaction[]> 
-    async findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]> 
-    async getProvenTxsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTx[]> 
-    async getProvenTxReqsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTxReq[]> 
-    async getTxLabelMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableTxLabelMap[]> 
-    async getOutputTagMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableOutputTagMap[]> 
 }
 ```
 
-See also: [AuthId](./client.md#interface-authid), [FindCertificateFieldsArgs](./client.md#interface-findcertificatefieldsargs), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindCommissionsArgs](./client.md#interface-findcommissionsargs), [FindForUserSincePagedArgs](./client.md#interface-findforusersincepagedargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputTagsArgs](./client.md#interface-findoutputtagsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindSyncStatesArgs](./client.md#interface-findsyncstatesargs), [FindTransactionsArgs](./client.md#interface-findtransactionsargs), [FindTxLabelsArgs](./client.md#interface-findtxlabelsargs), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReader](./storage.md#class-storagereader), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateField](./storage.md#interface-tablecertificatefield), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableCommission](./storage.md#interface-tablecommission), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableOutputTag](./storage.md#interface-tableoutputtag), [TableOutputTagMap](./storage.md#interface-tableoutputtagmap), [TableProvenTx](./storage.md#interface-tableproventx), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableTransaction](./storage.md#interface-tabletransaction), [TableTxLabel](./storage.md#interface-tabletxlabel), [TableTxLabelMap](./storage.md#interface-tabletxlabelmap), [TableUser](./storage.md#interface-tableuser), [getSyncChunk](./storage.md#function-getsyncchunk)
+See also: [AuthId](./client.md#interface-authid), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageReader](./storage.md#class-storagereader), [SyncChunk](./client.md#interface-syncchunk), [TableSettings](./storage.md#interface-tablesettings), [WalletStorageSyncReader](./client.md#interface-walletstoragesyncreader), [getSyncChunk](./storage.md#function-getsyncchunk)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8110,7 +7990,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ##### Class: WERR_NOT_ACTIVE
 
-WalletStorageManager is not accessing user's active storage.
+WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.
 
 ```ts
 export class WERR_NOT_ACTIVE extends WalletError {
@@ -8214,6 +8094,13 @@ export class Wallet implements WalletInterface, ProtoWallet {
     async getNetwork(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> 
     async getVersion(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> 
     async sweepTo(toWallet: Wallet): Promise<void> 
+    async balance(basket: string = "default"): Promise<{
+        total: number;
+        utxos: {
+            satoshis: number;
+            outpoint: string;
+        }[];
+    }> 
 }
 ```
 
@@ -8259,6 +8146,29 @@ If true, beefs returned to the user may contain txidOnly transactions.
 ```ts
 returnTxidOnly: boolean = false
 ```
+
+###### Method balance
+
+Uses `listOutputs` to iterate through all spendable outputs in the 'default' (change) basket.
+
+```ts
+async balance(basket: string = "default"): Promise<{
+    total: number;
+    utxos: {
+        satoshis: number;
+        outpoint: string;
+    }[];
+}> 
+```
+
+Returns
+
+: number, utxos: { satoshis: number, outpoint: string }[] }
+
+Argument Details
+
++ **basket**
+  + Optional. Defaults to 'default', the wallet change basket.
 
 ###### Method getKnownTxids
 
@@ -8986,10 +8896,13 @@ for these services.
 
 ```ts
 export class WalletStorageManager implements sdk.WalletStorage {
-    stores: sdk.WalletStorageProvider[] = [];
+    _stores: ManagedStorage[] = [];
+    _isAvailable: boolean = false;
+    _active?: ManagedStorage;
+    _backups?: ManagedStorage[];
+    _conflictingActives?: ManagedStorage[];
     _authId: sdk.AuthId;
     _services?: sdk.WalletServices;
-    _userIdentityKeyToId: Record<string, number> = {};
     _readerCount: number = 0;
     _writerCount: number = 0;
     _isSingleWriter: boolean = true;
@@ -8997,9 +8910,19 @@ export class WalletStorageManager implements sdk.WalletStorage {
     _storageProviderLocked: boolean = false;
     constructor(identityKey: string, active?: sdk.WalletStorageProvider, backups?: sdk.WalletStorageProvider[]) 
     isStorageProvider(): boolean 
-    async getUserId(): Promise<number> 
+    isAvailable(): boolean 
+    get isActiveEnabled(): boolean 
+    canMakeAvailable(): boolean 
+    async makeAvailable(): Promise<TableSettings> 
     async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> 
+    async getUserId(): Promise<number> 
     getActive(): sdk.WalletStorageProvider 
+    getActiveSettings(): TableSettings 
+    getActiveUser(): TableUser 
+    getActiveStore(): string 
+    getBackupStores(): string[] 
+    getConflictingStores(): string[] 
+    getAllStores(): string[] 
     async getActiveForWriter(): Promise<sdk.WalletStorageWriter> 
     async getActiveForReader(): Promise<sdk.WalletStorageReader> 
     async getActiveForSync(): Promise<sdk.WalletStorageSync> 
@@ -9009,12 +8932,10 @@ export class WalletStorageManager implements sdk.WalletStorage {
     async runAsSync<R>(sync: (active: sdk.WalletStorageSync) => Promise<R>, activeSync?: sdk.WalletStorageSync): Promise<R> 
     async runAsStorageProvider<R>(sync: (active: StorageProvider) => Promise<R>): Promise<R> 
     isActiveStorageProvider(): boolean 
-    isAvailable(): boolean 
     async addWalletStorageProvider(provider: sdk.WalletStorageProvider): Promise<void> 
     setServices(v: sdk.WalletServices) 
     getServices(): sdk.WalletServices 
     getSettings(): TableSettings 
-    async makeAvailable(): Promise<TableSettings> 
     async migrate(storageName: string, storageIdentityKey: string): Promise<string> 
     async destroy(): Promise<void> 
     async findOrInsertUser(identityKey: string): Promise<{
@@ -9035,17 +8956,63 @@ export class WalletStorageManager implements sdk.WalletStorage {
     async findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]> 
     async findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]> 
     async findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]> 
-    async syncFromReader(identityKey: string, reader: StorageSyncReader): Promise<void> 
-    async updateBackups(activeSync?: sdk.WalletStorageSync) 
-    async syncToWriter(auth: sdk.AuthId, writer: sdk.WalletStorageProvider, activeSync?: sdk.WalletStorageSync): Promise<{
+    async syncFromReader(identityKey: string, reader: sdk.WalletStorageSyncReader, activeSync?: sdk.WalletStorageSync, log: string = ""): Promise<{
         inserts: number;
         updates: number;
+        log: string;
     }> 
-    async setActive(storageIdentityKey: string): Promise<void> 
+    async syncToWriter(auth: sdk.AuthId, writer: sdk.WalletStorageProvider, activeSync?: sdk.WalletStorageSync, log: string = ""): Promise<{
+        inserts: number;
+        updates: number;
+        log: string;
+    }> 
+    async updateBackups(activeSync?: sdk.WalletStorageSync): Promise<string> 
+    async setActive(storageIdentityKey: string): Promise<string> 
 }
 ```
 
-See also: [AuthId](./client.md#interface-authid), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvider](./storage.md#class-storageprovider), [StorageSyncReader](./storage.md#class-storagesyncreader), [TableCertificate](./storage.md#interface-tablecertificate), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableUser](./storage.md#interface-tableuser), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorage](./client.md#interface-walletstorage), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [WalletStorageReader](./client.md#interface-walletstoragereader), [WalletStorageSync](./client.md#interface-walletstoragesync), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [StorageProvider](./storage.md#class-storageprovider), [TableCertificate](./storage.md#interface-tablecertificate), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableUser](./storage.md#interface-tableuser), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorage](./client.md#interface-walletstorage), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [WalletStorageReader](./client.md#interface-walletstoragereader), [WalletStorageSync](./client.md#interface-walletstoragesync), [WalletStorageSyncReader](./client.md#interface-walletstoragesyncreader), [WalletStorageWriter](./client.md#interface-walletstoragewriter), [createAction](./storage.md#function-createaction), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
+
+###### Property _active
+
+The current active store which is only enabled if the store's user record activeStorage property matches its settings record storageIdentityKey property
+
+```ts
+_active?: ManagedStorage
+```
+
+###### Property _authId
+
+identityKey is always valid, userId and isActive are valid only if _isAvailable
+
+```ts
+_authId: sdk.AuthId
+```
+See also: [AuthId](./client.md#interface-authid)
+
+###### Property _backups
+
+Stores to which state is pushed by updateBackups.
+
+```ts
+_backups?: ManagedStorage[]
+```
+
+###### Property _conflictingActives
+
+Stores whose user record activeStorage property disagrees with the active store's user record activeStorage property.
+
+```ts
+_conflictingActives?: ManagedStorage[]
+```
+
+###### Property _isAvailable
+
+True if makeAvailable has been run and access to managed stores (active) is allowed
+
+```ts
+_isAvailable: boolean = false
+```
 
 ###### Property _isSingleWriter
 
@@ -9056,6 +9023,23 @@ queue the blocked requests so they get executed in order when released.
 _isSingleWriter: boolean = true
 ```
 
+###### Property _readerCount
+
+How many read access operations are pending
+
+```ts
+_readerCount: number = 0
+```
+
+###### Property _services
+
+Configured services if any. If valid, shared with stores (which may ignore it).
+
+```ts
+_services?: sdk.WalletServices
+```
+See also: [WalletServices](./client.md#interface-walletservices)
+
 ###### Property _storageProviderLocked
 
 if true, allow no new reader or writers or sync to proceed.
@@ -9063,6 +9047,14 @@ queue the blocked requests so they get executed in order when released.
 
 ```ts
 _storageProviderLocked: boolean = false
+```
+
+###### Property _stores
+
+All configured stores including current active, backups, and conflicting actives.
+
+```ts
+_stores: ManagedStorage[] = []
 ```
 
 ###### Property _syncLocked
@@ -9074,6 +9066,24 @@ queue the blocked requests so they get executed in order when released.
 _syncLocked: boolean = false
 ```
 
+###### Property _writerCount
+
+How many write access operations are pending
+
+```ts
+_writerCount: number = 0
+```
+
+###### Method canMakeAvailable
+
+```ts
+canMakeAvailable(): boolean 
+```
+
+Returns
+
+true if at least one WalletStorageProvider has been added.
+
 ###### Method isActiveStorageProvider
 
 ```ts
@@ -9083,6 +9093,26 @@ isActiveStorageProvider(): boolean
 Returns
 
 true if the active `WalletStorageProvider` also implements `StorageProvider`
+
+###### Method makeAvailable
+
+This async function must be called after construction and before
+any other async function can proceed.
+
+Runs through `_stores` validating all properties and partitioning across `_active`, `_backups`, `_conflictingActives`.
+
+```ts
+async makeAvailable(): Promise<TableSettings> 
+```
+See also: [TableSettings](./storage.md#interface-tablesettings)
+
+Returns
+
+from the active storage.
+
+Throws
+
+WERR_INVALID_PARAMETER if canMakeAvailable returns false.
 
 ###### Method runAsSync
 
@@ -9102,8 +9132,10 @@ Argument Details
 
 Updates backups and switches to new active storage provider from among current backup providers.
 
+Also resolves conflicting actives.
+
 ```ts
-async setActive(storageIdentityKey: string): Promise<void> 
+async setActive(storageIdentityKey: string): Promise<string> 
 ```
 
 Argument Details

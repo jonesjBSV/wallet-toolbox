@@ -115,7 +115,11 @@ async function setActiveTwice(
   } = ctx
 
   if (withBackupFirst) {
-    await storageManager.updateBackups()
+    if (storageManager.isActiveEnabled) await storageManager.updateBackups()
+    else
+      await expect(storageManager.updateBackups()).rejects.toThrow(
+        `WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.`
+      )
   }
 
   const backupIdentityKey = (await backup.makeAvailable()).storageIdentityKey
@@ -123,7 +127,7 @@ async function setActiveTwice(
     .storageIdentityKey
   expect(backupIdentityKey).not.toBe(originalIdentityKey)
 
-  const originalAuth = await storageManager.getAuth()
+  const originalAuth = { ...(await storageManager.getAuth()) }
   expect(originalAuth.userId).toBe(originalUserId)
   const originalTransactions = await original.findTransactions({
     partial: { userId: originalAuth.userId }
@@ -150,8 +154,16 @@ async function setActiveTwice(
     true
   )
 
+  expect(storageManager.getActiveStore()).toBe(originalIdentityKey)
+  expect(storageManager.getActiveUser().activeStorage).toBe(originalIdentityKey)
+
   // sync to backup and make it active.
-  await storageManager.setActive(backupIdentityKey)
+  const log = await storageManager.setActive(backupIdentityKey)
+  console.log(log)
+
+  expect(storageManager.getActiveStore()).toBe(backupIdentityKey)
+  expect(storageManager.getActiveUser().activeStorage).toBe(backupIdentityKey)
+  expect(storageManager.getBackupStores()).toEqual([originalIdentityKey])
 
   let originalUserAfter = verifyTruthy(
     await original.findUserById(originalAuth.userId!)
@@ -173,13 +185,17 @@ async function setActiveTwice(
       output: `${'1'.repeat(64)}.42`
     })
   ).rejects.toThrow('Result must exist and be unique.')
-  if (backupWallet)
+  if (backupWallet) {
+    backupWallet.storage._isAvailable = false
+    backupWallet.storage._active!.user = undefined
+    await backupWallet.storage.makeAvailable()
     await expect(
       backupWallet.relinquishOutput({
         basket: 'xyzzy',
         output: `${'1'.repeat(64)}.42`
       })
     ).rejects.toThrow('Result must exist and be unique.')
+  }
 
   const backupAuth = await storageManager.getAuth()
   const backupTransactions = await backup.findTransactions({
@@ -189,7 +205,10 @@ async function setActiveTwice(
   now = Date.now()
 
   // sync back to original and make it active.
-  await storageManager.setActive(original.getSettings().storageIdentityKey)
+  const log2 = await storageManager.setActive(
+    original.getSettings().storageIdentityKey
+  )
+  console.log(log2)
 
   originalUserAfter = verifyTruthy(
     await original.findUserById(originalAuth.userId!)
@@ -212,15 +231,16 @@ async function setActiveTwice(
     })
   ).rejects.toThrow('Result must exist and be unique.')
   if (backupWallet) {
-    expect(backupWallet?.storage.stores.length === 1)
-    expect(backupWallet?.storage.stores[0] === backup)
+    backupWallet.storage._isAvailable = false
+    backupWallet.storage._active!.user = undefined
+    await backupWallet.storage.makeAvailable()
     await expect(
       backupWallet.relinquishOutput({
         basket: 'xyzzy',
         output: `${'1'.repeat(64)}.42`
       })
     ).rejects.toThrow(
-      `WalletStorageManager is not accessing user's active storage.`
+      `WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.`
     )
   }
 }

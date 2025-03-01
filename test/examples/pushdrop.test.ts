@@ -28,11 +28,8 @@ export async function transferPushDrop() {
   // obtain the secrets environment for the testnet network.
   const env = Setup.getEnv('main')
   // setup1 will be the sending wallet using the rootKey associated with identityKey, which is the default.
-  const setup1 = await Setup.createWalletSQLite({
-    env,
-    filePath: env.filePath!,
-    databaseName: 'exists'
-  })
+  const setup1 = await Setup.createWalletClient({ env })
+
   // setup2 will be the receiving wallet using the rootKey associated with identityKey2
   const setup2 = setup1
 
@@ -254,9 +251,7 @@ export async function inputPushDrop(
    */
   const st = car.signableTransaction!
   const beef = Beef.fromBinary(st.tx)
-  const tx = setup.wallet.beef.findAtomicTransaction(
-    beef.txs.slice(-1)[0].txid
-  )!
+  const tx = beef.findAtomicTransaction(beef.txs.slice(-1)[0].txid)!
   tx.inputs[0].unlockingScriptTemplate = unlock
   await tx.sign()
   const unlockingScript = tx.inputs[0].unlockingScript!.toHex()

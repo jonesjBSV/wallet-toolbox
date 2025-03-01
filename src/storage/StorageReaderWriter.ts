@@ -310,7 +310,8 @@ export abstract class StorageReaderWriter extends StorageReader {
           created_at: now,
           updated_at: now,
           userId: 0,
-          identityKey
+          identityKey,
+          activeStorage: this.getSettings().storageIdentityKey
         }
         user.userId = await this.insertUser(user, trx)
         isNew = true

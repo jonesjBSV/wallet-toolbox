@@ -25,6 +25,19 @@ import {
   TableUser,
   wait
 } from '../index.client'
+import { WERR_INVALID_PARAMETER } from '../sdk'
+
+class ManagedStorage {
+  isAvailable: boolean
+  isStorageProvider: boolean
+  settings?: TableSettings
+  user?: TableUser
+
+  constructor(public storage: sdk.WalletStorageProvider) {
+    this.isStorageProvider = storage.isStorageProvider()
+    this.isAvailable = false
+  }
+}
 
 /**
  * The `WalletStorageManager` class delivers authentication checking storage access to the wallet.
@@ -42,11 +55,41 @@ import {
  * for these services.
  */
 export class WalletStorageManager implements sdk.WalletStorage {
-  stores: sdk.WalletStorageProvider[] = []
+  /**
+   * All configured stores including current active, backups, and conflicting actives.
+   */
+  _stores: ManagedStorage[] = []
+  /**
+   * True if makeAvailable has been run and access to managed stores (active) is allowed
+   */
+  _isAvailable: boolean = false
+  /**
+   * The current active store which is only enabled if the store's user record activeStorage property matches its settings record storageIdentityKey property
+   */
+  _active?: ManagedStorage
+  /**
+   * Stores to which state is pushed by updateBackups.
+   */
+  _backups?: ManagedStorage[]
+  /**
+   * Stores whose user record activeStorage property disagrees with the active store's user record activeStorage property.
+   */
+  _conflictingActives?: ManagedStorage[]
+  /**
+   * identityKey is always valid, userId and isActive are valid only if _isAvailable
+   */
   _authId: sdk.AuthId
+  /**
+   * Configured services if any. If valid, shared with stores (which may ignore it).
+   */
   _services?: sdk.WalletServices
-  _userIdentityKeyToId: Record<string, number> = {}
+  /**
+   * How many read access operations are pending
+   */
   _readerCount: number = 0
+  /**
+   * How many write access operations are pending
+   */
   _writerCount: number = 0
   /**
    * if true, allow only a single writer to proceed at a time.
@@ -69,9 +112,9 @@ export class WalletStorageManager implements sdk.WalletStorage {
     active?: sdk.WalletStorageProvider,
     backups?: sdk.WalletStorageProvider[]
   ) {
-    this.stores = []
-    if (active) this.stores.push(active)
-    if (backups) this.stores = this.stores.concat(backups)
+    const stores = [...(backups || [])]
+    if (active) stores.unshift(active)
+    this._stores = stores.map(s => new ManagedStorage(s))
     this._authId = { identityKey }
   }
 
@@ -79,35 +122,153 @@ export class WalletStorageManager implements sdk.WalletStorage {
     return false
   }
 
-  async getUserId(): Promise<number> {
-    if (!this._authId.userId) await this.getAuth()
-    return this._authId.userId!
+  isAvailable(): boolean {
+    return this._isAvailable
+  }
+
+  /**
+   * The active storage is "enabled" only if its `storageIdentityKey` matches the user's currently selected `activeStorage`,
+   * and only if there are no stores with conflicting `activeStorage` selections.
+   *
+   * A wallet may be created without including the user's currently selected active storage. This allows readonly access to their wallet data.
+   *
+   * In addition, if there are conflicting `activeStorage` selections among backup storage providers then the active remains disabled.
+   */
+  get isActiveEnabled(): boolean {
+    return (
+      this._active !== undefined &&
+      this._active.settings!.storageIdentityKey ===
+        this._active.user!.activeStorage &&
+      this._conflictingActives !== undefined &&
+      this._conflictingActives.length === 0
+    )
+  }
+
+  /**
+   * @returns true if at least one WalletStorageProvider has been added.
+   */
+  canMakeAvailable(): boolean {
+    return this._stores.length > 0
+  }
+
+  /**
+   * This async function must be called after construction and before
+   * any other async function can proceed.
+   *
+   * Runs through `_stores` validating all properties and partitioning across `_active`, `_backups`, `_conflictingActives`.
+   *
+   * @throws WERR_INVALID_PARAMETER if canMakeAvailable returns false.
+   *
+   * @returns {TableSettings} from the active storage.
+   */
+  async makeAvailable(): Promise<TableSettings> {
+    if (this._isAvailable) return this._active!.settings!
+
+    this._active = undefined
+    this._backups = []
+    this._conflictingActives = []
+
+    if (this._stores.length < 1)
+      throw new sdk.WERR_INVALID_PARAMETER(
+        'active',
+        'valid. Must add active storage provider to wallet.'
+      )
+
+    // Initial backups. conflictingActives will be removed.
+    const backups: ManagedStorage[] = []
+    let i = -1
+    for (const store of this._stores) {
+      i++
+      if (!store.isAvailable || !store.settings || !store.user) {
+        // Validate all ManagedStorage properties.
+        store.settings = await store.storage.makeAvailable()
+        const r = await store.storage.findOrInsertUser(this._authId.identityKey)
+        store.user = r.user
+        store.isAvailable = true
+      }
+      if (!this._active)
+        // _stores[0] becomes the default active store. It may be replaced if it is not the user's "enabled" activeStorage and that store is found among the remainder (backups).
+        this._active = store
+      else {
+        const ua = store.user!.activeStorage
+        const si = store.settings!.storageIdentityKey
+        if (ua === si && !this.isActiveEnabled) {
+          // This store's user record selects it as an enabled active storage...
+          // swap the current not-enabled active for this storeage.
+          backups.push(this._active!)
+          this._active = store
+        } else {
+          // This store is a backup: Its user record selects some other storage as active.
+          backups.push(store)
+        }
+      }
+    }
+
+    // Review backups, partition out conflicting actives.
+    const si = this._active!.settings?.storageIdentityKey
+    for (const store of backups) {
+      if (store.user!.activeStorage !== si) this._conflictingActives.push(store)
+      else this._backups.push(store)
+    }
+
+    this._isAvailable = true
+    this._authId.userId = this._active!.user!.userId
+    this._authId.isActive = this.isActiveEnabled
+
+    return this._active!.settings!
+  }
+
+  private verifyActive(): ManagedStorage {
+    if (!this._active || !this._isAvailable)
+      throw new sdk.WERR_INVALID_OPERATION(
+        'An active WalletStorageProvider must be added to this WalletStorageManager and makeAvailable must be called.'
+      )
+    return this._active
   }
 
   async getAuth(mustBeActive?: boolean): Promise<sdk.AuthId> {
     if (!this.isAvailable()) await this.makeAvailable()
-    const { user, isNew } = await this.getActive().findOrInsertUser(
-      this._authId.identityKey
-    )
-    if (!user)
-      throw new sdk.WERR_INVALID_PARAMETER('identityKey', 'exist on storage.')
-    this._authId.userId = user.userId
-    this._authId.isActive =
-      user.activeStorage === undefined ||
-      user.activeStorage === this.getSettings().storageIdentityKey
     if (mustBeActive && !this._authId.isActive) throw new sdk.WERR_NOT_ACTIVE()
     return this._authId
   }
 
+  async getUserId(): Promise<number> {
+    return (await this.getAuth()).userId!
+  }
+
   getActive(): sdk.WalletStorageProvider {
-    if (this.stores.length < 1)
-      throw new sdk.WERR_INVALID_OPERATION(
-        'An active WalletStorageProvider must be added to this WalletStorageManager'
-      )
-    return this.stores[0]
+    return this.verifyActive().storage
+  }
+
+  getActiveSettings(): TableSettings {
+    return this.verifyActive().settings!
+  }
+
+  getActiveUser(): TableUser {
+    return this.verifyActive().user!
+  }
+
+  getActiveStore(): string {
+    return this.verifyActive().settings!.storageIdentityKey
+  }
+
+  getBackupStores(): string[] {
+    this.verifyActive()
+    return this._backups!.map(b => b.settings!.storageIdentityKey)
+  }
+
+  getConflictingStores(): string[] {
+    this.verifyActive()
+    return this._conflictingActives!.map(b => b.settings!.storageIdentityKey)
+  }
+
+  getAllStores(): string[] {
+    this.verifyActive()
+    return this._stores.map(b => b.settings!.storageIdentityKey)
   }
 
   async getActiveForWriter(): Promise<sdk.WalletStorageWriter> {
+    if (!this.isAvailable()) await this.makeAvailable()
     while (
       this._storageProviderLocked ||
       this._syncLocked ||
@@ -121,6 +282,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
 
   async getActiveForReader(): Promise<sdk.WalletStorageReader> {
+    if (!this.isAvailable()) await this.makeAvailable()
     while (
       this._storageProviderLocked ||
       this._syncLocked ||
@@ -133,6 +295,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
 
   async getActiveForSync(): Promise<sdk.WalletStorageSync> {
+    if (!this.isAvailable()) await this.makeAvailable()
     // Wait for a current sync task to complete...
     while (this._syncLocked) {
       await wait(100)
@@ -152,6 +315,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
 
   async getActiveForStorageProvider(): Promise<StorageProvider> {
+    if (!this.isAvailable()) await this.makeAvailable()
     // Wait for a current storageProvider call to complete...
     while (this._storageProviderLocked) {
       await wait(100)
@@ -234,21 +398,19 @@ export class WalletStorageManager implements sdk.WalletStorage {
     return this.getActive().isStorageProvider()
   }
 
-  isAvailable(): boolean {
-    return this.getActive().isAvailable()
-  }
-
   async addWalletStorageProvider(
     provider: sdk.WalletStorageProvider
   ): Promise<void> {
     await provider.makeAvailable()
     if (this._services) provider.setServices(this._services)
-    this.stores.push(provider)
+    this._stores.push(new ManagedStorage(provider))
+    this._isAvailable = false
+    await this.makeAvailable()
   }
 
   setServices(v: sdk.WalletServices) {
     this._services = v
-    for (const store of this.stores) store.setServices(v)
+    for (const store of this._stores) store.storage.setServices(v)
   }
   getServices(): sdk.WalletServices {
     if (!this._services)
@@ -258,13 +420,6 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   getSettings(): TableSettings {
     return this.getActive().getSettings()
-  }
-
-  async makeAvailable(): Promise<TableSettings> {
-    return await this.runAsWriter(async writer => {
-      writer.makeAvailable()
-      return writer.getSettings()
-    })
   }
 
   async migrate(
@@ -277,9 +432,9 @@ export class WalletStorageManager implements sdk.WalletStorage {
   }
 
   async destroy(): Promise<void> {
-    if (this.stores.length < 1) return
+    if (this._stores.length < 1) return
     return await this.runAsWriter(async writer => {
-      for (const store of this.stores) await store.destroy()
+      for (const store of this._stores) await store.storage.destroy()
     })
   }
 
@@ -415,21 +570,27 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
   async syncFromReader(
     identityKey: string,
-    reader: StorageSyncReader
-  ): Promise<void> {
+    reader: sdk.WalletStorageSyncReader,
+    activeSync?: sdk.WalletStorageSync,
+    log: string = ''
+  ): Promise<{ inserts: number; updates: number; log: string }> {
     const auth = await this.getAuth()
     if (identityKey !== auth.identityKey) throw new sdk.WERR_UNAUTHORIZED()
 
     const readerSettings = await reader.makeAvailable()
 
-    return await this.runAsSync(async sync => {
+    let inserts = 0,
+      updates = 0
+
+    log = await this.runAsSync(async sync => {
       const writer = sync
       const writerSettings = this.getSettings()
 
-      let log = ''
-      let inserts = 0,
-        updates = 0
+      log += `syncFromReader from ${readerSettings.storageName} to ${writerSettings.storageName}\n`
+
+      let i = -1
       for (;;) {
+        i++
         const ss = await EntitySyncState.fromStorage(
           writer,
           identityKey,
@@ -440,43 +601,45 @@ export class WalletStorageManager implements sdk.WalletStorage {
           writerSettings.storageIdentityKey
         )
         const chunk = await reader.getSyncChunk(args)
+        if (chunk.user) {
+          // Merging state from a reader cannot update activeStorage
+          chunk.user.activeStorage = this._active!.user!.activeStorage
+        }
         const r = await writer.processSyncChunk(args, chunk)
         inserts += r.inserts
         updates += r.updates
-        //log += `${r.maxUpdated_at} inserted ${r.inserts} updated ${r.updates}\n`
+        log += `chunk ${i} inserted ${r.inserts} updated ${r.updates} ${r.maxUpdated_at}\n`
         if (r.done) break
       }
-      //console.log(log)
-      console.log(`sync complete: ${inserts} inserts, ${updates} updates`)
-    })
-  }
-
-  async updateBackups(activeSync?: sdk.WalletStorageSync) {
-    const auth = await this.getAuth()
-    return await this.runAsSync(async sync => {
-      for (const backup of this.stores.slice(1)) {
-        await this.syncToWriter(auth, backup, sync)
-      }
+      log += `syncFromReader complete: ${inserts} inserts, ${updates} updates\n`
+      return log
     }, activeSync)
+
+    return { inserts, updates, log }
   }
 
   async syncToWriter(
     auth: sdk.AuthId,
     writer: sdk.WalletStorageProvider,
-    activeSync?: sdk.WalletStorageSync
-  ): Promise<{ inserts: number; updates: number }> {
+    activeSync?: sdk.WalletStorageSync,
+    log: string = ''
+  ): Promise<{ inserts: number; updates: number; log: string }> {
     const identityKey = auth.identityKey
 
     const writerSettings = await writer.makeAvailable()
 
-    return await this.runAsSync(async sync => {
-      const reader = sync
-      const readerSettings = this.getSettings()
+    let inserts = 0,
+      updates = 0
 
-      let log = ''
-      let inserts = 0,
-        updates = 0
+    log = await this.runAsSync(async sync => {
+      const reader = sync
+      const readerSettings = reader.getSettings()
+
+      log += `syncToWriter from ${readerSettings.storageName} to ${writerSettings.storageName}\n`
+
+      let i = -1
       for (;;) {
+        i++
         const ss = await EntitySyncState.fromStorage(
           writer,
           identityKey,
@@ -490,50 +653,119 @@ export class WalletStorageManager implements sdk.WalletStorage {
         const r = await writer.processSyncChunk(args, chunk)
         inserts += r.inserts
         updates += r.updates
-        log += `${r.maxUpdated_at} inserted ${r.inserts} updated ${r.updates}\n`
+        log += `chunk ${i} inserted ${r.inserts} updated ${r.updates} ${r.maxUpdated_at}\n`
         if (r.done) break
       }
-      //console.log(log)
-      //console.log(`sync complete: ${inserts} inserts, ${updates} updates`)
-      return { inserts, updates }
+      log += `syncToWriter complete: ${inserts} inserts, ${updates} updates\n`
+      return log
+    }, activeSync)
+
+    return { inserts, updates, log }
+  }
+
+  async updateBackups(activeSync?: sdk.WalletStorageSync): Promise<string> {
+    const auth = await this.getAuth(true)
+    return await this.runAsSync(async sync => {
+      let log = ''
+      for (const backup of this._backups!) {
+        log += await this.syncToWriter(auth, backup.storage, sync)
+      }
+      return log
     }, activeSync)
   }
 
   /**
    * Updates backups and switches to new active storage provider from among current backup providers.
    *
+   * Also resolves conflicting actives.
+   *
    * @param storageIdentityKey of current backup storage provider that is to become the new active provider.
    */
-  async setActive(storageIdentityKey: string): Promise<void> {
-    const newActiveIndex = this.stores.findIndex(
-      s => s.getSettings().storageIdentityKey === storageIdentityKey
+  async setActive(storageIdentityKey: string): Promise<string> {
+    if (!this.isAvailable()) await this.makeAvailable()
+
+    // Confirm a valid storageIdentityKey: must match one of the _stores.
+    const newActiveIndex = this._stores.findIndex(
+      s => s.settings!.storageIdentityKey === storageIdentityKey
     )
     if (newActiveIndex < 0)
       throw new sdk.WERR_INVALID_PARAMETER(
         'storageIdentityKey',
-        `registered with this "WalletStorageManager" as a backup data store.`
+        `registered with this "WalletStorageManager". ${storageIdentityKey} does not match any managed store.`
       )
-    if (newActiveIndex === 0)
+
+    const identityKey = (await this.getAuth()).identityKey
+    const newActive = this._stores[newActiveIndex]
+
+    let log = `setActive to ${newActive.settings!.storageName}`
+
+    if (storageIdentityKey === this.getActiveStore() && this.isActiveEnabled)
       /** Setting the current active as the new active is a permitted no-op. */
-      return
+      return log + ` unchanged\n`
 
-    const auth = await this.getAuth()
-    const newActive = this.stores[newActiveIndex]
-    const newActiveStorageIdentityKey = (await newActive.makeAvailable())
-      .storageIdentityKey
+    log += '\n'
 
-    return await this.runAsSync(async sync => {
-      await sync.setActive(auth, newActiveStorageIdentityKey)
-      await this.updateBackups(sync)
-      // swap stores...
-      const oldActive = this.stores[0]
-      this.stores[0] = this.stores[newActiveIndex]
-      this.stores[newActiveIndex] = oldActive
-      this._authId = {
-        ...this._authId,
-        userId: undefined,
-        isActive: undefined
+    log += await this.runAsSync(async sync => {
+      let log = ''
+
+      if (this._conflictingActives!.length > 0) {
+        // Handle case where new active is current active to resolve conflicts.
+        // And where new active is one of the current conflict actives.
+        this._conflictingActives!.push(this._active!)
+        // Remove the new active from conflicting actives and
+        // set new active as the conflicting active that matches the target `storageIdentityKey`
+        this._conflictingActives = this._conflictingActives!.filter(ca => {
+          const isNewActive =
+            ca.settings!.storageIdentityKey === storageIdentityKey
+          return !isNewActive
+        })
+
+        // Merge state from conflicting actives into `newActive`.
+        for (const conflict of this._conflictingActives) {
+          const sfr = await this.syncToWriter(
+            { identityKey, userId: newActive.user!.userId, isActive: false },
+            newActive.storage,
+            conflict.storage
+          )
+          log += sfr.log
+        }
       }
+
+      // If there were conflicting actives,
+      // Push state merged from all merged actives into newActive to all stores other than the now single active.
+      // Otherwise,
+      // Push state from current active to all other stores.
+      const backupSource =
+        this._conflictingActives!.length > 0 ? newActive : this._active!
+
+      for (const store of this._stores) {
+        // Update all store's user records to reflect new active store
+        await store.storage.setActive(
+          { identityKey, userId: store.user!.userId },
+          storageIdentityKey
+        )
+        // Update cached user.activeStorage of all stores
+        store.user!.activeStorage = storageIdentityKey
+
+        if (
+          store.settings!.storageIdentityKey !==
+          backupSource.settings!.storageIdentityKey
+        ) {
+          const stwr = await this.syncToWriter(
+            { identityKey, userId: store.user!.userId, isActive: false },
+            store.storage,
+            backupSource.storage
+          )
+          log += stwr.log
+        }
+      }
+
+      this._isAvailable = false
+      await this.makeAvailable()
+
+      return log
     })
+
+    return log
   }
 }

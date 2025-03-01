@@ -40,6 +40,7 @@ describe('find tests', () => {
     for (const storage of storages) {
       await storage.dropAllData()
       await storage.migrate('insert tests', '1'.repeat(64))
+      await storage.makeAvailable()
       setups.push({ storage, setup: await _tu.createTestSetup1(storage) })
     }
   })

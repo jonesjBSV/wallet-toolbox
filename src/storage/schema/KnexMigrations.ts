@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Knex } from 'knex'
-import { sdk } from '../../index.all'
+import { sdk, StorageKnex } from '../../index.all'
 import { DBType } from '../StorageReader'
 
 interface Migration {
@@ -88,6 +88,28 @@ export class KnexMigrations implements MigrationSource<string> {
           .timestamp('updated_at', { precision: 3 })
           .defaultTo(knex.fn.now())
           .notNullable()
+      }
+    }
+
+    migrations['2025-02-22-001 nonNULL activeStorage'] = {
+      async up(knex) {
+        const storage = new StorageKnex({
+          ...StorageKnex.defaultOptions(),
+          chain: <sdk.Chain>chain,
+          knex
+        })
+        const settings = await storage.makeAvailable()
+        await knex.raw(
+          `update users set activeStorage = '${settings.storageIdentityKey}' where activeStorage is NULL`
+        )
+        await knex.schema.alterTable('users', table => {
+          table.string('activeStorage').notNullable().alter()
+        })
+      },
+      async down(knex) {
+        await knex.schema.alterTable('users', table => {
+          table.string('activeStorage').nullable().alter()
+        })
       }
     }
 
