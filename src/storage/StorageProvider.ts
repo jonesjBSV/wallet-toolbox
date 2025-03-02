@@ -761,7 +761,13 @@ export abstract class StorageProvider
               req.addHistoryNote({ what: 'notifyTxOfProof', transactionId: id })
             } catch (eu: unknown) {
               const e = sdk.WalletError.fromUnknown(eu)
-              req.addHistoryNote({ what: 'notifyTxOfProofError', transactionId: id, provenTxId: proven.provenTxId, code: e.code, description: e.description })
+              req.addHistoryNote({
+                what: 'notifyTxOfProofError',
+                transactionId: id,
+                provenTxId: proven.provenTxId,
+                code: e.code,
+                description: e.description
+              })
             }
           }
           await req.updateStorageDynamicProperties(this)

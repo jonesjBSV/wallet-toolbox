@@ -443,8 +443,10 @@ export function validateCreateActionArgs(
     includeAllSourceTransactions: false
   }
   vargs.isSendWith = vargs.options.sendWith.length > 0
-  vargs.isRemixChange = !vargs.isSendWith && vargs.inputs.length === 0 && vargs.outputs.length === 0
-  vargs.isNewTx = vargs.isRemixChange || vargs.inputs.length > 0 || vargs.outputs.length > 0
+  vargs.isRemixChange =
+    !vargs.isSendWith && vargs.inputs.length === 0 && vargs.outputs.length === 0
+  vargs.isNewTx =
+    vargs.isRemixChange || vargs.inputs.length > 0 || vargs.outputs.length > 0
   vargs.isSignAction =
     vargs.isNewTx &&
     (vargs.options.signAndProcess === false ||

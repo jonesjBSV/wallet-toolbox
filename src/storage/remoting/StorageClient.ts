@@ -100,14 +100,13 @@ export class StorageClient implements sdk.WalletStorageProvider {
       if (json.error) {
         const { code, message, data } = json.error
         const err = new Error(`RPC Error: ${message}`)
-          // You could attach more info here if you like:
-          ; (err as any).code = code
-          ; (err as any).data = data
+        // You could attach more info here if you like:
+        ;(err as any).code = code
+        ;(err as any).data = data
         throw err
       }
 
       return json.result
-
     } catch (eu: unknown) {
       throw eu
     }

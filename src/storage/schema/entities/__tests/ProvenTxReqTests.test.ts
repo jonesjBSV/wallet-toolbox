@@ -62,8 +62,7 @@ describe('ProvenTxReq class method tests', () => {
   })
 
   // Test: getHistorySummary method
-  test('1_getHistorySummary', () => {
-  })
+  test('1_getHistorySummary', () => {})
 
   // Test: parseHistoryNote method
   test('2_parseHistoryNote', () => {
@@ -324,12 +323,10 @@ describe('ProvenTxReq class method tests', () => {
   })
 
   // Test: parseHistoryNote method
-  test('9_parseHistoryNote', () => {
-  })
+  test('9_parseHistoryNote', () => {})
 
   // Test: mergeHistory method
-  test('10_mergeHistory', () => {
-  })
+  test('10_mergeHistory', () => {})
 
   test('12_isTerminalStatus_with_real_data', async () => {
     // Assuming `ctxs[0]` contains the necessary setup and `sdk.ProvenTxReqTerminalStatus` is already defined
@@ -351,6 +348,5 @@ describe('ProvenTxReq class method tests', () => {
     }
   })
 
-  test('13_mergeExisting_real_data', async () => {
-  })
+  test('13_mergeExisting_real_data', async () => {})
 })

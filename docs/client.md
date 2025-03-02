@@ -1387,9 +1387,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ProvenTxReqHistory {
-    notes?: Record<string, string>;
+    notes?: ReqHistoryNote[];
 }
 ```
+
+See also: [ReqHistoryNote](./storage.md#type-reqhistorynote)
 
 ###### Property notes
 
@@ -1397,8 +1399,9 @@ Keys are Date().toISOString()
 Values are a description of what happened.
 
 ```ts
-notes?: Record<string, string>
+notes?: ReqHistoryNote[]
 ```
+See also: [ReqHistoryNote](./storage.md#type-reqhistorynote)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3032,6 +3035,7 @@ export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
     options: sdk.ValidProcessActionOptions;
     isSendWith: boolean;
     isNewTx: boolean;
+    isRemixChange: boolean;
     isNoSend: boolean;
     isDelayed: boolean;
 }
@@ -4370,12 +4374,11 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     constructor(api?: TableProvenTxReq) 
     historySince(since: Date): ProvenTxReqHistory 
     historyPretty(since?: Date, indent = 0): string 
+    prettyNote(note: ReqHistoryNote): string 
     getHistorySummary(): ProvenTxReqHistorySummaryApi 
-    parseHistoryNote(note: string, summary?: ProvenTxReqHistorySummaryApi): string 
+    parseHistoryNote(note: ReqHistoryNote, summary?: ProvenTxReqHistorySummaryApi): string 
     addNotifyTransactionId(id: number) 
-    addHistoryNote<T extends {
-        what: string;
-    }>(note: string | T, when?: Date, noDupes?: boolean) 
+    addHistoryNote(note: ReqHistoryNote, noDupes?: boolean) 
     async updateStorage(storage: EntityStorage, trx?: sdk.TrxToken) 
     async updateStorageDynamicProperties(storage: WalletStorageManager | StorageProvider, trx?: sdk.TrxToken) 
     async insertOrMerge(storage: EntityStorage, trx?: sdk.TrxToken): Promise<EntityProvenTxReq> 
@@ -4420,7 +4423,24 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
 }
 ```
 
-See also: [EntityBase](./storage.md#class-entitybase), [EntityStorage](./storage.md#type-entitystorage), [ProvenTxReqHistory](./storage.md#interface-proventxreqhistory), [ProvenTxReqHistorySummaryApi](./storage.md#interface-proventxreqhistorysummaryapi), [ProvenTxReqNotify](./storage.md#interface-proventxreqnotify), [ProvenTxReqStatus](./client.md#type-proventxreqstatus), [StorageProvider](./storage.md#class-storageprovider), [SyncMap](./storage.md#interface-syncmap), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TrxToken](./client.md#interface-trxtoken), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+See also: [EntityBase](./storage.md#class-entitybase), [EntityStorage](./storage.md#type-entitystorage), [ProvenTxReqHistory](./storage.md#interface-proventxreqhistory), [ProvenTxReqHistorySummaryApi](./storage.md#interface-proventxreqhistorysummaryapi), [ProvenTxReqNotify](./storage.md#interface-proventxreqnotify), [ProvenTxReqStatus](./client.md#type-proventxreqstatus), [ReqHistoryNote](./storage.md#type-reqhistorynote), [StorageProvider](./storage.md#class-storageprovider), [SyncMap](./storage.md#interface-syncmap), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TrxToken](./client.md#interface-trxtoken), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+
+###### Method addHistoryNote
+
+Adds a note to history.
+Notes with identical property values to an existing note are ignored.
+
+```ts
+addHistoryNote(note: ReqHistoryNote, noDupes?: boolean) 
+```
+See also: [ReqHistoryNote](./storage.md#type-reqhistorynote)
+
+Argument Details
+
++ **note**
+  + Note to add
++ **noDupes**
+  + if true, only newest note with same `what` value is retained.
 
 ###### Method equals
 
@@ -8626,12 +8646,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [Chain](#type-chain) | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) |
 | [DBType](#type-dbtype) | [PostTxsService](#type-posttxsservice) |
 | [EntityStorage](#type-entitystorage) | [ProvenTxReqStatus](#type-proventxreqstatus) |
-| [GetMerklePathService](#type-getmerklepathservice) | [StorageProvidedBy](#type-storageprovidedby) |
-| [GetRawTxService](#type-getrawtxservice) | [SyncProtocolVersion](#type-syncprotocolversion) |
-| [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [SyncStatus](#type-syncstatus) |
-| [GetUtxoStatusService](#type-getutxostatusservice) | [TransactionStatus](#type-transactionstatus) |
-| [MonitorStorage](#type-monitorstorage) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
-| [PostBeefService](#type-postbeefservice) |  |
+| [GetMerklePathService](#type-getmerklepathservice) | [ReqHistoryNote](#type-reqhistorynote) |
+| [GetRawTxService](#type-getrawtxservice) | [StorageProvidedBy](#type-storageprovidedby) |
+| [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [SyncProtocolVersion](#type-syncprotocolversion) |
+| [GetUtxoStatusService](#type-getutxostatusservice) | [SyncStatus](#type-syncstatus) |
+| [MonitorStorage](#type-monitorstorage) | [TransactionStatus](#type-transactionstatus) |
+| [PostBeefService](#type-postbeefservice) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8786,6 +8806,19 @@ completed: proven_txs record added, and notifications are complete.
 
 ```ts
 export type ProvenTxReqStatus = "sending" | "unsent" | "nosend" | "unknown" | "nonfinal" | "unprocessed" | "unmined" | "callback" | "unconfirmed" | "completed" | "invalid" | "doubleSpend"
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Type: ReqHistoryNote
+
+```ts
+export type ReqHistoryNote = {
+    when?: string;
+    what: string;
+    [key: string]: string | number | undefined;
+}
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)

@@ -178,10 +178,8 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     let log = `${note.when}: ${note.what}`
     for (const [key, val] of Object.entries(note)) {
       if (key !== 'when' && key !== 'what') {
-        if (typeof val === 'string')
-          log += ' ' + key + ':`' + val + '`'
-        else
-          log += ' ' + key + ':' + val
+        if (typeof val === 'string') log += ' ' + key + ':`' + val + '`'
+        else log += ' ' + key + ':' + val
       }
     }
     return log
@@ -273,12 +271,9 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
    * @param note Note to add
    * @param noDupes if true, only newest note with same `what` value is retained.
    */
-  addHistoryNote(
-    note: ReqHistoryNote,
-    noDupes?: boolean
-  ) {
+  addHistoryNote(note: ReqHistoryNote, noDupes?: boolean) {
     if (!this.history.notes) this.history.notes = []
-    if (!note.when) note.when = new Date().toISOString();
+    if (!note.when) note.when = new Date().toISOString()
     let addNote = true
     for (const n of this.history.notes) {
       if (n.when && n.when > note.when && n.what === note.what && noDupes) {
@@ -295,8 +290,12 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     }
     if (addNote) {
       this.history.notes.push(note as ReqHistoryNote)
-      const k = (n: ReqHistoryNote) : string => { return `${n.when} ${n.what}` }
-      this.history.notes.sort((a, b) => k(a) < k(b) ? -1 : k(a) > k(b) ? 1 : 0)
+      const k = (n: ReqHistoryNote): string => {
+        return `${n.when} ${n.what}`
+      }
+      this.history.notes.sort((a, b) =>
+        k(a) < k(b) ? -1 : k(a) > k(b) ? 1 : 0
+      )
     }
   }
 
@@ -388,7 +387,11 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   }
   set status(v: sdk.ProvenTxReqStatus) {
     if (v !== this.api.status) {
-      this.addHistoryNote({ what: 'status', status_was: this.api.status, status_now: v })
+      this.addHistoryNote({
+        what: 'status',
+        status_was: this.api.status,
+        status_now: v
+      })
       this.api.status = v
     }
   }
@@ -645,4 +648,8 @@ export interface ProvenTxReqNotify {
   transactionIds?: number[]
 }
 
-export type ReqHistoryNote = { when?: string, what: string, [key: string]: string | number | undefined }
+export type ReqHistoryNote = {
+  when?: string
+  what: string
+  [key: string]: string | number | undefined
+}

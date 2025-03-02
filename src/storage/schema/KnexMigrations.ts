@@ -99,9 +99,7 @@ export class KnexMigrations implements MigrationSource<string> {
           knex
         })
         const settings = await storage.makeAvailable()
-        await knex.raw(
-          `update proven_tx_reqs set history = '{}'`
-        )
+        await knex.raw(`update proven_tx_reqs set history = '{}'`)
       },
       async down(knex) {
         // No way back...

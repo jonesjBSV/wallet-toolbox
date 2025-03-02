@@ -370,9 +370,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ProvenTxReqHistory {
-    notes?: Record<string, string>;
+    notes?: ReqHistoryNote[];
 }
 ```
+
+See also: [ReqHistoryNote](./storage.md#type-reqhistorynote)
 
 ###### Property notes
 
@@ -380,8 +382,9 @@ Keys are Date().toISOString()
 Values are a description of what happened.
 
 ```ts
-notes?: Record<string, string>
+notes?: ReqHistoryNote[]
 ```
+See also: [ReqHistoryNote](./storage.md#type-reqhistorynote)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1719,12 +1722,11 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     constructor(api?: TableProvenTxReq) 
     historySince(since: Date): ProvenTxReqHistory 
     historyPretty(since?: Date, indent = 0): string 
+    prettyNote(note: ReqHistoryNote): string 
     getHistorySummary(): ProvenTxReqHistorySummaryApi 
-    parseHistoryNote(note: string, summary?: ProvenTxReqHistorySummaryApi): string 
+    parseHistoryNote(note: ReqHistoryNote, summary?: ProvenTxReqHistorySummaryApi): string 
     addNotifyTransactionId(id: number) 
-    addHistoryNote<T extends {
-        what: string;
-    }>(note: string | T, when?: Date, noDupes?: boolean) 
+    addHistoryNote(note: ReqHistoryNote, noDupes?: boolean) 
     async updateStorage(storage: EntityStorage, trx?: sdk.TrxToken) 
     async updateStorageDynamicProperties(storage: WalletStorageManager | StorageProvider, trx?: sdk.TrxToken) 
     async insertOrMerge(storage: EntityStorage, trx?: sdk.TrxToken): Promise<EntityProvenTxReq> 
@@ -1769,7 +1771,24 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
 }
 ```
 
-See also: [EntityBase](./storage.md#class-entitybase), [EntityStorage](./storage.md#type-entitystorage), [ProvenTxReqHistory](./storage.md#interface-proventxreqhistory), [ProvenTxReqHistorySummaryApi](./storage.md#interface-proventxreqhistorysummaryapi), [ProvenTxReqNotify](./storage.md#interface-proventxreqnotify), [ProvenTxReqStatus](./client.md#type-proventxreqstatus), [StorageProvider](./storage.md#class-storageprovider), [SyncMap](./storage.md#interface-syncmap), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TrxToken](./client.md#interface-trxtoken), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+See also: [EntityBase](./storage.md#class-entitybase), [EntityStorage](./storage.md#type-entitystorage), [ProvenTxReqHistory](./storage.md#interface-proventxreqhistory), [ProvenTxReqHistorySummaryApi](./storage.md#interface-proventxreqhistorysummaryapi), [ProvenTxReqNotify](./storage.md#interface-proventxreqnotify), [ProvenTxReqStatus](./client.md#type-proventxreqstatus), [ReqHistoryNote](./storage.md#type-reqhistorynote), [StorageProvider](./storage.md#class-storageprovider), [SyncMap](./storage.md#interface-syncmap), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TrxToken](./client.md#interface-trxtoken), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+
+###### Method addHistoryNote
+
+Adds a note to history.
+Notes with identical property values to an existing note are ignored.
+
+```ts
+addHistoryNote(note: ReqHistoryNote, noDupes?: boolean) 
+```
+See also: [ReqHistoryNote](./storage.md#type-reqhistorynote)
+
+Argument Details
+
++ **note**
+  + Note to add
++ **noDupes**
+  + if true, only newest note with same `what` value is retained.
 
 ###### Method equals
 
@@ -4134,6 +4153,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [DBType](#type-dbtype) |
 | [EntityStorage](#type-entitystorage) |
 | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) |
+| [ReqHistoryNote](#type-reqhistorynote) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4163,6 +4183,19 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export type PostReqsToNetworkDetailsStatus = "success" | "doubleSpend" | "unknown"
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Type: ReqHistoryNote
+
+```ts
+export type ReqHistoryNote = {
+    when?: string;
+    what: string;
+    [key: string]: string | number | undefined;
+}
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)

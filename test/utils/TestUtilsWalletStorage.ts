@@ -338,7 +338,9 @@ export abstract class TestUtilsWalletStorage {
    *
    * @returns {TestWalletNoSetup}
    */
-  static async createTestWallet(args: sdk.Chain | CreateTestWalletArgs): Promise<TestWalletNoSetup> {
+  static async createTestWallet(
+    args: sdk.Chain | CreateTestWalletArgs
+  ): Promise<TestWalletNoSetup> {
     let chain: sdk.Chain
     let rootKeyHex: string
     let filePath: string
@@ -360,7 +362,12 @@ export abstract class TestUtilsWalletStorage {
     }
 
     const databaseName = path.parse(filePath).name
-    const setup = await _tu.createSQLiteTestWallet({ filePath, rootKeyHex, databaseName, chain })
+    const setup = await _tu.createSQLiteTestWallet({
+      filePath,
+      rootKeyHex,
+      databaseName,
+      chain
+    })
     const localStorageIdentityKey = setup.storage.getActiveStore()
 
     const endpointUrl =
@@ -369,7 +376,8 @@ export abstract class TestUtilsWalletStorage {
         : 'https://staging-storage.babbage.systems'
 
     const client = new StorageClient(setup.wallet, endpointUrl)
-    const clientStorageIdentityKey = (await client.makeAvailable()).storageIdentityKey
+    const clientStorageIdentityKey = (await client.makeAvailable())
+      .storageIdentityKey
     await setup.wallet.storage.addWalletStorageProvider(client)
 
     const backupName = `${databaseName}_backup`
