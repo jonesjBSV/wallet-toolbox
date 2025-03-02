@@ -298,10 +298,12 @@ export class StorageClient implements sdk.WalletStorageProvider {
     storageIdentityKey: string,
     storageName: string
   ): Promise<{ syncState: TableSyncState; isNew: boolean }> {
-    return this.rpcCall<{ syncState: TableSyncState; isNew: boolean }>(
+    const r = await this.rpcCall<{ syncState: TableSyncState; isNew: boolean }>(
       'findOrInsertSyncStateAuth',
       [auth, storageIdentityKey, storageName]
     )
+    r.syncState = this.validateEntity(r.syncState, ['when'])
+    return r
   }
 
   /**
@@ -315,7 +317,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     certificate: TableCertificateX
   ): Promise<number> {
-    return this.rpcCall<number>('insertCertificateAuth', [auth, certificate])
+    const r = await this.rpcCall<number>('insertCertificateAuth', [auth, certificate])
+    return r
   }
 
   /**
@@ -329,7 +332,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     vargs: sdk.ValidListActionsArgs
   ): Promise<ListActionsResult> {
-    return this.rpcCall<ListActionsResult>('listActions', [auth, vargs])
+    const r = await this.rpcCall<ListActionsResult>('listActions', [auth, vargs])
+    return r
   }
 
   /**
@@ -343,7 +347,8 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     vargs: sdk.ValidListOutputsArgs
   ): Promise<ListOutputsResult> {
-    return this.rpcCall<ListOutputsResult>('listOutputs', [auth, vargs])
+    const r = await this.rpcCall<ListOutputsResult>('listOutputs', [auth, vargs])
+    return r
   }
 
   /**
@@ -357,10 +362,11 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     vargs: sdk.ValidListCertificatesArgs
   ): Promise<ListCertificatesResult> {
-    return this.rpcCall<ListCertificatesResult>('listCertificates', [
+    const r = await this.rpcCall<ListCertificatesResult>('listCertificates', [
       auth,
       vargs
     ])
+    return r
   }
 
   /**
@@ -378,10 +384,17 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     args: sdk.FindCertificatesArgs
   ): Promise<TableCertificateX[]> {
-    return this.rpcCall<TableCertificate[]>('findCertificatesAuth', [
+    const r = await this.rpcCall<TableCertificateX[]>('findCertificatesAuth', [
       auth,
       args
     ])
+    this.validateEntities(r)
+    if (args.includeFields) {
+      for (const c of r) {
+        if (c.fields) this.validateEntities(c.fields)
+      }
+    }
+    return r
   }
 
   /**
@@ -398,7 +411,9 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
   ): Promise<TableOutputBasket[]> {
-    return this.rpcCall<TableOutputBasket[]>('findOutputBaskets', [auth, args])
+    const r = await this.rpcCall<TableOutputBasket[]>('findOutputBaskets', [auth, args])
+    this.validateEntities(r)
+    return r
   }
 
   /**
@@ -415,7 +430,9 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     args: sdk.FindOutputsArgs
   ): Promise<TableOutput[]> {
-    return this.rpcCall<TableOutput[]>('findOutputsAuth', [auth, args])
+    const r = await this.rpcCall<TableOutput[]>('findOutputsAuth', [auth, args])
+    this.validateEntities(r)
+    return r
   }
 
   /**
@@ -428,10 +445,12 @@ export class StorageClient implements sdk.WalletStorageProvider {
    * @param args `FindProvenTxReqsArgs` determines which proof requests to retrieve.
    * @returns array of proof requests matching args.
    */
-  findProvenTxReqs(
+  async findProvenTxReqs(
     args: sdk.FindProvenTxReqsArgs
   ): Promise<TableProvenTxReq[]> {
-    return this.rpcCall<TableProvenTxReq[]>('findProvenTxReqs', [args])
+    const r = await this.rpcCall<TableProvenTxReq[]>('findProvenTxReqs', [args])
+    this.validateEntities(r)
+    return r
   }
 
   /**
@@ -480,10 +499,11 @@ export class StorageClient implements sdk.WalletStorageProvider {
     args: sdk.RequestSyncChunkArgs,
     chunk: sdk.SyncChunk
   ): Promise<sdk.ProcessSyncChunkResult> {
-    return this.rpcCall<sdk.ProcessSyncChunkResult>('processSyncChunk', [
+    const r = await this.rpcCall<sdk.ProcessSyncChunkResult>('processSyncChunk', [
       args,
       chunk
     ])
+    return r
   }
 
   /**
@@ -496,7 +516,21 @@ export class StorageClient implements sdk.WalletStorageProvider {
    * @returns the next "chunk" of replication data
    */
   async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> {
-    return this.rpcCall<sdk.SyncChunk>('getSyncChunk', [args])
+    const r = await this.rpcCall<sdk.SyncChunk>('getSyncChunk', [args])
+    if (r.certificateFields) r.certificateFields = this.validateEntities(r.certificateFields)
+    if (r.certificates) r.certificates = this.validateEntities(r.certificates)
+    if (r.commissions) r.commissions = this.validateEntities(r.commissions)
+    if (r.outputBaskets) r.outputBaskets = this.validateEntities(r.outputBaskets);
+    if (r.outputTagMaps) r.outputTagMaps = this.validateEntities(r.outputTagMaps);
+    if (r.outputTags) r.outputTags = this.validateEntities(r.outputTags);
+    if (r.outputs) r.outputs = this.validateEntities(r.outputs);
+    if (r.provenTxReqs) r.provenTxReqs = this.validateEntities(r.provenTxReqs);
+    if (r.provenTxs) r.provenTxs = this.validateEntities(r.provenTxs);
+    if (r.transactions) r.transactions = this.validateEntities(r.transactions);
+    if (r.txLabelMaps) r.txLabelMaps = this.validateEntities(r.txLabelMaps);
+    if (r.txLabels) r.txLabels = this.validateEntities(r.txLabels);
+    if (r.user) r.user = this.validateEntity(r.user);
+    return r
   }
 
   /**
@@ -512,10 +546,11 @@ export class StorageClient implements sdk.WalletStorageProvider {
   async updateProvenTxReqWithNewProvenTx(
     args: sdk.UpdateProvenTxReqWithNewProvenTxArgs
   ): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult> {
-    return this.rpcCall<sdk.UpdateProvenTxReqWithNewProvenTxResult>(
+    const r = await this.rpcCall<sdk.UpdateProvenTxReqWithNewProvenTxResult>(
       'updateProvenTxReqWithNewProvenTx',
       [args]
     )
+    return r
   }
 
   /**
@@ -535,5 +570,53 @@ export class StorageClient implements sdk.WalletStorageProvider {
       auth,
       newActiveStorageIdentityKey
     ])
+  }
+
+  validateDate(date: Date | string | number): Date {
+    let r: Date
+    if (date instanceof Date) r = date
+    else r = new Date(date)
+    return r
+  }
+
+  /**
+   * Helper to force uniform behavior across database engines.
+   * Use to process all individual records with time stamps retreived from database.
+   */
+  validateEntity<T extends sdk.EntityTimeStamp>(
+    entity: T,
+    dateFields?: string[]
+  ): T {
+    entity.created_at = this.validateDate(entity.created_at)
+    entity.updated_at = this.validateDate(entity.updated_at)
+    if (dateFields) {
+      for (const df of dateFields) {
+        if (entity[df]) entity[df] = this.validateDate(entity[df])
+      }
+    }
+    for (const key of Object.keys(entity)) {
+      const val = entity[key]
+      if (val === null) {
+        entity[key] = undefined
+      } else if (Buffer.isBuffer(val)) {
+        entity[key] = Array.from(val)
+      }
+    }
+    return entity
+  }
+
+  /**
+   * Helper to force uniform behavior across database engines.
+   * Use to process all arrays of records with time stamps retreived from database.
+   * @returns input `entities` array with contained values validated.
+   */
+  validateEntities<T extends sdk.EntityTimeStamp>(
+    entities: T[],
+    dateFields?: string[]
+  ): T[] {
+    for (let i = 0; i < entities.length; i++) {
+      entities[i] = this.validateEntity(entities[i], dateFields)
+    }
+    return entities
   }
 }

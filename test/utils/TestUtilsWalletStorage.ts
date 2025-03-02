@@ -391,6 +391,9 @@ export abstract class TestUtilsWalletStorage {
     const backupSettings = await localBackup.makeAvailable()
     await setup.wallet.storage.addWalletStorageProvider(localBackup)
 
+    // SETTING ACTIVE
+    // SETTING ACTIVE
+    // SETTING ACTIVE
     const log = await setup.storage.setActive(localStorageIdentityKey)
     //const log = await setup.storage.setActive(clientStorageIdentityKey)
     console.log(log)

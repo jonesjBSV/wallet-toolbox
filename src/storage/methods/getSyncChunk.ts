@@ -40,7 +40,7 @@ export async function getSyncChunk(
   const user = verifyTruthy(
     await storage.findUserByIdentityKey(args.identityKey)
   )
-  if (!args.since || user.updated_at > args.since) r.user = user
+  if (!args.since || user.updated_at > new Date(args.since)) r.user = user
 
   const chunkers: ChunkerArgs[] = [
     {

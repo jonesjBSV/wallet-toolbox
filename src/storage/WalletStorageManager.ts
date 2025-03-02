@@ -666,7 +666,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
   async updateBackups(activeSync?: sdk.WalletStorageSync): Promise<string> {
     const auth = await this.getAuth(true)
     return await this.runAsSync(async sync => {
-      let log = ''
+      let log = `BACKUP CURRENT ACTIVE TO ${this._backups!.length} STORES\n`
       for (const backup of this._backups!) {
         const stwr = await this.syncToWriter(auth, backup.storage, sync)
         log += stwr.log
@@ -725,6 +725,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
 
         // Merge state from conflicting actives into `newActive`.
         for (const conflict of this._conflictingActives) {
+          log += 'MERGING STATE FROM CONFLICTING ACTIVES:\n'
           const sfr = await this.syncToWriter(
             { identityKey, userId: newActive.user!.userId, isActive: false },
             newActive.storage,
@@ -732,6 +733,9 @@ export class WalletStorageManager implements sdk.WalletStorage {
           )
           log += sfr.log
         }
+        log += 'PROPAGATE MERGED ACTIVE STATE TO NON-ACTIVES\n'
+      } else {
+        log += 'BACKUP CURRENT ACTIVE STATE THEN SET NEW ACTIVE\n'
       }
 
       // If there were conflicting actives,
