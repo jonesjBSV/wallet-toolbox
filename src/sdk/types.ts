@@ -125,3 +125,9 @@ export interface WalletBalance {
   total: number
   utxos: { satoshis: number; outpoint: string }[]
 }
+
+export type ReqHistoryNote = {
+  when?: string
+  what: string
+  [key: string]: string | number | undefined
+}

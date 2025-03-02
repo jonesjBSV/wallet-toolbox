@@ -207,6 +207,8 @@ export interface GetMerklePathResult {
    * The first exception error that occurred during processing, if any.
    */
   error?: sdk.WalletError
+
+  notes?: sdk.ReqHistoryNote[]
 }
 
 export interface PostTxResultForTxid {

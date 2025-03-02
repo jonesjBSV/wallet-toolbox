@@ -174,7 +174,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     return log
   }
 
-  prettyNote(note: ReqHistoryNote): string {
+  prettyNote(note: sdk.ReqHistoryNote): string {
     let log = `${note.when}: ${note.what}`
     for (const [key, val] of Object.entries(note)) {
       if (key !== 'when' && key !== 'what') {
@@ -204,7 +204,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   }
 
   parseHistoryNote(
-    note: ReqHistoryNote,
+    note: sdk.ReqHistoryNote,
     summary?: ProvenTxReqHistorySummaryApi
   ): string {
     const c = summary || {
@@ -271,26 +271,28 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
    * @param note Note to add
    * @param noDupes if true, only newest note with same `what` value is retained.
    */
-  addHistoryNote(note: ReqHistoryNote, noDupes?: boolean) {
+  addHistoryNote(note: sdk.ReqHistoryNote, noDupes?: boolean) {
     if (!this.history.notes) this.history.notes = []
     if (!note.when) note.when = new Date().toISOString()
+    if (noDupes) {
+      // Remove any existing notes with same 'what' value and either no 'when' or an earlier 'when'
+      this.history.notes = this.history.notes!.filter(n => n.what !== note.what || (n.when && n.when > note.when!))
+    }
     let addNote = true
     for (const n of this.history.notes) {
-      if (n.when && n.when > note.when && n.what === note.what && noDupes) {
-        addNote = false
-        break
-      }
+      let isEqual = true
       for (const [k, v] of Object.entries(n)) {
         if (v !== note[k]) {
-          addNote = false
+          isEqual = false
           break
         }
       }
+      if (isEqual) addNote = false
       if (!addNote) break
     }
     if (addNote) {
-      this.history.notes.push(note as ReqHistoryNote)
-      const k = (n: ReqHistoryNote): string => {
+      this.history.notes.push(note as sdk.ReqHistoryNote)
+      const k = (n: sdk.ReqHistoryNote): string => {
         return `${n.when} ${n.what}`
       }
       this.history.notes.sort((a, b) =>
@@ -641,15 +643,9 @@ export interface ProvenTxReqHistory {
    * Keys are Date().toISOString()
    * Values are a description of what happened.
    */
-  notes?: ReqHistoryNote[]
+  notes?: sdk.ReqHistoryNote[]
 }
 
 export interface ProvenTxReqNotify {
   transactionIds?: number[]
-}
-
-export type ReqHistoryNote = {
-  when?: string
-  what: string
-  [key: string]: string | number | undefined
 }

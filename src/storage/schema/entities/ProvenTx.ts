@@ -260,30 +260,18 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
     if (!req.rawTx) throw new sdk.WERR_MISSING_PARAMETER('req.rawTx')
 
     if (!req.rawTx) throw new sdk.WERR_INTERNAL('rawTx must be valid')
+    
+    for (const note of gmpResult.notes || []) {
+      req.addHistoryNote(note, true)
+    }
 
     if (!gmpResult.name && !gmpResult.merklePath && !gmpResult.error) {
       // Most likely offline or now services configured.
       // Does not count as a proof attempt.
-      req.addHistoryNote(
-        {
-          what: 'getProofOffline',
-          name: gmpResult.name,
-          attempts: req.attempts
-        },
-        true
-      )
       return undefined
     }
 
     if (!gmpResult.merklePath) {
-      req.addHistoryNote(
-        {
-          what: 'getProofUnknown',
-          name: gmpResult.name,
-          attempts: req.attempts
-        },
-        true
-      )
       if (req.created_at) {
         const reqAgeInMsecs = Date.now() - req.created_at.getTime()
         const reqAgeInMinutes = Math.ceil(
@@ -297,9 +285,9 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
           // Start the process of setting transactions to 'failed'
           req.addHistoryNote(
             {
-              what: 'getProofGiveUp',
-              name: gmpResult.name,
+              what: 'getMerklePathGiveUp',
               attempts: req.attempts,
+              limit: EntityProvenTx.getProofAttemptsLimit,
               ageInMinutes: reqAgeInMinutes
             },
             true
@@ -323,10 +311,12 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
         const leaf = proof.path[0].find(
           leaf => leaf.txid === true && leaf.hash === req.txid
         )
-        if (!leaf)
+        if (!leaf) {
+          req.addHistoryNote({ what: 'getMerklePathTxidNotFound' }, true)
           throw new sdk.WERR_INTERNAL(
             'merkle path does not contain leaf for txid'
           )
+        }
 
         const proven = new EntityProvenTx({
           created_at: now,
@@ -341,22 +331,12 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
           blockHash: gmpResult.header!.hash
         })
 
-        req.addHistoryNote(
-          {
-            what: 'getProofProven',
-            name: gmpResult.name,
-            attempts: req.attempts
-          },
-          true
-        )
-
         return proven
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
         req.addHistoryNote(
           {
-            what: 'getProofProvenError',
-            name: gmpResult.name,
+            what: 'getMerklePathProvenError',
             attempts: req.attempts,
             code: e.code,
             description: e.description

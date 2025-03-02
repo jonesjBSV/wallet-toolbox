@@ -213,7 +213,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     txid: string,
     services: sdk.WalletServices
   ): Promise<sdk.GetMerklePathResult> {
-    const r: sdk.GetMerklePathResult = { name: 'WoCTsc' }
+    const r: sdk.GetMerklePathResult = { name: 'WoCTsc', notes: [] }
 
     const headers = this.getHttpHeaders()
     const requestOptions = {
@@ -227,25 +227,31 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           WhatsOnChainTscProof | WhatsOnChainTscProof[]
         >(`${this.URL}/tx/${txid}/proof/tsc`, requestOptions)
         if (response.statusText === 'Too Many Requests' && retry < 2) {
+          r.notes!.push({ what: 'getMerklePathRetry', name: r.name, status: response.status, statusText: response.statusText })
           await wait(2000)
           continue
         }
 
-        if (response.status === 404 && response.statusText === 'Not Found')
+        if (response.status === 404 && response.statusText === 'Not Found') {
+          r.notes!.push({ what: 'getMerklePathNotFound', name: r.name, status: response.status, statusText: response.statusText })
           return r
+        }
 
         if (
           !response.ok ||
           response.status !== 200 ||
           response.statusText !== 'OK'
-        )
+        ) {
+          r.notes!.push({ what: 'getMerklePathBadStatus', name: r.name, status: response.status, statusText: response.statusText })
           throw new sdk.WERR_INVALID_PARAMETER(
             'txid',
             `valid transaction. '${txid}' response ${response.statusText}`
           )
+        }
 
         if (!response.data) {
           // Unmined, proof not yet available.
+          r.notes!.push({ what: 'getMerklePathNoData', name: r.name, status: response.status, statusText: response.statusText })
           return r
         }
 
@@ -263,17 +269,22 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           }
           r.merklePath = convertProofToMerklePath(txid, proof)
           r.header = header
+          r.notes!.push({ what: 'getMerklePathSuccess', name: r.name, status: response.status, statusText: response.statusText })
         } else {
+          r.notes!.push({ what: 'getMerklePathNoHeader', target: p.target, name: r.name, status: response.status, statusText: response.statusText })
           throw new sdk.WERR_INVALID_PARAMETER(
             'blockhash',
             'a valid on-chain block hash'
           )
         }
-      } catch (err: unknown) {
-        r.error = sdk.WalletError.fromUnknown(err)
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        r.notes!.push({ what: 'getMerklePathError', name: r.name, code: e.code, description: e.description })
+        r.error = e
       }
       return r
     }
+    r.notes!.push({ what: 'getMerklePathInternal', name: r.name })
     throw new sdk.WERR_INTERNAL()
   }
 

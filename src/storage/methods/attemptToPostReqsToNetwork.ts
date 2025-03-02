@@ -112,7 +112,7 @@ export async function attemptToPostReqsToNetwork(
         r.status = 'error'
       d.req.attempts++
       d.req.addHistoryNote({
-        what: 'postToNetworkBadResponse',
+        what: 'postToNetwork',
         name: r.pbr.name,
         status: d.status,
         error: d.error
