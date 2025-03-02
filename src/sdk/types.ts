@@ -120,3 +120,8 @@ export interface ScriptTemplateUnlock {
   sign: (tx: Transaction, inputIndex: number) => Promise<UnlockingScript>
   estimateLength: (tx: Transaction, inputIndex: number) => Promise<number>
 }
+
+export interface WalletBalance {
+  total: number
+  utxos: { satoshis: number; outpoint: string }[]
+}

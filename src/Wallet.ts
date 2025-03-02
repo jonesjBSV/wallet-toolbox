@@ -887,16 +887,14 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   /**
    * Uses `listOutputs` to iterate through all spendable outputs in the 'default' (change) basket.
+   * 
+   * Outputs in the 'default' basket are managed by the wallet and MUST NOT USED AS UNMANAGED INPUTS.
    *
    * @param {string} basket - Optional. Defaults to 'default', the wallet change basket.
    * @returns { total: number, utxos: { satoshis: number, outpoint: string }[] }
    */
-  async balance(basket: string = 'default'): Promise<{
-    total: number
-    utxos: { satoshis: number; outpoint: string }[]
-  }> {
-    let total = 0
-    const utxos: { satoshis: number; outpoint: string }[] = []
+  async balance(basket: string = 'default'): Promise<sdk.WalletBalance> {
+    const r: sdk.WalletBalance = { total: 0, utxos: [] }
     let offset = 0
     for (;;) {
       const change = await this.listOutputs({
@@ -906,12 +904,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
       })
       if (change.totalOutputs === 0) break
       for (const o of change.outputs) {
-        total += o.satoshis
-        utxos.push({ satoshis: o.satoshis, outpoint: o.outpoint })
+        r.total += o.satoshis
+        r.utxos.push({ satoshis: o.satoshis, outpoint: o.outpoint })
       }
       offset += change.outputs.length
     }
-    return { total, utxos }
+    return r
   }
 }
 
