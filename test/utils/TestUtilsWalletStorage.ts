@@ -344,6 +344,8 @@ export abstract class TestUtilsWalletStorage {
     let chain: sdk.Chain
     let rootKeyHex: string
     let filePath: string
+    let addLocalBackup = false
+    let setActiveClient = false
     if (typeof args === 'string') {
       chain = args
       const env = _tu.getEnv(chain)
@@ -359,6 +361,8 @@ export abstract class TestUtilsWalletStorage {
       chain = args.chain
       rootKeyHex = args.rootKeyHex
       filePath = args.filePath
+      addLocalBackup = args.addLocalBackup === true
+      setActiveClient = args.setActiveClient === true
     }
 
     const databaseName = path.parse(filePath).name
@@ -368,7 +372,7 @@ export abstract class TestUtilsWalletStorage {
       databaseName,
       chain
     })
-    const localStorageIdentityKey = setup.storage.getActiveStore()
+    setup.localStorageIdentityKey = setup.storage.getActiveStore()
 
     const endpointUrl =
       chain === 'main'
@@ -376,29 +380,32 @@ export abstract class TestUtilsWalletStorage {
         : 'https://staging-storage.babbage.systems'
 
     const client = new StorageClient(setup.wallet, endpointUrl)
-    const clientStorageIdentityKey = (await client.makeAvailable())
+    setup.clientStorageIdentityKey = (await client.makeAvailable())
       .storageIdentityKey
     await setup.wallet.storage.addWalletStorageProvider(client)
 
-    const backupName = `${databaseName}_backup`
-    const backupPath = filePath.replace(databaseName, backupName)
-    const localBackup = new StorageKnex({
-      ...StorageKnex.defaultOptions(),
-      knex: _tu.createLocalSQLite(backupPath),
-      chain
-    })
-    await localBackup.migrate(backupName, randomBytesHex(33))
-    const backupSettings = await localBackup.makeAvailable()
-    await setup.wallet.storage.addWalletStorageProvider(localBackup)
+    if (addLocalBackup) {
+      const backupName = `${databaseName}_backup`
+      const backupPath = filePath.replace(databaseName, backupName)
+      const localBackup = new StorageKnex({
+        ...StorageKnex.defaultOptions(),
+        knex: _tu.createLocalSQLite(backupPath),
+        chain
+      })
+      await localBackup.migrate(backupName, randomBytesHex(33))
+      setup.localBackupStorageIdentityKey = (await localBackup.makeAvailable()).storageIdentityKey
+      await setup.wallet.storage.addWalletStorageProvider(localBackup)
+    }
 
     // SETTING ACTIVE
     // SETTING ACTIVE
     // SETTING ACTIVE
-    const log = await setup.storage.setActive(localStorageIdentityKey)
-    //const log = await setup.storage.setActive(clientStorageIdentityKey)
+    const log = await setup.storage.setActive(setActiveClient ? setup.clientStorageIdentityKey : setup.localStorageIdentityKey)
     console.log(log)
 
-    if (setup.storage.getActiveStore() === localStorageIdentityKey) {
+    let needsBackup = false
+
+    if (setup.storage.getActiveStore() === setup.localStorageIdentityKey) {
       const basket = verifyOne(
         await setup.activeStorage.findOutputBaskets({
           partial: {
@@ -411,6 +418,7 @@ export abstract class TestUtilsWalletStorage {
         basket.minimumDesiredUTXOValue !== 5 ||
         basket.numberOfDesiredUTXOs < 32
       ) {
+        needsBackup = true
         await setup.activeStorage.updateOutputBasket(basket.basketId, {
           minimumDesiredUTXOValue: 5,
           numberOfDesiredUTXOs: 32
@@ -418,19 +426,23 @@ export abstract class TestUtilsWalletStorage {
       }
     }
 
-    const log2 = await setup.storage.updateBackups()
-    console.log(log2)
-
     const balance = await setup.wallet.balance()
 
     if (balance.total < 1000) {
       throw new sdk.WERR_INSUFFICIENT_FUNDS(1000, 1000 - balance.total)
     }
+
     if (balance.utxos.length <= 10) {
       const args: CreateActionArgs = {
         description: 'spread change'
       }
       await setup.wallet.createAction(args)
+      needsBackup = true
+    }
+
+    if (needsBackup) {
+      const log2 = await setup.storage.updateBackups()
+      console.log(log2)
     }
 
     return setup
@@ -1776,6 +1788,9 @@ export interface TestWallet<T> extends TestWalletOnly {
   services: Services
   monitor: Monitor
   wallet: Wallet
+  localStorageIdentityKey?: string
+  clientStorageIdentityKey?: string
+  localBackupStorageIdentityKey?: string
 }
 
 export interface TestWalletOnly {
@@ -2485,4 +2500,6 @@ export interface CreateTestWalletArgs {
   chain: sdk.Chain
   rootKeyHex: string
   filePath: string
+  addLocalBackup?: boolean
+  setActiveClient?: boolean
 }
