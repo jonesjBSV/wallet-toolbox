@@ -308,7 +308,7 @@ export abstract class StorageReaderWriter extends StorageReader {
         const now = new Date()
         user = {
           created_at: now,
-          updated_at: now,
+          updated_at: new Date(0), // Default constructed user, sync will override with any updated user.
           userId: 0,
           identityKey,
           activeStorage: this.getSettings().storageIdentityKey
@@ -318,7 +318,7 @@ export abstract class StorageReaderWriter extends StorageReader {
         // Add default change basket for new user.
         await this.insertOutputBasket({
           created_at: now,
-          updated_at: now,
+          updated_at: new Date(0), // Default constructed basket, sync will override with any updated basket.
           basketId: 0,
           userId: user.userId,
           name: 'default',

@@ -803,7 +803,7 @@ async function fundNewTransactionSdk(
     changeInitialSatoshis: ctx.changeBasket.minimumDesiredUTXOValue,
     changeFirstSatoshis: Math.max(
       1,
-      ctx.changeBasket.minimumDesiredUTXOValue / 4
+      Math.round(ctx.changeBasket.minimumDesiredUTXOValue / 4)
     ),
     changeLockingScriptLength: 25,
     changeUnlockingScriptLength: 107,

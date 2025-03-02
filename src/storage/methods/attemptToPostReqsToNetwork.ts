@@ -39,17 +39,15 @@ export async function attemptToPostReqsToNetwork(
     let badReq: boolean = false
     if (!rb.rawTx) {
       badReq = true
-      rb.addHistoryNote(`invalid req: rawTx must be valid`)
+      rb.addHistoryNote({ what: 'postToNetworkError', error: 'no rawTx' })
     }
     if (!rb.notify.transactionIds || rb.notify.transactionIds.length < 1) {
       badReq = true
-      rb.addHistoryNote(
-        `invalid req: must have at least one transaction to notify`
-      )
+      rb.addHistoryNote({ what: 'postToNetworkError', error: 'no notify tx' })
     }
     if (rb.attempts > 10) {
       badReq = true
-      rb.addHistoryNote(`invalid req: too many attempts ${rb.attempts}`)
+      rb.addHistoryNote({ what: 'postToNetworkError', error: 'too many attempts', attempts: rb.attempts })
     }
 
     // Accumulate batch beefs.
@@ -63,7 +61,7 @@ export async function attemptToPostReqsToNetwork(
           (e as sdk.WERR_INVALID_PARAMETER).parameter === 'txid'
         ) {
           badReq = true
-          rb.addHistoryNote(`invalid req: depends on txid which is unknown`)
+          rb.addHistoryNote({ what: 'postToNetworkError', error: 'depends on unknown txid' })
         }
       }
     }
@@ -106,12 +104,7 @@ export async function attemptToPostReqsToNetwork(
         // If any txid result fails, the aggregate result is error.
         r.status = 'error'
       d.req.attempts++
-      const note = {
-        what: 'postReqsToNetwork result',
-        name: r.pbr.name,
-        result: JSON.stringify(d.data)
-      }
-      d.req.addHistoryNote(note)
+      d.req.addHistoryNote({ what: 'postToNetworkBadResponse', name: r.pbr.name, status: d.status, error: d.error  })
     }
   }
 

@@ -668,7 +668,8 @@ export class WalletStorageManager implements sdk.WalletStorage {
     return await this.runAsSync(async sync => {
       let log = ''
       for (const backup of this._backups!) {
-        log += await this.syncToWriter(auth, backup.storage, sync)
+        const stwr = await this.syncToWriter(auth, backup.storage, sync)
+        log += stwr.log
       }
       return log
     }, activeSync)
@@ -709,6 +710,8 @@ export class WalletStorageManager implements sdk.WalletStorage {
       let log = ''
 
       if (this._conflictingActives!.length > 0) {
+        // Merge state from conflicting actives into `newActive`.
+
         // Handle case where new active is current active to resolve conflicts.
         // And where new active is one of the current conflict actives.
         this._conflictingActives!.push(this._active!)
@@ -738,12 +741,14 @@ export class WalletStorageManager implements sdk.WalletStorage {
       const backupSource =
         this._conflictingActives!.length > 0 ? newActive : this._active!
 
+      // Update the backupSource's user record with the new activeStorage
+      // which will propagate to all other stores in the following backup loop.
+      await backupSource.storage.setActive(
+        { identityKey, userId: backupSource.user!.userId },
+        storageIdentityKey
+      )
+
       for (const store of this._stores) {
-        // Update all store's user records to reflect new active store
-        await store.storage.setActive(
-          { identityKey, userId: store.user!.userId },
-          storageIdentityKey
-        )
         // Update cached user.activeStorage of all stores
         store.user!.activeStorage = storageIdentityKey
 
@@ -751,6 +756,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
           store.settings!.storageIdentityKey !==
           backupSource.settings!.storageIdentityKey
         ) {
+          // If this store is not the backupSource store push state from backupSource to this store.
           const stwr = await this.syncToWriter(
             { identityKey, userId: store.user!.userId, isActive: false },
             store.storage,

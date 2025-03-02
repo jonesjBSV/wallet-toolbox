@@ -91,6 +91,23 @@ export class KnexMigrations implements MigrationSource<string> {
       }
     }
 
+    migrations['2025-03-01-001 reset req history'] = {
+      async up(knex) {
+        const storage = new StorageKnex({
+          ...StorageKnex.defaultOptions(),
+          chain: <sdk.Chain>chain,
+          knex
+        })
+        const settings = await storage.makeAvailable()
+        await knex.raw(
+          `update proven_tx_reqs set history = '{}'`
+        )
+      },
+      async down(knex) {
+        // No way back...
+      }
+    }
+
     migrations['2025-02-28-001 derivations to 200'] = {
       async up(knex) {
         await knex.schema.alterTable('outputs', table => {

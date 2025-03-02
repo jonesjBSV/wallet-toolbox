@@ -261,19 +261,15 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
 
     if (!req.rawTx) throw new sdk.WERR_INTERNAL('rawTx must be valid')
 
-    req.addHistoryNote({
-      what: 'getMerkleProof result',
-      result: gmpResult,
-      attempts: req.attempts
-    })
-
     if (!gmpResult.name && !gmpResult.merklePath && !gmpResult.error) {
       // Most likely offline or now services configured.
       // Does not count as a proof attempt.
+      req.addHistoryNote({ what: 'getProofOffline', name: gmpResult.name, attempts: req.attempts }, true)
       return undefined
     }
 
     if (!gmpResult.merklePath) {
+      req.addHistoryNote({ what: 'getProofUnknown', name: gmpResult.name, attempts: req.attempts }, true)
       if (req.created_at) {
         const reqAgeInMsecs = Date.now() - req.created_at.getTime()
         const reqAgeInMinutes = Math.ceil(
@@ -285,11 +281,7 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
           reqAgeInMinutes > EntityProvenTx.getProofMinutes
         ) {
           // Start the process of setting transactions to 'failed'
-          req.addHistoryNote({
-            what: 'getMerkleProof invalid',
-            attempts: req.attempts,
-            ageInMinutes: reqAgeInMinutes
-          })
+          req.addHistoryNote({ what: 'getProofGiveUp', name: gmpResult.name, attempts: req.attempts, ageInMinutes: reqAgeInMinutes }, true)
           req.notified = false
           req.status = 'invalid'
         }
@@ -327,13 +319,12 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
           blockHash: gmpResult.header!.hash
         })
 
+        req.addHistoryNote({ what: 'getProofProven', name: gmpResult.name, attempts: req.attempts }, true)
+
         return proven
-      } catch (err: unknown) {
-        req.addHistoryNote({
-          what: 'getMerkleProof catch',
-          proof,
-          error: sdk.WalletError.fromUnknown(err)
-        })
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        req.addHistoryNote({ what: 'getProofProvenError', name: gmpResult.name, attempts: req.attempts, code: e.code, description: e.description }, true)
       }
     }
   }

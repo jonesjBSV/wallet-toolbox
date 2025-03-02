@@ -70,37 +70,47 @@ export class StorageClient implements sdk.WalletStorageProvider {
    * @param params The array of parameters to pass to the method in order.
    */
   private async rpcCall<T>(method: string, params: unknown[]): Promise<T> {
-    const id = this.nextId++
-    const body = {
-      jsonrpc: '2.0',
-      method,
-      params,
-      id
+    try {
+      const id = this.nextId++
+      const body = {
+        jsonrpc: '2.0',
+        method,
+        params,
+        id
+      }
+
+      let response: Response
+      try {
+        response = await this.authClient.fetch(this.endpointUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
+      } catch (eu: unknown) {
+        throw eu
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          `WalletStorageClient rpcCall: network error ${response.status} ${response.statusText}`
+        )
+      }
+
+      const json = await response.json()
+      if (json.error) {
+        const { code, message, data } = json.error
+        const err = new Error(`RPC Error: ${message}`)
+          // You could attach more info here if you like:
+          ; (err as any).code = code
+          ; (err as any).data = data
+        throw err
+      }
+
+      return json.result
+
+    } catch (eu: unknown) {
+      throw eu
     }
-
-    const response = await this.authClient.fetch(this.endpointUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
-
-    if (!response.ok) {
-      throw new Error(
-        `WalletStorageClient rpcCall: network error ${response.status} ${response.statusText}`
-      )
-    }
-
-    const json = await response.json()
-    if (json.error) {
-      const { code, message, data } = json.error
-      const err = new Error(`RPC Error: ${message}`)
-      // You could attach more info here if you like:
-      ;(err as any).code = code
-      ;(err as any).data = data
-      throw err
-    }
-
-    return json.result
   }
 
   //////////////////////////////////////////////////////////////////////////////

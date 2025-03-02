@@ -330,6 +330,7 @@ export abstract class TestUtilsWalletStorage {
    * Creates a wallet with both local sqlite and cloud stores, the local store is left active.
    *
    * Requires a valid .env file with chain matching testIdentityKey and testFilePath properties valid.
+   * Or `args` with those properties.
    *
    * Verifies wallet has at least 1000 satoshis in at least 10 change utxos.
    *
@@ -337,22 +338,29 @@ export abstract class TestUtilsWalletStorage {
    *
    * @returns {TestWalletNoSetup}
    */
-  static async createTestWallet(chain: sdk.Chain): Promise<TestWalletNoSetup> {
-    const env = _tu.getEnv(chain)
-    if (!env.testIdentityKey || !env.testFilePath)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'env.testIdentityKey and env.testFilePath',
-        'valid'
-      )
+  static async createTestWallet(args: sdk.Chain | CreateTestWalletArgs): Promise<TestWalletNoSetup> {
+    let chain: sdk.Chain
+    let rootKeyHex: string
+    let filePath: string
+    if (typeof args === 'string') {
+      chain = args
+      const env = _tu.getEnv(chain)
+      if (!env.testIdentityKey || !env.testFilePath) {
+        throw new sdk.WERR_INVALID_PARAMETER(
+          'env.testIdentityKey and env.testFilePath',
+          'valid'
+        )
+      }
+      rootKeyHex = env.devKeys[env.testIdentityKey!]
+      filePath = env.testFilePath
+    } else {
+      chain = args.chain
+      rootKeyHex = args.rootKeyHex
+      filePath = args.filePath
+    }
 
-    const databaseName = path.parse(env.testFilePath!).name
-    const rootKeyHex = env.devKeys[env.testIdentityKey!]
-    const setup = await _tu.createSQLiteTestWallet({
-      filePath: env.testFilePath!,
-      rootKeyHex,
-      databaseName,
-      chain
-    })
+    const databaseName = path.parse(filePath).name
+    const setup = await _tu.createSQLiteTestWallet({ filePath, rootKeyHex, databaseName, chain })
     const localStorageIdentityKey = setup.storage.getActiveStore()
 
     const endpointUrl =
@@ -361,10 +369,11 @@ export abstract class TestUtilsWalletStorage {
         : 'https://staging-storage.babbage.systems'
 
     const client = new StorageClient(setup.wallet, endpointUrl)
-    //await setup.wallet.storage.addWalletStorageProvider(client)
+    const clientStorageIdentityKey = (await client.makeAvailable()).storageIdentityKey
+    await setup.wallet.storage.addWalletStorageProvider(client)
 
     const backupName = `${databaseName}_backup`
-    const backupPath = env.testFilePath!.replace(databaseName, backupName)
+    const backupPath = filePath.replace(databaseName, backupName)
     const localBackup = new StorageKnex({
       ...StorageKnex.defaultOptions(),
       knex: _tu.createLocalSQLite(backupPath),
@@ -375,24 +384,27 @@ export abstract class TestUtilsWalletStorage {
     await setup.wallet.storage.addWalletStorageProvider(localBackup)
 
     const log = await setup.storage.setActive(localStorageIdentityKey)
+    //const log = await setup.storage.setActive(clientStorageIdentityKey)
     console.log(log)
 
-    const basket = verifyOne(
-      await setup.activeStorage.findOutputBaskets({
-        partial: {
-          userId: setup.storage.getActiveUser().userId,
-          name: 'default'
-        }
-      })
-    )
-    if (
-      basket.minimumDesiredUTXOValue !== 3 ||
-      basket.numberOfDesiredUTXOs < 32
-    ) {
-      await setup.activeStorage.updateOutputBasket(basket.basketId, {
-        minimumDesiredUTXOValue: 3,
-        numberOfDesiredUTXOs: 32
-      })
+    if (setup.storage.getActiveStore() === localStorageIdentityKey) {
+      const basket = verifyOne(
+        await setup.activeStorage.findOutputBaskets({
+          partial: {
+            userId: setup.storage.getActiveUser().userId,
+            name: 'default'
+          }
+        })
+      )
+      if (
+        basket.minimumDesiredUTXOValue !== 5 ||
+        basket.numberOfDesiredUTXOs < 32
+      ) {
+        await setup.activeStorage.updateOutputBasket(basket.basketId, {
+          minimumDesiredUTXOValue: 5,
+          numberOfDesiredUTXOs: 32
+        })
+      }
     }
 
     const log2 = await setup.storage.updateBackups()
@@ -404,10 +416,10 @@ export abstract class TestUtilsWalletStorage {
       throw new sdk.WERR_INSUFFICIENT_FUNDS(1000, 1000 - balance.total)
     }
     if (balance.utxos.length <= 10) {
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'change utxos count',
-        'greater than 10'
-      )
+      const args: CreateActionArgs = {
+        description: 'spread change'
+      }
+      await setup.wallet.createAction(args)
     }
 
     return setup
@@ -2456,4 +2468,10 @@ export async function logInput(
 
 export function logBasket(basket: TableOutputBasket): string {
   return `\n-- Basket --\nName: ${basket.name}\n`
+}
+
+export interface CreateTestWalletArgs {
+  chain: sdk.Chain
+  rootKeyHex: string
+  filePath: string
 }

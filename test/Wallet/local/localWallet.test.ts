@@ -9,5 +9,7 @@ describe('localWallet tests', () => {
     if (_tu.noTestEnv(chain)) return
 
     const setup = await _tu.createTestWallet(chain)
+
+    await setup.wallet.destroy()
   })
 })

@@ -232,7 +232,7 @@ export abstract class StorageProvider
       if (tx.txid) {
         const req = await EntityProvenTxReq.fromStorageTxid(this, tx.txid, trx)
         if (req) {
-          req.addHistoryNote({ what: 'aborted' })
+          req.addHistoryNote({ what: 'abortAction', reference: args.reference })
           req.status = 'invalid'
           await req.updateStorageDynamicProperties(this, trx)
         }
@@ -758,13 +758,10 @@ export abstract class StorageProvider
                 provenTxId: proven.provenTxId,
                 status: 'completed'
               })
-              req.addHistoryNote(`transaction ${id} notified of ProvenTx`)
+              req.addHistoryNote({ what: 'notifyTxOfProof', transactionId: id })
             } catch (eu: unknown) {
               const e = sdk.WalletError.fromUnknown(eu)
-              req.addHistoryNote({
-                what: 'transactionNotificationFailure',
-                error: `${e.code}: ${e.description}`
-              })
+              req.addHistoryNote({ what: 'notifyTxOfProofError', transactionId: id, provenTxId: proven.provenTxId, code: e.code, description: e.description })
             }
           }
           await req.updateStorageDynamicProperties(this)
