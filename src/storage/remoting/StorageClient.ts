@@ -317,7 +317,10 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     certificate: TableCertificateX
   ): Promise<number> {
-    const r = await this.rpcCall<number>('insertCertificateAuth', [auth, certificate])
+    const r = await this.rpcCall<number>('insertCertificateAuth', [
+      auth,
+      certificate
+    ])
     return r
   }
 
@@ -332,7 +335,10 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     vargs: sdk.ValidListActionsArgs
   ): Promise<ListActionsResult> {
-    const r = await this.rpcCall<ListActionsResult>('listActions', [auth, vargs])
+    const r = await this.rpcCall<ListActionsResult>('listActions', [
+      auth,
+      vargs
+    ])
     return r
   }
 
@@ -347,7 +353,10 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     vargs: sdk.ValidListOutputsArgs
   ): Promise<ListOutputsResult> {
-    const r = await this.rpcCall<ListOutputsResult>('listOutputs', [auth, vargs])
+    const r = await this.rpcCall<ListOutputsResult>('listOutputs', [
+      auth,
+      vargs
+    ])
     return r
   }
 
@@ -411,7 +420,10 @@ export class StorageClient implements sdk.WalletStorageProvider {
     auth: sdk.AuthId,
     args: sdk.FindOutputBasketsArgs
   ): Promise<TableOutputBasket[]> {
-    const r = await this.rpcCall<TableOutputBasket[]>('findOutputBaskets', [auth, args])
+    const r = await this.rpcCall<TableOutputBasket[]>('findOutputBaskets', [
+      auth,
+      args
+    ])
     this.validateEntities(r)
     return r
   }
@@ -499,10 +511,10 @@ export class StorageClient implements sdk.WalletStorageProvider {
     args: sdk.RequestSyncChunkArgs,
     chunk: sdk.SyncChunk
   ): Promise<sdk.ProcessSyncChunkResult> {
-    const r = await this.rpcCall<sdk.ProcessSyncChunkResult>('processSyncChunk', [
-      args,
-      chunk
-    ])
+    const r = await this.rpcCall<sdk.ProcessSyncChunkResult>(
+      'processSyncChunk',
+      [args, chunk]
+    )
     return r
   }
 
@@ -517,19 +529,22 @@ export class StorageClient implements sdk.WalletStorageProvider {
    */
   async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> {
     const r = await this.rpcCall<sdk.SyncChunk>('getSyncChunk', [args])
-    if (r.certificateFields) r.certificateFields = this.validateEntities(r.certificateFields)
+    if (r.certificateFields)
+      r.certificateFields = this.validateEntities(r.certificateFields)
     if (r.certificates) r.certificates = this.validateEntities(r.certificates)
     if (r.commissions) r.commissions = this.validateEntities(r.commissions)
-    if (r.outputBaskets) r.outputBaskets = this.validateEntities(r.outputBaskets);
-    if (r.outputTagMaps) r.outputTagMaps = this.validateEntities(r.outputTagMaps);
-    if (r.outputTags) r.outputTags = this.validateEntities(r.outputTags);
-    if (r.outputs) r.outputs = this.validateEntities(r.outputs);
-    if (r.provenTxReqs) r.provenTxReqs = this.validateEntities(r.provenTxReqs);
-    if (r.provenTxs) r.provenTxs = this.validateEntities(r.provenTxs);
-    if (r.transactions) r.transactions = this.validateEntities(r.transactions);
-    if (r.txLabelMaps) r.txLabelMaps = this.validateEntities(r.txLabelMaps);
-    if (r.txLabels) r.txLabels = this.validateEntities(r.txLabels);
-    if (r.user) r.user = this.validateEntity(r.user);
+    if (r.outputBaskets)
+      r.outputBaskets = this.validateEntities(r.outputBaskets)
+    if (r.outputTagMaps)
+      r.outputTagMaps = this.validateEntities(r.outputTagMaps)
+    if (r.outputTags) r.outputTags = this.validateEntities(r.outputTags)
+    if (r.outputs) r.outputs = this.validateEntities(r.outputs)
+    if (r.provenTxReqs) r.provenTxReqs = this.validateEntities(r.provenTxReqs)
+    if (r.provenTxs) r.provenTxs = this.validateEntities(r.provenTxs)
+    if (r.transactions) r.transactions = this.validateEntities(r.transactions)
+    if (r.txLabelMaps) r.txLabelMaps = this.validateEntities(r.txLabelMaps)
+    if (r.txLabels) r.txLabels = this.validateEntities(r.txLabels)
+    if (r.user) r.user = this.validateEntity(r.user)
     return r
   }
 
