@@ -252,6 +252,10 @@ export class WalletStorageManager implements sdk.WalletStorage {
     return this.verifyActive().settings!.storageIdentityKey
   }
 
+  getActiveStoreName(): string {
+    return this.verifyActive().settings!.storageName
+  }
+
   getBackupStores(): string[] {
     this.verifyActive()
     return this._backups!.map(b => b.settings!.storageIdentityKey)
