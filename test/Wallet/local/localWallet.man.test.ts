@@ -33,7 +33,11 @@ describe('localWallet tests', () => {
   test('0a create 1 sat immediate', async () => {
     const setup = await createSetup('test')
 
-    const car = await createOneSatTestOutput(setup, { acceptDelayedBroadcast: false }, 1)
+    const car = await createOneSatTestOutput(
+      setup,
+      { acceptDelayedBroadcast: false },
+      1
+    )
 
     await trackReqByTxid(setup, car.txid!)
 
@@ -74,7 +78,7 @@ describe('localWallet tests', () => {
   })
 })
 
-async function createSetup(chain: sdk.Chain) : Promise<TestWalletNoSetup> {
+async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
   const env = _tu.getEnv(chain)
   if (!env.testIdentityKey)
     throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
@@ -141,7 +145,7 @@ async function createOneSatTestOutput(
 }
 
 async function recoverOneSatTestOutputs(
-  setup: TestWalletNoSetup,
+  setup: TestWalletNoSetup
 ): Promise<void> {
   const outputs = await setup.wallet.listOutputs({
     basket: 'test-output',
@@ -188,7 +192,6 @@ async function trackReqByTxid(
   setup: TestWalletNoSetup,
   txid: string
 ): Promise<void> {
-
   const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, txid)
 
   expect(req !== undefined && req.history.notes !== undefined)
@@ -196,13 +199,13 @@ async function trackReqByTxid(
 
   let newBlocks = 0
   let lastHeight: number | undefined
-  for (; req.status !== 'completed' ;) {
+  for (; req.status !== 'completed'; ) {
     let height = setup.monitor.lastNewHeader?.height
     if (req.status === 'unsent') {
-      // send it... 
+      // send it...
     }
     if (req.status === 'sending') {
-      // send it... 
+      // send it...
     }
     if (req.status === 'unmined') {
       if (height && lastHeight) {

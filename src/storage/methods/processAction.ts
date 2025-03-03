@@ -174,7 +174,10 @@ async function shareReqsWithWorld(
         // If the immediate (un-delayed) broadcast attempt APPEARS to fail,
         // fall back to delayed sending and tracking to make sure transaction
         // gets tracked if it is valid and floating around the network...
-        const req = await EntityProvenTxReq.fromStorageId(storage, ar.getReq.req.provenTxReqId)
+        const req = await EntityProvenTxReq.fromStorageId(
+          storage,
+          ar.getReq.req.provenTxReqId
+        )
         if (req.status === 'unprocessed') {
           req.status = 'unsent'
           await req.updateStorageDynamicProperties(storage)
