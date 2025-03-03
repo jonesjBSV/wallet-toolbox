@@ -30,6 +30,7 @@ import {
   verifyOneOrNone,
   verifyTruthy
 } from '../../index.client'
+import { ProvenTxReqNonTerminalStatus } from '../../sdk'
 
 export async function processAction(
   storage: StorageProvider,
@@ -169,6 +170,16 @@ async function shareReqsWithWorld(
     const d = prtn.details.find(d => d.txid === ar.txid)
     if (d) {
       ar.postBeef = d.pbrft
+      if (d.pbrft.status === 'error' && ar.getReq.req) {
+        // If the immediate (un-delayed) broadcast attempt APPEARS to fail,
+        // fall back to delayed sending and tracking to make sure transaction
+        // gets tracked if it is valid and floating around the network...
+        const req = await EntityProvenTxReq.fromStorageId(storage, ar.getReq.req.provenTxReqId)
+        if (req.status === 'unprocessed') {
+          req.status = 'unsent'
+          await req.updateStorageDynamicProperties(storage)
+        }
+      }
     }
   }
 
