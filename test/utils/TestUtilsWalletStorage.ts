@@ -83,6 +83,7 @@ export interface TuEnv {
    * file path to local sqlite file for testIdentityKey
    */
   testFilePath?: string
+  cloudMySQLConnection?: string
 }
 
 export abstract class TestUtilsWalletStorage {
@@ -134,6 +135,10 @@ export abstract class TestUtilsWalletStorage {
       chain === 'main'
         ? process.env.TEST_MAIN_FILEPATH
         : process.env.TEST_TEST_FILEPATH
+    const cloudMySQLConnection =
+      chain === 'main'
+        ? process.env.MAIN_CLOUD_MYSQL_CONNECTION
+        : process.env.TEST_CLOUD_MYSQL_CONNECTION
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
@@ -151,7 +156,8 @@ export abstract class TestUtilsWalletStorage {
       logTests,
       filePath,
       testIdentityKey,
-      testFilePath
+      testFilePath,
+      cloudMySQLConnection
     }
   }
 

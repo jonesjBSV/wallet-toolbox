@@ -9,7 +9,7 @@ import {
   Script,
   SignActionArgs
 } from '@bsv/sdk'
-import { EntityProvenTxReq, Monitor, sdk, Setup, wait } from '../../../src'
+import { asString, EntityProvenTxReq, EntitySyncState, Monitor, sdk, Services, Setup, StorageKnex, TableOutput, TableUser, verifyId, verifyOne, wait } from '../../../src'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { monitorEventLoopDelay } from 'perf_hooks'
 
@@ -76,6 +76,64 @@ describe('localWallet tests', () => {
 
     await setup.wallet.destroy()
   })
+
+  test('4 review change utxos', async () => {
+    const setup = await createSetup('test')
+
+    const storage = setup.activeStorage
+    const services = setup.services
+
+    const { invalidSpendableOutputs: notUtxos } =
+      await confirmSpendableOutputs(storage, services)
+    const outputsToUpdate = notUtxos.map(o => ({
+      id: o.outputId,
+      satoshis: o.satoshis
+    }))
+
+    const total: number = outputsToUpdate.reduce((t, o) => t + o.satoshis, 0)
+
+    debugger
+    // *** About set spendable = false for outputs ***/
+    for (const o of outputsToUpdate) {
+      await storage.updateOutput(o.id, { spendable: false })
+    }
+
+    await setup.wallet.destroy()
+  })
+
+  test('5 review synchunk', async () => {
+    const setup = await createSetup('test')
+
+    const identityKey = setup.identityKey
+    const reader = setup.activeStorage
+    const readerSettings = reader.getSettings()
+    const writer = setup.storage._backups![0].storage
+    const writerSettings = writer.getSettings()
+
+    const ss = await EntitySyncState.fromStorage(
+      writer,
+      identityKey,
+      readerSettings
+    )
+
+    const args = ss.makeRequestSyncChunkArgs(
+      identityKey,
+      writerSettings.storageIdentityKey
+    )
+
+    const chunk = await reader.getSyncChunk(args)
+
+    await setup.wallet.destroy()
+  })
+
+  test('6 backup', async () => {
+    const setup = await createSetup('test')
+
+    await setup.storage.updateBackups()
+
+    await setup.wallet.destroy()
+  })
+
 })
 
 async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
@@ -222,4 +280,67 @@ async function trackReqByTxid(
     await req.refreshFromStorage(setup.activeStorage)
     lastHeight = height
   }
+}
+
+export async function confirmSpendableOutputs(
+  storage: StorageKnex,
+  services: Services,
+  identityKey?: string
+): Promise<{ invalidSpendableOutputs: TableOutput[] }> {
+  const invalidSpendableOutputs: TableOutput[] = []
+  const partial: Partial<TableUser> = {}
+  if (identityKey) partial.identityKey = identityKey
+  const users = await storage.findUsers({ partial })
+
+  for (const { userId } of users) {
+    const defaultBasket = verifyOne(
+      await storage.findOutputBaskets({ partial: { userId, name: 'default' } })
+    )
+    const where: Partial<TableOutput> = {
+      userId,
+      basketId: defaultBasket.basketId,
+      spendable: true
+    }
+
+    const outputs = await storage.findOutputs({ partial: where })
+
+    for (let i = outputs.length - 1; i >= 0; i--) {
+      const o = outputs[i]
+      const oid = verifyId(o.outputId)
+
+      if (o.spendable) {
+        let ok = false
+
+        if (o.lockingScript && o.lockingScript.length > 0) {
+          const r = await services.getUtxoStatus(
+            asString(o.lockingScript),
+            'script'
+          )
+
+          if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
+            const tx = await storage.findTransactionById(o.transactionId)
+
+            if (
+              tx &&
+              tx.txid &&
+              r.details.some(
+                d =>
+                  d.txid === tx.txid &&
+                  d.satoshis === o.satoshis &&
+                  d.index === o.vout
+              )
+            ) {
+              ok = true
+            }
+          }
+        }
+
+        if (!ok) {
+          invalidSpendableOutputs.push(o)
+        }
+      }
+    }
+  }
+
+  return { invalidSpendableOutputs }
 }
