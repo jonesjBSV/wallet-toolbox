@@ -9,7 +9,21 @@ import {
   Script,
   SignActionArgs
 } from '@bsv/sdk'
-import { asString, EntityProvenTxReq, EntitySyncState, Monitor, sdk, Services, Setup, StorageKnex, TableOutput, TableUser, verifyId, verifyOne, wait } from '../../../src'
+import {
+  asString,
+  EntityProvenTxReq,
+  EntitySyncState,
+  Monitor,
+  sdk,
+  Services,
+  Setup,
+  StorageKnex,
+  TableOutput,
+  TableUser,
+  verifyId,
+  verifyOne,
+  wait
+} from '../../../src'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { monitorEventLoopDelay } from 'perf_hooks'
 
@@ -83,8 +97,10 @@ describe('localWallet tests', () => {
     const storage = setup.activeStorage
     const services = setup.services
 
-    const { invalidSpendableOutputs: notUtxos } =
-      await confirmSpendableOutputs(storage, services)
+    const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(
+      storage,
+      services
+    )
     const outputsToUpdate = notUtxos.map(o => ({
       id: o.outputId,
       satoshis: o.satoshis
@@ -133,7 +149,6 @@ describe('localWallet tests', () => {
 
     await setup.wallet.destroy()
   })
-
 })
 
 async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {

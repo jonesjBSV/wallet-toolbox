@@ -161,7 +161,8 @@ export class StorageKnex
       q = q.limit(args.paged.limit)
       q = q.offset(args.paged.offset || 0)
     }
-    if (args.since) q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
+    if (args.since)
+      q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
     return q
   }
   override async getProvenTxsForUser(
@@ -190,7 +191,8 @@ export class StorageKnex
       q = q.limit(args.paged.limit)
       q = q.offset(args.paged.offset || 0)
     }
-    if (args.since) q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
+    if (args.since)
+      q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
     return q
   }
   override async getProvenTxReqsForUser(
