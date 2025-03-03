@@ -186,11 +186,22 @@ describe('localWallet tests', () => {
       chain,
       rootKeyHex: env.devKeys[env.testIdentityKey],
       filePath: env.testFilePath,
-      setActiveClient: true,
+      setActiveClient: false,
       addLocalBackup: false
     })
 
     console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
+
+    const localBalance = await setup.wallet.balance()
+
+    const log = await setup.storage.setActive(setup.clientStorageIdentityKey!)
+    console.log(log)
+
+    console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
+
+    const clientBalance = await setup.wallet.balance()
+
+    expect(localBalance.total).toBe(clientBalance.total)
 
     await setup.wallet.destroy()
   })
