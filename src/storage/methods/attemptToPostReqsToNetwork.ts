@@ -93,14 +93,12 @@ export async function attemptToPostReqsToNetwork(
   const pbrs = await services.postBeef(r.beef, txids)
   for (const txid of txids) {
     const req = reqs.find(r => r.txid === txid)
-    if (!req)
-      throw new sdk.WERR_INTERNAL();
+    if (!req) throw new sdk.WERR_INTERNAL()
     const notes: ReqHistoryNote[] = []
     for (const pbr of pbrs) {
       notes.push(...(pbr.notes || []))
       const r = pbr.txidResults.find(tr => tr.txid === txid)
-      if (r)
-        notes.push(...(r.notes || []));
+      if (r) notes.push(...(r.notes || []))
     }
     for (const n of notes) {
       req.addHistoryNote(n, true)

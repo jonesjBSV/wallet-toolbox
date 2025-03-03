@@ -356,14 +356,14 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     async getRawTx(txid: string): Promise<string | undefined> 
     async getRawTxResult(txid: string): Promise<sdk.GetRawTxResult> 
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
-    async postRawTx(rawTx: HexString): Promise<string> 
+    async postRawTx(rawTx: HexString): Promise<sdk.PostTxResultForTxid> 
     async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
     async updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> 
     async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> 
 }
 ```
 
-See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [PostBeefResult](./client.md#interface-postbeefresult), [SdkWhatsOnChain](./services.md#class-sdkwhatsonchain), [WalletServices](./client.md#interface-walletservices)
+See also: [BsvExchangeRate](./client.md#interface-bsvexchangerate), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [PostBeefResult](./client.md#interface-postbeefresult), [PostTxResultForTxid](./client.md#interface-posttxresultfortxid), [SdkWhatsOnChain](./services.md#class-sdkwhatsonchain), [WalletServices](./client.md#interface-walletservices)
 
 ###### Method getRawTx
 
@@ -399,8 +399,9 @@ See also: [PostBeefResult](./client.md#interface-postbeefresult)
 ###### Method postRawTx
 
 ```ts
-async postRawTx(rawTx: HexString): Promise<string> 
+async postRawTx(rawTx: HexString): Promise<sdk.PostTxResultForTxid> 
 ```
+See also: [PostTxResultForTxid](./client.md#interface-posttxresultfortxid)
 
 Returns
 

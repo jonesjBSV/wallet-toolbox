@@ -887,7 +887,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   /**
    * Uses `listOutputs` to iterate through all spendable outputs in the 'default' (change) basket.
-   * 
+   *
    * Outputs in the 'default' basket are managed by the wallet and MUST NOT USED AS UNMANAGED INPUTS.
    *
    * @param {string} basket - Optional. Defaults to 'default', the wallet change basket.

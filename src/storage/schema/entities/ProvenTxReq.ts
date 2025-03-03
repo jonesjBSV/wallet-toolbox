@@ -276,7 +276,9 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     if (!note.when) note.when = new Date().toISOString()
     if (noDupes) {
       // Remove any existing notes with same 'what' value and either no 'when' or an earlier 'when'
-      this.history.notes = this.history.notes!.filter(n => n.what !== note.what || (n.when && n.when > note.when!))
+      this.history.notes = this.history.notes!.filter(
+        n => n.what !== note.what || (n.when && n.when > note.when!)
+      )
     }
     let addNote = true
     for (const n of this.history.notes) {

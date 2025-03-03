@@ -136,8 +136,7 @@ export default class ARC {
     let txid = Utils.toHex(doubleSha256BE(Utils.toArray(rawTx, 'hex')))
     if (txids) {
       txid = txids.slice(-1)[0]
-    }
-    else {
+    } else {
       txids = [txid]
     }
 
@@ -164,7 +163,12 @@ export default class ARC {
       )
 
       const { txid, extraInfo, txStatus, competingTxs } = response.data
-      const nnr = () => ({ txid, extraInfo, txStatus, competingTxs: competingTxs?.join(',') })
+      const nnr = () => ({
+        txid,
+        extraInfo,
+        txStatus,
+        competingTxs: competingTxs?.join(',')
+      })
 
       if (response.ok) {
         r.data = `${txStatus} ${extraInfo}`
@@ -174,15 +178,20 @@ export default class ARC {
           r.status = 'error'
           r.doubleSpend = true
           r.competingTxs = competingTxs
-          r.notes!.push({...nne(), ...nnr(), what: 'postRawTxDoubleSpend' })
+          r.notes!.push({ ...nne(), ...nnr(), what: 'postRawTxDoubleSpend' })
         } else {
-          r.notes!.push({...nn(), ...nnr(), what: 'postRawTxSuccess' })
+          r.notes!.push({ ...nn(), ...nnr(), what: 'postRawTxSuccess' })
         }
       } else if (typeof response === 'string') {
-          r.notes!.push({...nn(), what: 'postRawTxString', response })
+        r.notes!.push({ ...nn(), what: 'postRawTxString', response })
       } else {
         r.status = 'error'
-        const n: ReqHistoryNote = { ...nn(), ...nne(), ...nnr(), what: 'postRawTxError' }
+        const n: ReqHistoryNote = {
+          ...nn(),
+          ...nne(),
+          ...nnr(),
+          what: 'postRawTxError'
+        }
         const ed: sdk.PostTxResultForTxidError = {}
         r.data = ed
         const st = typeof response.status
@@ -216,7 +225,12 @@ export default class ARC {
       const e = sdk.WalletError.fromUnknown(eu)
       r.status = 'error'
       r.data = `${e.code} ${e.message}`
-      r.notes!.push({ ...nne(), what: 'postRawTxCatch', code: e.code, description: e.description })
+      r.notes!.push({
+        ...nne(),
+        what: 'postRawTxCatch',
+        code: e.code,
+        description: e.description
+      })
     }
 
     return r
@@ -255,7 +269,7 @@ export default class ARC {
     r.txidResults = [prtr]
 
     // Since postRawTx only returns results for a single txid,
-    // replicate the basic results any additional txids. 
+    // replicate the basic results any additional txids.
     // TODO: Temporary hack...
     for (const txid of txids) {
       if (prtr.txid === txid) continue
@@ -269,17 +283,32 @@ export default class ARC {
       if (dr.txid !== txid) {
         tr.status = 'error'
         tr.data = 'internal error'
-        tr.notes!.push({ ...nn(), what: 'postBeefGetTxDataInternal', txid, returnedTxid: dr.txid })
+        tr.notes!.push({
+          ...nn(),
+          what: 'postBeefGetTxDataInternal',
+          txid,
+          returnedTxid: dr.txid
+        })
       } else if (
         dr.txStatus === 'SEEN_ON_NETWORK' ||
         dr.txStatus === 'STORED'
       ) {
         tr.data = dr.txStatus
-        tr.notes!.push({ ...nn(), what: 'postBeefGetTxDataSuccess', txid, txStatus: dr.txStatus })
+        tr.notes!.push({
+          ...nn(),
+          what: 'postBeefGetTxDataSuccess',
+          txid,
+          txStatus: dr.txStatus
+        })
       } else {
         tr.status = 'error'
         tr.data = dr
-        tr.notes!.push({ ...nn(), what: 'postBeefGetTxDataError', txid, txStatus: dr.txStatus })
+        tr.notes!.push({
+          ...nn(),
+          what: 'postBeefGetTxDataError',
+          txid,
+          txStatus: dr.txStatus
+        })
       }
       r.txidResults.push(tr)
       if (r.status === 'success' && tr.status === 'error') r.status = 'error'

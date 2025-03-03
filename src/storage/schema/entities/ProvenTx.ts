@@ -260,7 +260,7 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
     if (!req.rawTx) throw new sdk.WERR_MISSING_PARAMETER('req.rawTx')
 
     if (!req.rawTx) throw new sdk.WERR_INTERNAL('rawTx must be valid')
-    
+
     for (const note of gmpResult.notes || []) {
       req.addHistoryNote(note, true)
     }

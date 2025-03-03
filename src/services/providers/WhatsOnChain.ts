@@ -128,7 +128,6 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     const nne = () => ({ ...nn(), beef: beef.toHex(), txids: txids.join(',') })
 
     for (const txid of txids) {
-
       const rawTx = Utils.toHex(beef.findTxid(txid)!.rawTx!)
 
       if (delay) {
@@ -139,7 +138,9 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
       const tr = await this.postRawTx(rawTx)
       if (txid !== tr.txid) {
-        throw new sdk.WERR_INTERNAL(`woc returned txid ${tr.txid}, expected ${txid}`)
+        throw new sdk.WERR_INTERNAL(
+          `woc returned txid ${tr.txid}, expected ${txid}`
+        )
       }
 
       r.txidResults.push(tr)
@@ -147,9 +148,9 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     }
 
     if (r.status === 'success') {
-      r.notes!.push({...nn(), what: 'postBeefSuccess' })
+      r.notes!.push({ ...nn(), what: 'postBeefSuccess' })
     } else {
-      r.notes!.push({...nne(), what: 'postBeefError' })
+      r.notes!.push({ ...nne(), what: 'postBeefError' })
     }
 
     return r
@@ -200,17 +201,24 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           return r
         } else {
           r.status = 'error'
-          const n: ReqHistoryNote = { ...nn(), ...nne(), what: 'postRawTxError' }
+          const n: ReqHistoryNote = {
+            ...nn(),
+            ...nne(),
+            what: 'postRawTxError'
+          }
           if (typeof response.data === 'string') {
-            n.data = response.data.slice(0,128)
+            n.data = response.data.slice(0, 128)
             r.data = response.data
           }
           if (typeof response.statusText === 'string') {
-            n.statusText = response.data.slice(0,128)
+            n.statusText = response.data.slice(0, 128)
             r.data = `${r.data || ''} ${response.statusText}`
           }
-          if (typeof response.status === 'string' || typeof response.status === 'number') {
-            n.status = response.data.slice(0,128)
+          if (
+            typeof response.status === 'string' ||
+            typeof response.status === 'number'
+          ) {
+            n.status = response.data.slice(0, 128)
             r.data = `${r.data || ''} ${response.status}`
           }
           r.notes!.push(n)
@@ -218,12 +226,23 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       } catch (eu: unknown) {
         r.status = 'error'
         const e = sdk.WalletError.fromUnknown(eu)
-        r.notes!.push({ ...nn(), ...nne(), what: 'postRawTxCatch', code: e.code, description: e.description })
+        r.notes!.push({
+          ...nn(),
+          ...nne(),
+          what: 'postRawTxCatch',
+          code: e.code,
+          description: e.description
+        })
         r.data = `${e.code} ${e.description}`
       }
     }
     r.status = 'error'
-    r.notes!.push({ ...nn(), ...nne(), what: 'postRawTxRetryLimit', retryLimit })
+    r.notes!.push({
+      ...nn(),
+      ...nne(),
+      what: 'postRawTxRetryLimit',
+      retryLimit
+    })
     return r
   }
 
@@ -249,13 +268,23 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           WhatsOnChainTscProof | WhatsOnChainTscProof[]
         >(`${this.URL}/tx/${txid}/proof/tsc`, requestOptions)
         if (response.statusText === 'Too Many Requests' && retry < 2) {
-          r.notes!.push({ what: 'getMerklePathRetry', name: r.name, status: response.status, statusText: response.statusText })
+          r.notes!.push({
+            what: 'getMerklePathRetry',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
           await wait(2000)
           continue
         }
 
         if (response.status === 404 && response.statusText === 'Not Found') {
-          r.notes!.push({ what: 'getMerklePathNotFound', name: r.name, status: response.status, statusText: response.statusText })
+          r.notes!.push({
+            what: 'getMerklePathNotFound',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
           return r
         }
 
@@ -264,7 +293,12 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           response.status !== 200 ||
           response.statusText !== 'OK'
         ) {
-          r.notes!.push({ what: 'getMerklePathBadStatus', name: r.name, status: response.status, statusText: response.statusText })
+          r.notes!.push({
+            what: 'getMerklePathBadStatus',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
           throw new sdk.WERR_INVALID_PARAMETER(
             'txid',
             `valid transaction. '${txid}' response ${response.statusText}`
@@ -273,7 +307,12 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
         if (!response.data) {
           // Unmined, proof not yet available.
-          r.notes!.push({ what: 'getMerklePathNoData', name: r.name, status: response.status, statusText: response.statusText })
+          r.notes!.push({
+            what: 'getMerklePathNoData',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
           return r
         }
 
@@ -291,9 +330,20 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           }
           r.merklePath = convertProofToMerklePath(txid, proof)
           r.header = header
-          r.notes!.push({ what: 'getMerklePathSuccess', name: r.name, status: response.status, statusText: response.statusText })
+          r.notes!.push({
+            what: 'getMerklePathSuccess',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
         } else {
-          r.notes!.push({ what: 'getMerklePathNoHeader', target: p.target, name: r.name, status: response.status, statusText: response.statusText })
+          r.notes!.push({
+            what: 'getMerklePathNoHeader',
+            target: p.target,
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
           throw new sdk.WERR_INVALID_PARAMETER(
             'blockhash',
             'a valid on-chain block hash'
@@ -301,7 +351,12 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         }
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
-        r.notes!.push({ what: 'getMerklePathError', name: r.name, code: e.code, description: e.description })
+        r.notes!.push({
+          what: 'getMerklePathError',
+          name: r.name,
+          code: e.code,
+          description: e.description
+        })
         r.error = e
       }
       return r

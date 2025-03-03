@@ -1,4 +1,12 @@
-import { Beef, CreateActionArgs, P2PKH, PrivateKey, PublicKey, Script, SignActionArgs } from '@bsv/sdk'
+import {
+  Beef,
+  CreateActionArgs,
+  P2PKH,
+  PrivateKey,
+  PublicKey,
+  Script,
+  SignActionArgs
+} from '@bsv/sdk'
 import { EntityProvenTxReq, sdk, Setup } from '../../../src'
 import { _tu } from '../../utils/TestUtilsWalletStorage'
 
@@ -9,8 +17,10 @@ describe('localWallet tests', () => {
     const chain: sdk.Chain = 'test'
     if (_tu.noTestEnv(chain)) return
     const env = _tu.getEnv(chain)
-    if (!env.testIdentityKey) throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
-    if (!env.testFilePath) throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
+    if (!env.testIdentityKey)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
+    if (!env.testFilePath)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
 
     const setup = await _tu.createTestWallet({
       chain,
@@ -27,10 +37,15 @@ describe('localWallet tests', () => {
       const args: CreateActionArgs = {
         outputs: [
           {
-            lockingScript: new P2PKH().lock(PublicKey.fromString(setup.identityKey).toAddress()).toHex(),
+            lockingScript: new P2PKH()
+              .lock(PublicKey.fromString(setup.identityKey).toAddress())
+              .toHex(),
             satoshis: 1,
             outputDescription: 'test output',
-            customInstructions: JSON.stringify({ type: 'P2PKH', key: 'identity' }),
+            customInstructions: JSON.stringify({
+              type: 'P2PKH',
+              key: 'identity'
+            }),
             basket: 'test-output'
           }
         ],
@@ -39,7 +54,10 @@ describe('localWallet tests', () => {
       const car = await setup.wallet.createAction(args)
       expect(car.txid)
 
-      const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, car.txid!)
+      const req = await EntityProvenTxReq.fromStorageTxid(
+        setup.activeStorage,
+        car.txid!
+      )
       expect(req !== undefined && req.history.notes !== undefined)
       if (req && req.history.notes) {
         expect(req.status === 'unsent')
@@ -52,7 +70,10 @@ describe('localWallet tests', () => {
       if (runOnce) {
         await setup.monitor.runOnce()
 
-        const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, car.txid!)
+        const req = await EntityProvenTxReq.fromStorageTxid(
+          setup.activeStorage,
+          car.txid!
+        )
         expect(req !== undefined && req.history.notes !== undefined)
         if (req && req.history.notes) {
           expect(req.status === 'unmined')
@@ -70,8 +91,10 @@ describe('localWallet tests', () => {
     const chain: sdk.Chain = 'test'
     if (_tu.noTestEnv(chain)) return
     const env = _tu.getEnv(chain)
-    if (!env.testIdentityKey) throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
-    if (!env.testFilePath) throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
+    if (!env.testIdentityKey)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
+    if (!env.testFilePath)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
 
     const setup = await _tu.createTestWallet({
       chain,
@@ -93,14 +116,14 @@ describe('localWallet tests', () => {
       const args: CreateActionArgs = {
         inputBEEF: outputs.BEEF!,
         inputs: [],
-        description: 'recover test output',
+        description: 'recover test output'
       }
       const p2pkh = new P2PKH()
       for (const o of outputs.outputs) {
         args.inputs!.push({
           unlockingScriptLength: 108,
           outpoint: o.outpoint,
-          inputDescription: 'recovered test output',
+          inputDescription: 'recovered test output'
         })
       }
       const car = await setup.wallet.createAction(args)
@@ -130,8 +153,10 @@ describe('localWallet tests', () => {
     const chain: sdk.Chain = 'test'
     if (_tu.noTestEnv(chain)) return
     const env = _tu.getEnv(chain)
-    if (!env.testIdentityKey) throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
-    if (!env.testFilePath) throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
+    if (!env.testIdentityKey)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
+    if (!env.testFilePath)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
 
     const setup = await _tu.createTestWallet({
       chain,
@@ -152,8 +177,10 @@ describe('localWallet tests', () => {
     const chain: sdk.Chain = 'test'
     if (_tu.noTestEnv(chain)) return
     const env = _tu.getEnv(chain)
-    if (!env.testIdentityKey) throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
-    if (!env.testFilePath) throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
+    if (!env.testIdentityKey)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
+    if (!env.testFilePath)
+      throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
 
     const setup = await _tu.createTestWallet({
       chain,
@@ -167,5 +194,4 @@ describe('localWallet tests', () => {
 
     await setup.wallet.destroy()
   })
-
 })

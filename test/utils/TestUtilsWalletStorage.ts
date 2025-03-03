@@ -380,8 +380,9 @@ export abstract class TestUtilsWalletStorage {
         : 'https://staging-storage.babbage.systems'
 
     const client = new StorageClient(setup.wallet, endpointUrl)
-    setup.clientStorageIdentityKey = (await client.makeAvailable())
-      .storageIdentityKey
+    setup.clientStorageIdentityKey = (
+      await client.makeAvailable()
+    ).storageIdentityKey
     await setup.wallet.storage.addWalletStorageProvider(client)
 
     if (addLocalBackup) {
@@ -393,14 +394,20 @@ export abstract class TestUtilsWalletStorage {
         chain
       })
       await localBackup.migrate(backupName, randomBytesHex(33))
-      setup.localBackupStorageIdentityKey = (await localBackup.makeAvailable()).storageIdentityKey
+      setup.localBackupStorageIdentityKey = (
+        await localBackup.makeAvailable()
+      ).storageIdentityKey
       await setup.wallet.storage.addWalletStorageProvider(localBackup)
     }
 
     // SETTING ACTIVE
     // SETTING ACTIVE
     // SETTING ACTIVE
-    const log = await setup.storage.setActive(setActiveClient ? setup.clientStorageIdentityKey : setup.localStorageIdentityKey)
+    const log = await setup.storage.setActive(
+      setActiveClient
+        ? setup.clientStorageIdentityKey
+        : setup.localStorageIdentityKey
+    )
     console.log(log)
 
     let needsBackup = false
