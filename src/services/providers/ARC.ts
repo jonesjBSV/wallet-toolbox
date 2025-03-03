@@ -10,6 +10,7 @@ import {
   Utils
 } from '@bsv/sdk'
 import { doubleSha256BE, sdk } from '../../index.client'
+import { ReqHistoryNote } from '../../sdk'
 
 /** Configuration options for the ARC broadcaster. */
 export interface ArcConfig {
@@ -136,6 +137,9 @@ export default class ARC {
     if (txids) {
       txid = txids.slice(-1)[0]
     }
+    else {
+      txids = [txid]
+    }
 
     const requestOptions: HttpClientRequestOptions = {
       method: 'POST',
@@ -145,17 +149,24 @@ export default class ARC {
 
     const r: sdk.PostTxResultForTxid = {
       txid,
-      status: 'success'
+      status: 'success',
+      notes: []
     }
+
+    const url = `${this.URL}/v1/tx`
+    const nn = () => ({ name: 'ARCv1tx', when: new Date().toISOString() })
+    const nne = () => ({ ...nn(), rawTx, txids: txids.join(','), url })
 
     try {
       const response = await this.httpClient.request<ArcResponse>(
-        `${this.URL}/v1/tx`,
+        url,
         requestOptions
       )
 
+      const { txid, extraInfo, txStatus, competingTxs } = response.data
+      const nnr = () => ({ txid, extraInfo, txStatus, competingTxs: competingTxs?.join(',') })
+
       if (response.ok) {
-        const { txid, extraInfo, txStatus, competingTxs } = response.data
         r.data = `${txStatus} ${extraInfo}`
         if (r.txid !== txid) r.data += ` txid altered from ${r.txid} to ${txid}`
         r.txid = txid
@@ -163,35 +174,49 @@ export default class ARC {
           r.status = 'error'
           r.doubleSpend = true
           r.competingTxs = competingTxs
+          r.notes!.push({...nne(), ...nnr(), what: 'postRawTxDoubleSpend' })
+        } else {
+          r.notes!.push({...nn(), ...nnr(), what: 'postRawTxSuccess' })
         }
+      } else if (typeof response === 'string') {
+          r.notes!.push({...nn(), what: 'postRawTxString', response })
       } else {
         r.status = 'error'
+        const n: ReqHistoryNote = { ...nn(), ...nne(), ...nnr(), what: 'postRawTxError' }
         const ed: sdk.PostTxResultForTxidError = {}
         r.data = ed
         const st = typeof response.status
-        ed.status =
-          st === 'number' || st === 'string'
-            ? response.status.toString()
-            : 'ERR_UNKNOWN'
+        if (st === 'number' || st === 'string') {
+          n.status = response.status
+          ed.status = response.status.toString()
+        } else {
+          n.status = st
+          ed.status = 'ERR_UNKNOWN'
+        }
 
         let d = response.data
         if (d && typeof d === 'string') {
+          n.data = response.data.slice(0, 128)
           try {
             d = JSON.parse(d)
           } catch {
             // Intentionally left empty
           }
-        }
-        if (d && typeof d === 'object') {
+        } else if (d && typeof d === 'object') {
           ed.more = d
           ed.detail = d['detail']
           if (typeof ed.detail !== 'string') ed.detail = undefined
+          if (ed.detail) {
+            n.detail = ed.detail
+          }
         }
+        r.notes!.push(n)
       }
     } catch (eu: unknown) {
       const e = sdk.WalletError.fromUnknown(eu)
       r.status = 'error'
       r.data = `${e.code} ${e.message}`
+      r.notes!.push({ ...nne(), what: 'postRawTxCatch', code: e.code, description: e.description })
     }
 
     return r
@@ -208,38 +233,53 @@ export default class ARC {
    * @returns
    */
   async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> {
+    const r: sdk.PostBeefResult = {
+      name: 'ARC',
+      status: 'success',
+      txidResults: [],
+      notes: []
+    }
+
+    const nn = () => ({ name: 'ARCpostBeef', when: new Date().toISOString() })
+
     if (beef.version === BEEF_V2 && beef.txs.every(btx => !btx.isTxidOnly)) {
       beef.version = BEEF_V1
+      r.notes!.push({ ...nn(), what: 'postBeefV2ToV1' })
     }
 
     const beefHex = beef.toHex()
 
     const prtr = await this.postRawTx(beefHex, txids)
 
-    const r: sdk.PostBeefResult = {
-      name: 'ARC',
-      status: prtr.status,
-      txidResults: [prtr]
-    }
+    r.status = prtr.status
+    r.txidResults = [prtr]
 
+    // Since postRawTx only returns results for a single txid,
+    // replicate the basic results any additional txids. 
+    // TODO: Temporary hack...
     for (const txid of txids) {
       if (prtr.txid === txid) continue
       const tr: sdk.PostTxResultForTxid = {
         txid,
-        status: 'success'
+        status: 'success',
+        notes: []
       }
+      // For the extra txids, go back to the service for confirmation...
       const dr = await this.getTxData(txid)
       if (dr.txid !== txid) {
         tr.status = 'error'
         tr.data = 'internal error'
+        tr.notes!.push({ ...nn(), what: 'postBeefGetTxDataInternal', txid, returnedTxid: dr.txid })
       } else if (
         dr.txStatus === 'SEEN_ON_NETWORK' ||
         dr.txStatus === 'STORED'
       ) {
         tr.data = dr.txStatus
+        tr.notes!.push({ ...nn(), what: 'postBeefGetTxDataSuccess', txid, txStatus: dr.txStatus })
       } else {
         tr.status = 'error'
         tr.data = dr
+        tr.notes!.push({ ...nn(), what: 'postBeefGetTxDataError', txid, txStatus: dr.txStatus })
       }
       r.txidResults.push(tr)
       if (r.status === 'success' && tr.status === 'error') r.status = 'error'

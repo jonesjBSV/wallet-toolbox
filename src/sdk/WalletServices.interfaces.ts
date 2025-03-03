@@ -239,6 +239,8 @@ export interface PostTxResultForTxid {
   competingTxs?: string[]
 
   data?: object | string | PostTxResultForTxidError
+
+  notes?: sdk.ReqHistoryNote[]
 }
 
 export interface PostTxResultForTxidError {
@@ -271,6 +273,8 @@ export interface PostTxsResult {
    * Service response object. Use service name and status to infer type of object.
    */
   data?: object
+
+  notes?: sdk.ReqHistoryNote[]
 }
 
 export interface GetUtxoStatusDetails {

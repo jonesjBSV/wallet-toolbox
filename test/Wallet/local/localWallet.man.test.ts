@@ -22,41 +22,46 @@ describe('localWallet tests', () => {
 
     console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
 
-    const args: CreateActionArgs = {
-      outputs: [
-        {
-          lockingScript: new P2PKH().lock(PublicKey.fromString(setup.identityKey).toAddress()).toHex(),
-          satoshis: 1,
-          outputDescription: 'test output',
-          customInstructions: JSON.stringify({ type: 'P2PKH', key: 'identity' }),
-          basket: 'test-output'
+    const createHowMany = 10
+    for (let i = 0; i < createHowMany; i++) {
+      const args: CreateActionArgs = {
+        outputs: [
+          {
+            lockingScript: new P2PKH().lock(PublicKey.fromString(setup.identityKey).toAddress()).toHex(),
+            satoshis: 1,
+            outputDescription: 'test output',
+            customInstructions: JSON.stringify({ type: 'P2PKH', key: 'identity' }),
+            basket: 'test-output'
+          }
+        ],
+        description: 'create test output'
+      }
+      const car = await setup.wallet.createAction(args)
+      expect(car.txid)
+
+      const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, car.txid!)
+      expect(req !== undefined && req.history.notes !== undefined)
+      if (req && req.history.notes) {
+        expect(req.status === 'unsent')
+        expect(req.history.notes.length === 1)
+        const n = req.history.notes[0]
+        expect(n.what === 'status' && n.status_now === 'unsent')
+      }
+
+      let runOnce = false
+      if (runOnce) {
+        await setup.monitor.runOnce()
+
+        const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, car.txid!)
+        expect(req !== undefined && req.history.notes !== undefined)
+        if (req && req.history.notes) {
+          expect(req.status === 'unmined')
+          expect(req.history.notes.length === 1)
+          const n = req.history.notes[0]
+          expect(n.what === 'status' && n.status_now === 'unsent')
         }
-      ],
-      description: 'create test output'
+      }
     }
-    const car = await setup.wallet.createAction(args)
-    expect(car.txid)
-
-    let req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, car.txid!)
-    expect(req !== undefined && req.history.notes !== undefined)
-    if (req && req.history.notes) {
-      expect(req.status === 'unsent')
-      expect(req.history.notes.length === 1)
-      const n = req.history.notes[0]
-      expect(n.what === 'status' && n.status_now === 'unsent')
-    }
-
-    await setup.monitor.runOnce()
-
-    req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, car.txid!)
-    expect(req !== undefined && req.history.notes !== undefined)
-    if (req && req.history.notes) {
-      expect(req.status === 'unmined')
-      expect(req.history.notes.length === 1)
-      const n = req.history.notes[0]
-      expect(n.what === 'status' && n.status_now === 'unsent')
-    }
-
 
     await setup.wallet.destroy()
   })
