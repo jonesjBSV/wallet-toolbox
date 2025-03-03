@@ -16,6 +16,9 @@ describe('whatsonchain tests', () => {
     apiKey: envMain.taalApiKey
   })
 
+  test('00', () => {})
+  if (_tu.noTestEnv('test')) return
+
   test('0 getRawTx testnet', async () => {
     const rawTx = await wocTest.getRawTx(
       '7e5b797b86abd31a654bf296900d6cb14d04ef0811568ff4675494af2d92166b'
