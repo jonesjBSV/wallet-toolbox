@@ -13,12 +13,20 @@ interface SpecOp {
   name: string
   useBasket?: string
   ignoreLimit?: boolean
-  resultFromOutputs?: (s: StorageKnex, vargs: ValidListOutputsArgs, outputs: TableOutput[]) => Promise<ListOutputsResult>
-  filterOutputs?: (s: StorageKnex, vargs: ValidListOutputsArgs, outputs: TableOutput[]) => Promise<TableOutput[]>
+  resultFromOutputs?: (
+    s: StorageKnex,
+    vargs: ValidListOutputsArgs,
+    outputs: TableOutput[]
+  ) => Promise<ListOutputsResult>
+  filterOutputs?: (
+    s: StorageKnex,
+    vargs: ValidListOutputsArgs,
+    outputs: TableOutput[]
+  ) => Promise<TableOutput[]>
 }
 
 const basketToSpecOp: Record<string, SpecOp> = {
-  'f61dc9289ceea604247ebde125b93a4099931f69c0e95ecd43ce0a480b9bb6c9': {
+  f61dc9289ceea604247ebde125b93a4099931f69c0e95ecd43ce0a480b9bb6c9: {
     name: 'reserved...'
   },
   '69a57cc2b34058d5218927ecfd3e9e4254d8395b6fda9d57c689c753c6d6cad5': {
@@ -28,7 +36,11 @@ const basketToSpecOp: Record<string, SpecOp> = {
     name: 'totalOutputsIsWalletBalance',
     useBasket: 'default',
     ignoreLimit: true,
-    resultFromOutputs: async (s: StorageKnex, vargs: ValidListOutputsArgs, outputs: TableOutput[]): Promise<ListOutputsResult> => {
+    resultFromOutputs: async (
+      s: StorageKnex,
+      vargs: ValidListOutputsArgs,
+      outputs: TableOutput[]
+    ): Promise<ListOutputsResult> => {
       let totalOutputs = 0
       for (const o of outputs) totalOutputs += o.satoshis
       return { totalOutputs, outputs: [] }
@@ -38,18 +50,28 @@ const basketToSpecOp: Record<string, SpecOp> = {
     name: 'invalidChangeOutputs',
     useBasket: 'default',
     ignoreLimit: true,
-    filterOutputs: async (s: StorageKnex, vargs: ValidListOutputsArgs, outputs: TableOutput[]): Promise<TableOutput[]> => {
+    filterOutputs: async (
+      s: StorageKnex,
+      vargs: ValidListOutputsArgs,
+      outputs: TableOutput[]
+    ): Promise<TableOutput[]> => {
       const filteredOutputs: TableOutput[] = []
       let ok = false
 
       for (const o of outputs) {
         if (o.lockingScript && o.lockingScript.length > 0) {
-          const r = await s.getServices().getUtxoStatus(
-            asString(o.lockingScript),
-            'script'
-          )
+          const r = await s
+            .getServices()
+            .getUtxoStatus(asString(o.lockingScript), 'script')
           if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
-            if (r.details.some(d => d.txid === o.txid && d.satoshis === o.satoshis && d.index === o.vout)) {
+            if (
+              r.details.some(
+                d =>
+                  d.txid === o.txid &&
+                  d.satoshis === o.satoshis &&
+                  d.index === o.vout
+              )
+            ) {
               ok = true
             }
           }
@@ -66,7 +88,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
       }
       return filteredOutputs
     }
-  },
+  }
 }
 
 export async function listOutputs(
@@ -105,7 +127,7 @@ export async function listOutputs(
   if (vargs.basket) {
     let b = vargs.basket
     specOp = basketToSpecOp[b]
-    b = specOp ? specOp.useBasket ? specOp.useBasket : '' : b
+    b = specOp ? (specOp.useBasket ? specOp.useBasket : '') : b
     if (b) {
       const baskets = await dsk.findOutputBaskets({
         partial: { userId, name: b },
@@ -199,16 +221,15 @@ export async function listOutputs(
     : makeWithTagsQueries()
 
   // Sort order when limit and offset are possible must be ascending for determinism.
-  if (!specOp || !specOp.ignoreLimit)
-    q.limit(limit).offset(offset);
+  if (!specOp || !specOp.ignoreLimit) q.limit(limit).offset(offset)
 
-  q.orderBy('outputId', 'asc');
+  q.orderBy('outputId', 'asc')
 
   let outputs: TableOutput[] = await q
 
   if (specOp) {
     if (specOp.filterOutputs)
-      outputs = await specOp.filterOutputs(dsk, vargs, outputs);
+      outputs = await specOp.filterOutputs(dsk, vargs, outputs)
     if (specOp.resultFromOutputs) {
       const r = await specOp.resultFromOutputs(dsk, vargs, outputs)
       return r

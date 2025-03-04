@@ -1,37 +1,39 @@
-import { sdk } from "../../../src"
-import { _tu, TestWalletNoSetup } from "../../utils/TestUtilsWalletStorage"
+import { sdk } from '../../../src'
+import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('specOps tests', () => {
-    jest.setTimeout(99999999)
+  jest.setTimeout(99999999)
 
-    test('00', () => { })
-    if (_tu.noTestEnv('test')) return
-    if (_tu.noTestEnv('main')) return
+  test('00', () => {})
+  if (_tu.noTestEnv('test')) return
+  if (_tu.noTestEnv('main')) return
 
-    test('0 wallet balance specOp', async () => {
-        const setup = await createSetup('test')
+  test('0 wallet balance specOp', async () => {
+    const setup = await createSetup('test')
 
-        const r = await setup.wallet.listOutputs({ basket: '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8' })
-
-        expect(r.totalOutputs > 0).toBe(true)
-        expect(r.outputs.length === 0).toBe(true)
-
-        await setup.wallet.destroy()
+    const r = await setup.wallet.listOutputs({
+      basket: '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
     })
 
-    test('1 wallet invalid change outputs', async () => {
-        const setup = await createSetup('test')
+    expect(r.totalOutputs > 0).toBe(true)
+    expect(r.outputs.length === 0).toBe(true)
 
-        const r = await setup.wallet.listOutputs({
-            basket: '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57',
-            // tags: ['release']
-        })
+    await setup.wallet.destroy()
+  })
 
-        expect(r.totalOutputs).toBe(0)
-        expect(r.outputs.length).toBe(0)
+  test('1 wallet invalid change outputs', async () => {
+    const setup = await createSetup('test')
 
-        await setup.wallet.destroy()
+    const r = await setup.wallet.listOutputs({
+      basket: '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
+      // tags: ['release']
     })
+
+    expect(r.totalOutputs).toBe(0)
+    expect(r.outputs.length).toBe(0)
+
+    await setup.wallet.destroy()
+  })
 })
 
 async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
