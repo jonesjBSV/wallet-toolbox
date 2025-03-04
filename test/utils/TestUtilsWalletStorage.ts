@@ -352,6 +352,7 @@ export abstract class TestUtilsWalletStorage {
     let filePath: string
     let addLocalBackup = false
     let setActiveClient = false
+    let useMySQLConnectionForClient = false
     if (typeof args === 'string') {
       chain = args
       const env = _tu.getEnv(chain)
@@ -369,6 +370,7 @@ export abstract class TestUtilsWalletStorage {
       filePath = args.filePath
       addLocalBackup = args.addLocalBackup === true
       setActiveClient = args.setActiveClient === true
+      useMySQLConnectionForClient = args.useMySQLConnectionForClient === true
     }
 
     const databaseName = path.parse(filePath).name
@@ -380,15 +382,25 @@ export abstract class TestUtilsWalletStorage {
     })
     setup.localStorageIdentityKey = setup.storage.getActiveStore()
 
-    const endpointUrl =
-      chain === 'main'
-        ? 'https://storage.babbage.systems'
-        : 'https://staging-storage.babbage.systems'
+    let client: sdk.WalletStorageProvider
+    if (useMySQLConnectionForClient) {
+      const env = _tu.getEnv(chain)
+      if (!env.cloudMySQLConnection) throw new sdk.WERR_INVALID_PARAMETER('env.cloundMySQLConnection', 'valid')
+      const connection = JSON.parse(env.cloudMySQLConnection)
+      client = new StorageKnex({
+        ...StorageKnex.defaultOptions(),
+        knex: _tu.createMySQLFromConnection(connection),
+        chain: env.chain
+      })
+    } else {
+      const endpointUrl =
+        chain === 'main'
+          ? 'https://storage.babbage.systems'
+          : 'https://staging-storage.babbage.systems'
 
-    const client = new StorageClient(setup.wallet, endpointUrl)
-    setup.clientStorageIdentityKey = (
-      await client.makeAvailable()
-    ).storageIdentityKey
+      client = new StorageClient(setup.wallet, endpointUrl)
+    }
+    setup.clientStorageIdentityKey = (await client.makeAvailable()).storageIdentityKey
     await setup.wallet.storage.addWalletStorageProvider(client)
 
     if (addLocalBackup) {
@@ -2515,4 +2527,5 @@ export interface CreateTestWalletArgs {
   filePath: string
   addLocalBackup?: boolean
   setActiveClient?: boolean
+  useMySQLConnectionForClient?: boolean
 }

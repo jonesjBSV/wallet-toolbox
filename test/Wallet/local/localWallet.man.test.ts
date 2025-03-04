@@ -163,7 +163,8 @@ async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
     rootKeyHex: env.devKeys[env.testIdentityKey],
     filePath: env.testFilePath,
     setActiveClient: false,
-    addLocalBackup: false
+    addLocalBackup: false,
+    useMySQLConnectionForClient: false
   })
 
   console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
