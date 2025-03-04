@@ -385,7 +385,11 @@ export abstract class TestUtilsWalletStorage {
     let client: sdk.WalletStorageProvider
     if (useMySQLConnectionForClient) {
       const env = _tu.getEnv(chain)
-      if (!env.cloudMySQLConnection) throw new sdk.WERR_INVALID_PARAMETER('env.cloundMySQLConnection', 'valid')
+      if (!env.cloudMySQLConnection)
+        throw new sdk.WERR_INVALID_PARAMETER(
+          'env.cloundMySQLConnection',
+          'valid'
+        )
       const connection = JSON.parse(env.cloudMySQLConnection)
       client = new StorageKnex({
         ...StorageKnex.defaultOptions(),
@@ -400,7 +404,9 @@ export abstract class TestUtilsWalletStorage {
 
       client = new StorageClient(setup.wallet, endpointUrl)
     }
-    setup.clientStorageIdentityKey = (await client.makeAvailable()).storageIdentityKey
+    setup.clientStorageIdentityKey = (
+      await client.makeAvailable()
+    ).storageIdentityKey
     await setup.wallet.storage.addWalletStorageProvider(client)
 
     if (addLocalBackup) {
