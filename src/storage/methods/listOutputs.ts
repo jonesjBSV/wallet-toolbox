@@ -9,6 +9,9 @@ import { asString, sdk, verifyId, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 import { ValidListOutputsArgs } from '../../sdk'
 
+export const specOpWalletBalance = '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
+export const specOpInvalidChange = '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
+
 interface SpecOp {
   name: string
   useBasket?: string
@@ -16,29 +19,32 @@ interface SpecOp {
   resultFromOutputs?: (
     s: StorageKnex,
     vargs: ValidListOutputsArgs,
+    specOpTags: string[],
     outputs: TableOutput[]
   ) => Promise<ListOutputsResult>
   filterOutputs?: (
     s: StorageKnex,
     vargs: ValidListOutputsArgs,
+    specOpTags: string[],
     outputs: TableOutput[]
   ) => Promise<TableOutput[]>
+  /**
+   * undefined to intercept no tags from vargs,
+   * empty array to intercept all tags,
+   * or an explicit array of tags to intercept.
+   */
+  tagsToIntercept?: string[]
 }
 
 const basketToSpecOp: Record<string, SpecOp> = {
-  f61dc9289ceea604247ebde125b93a4099931f69c0e95ecd43ce0a480b9bb6c9: {
-    name: 'reserved...'
-  },
-  '69a57cc2b34058d5218927ecfd3e9e4254d8395b6fda9d57c689c753c6d6cad5': {
-    name: 'reserved...'
-  },
-  '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8': {
+  [specOpWalletBalance]: {
     name: 'totalOutputsIsWalletBalance',
     useBasket: 'default',
     ignoreLimit: true,
     resultFromOutputs: async (
       s: StorageKnex,
       vargs: ValidListOutputsArgs,
+      specOpTags: string[],
       outputs: TableOutput[]
     ): Promise<ListOutputsResult> => {
       let totalOutputs = 0
@@ -46,18 +52,19 @@ const basketToSpecOp: Record<string, SpecOp> = {
       return { totalOutputs, outputs: [] }
     }
   },
-  '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57': {
+  [specOpInvalidChange]: {
     name: 'invalidChangeOutputs',
     useBasket: 'default',
     ignoreLimit: true,
+    tagsToIntercept: ['release'],
     filterOutputs: async (
       s: StorageKnex,
       vargs: ValidListOutputsArgs,
+      specOpTags: string[],
       outputs: TableOutput[]
     ): Promise<TableOutput[]> => {
       const filteredOutputs: TableOutput[] = []
       let ok = false
-
       for (const o of outputs) {
         if (o.lockingScript && o.lockingScript.length > 0) {
           const r = await s
@@ -76,12 +83,11 @@ const basketToSpecOp: Record<string, SpecOp> = {
             }
           }
         }
-
         if (!ok) {
           filteredOutputs.push(o)
         }
       }
-      if (vargs.tags[0] === 'release') {
+      if (specOpTags.indexOf('release') >= 0) {
         for (const o of filteredOutputs) {
           await s.updateOutput(o.outputId, { spendable: false })
         }
@@ -122,6 +128,7 @@ export async function listOutputs(
     */
 
   let specOp: SpecOp | undefined = undefined
+  const specOpTags: string[] = []
   let basketId: number | undefined = undefined
   const basketsById: Record<number, TableOutputBasket> = {}
   if (vargs.basket) {
@@ -144,7 +151,20 @@ export async function listOutputs(
   }
 
   let tagIds: number[] = []
-  if (vargs.tags && vargs.tags.length > 0) {
+  let tags = vargs.tags
+  if (specOp && specOp.tagsToIntercept) {
+    // Pull out tags used by current specOp
+    tags = []
+    for (const t of vargs.tags) {
+      if (specOp.tagsToIntercept.length === 0 || specOp.tagsToIntercept.indexOf(t) >= 0) {
+        specOpTags.push(t)
+      } else {
+        tags.push(t)
+      }
+    }
+  }
+
+  if (tags && tags.length > 0) {
     const q = k<TableOutputTag>('output_tags')
       .where({
         userId: userId,
@@ -229,9 +249,9 @@ export async function listOutputs(
 
   if (specOp) {
     if (specOp.filterOutputs)
-      outputs = await specOp.filterOutputs(dsk, vargs, outputs)
+      outputs = await specOp.filterOutputs(dsk, vargs, specOpTags, outputs)
     if (specOp.resultFromOutputs) {
-      const r = await specOp.resultFromOutputs(dsk, vargs, outputs)
+      const r = await specOp.resultFromOutputs(dsk, vargs, specOpTags, outputs)
       return r
     }
   }

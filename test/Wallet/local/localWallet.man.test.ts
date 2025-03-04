@@ -145,7 +145,8 @@ describe('localWallet tests', () => {
   test('6 backup', async () => {
     const setup = await createSetup('test')
 
-    await setup.storage.updateBackups()
+    const log = await setup.storage.updateBackups()
+    console.log(log)
 
     await setup.wallet.destroy()
   })
