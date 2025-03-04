@@ -131,3 +131,8 @@ export type ReqHistoryNote = {
   what: string
   [key: string]: string | number | undefined
 }
+
+export const specOpWalletBalance =
+  '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
+export const specOpInvalidChange =
+  '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
