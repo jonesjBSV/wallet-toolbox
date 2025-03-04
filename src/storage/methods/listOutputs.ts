@@ -9,8 +9,10 @@ import { asString, sdk, verifyId, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 import { ValidListOutputsArgs } from '../../sdk'
 
-export const specOpWalletBalance = '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
-export const specOpInvalidChange = '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
+export const specOpWalletBalance =
+  '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
+export const specOpInvalidChange =
+  '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
 
 interface SpecOp {
   name: string
@@ -156,7 +158,10 @@ export async function listOutputs(
     // Pull out tags used by current specOp
     tags = []
     for (const t of vargs.tags) {
-      if (specOp.tagsToIntercept.length === 0 || specOp.tagsToIntercept.indexOf(t) >= 0) {
+      if (
+        specOp.tagsToIntercept.length === 0 ||
+        specOp.tagsToIntercept.indexOf(t) >= 0
+      ) {
         specOpTags.push(t)
       } else {
         tags.push(t)

@@ -25,7 +25,7 @@ describe('specOps tests', () => {
     const setup = await createSetup('test')
 
     const r = await setup.wallet.listOutputs({
-      basket: '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57',
+      basket: '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
       //tags: ['release', 'foobar']
     })
 
