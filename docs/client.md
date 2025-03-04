@@ -2814,7 +2814,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ValidCreateActionArgs extends ValidProcessActionArgs {
-    description: DescriptionString5to50Bytes;
+    description: DescriptionString5to2000Bytes;
     inputBEEF?: BEEF;
     inputs: sdk.ValidCreateActionInput[];
     outputs: sdk.ValidCreateActionOutput[];
@@ -2828,7 +2828,7 @@ export interface ValidCreateActionArgs extends ValidProcessActionArgs {
 }
 ```
 
-See also: [ValidCreateActionInput](./client.md#interface-validcreateactioninput), [ValidCreateActionOptions](./client.md#interface-validcreateactionoptions), [ValidCreateActionOutput](./client.md#interface-validcreateactionoutput), [ValidProcessActionArgs](./client.md#interface-validprocessactionargs)
+See also: [DescriptionString5to2000Bytes](./client.md#type-descriptionstring5to2000bytes), [ValidCreateActionInput](./client.md#interface-validcreateactioninput), [ValidCreateActionOptions](./client.md#interface-validcreateactionoptions), [ValidCreateActionOutput](./client.md#interface-validcreateactionoutput), [ValidProcessActionArgs](./client.md#interface-validprocessactionargs)
 
 ###### Property includeAllSourceTransactions
 
@@ -2848,14 +2848,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export interface ValidCreateActionInput {
     outpoint: OutPoint;
-    inputDescription: DescriptionString5to50Bytes;
+    inputDescription: DescriptionString5to2000Bytes;
     sequenceNumber: PositiveIntegerOrZero;
     unlockingScript?: HexString;
     unlockingScriptLength: PositiveInteger;
 }
 ```
 
-See also: [OutPoint](./client.md#interface-outpoint)
+See also: [DescriptionString5to2000Bytes](./client.md#type-descriptionstring5to2000bytes), [OutPoint](./client.md#interface-outpoint)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2883,12 +2883,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface ValidCreateActionOutput {
     lockingScript: HexString;
     satoshis: SatoshiValue;
-    outputDescription: DescriptionString5to50Bytes;
+    outputDescription: DescriptionString5to2000Bytes;
     basket?: BasketStringUnder300Bytes;
     customInstructions?: string;
     tags: BasketStringUnder300Bytes[];
 }
 ```
+
+See also: [DescriptionString5to2000Bytes](./client.md#type-descriptionstring5to2000bytes)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -2931,13 +2933,13 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
     tx: AtomicBEEF;
     outputs: InternalizeOutput[];
-    description: DescriptionString5to50Bytes;
+    description: DescriptionString5to2000Bytes;
     labels: LabelStringUnder300Bytes[];
     seekPermission: BooleanDefaultTrue;
 }
 ```
 
-See also: [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
+See also: [DescriptionString5to2000Bytes](./client.md#type-descriptionstring5to2000bytes), [ValidWalletSignerArgs](./client.md#interface-validwalletsignerargs)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8712,13 +8714,14 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | --- | --- |
 | [Chain](#type-chain) | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) |
 | [DBType](#type-dbtype) | [PostTxsService](#type-posttxsservice) |
-| [EntityStorage](#type-entitystorage) | [ProvenTxReqStatus](#type-proventxreqstatus) |
-| [GetMerklePathService](#type-getmerklepathservice) | [ReqHistoryNote](#type-reqhistorynote) |
-| [GetRawTxService](#type-getrawtxservice) | [StorageProvidedBy](#type-storageprovidedby) |
-| [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [SyncProtocolVersion](#type-syncprotocolversion) |
-| [GetUtxoStatusService](#type-getutxostatusservice) | [SyncStatus](#type-syncstatus) |
-| [MonitorStorage](#type-monitorstorage) | [TransactionStatus](#type-transactionstatus) |
-| [PostBeefService](#type-postbeefservice) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
+| [DescriptionString5to2000Bytes](#type-descriptionstring5to2000bytes) | [ProvenTxReqStatus](#type-proventxreqstatus) |
+| [EntityStorage](#type-entitystorage) | [ReqHistoryNote](#type-reqhistorynote) |
+| [GetMerklePathService](#type-getmerklepathservice) | [StorageProvidedBy](#type-storageprovidedby) |
+| [GetRawTxService](#type-getrawtxservice) | [SyncProtocolVersion](#type-syncprotocolversion) |
+| [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [SyncStatus](#type-syncstatus) |
+| [GetUtxoStatusService](#type-getutxostatusservice) | [TransactionStatus](#type-transactionstatus) |
+| [MonitorStorage](#type-monitorstorage) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
+| [PostBeefService](#type-postbeefservice) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -8737,6 +8740,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export type DBType = "SQLite" | "MySQL"
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Type: DescriptionString5to2000Bytes
+
+```ts
+export type DescriptionString5to2000Bytes = string
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)

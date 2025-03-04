@@ -101,8 +101,7 @@ export class KnexMigrations implements MigrationSource<string> {
           table.string('spendingDescription', 2048).alter()
         })
       },
-      async down(knex) {
-      }
+      async down(knex) {}
     }
 
     migrations['2025-03-01-001 reset req history'] = {
