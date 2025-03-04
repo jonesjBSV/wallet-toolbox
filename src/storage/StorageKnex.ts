@@ -112,6 +112,7 @@ export class StorageKnex
     trx?: sdk.TrxToken
   ): Promise<number[] | undefined> {
     if (!txid) return undefined
+    if (!this.isAvailable()) await this.makeAvailable()
 
     let rawTx: number[] | undefined = undefined
     if (Number.isInteger(offset) && Number.isInteger(length)) {
@@ -160,7 +161,8 @@ export class StorageKnex
       q = q.limit(args.paged.limit)
       q = q.offset(args.paged.offset || 0)
     }
-    if (args.since) q = q.where('updated_at', '>=', args.since)
+    if (args.since)
+      q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
     return q
   }
   override async getProvenTxsForUser(
@@ -189,7 +191,8 @@ export class StorageKnex
       q = q.limit(args.paged.limit)
       q = q.offset(args.paged.offset || 0)
     }
-    if (args.since) q = q.where('updated_at', '>=', args.since)
+    if (args.since)
+      q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
     return q
   }
   override async getProvenTxReqsForUser(

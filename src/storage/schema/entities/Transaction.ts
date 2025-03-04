@@ -242,7 +242,7 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
       (ei.provenTxId &&
         eo.provenTxId !==
           (syncMap
-            ? syncMap.transaction.idMap[verifyId(ei.provenTxId)]
+            ? syncMap.provenTx.idMap[verifyId(ei.provenTxId)]
             : ei.provenTxId))
     )
       return false
@@ -303,7 +303,7 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
       this.isOutgoing = ei.isOutgoing
       this.status = ei.status
       this.provenTxId = ei.provenTxId
-        ? syncMap.transaction.idMap[ei.provenTxId]
+        ? syncMap.provenTx.idMap[ei.provenTxId]
         : undefined
       this.satoshis = ei.satoshis
       this.txid = ei.txid

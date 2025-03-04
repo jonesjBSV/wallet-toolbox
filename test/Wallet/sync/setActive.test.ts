@@ -1,5 +1,5 @@
 import knex from 'knex'
-import { Setup, StorageKnex } from '../../../src'
+import { sdk, Setup, StorageKnex } from '../../../src'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { Database } from 'sqlite3'
 
@@ -142,6 +142,15 @@ describe('setActive tests', () => {
       console.log(log)
     }
     expect(s.storage.isActiveEnabled)
+    await s.wallet.destroy()
+  })
+
+  test('3 compare wallet balances', async () => {
+    const chain: sdk.Chain = 'test'
+    if (Setup.noEnv(chain)) return
+
+    const s = await _tu.createTestWallet(chain)
+
     await s.wallet.destroy()
   })
 })

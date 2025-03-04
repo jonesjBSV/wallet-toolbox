@@ -47,7 +47,7 @@ describe('Wallet sync tests', () => {
     {
       const r = await manager.syncToWriter(auth, tmpStore)
       expect(r.inserts).toBeGreaterThan(1000)
-      expect(r.updates).toBe(0)
+      expect(r.updates).toBe(2)
     }
     {
       const r = await manager.syncToWriter(auth, tmpStore)

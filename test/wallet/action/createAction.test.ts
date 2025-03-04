@@ -38,8 +38,8 @@ describe('createAction test', () => {
         const args: CreateActionArgs[] = [
           // description is too short...
           { description: '' },
-          // no outputs, inputs or sendWith
-          { description: '12345' },
+          // no outputs, inputs or sendWith, now legal as isRemixChange transaction
+          //{ description: '12345' },
           // lockingScript must be hexadecimal
           {
             description: '12345',

@@ -110,27 +110,41 @@ export class StorageServer {
                   )
               }
               break
+            case 'processSyncChunk':
+              {
+                await this.validateParam0(params, req)
+                //const args: sdk.RequestSyncChunkArgs = params[0]
+                const r: sdk.SyncChunk = params[1]
+                if (r.certificateFields)
+                  r.certificateFields = this.validateEntities(
+                    r.certificateFields
+                  )
+                if (r.certificates)
+                  r.certificates = this.validateEntities(r.certificates)
+                if (r.commissions)
+                  r.commissions = this.validateEntities(r.commissions)
+                if (r.outputBaskets)
+                  r.outputBaskets = this.validateEntities(r.outputBaskets)
+                if (r.outputTagMaps)
+                  r.outputTagMaps = this.validateEntities(r.outputTagMaps)
+                if (r.outputTags)
+                  r.outputTags = this.validateEntities(r.outputTags)
+                if (r.outputs) r.outputs = this.validateEntities(r.outputs)
+                if (r.provenTxReqs)
+                  r.provenTxReqs = this.validateEntities(r.provenTxReqs)
+                if (r.provenTxs)
+                  r.provenTxs = this.validateEntities(r.provenTxs)
+                if (r.transactions)
+                  r.transactions = this.validateEntities(r.transactions)
+                if (r.txLabelMaps)
+                  r.txLabelMaps = this.validateEntities(r.txLabelMaps)
+                if (r.txLabels) r.txLabels = this.validateEntities(r.txLabels)
+                if (r.user) r.user = this.validateEntity(r.user)
+              }
+              break
             default:
               {
-                if (typeof params[0] !== 'object' || !params[0]) {
-                  params = [{}]
-                }
-                if (
-                  params[0]['identityKey'] &&
-                  params[0]['identityKey'] !== req.auth.identityKey
-                )
-                  throw new sdk.WERR_UNAUTHORIZED(
-                    'identityKey does not match authentiation'
-                  )
-                console.log(
-                  'looking up user with identityKey:',
-                  req.auth.identityKey
-                )
-                const { user, isNew } = await this.storage.findOrInsertUser(
-                  req.auth.identityKey
-                )
-                params[0].reqAuthUserId = user.userId
-                if (params[0]['identityKey']) params[0].userId = user.userId
+                await this.validateParam0(params, req)
               }
               break
           }
@@ -169,11 +183,78 @@ export class StorageServer {
     })
   }
 
+  private async validateParam0(params: any, req: Request): Promise<void> {
+    if (typeof params[0] !== 'object' || !params[0]) {
+      params = [{}]
+    }
+    if (
+      params[0]['identityKey'] &&
+      params[0]['identityKey'] !== req.auth.identityKey
+    )
+      throw new sdk.WERR_UNAUTHORIZED(
+        'identityKey does not match authentiation'
+      )
+    console.log('looking up user with identityKey:', req.auth.identityKey)
+    const { user, isNew } = await this.storage.findOrInsertUser(
+      req.auth.identityKey
+    )
+    params[0].reqAuthUserId = user.userId
+    if (params[0]['identityKey']) params[0].userId = user.userId
+  }
+
   public start(): void {
     this.app.listen(this.port, () => {
       console.log(
         `WalletStorageServer listening at http://localhost:${this.port}`
       )
     })
+  }
+
+  validateDate(date: Date | string | number): Date {
+    let r: Date
+    if (date instanceof Date) r = date
+    else r = new Date(date)
+    return r
+  }
+
+  /**
+   * Helper to force uniform behavior across database engines.
+   * Use to process all individual records with time stamps retreived from database.
+   */
+  validateEntity<T extends sdk.EntityTimeStamp>(
+    entity: T,
+    dateFields?: string[]
+  ): T {
+    entity.created_at = this.validateDate(entity.created_at)
+    entity.updated_at = this.validateDate(entity.updated_at)
+    if (dateFields) {
+      for (const df of dateFields) {
+        if (entity[df]) entity[df] = this.validateDate(entity[df])
+      }
+    }
+    for (const key of Object.keys(entity)) {
+      const val = entity[key]
+      if (val === null) {
+        entity[key] = undefined
+      } else if (Buffer.isBuffer(val)) {
+        entity[key] = Array.from(val)
+      }
+    }
+    return entity
+  }
+
+  /**
+   * Helper to force uniform behavior across database engines.
+   * Use to process all arrays of records with time stamps retreived from database.
+   * @returns input `entities` array with contained values validated.
+   */
+  validateEntities<T extends sdk.EntityTimeStamp>(
+    entities: T[],
+    dateFields?: string[]
+  ): T[] {
+    for (let i = 0; i < entities.length; i++) {
+      entities[i] = this.validateEntity(entities[i], dateFields)
+    }
+    return entities
   }
 }

@@ -272,11 +272,13 @@ export class Services implements sdk.WalletServices {
   ): Promise<sdk.GetMerklePathResult> {
     if (useNext) this.getMerklePathServices.next()
 
-    const r0: sdk.GetMerklePathResult = {}
+    const r0: sdk.GetMerklePathResult = { notes: [] }
 
     for (let tries = 0; tries < this.getMerklePathServices.count; tries++) {
       const service = this.getMerklePathServices.service
       const r = await service(txid, this)
+      if (r.notes) r0.notes!.push(...r.notes)
+      if (!r0.name) r0.name = r.name
       if (r.merklePath) {
         // If we have a proof, call it done.
         r0.merklePath = r.merklePath
@@ -284,9 +286,10 @@ export class Services implements sdk.WalletServices {
         r0.name = r.name
         r0.error = undefined
         break
-      } else if (r.error && !r0.error)
+      } else if (r.error && !r0.error) {
         // If we have an error and didn't before...
         r0.error = r.error
+      }
 
       this.getMerklePathServices.next()
     }

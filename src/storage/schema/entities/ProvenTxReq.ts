@@ -152,12 +152,12 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
    * Returns history to only what followed since date.
    */
   historySince(since: Date): ProvenTxReqHistory {
-    const fh: ProvenTxReqHistory = { notes: {} }
+    const fh: ProvenTxReqHistory = { notes: [] }
     const filter = since.toISOString()
     const notes = this.history.notes
     if (notes && fh.notes) {
-      for (const key of Object.keys(notes))
-        if (key > filter) fh.notes[key] = notes[key]
+      for (const note of notes)
+        if (note.when && note.when > filter) fh.notes.push(note)
     }
     return fh
   }
@@ -165,14 +165,23 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   historyPretty(since?: Date, indent = 0): string {
     const h = since ? this.historySince(since) : { ...this.history }
     if (!h.notes) return ''
-    const keyLimit = since ? since.toISOString() : undefined
+    const whenLimit = since ? since.toISOString() : undefined
     let log = ''
-    for (const key of Object.keys(h.notes)) {
-      if (keyLimit && key < keyLimit) continue
-      h.notes[key] = this.parseHistoryNote(h.notes[key])
-      log += `${key}: ${h.notes[key]}\n`
+    for (const note of h.notes) {
+      if (whenLimit && note.when && note.when < whenLimit) continue
+      log += this.prettyNote(note) + '\n'
     }
-    if (log.slice(-1) !== '\n') log += '\n'
+    return log
+  }
+
+  prettyNote(note: sdk.ReqHistoryNote): string {
+    let log = `${note.when}: ${note.what}`
+    for (const [key, val] of Object.entries(note)) {
+      if (key !== 'when' && key !== 'what') {
+        if (typeof val === 'string') log += ' ' + key + ':`' + val + '`'
+        else log += ' ' + key + ':' + val
+      }
+    }
     return log
   }
 
@@ -187,15 +196,15 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     }
     const h = this.history
     if (h.notes) {
-      for (const key of Object.keys(h.notes)) {
-        this.parseHistoryNote(h.notes[key], summary)
+      for (const note of h.notes) {
+        this.parseHistoryNote(note, summary)
       }
     }
     return summary
   }
 
   parseHistoryNote(
-    note: string,
+    note: sdk.ReqHistoryNote,
     summary?: ProvenTxReqHistorySummaryApi
   ): string {
     const c = summary || {
@@ -206,23 +215,12 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
       setToSending: false,
       setToUnconfirmed: false
     }
+    let n = this.prettyNote(note)
     try {
-      const v = JSON.parse(note)
-      switch (v.what) {
-        case 'postReqsToNetwork result':
+      switch (note.what) {
+        case 'status':
           {
-            const r = v['result'] as any
-            return `posted by ${v['name']} status=${r.status} txid=${r.txid}`
-          }
-          break
-        case 'getMerkleProof invalid':
-          {
-            return `getMerkleProof failing after ${v['attempts']} attempts over ${v['ageInMinutes']} minutes`
-          }
-          break
-        case 'ProvenTxReq.set status':
-          {
-            const status: sdk.ProvenTxReqStatus = v.new
+            const status = <sdk.ProvenTxReqStatus>note.status_now
             switch (status) {
               case 'completed':
                 c.setToCompleted = true
@@ -245,18 +243,15 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
               default:
                 break
             }
-            return `set status ${v.old} to ${v.new}`
           }
           break
-        case 'notified':
-          return `notified`
         default:
           break
       }
     } catch {
       /** */
     }
-    return note
+    return n
   }
 
   addNotifyTransactionId(id: number) {
@@ -270,27 +265,42 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     this.notified = false
   }
 
-  addHistoryNote<T extends { what: string }>(
-    note: string | T,
-    when?: Date,
-    noDupes?: boolean
-  ) {
-    if (!this.history.notes) this.history.notes = {}
-    if (typeof note === 'string')
-      note = JSON.stringify({ what: 'string', note })
-    else note = JSON.stringify(note)
-    when ||= new Date()
-    let msecs = when.getTime()
-    let key = when.toISOString()
-    if (!noDupes) {
-      while (this.history.notes[key]) {
-        // Make sure new key (timestamp) will not overwrite existing.
-        // Fudge the time by 1 msec forward until unique
-        msecs += 1
-        key = new Date(msecs).toISOString()
-      }
+  /**
+   * Adds a note to history.
+   * Notes with identical property values to an existing note are ignored.
+   * @param note Note to add
+   * @param noDupes if true, only newest note with same `what` value is retained.
+   */
+  addHistoryNote(note: sdk.ReqHistoryNote, noDupes?: boolean) {
+    if (!this.history.notes) this.history.notes = []
+    if (!note.when) note.when = new Date().toISOString()
+    if (noDupes) {
+      // Remove any existing notes with same 'what' value and either no 'when' or an earlier 'when'
+      this.history.notes = this.history.notes!.filter(
+        n => n.what !== note.what || (n.when && n.when > note.when!)
+      )
     }
-    if (!this.history.notes[key]) this.history.notes[key] = note
+    let addNote = true
+    for (const n of this.history.notes) {
+      let isEqual = true
+      for (const [k, v] of Object.entries(n)) {
+        if (v !== note[k]) {
+          isEqual = false
+          break
+        }
+      }
+      if (isEqual) addNote = false
+      if (!addNote) break
+    }
+    if (addNote) {
+      this.history.notes.push(note as sdk.ReqHistoryNote)
+      const k = (n: sdk.ReqHistoryNote): string => {
+        return `${n.when} ${n.what}`
+      }
+      this.history.notes.sort((a, b) =>
+        k(a) < k(b) ? -1 : k(a) > k(b) ? 1 : 0
+      )
+    }
   }
 
   /**
@@ -365,7 +375,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
       } else {
         const req = new EntityProvenTxReq(reqApi1)
         req.mergeNotifyTransactionIds(reqApi0)
-        req.mergeHistory(reqApi0)
+        req.mergeHistory(reqApi0, undefined, true)
         await req.updateStorage(storage, trx)
         return req
       }
@@ -382,9 +392,9 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   set status(v: sdk.ProvenTxReqStatus) {
     if (v !== this.api.status) {
       this.addHistoryNote({
-        what: 'ProvenTxReq.set status',
-        old: this.api.status,
-        new: v
+        what: 'status',
+        status_was: this.api.status,
+        status_now: v
       })
       this.api.status = v
     }
@@ -566,8 +576,8 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   ): void {
     const eie = new EntityProvenTxReq(ei)
     if (eie.history.notes) {
-      for (const [k, v] of Object.entries(eie.history.notes)) {
-        this.addHistoryNote(v, new Date(k), noDupes)
+      for (const note of eie.history.notes) {
+        this.addHistoryNote(note)
       }
     }
   }
@@ -612,7 +622,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     else if (this.batch && ei.batch && this.batch !== ei.batch)
       throw new sdk.WERR_INTERNAL('ProvenTxReq merge batch not equal.')
 
-    this.mergeHistory(ei, syncMap)
+    this.mergeHistory(ei, syncMap, true)
     this.mergeNotifyTransactionIds(ei, syncMap)
 
     this.updated_at = new Date()
@@ -635,7 +645,7 @@ export interface ProvenTxReqHistory {
    * Keys are Date().toISOString()
    * Values are a description of what happened.
    */
-  notes?: Record<string, string>
+  notes?: sdk.ReqHistoryNote[]
 }
 
 export interface ProvenTxReqNotify {

@@ -197,6 +197,8 @@ export class TaskCheckForProofs extends WalletMonitorTask {
 
       if (ptx) {
         // We have a merklePath proof for the request (and a block header)
+        await req.updateStorageDynamicProperties(this.storage)
+        await req.refreshFromStorage(this.storage)
         const { provenTxReqId, status, txid, attempts, history } = req.toApi()
         const { index, height, blockHash, merklePath, merkleRoot } = ptx.toApi()
         const r = await this.storage.runAsStorageProvider(async sp => {
@@ -221,9 +223,9 @@ export class TaskCheckForProofs extends WalletMonitorTask {
         if (countsAsAttempt && req.status !== 'nosend') {
           req.attempts++
         }
-        await req.updateStorageDynamicProperties(this.storage)
-        await req.refreshFromStorage(this.storage)
       }
+      await req.updateStorageDynamicProperties(this.storage)
+      await req.refreshFromStorage(this.storage)
 
       log += req.historyPretty(since, indent + 2) + '\n'
 

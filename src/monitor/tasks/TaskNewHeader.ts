@@ -42,7 +42,7 @@ export class TaskNewHeader extends WalletMonitorTask {
     } else {
       isNew = false
     }
-    if (isNew) TaskCheckForProofs.checkNow = true
+    if (isNew) this.monitor.processNewBlockHeader(this.header)
     return log
   }
 }

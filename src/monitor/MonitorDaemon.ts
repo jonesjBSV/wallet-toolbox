@@ -92,6 +92,7 @@ export class MonitorDaemon {
           settings.storageIdentityKey,
           a.storageProvider
         )
+        await a.storageManager.makeAvailable()
       } else if (!a.storageManager) {
         throw new sdk.WERR_INVALID_PARAMETER(
           'storageManager',

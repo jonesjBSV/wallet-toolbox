@@ -1,6 +1,7 @@
 import { Beef } from '@bsv/sdk'
 import { StorageProvider } from '../StorageProvider'
 import { EntityProvenTxReq, sdk } from '../../index.client'
+import { ReqHistoryNote } from '../../sdk'
 
 /**
  * Attempt to post one or more `ProvenTxReq` with status 'unsent'
@@ -39,17 +40,19 @@ export async function attemptToPostReqsToNetwork(
     let badReq: boolean = false
     if (!rb.rawTx) {
       badReq = true
-      rb.addHistoryNote(`invalid req: rawTx must be valid`)
+      rb.addHistoryNote({ what: 'postToNetworkError', error: 'no rawTx' })
     }
     if (!rb.notify.transactionIds || rb.notify.transactionIds.length < 1) {
       badReq = true
-      rb.addHistoryNote(
-        `invalid req: must have at least one transaction to notify`
-      )
+      rb.addHistoryNote({ what: 'postToNetworkError', error: 'no notify tx' })
     }
     if (rb.attempts > 10) {
       badReq = true
-      rb.addHistoryNote(`invalid req: too many attempts ${rb.attempts}`)
+      rb.addHistoryNote({
+        what: 'postToNetworkError',
+        error: 'too many attempts',
+        attempts: rb.attempts
+      })
     }
 
     // Accumulate batch beefs.
@@ -63,7 +66,10 @@ export async function attemptToPostReqsToNetwork(
           (e as sdk.WERR_INVALID_PARAMETER).parameter === 'txid'
         ) {
           badReq = true
-          rb.addHistoryNote(`invalid req: depends on txid which is unknown`)
+          rb.addHistoryNote({
+            what: 'postToNetworkError',
+            error: 'depends on unknown txid'
+          })
         }
       }
     }
@@ -85,6 +91,21 @@ export async function attemptToPostReqsToNetwork(
   // and add the new results to aggregate results.
   const services = await storage.getServices()
   const pbrs = await services.postBeef(r.beef, txids)
+  for (const txid of txids) {
+    const req = reqs.find(r => r.txid === txid)
+    if (!req) throw new sdk.WERR_INTERNAL()
+    const notes: ReqHistoryNote[] = []
+    for (const pbr of pbrs) {
+      notes.push(...(pbr.notes || []))
+      const r = pbr.txidResults.find(tr => tr.txid === txid)
+      if (r) notes.push(...(r.notes || []))
+    }
+    for (const n of notes) {
+      req.addHistoryNote(n, true)
+    }
+    await req.updateStorageDynamicProperties(storage)
+    await req.refreshFromStorage(storage)
+  }
   const pbrOk = pbrs.find(p => p.status === 'success')
   r.pbr = pbrOk ? pbrOk : pbrs.length > 0 ? pbrs[0] : undefined
 
@@ -106,12 +127,12 @@ export async function attemptToPostReqsToNetwork(
         // If any txid result fails, the aggregate result is error.
         r.status = 'error'
       d.req.attempts++
-      const note = {
-        what: 'postReqsToNetwork result',
+      d.req.addHistoryNote({
+        what: 'postToNetwork',
         name: r.pbr.name,
-        result: JSON.stringify(d.data)
-      }
-      d.req.addHistoryNote(note)
+        status: d.status,
+        error: d.error
+      })
     }
   }
 

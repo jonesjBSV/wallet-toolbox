@@ -260,11 +260,17 @@ export function isHexString(s: string): boolean {
   return true
 }
 
+/**
+ * @typedef {string & { minLength: 5, maxLength: 2000 }} DescriptionString5to2000Bytes
+ * A string used for descriptions, with a length between 5 and 2000 characters.
+ */
+export type DescriptionString5to2000Bytes = string
+
 export interface ValidWalletSignerArgs {}
 
 export interface ValidCreateActionInput {
   outpoint: OutPoint
-  inputDescription: DescriptionString5to50Bytes
+  inputDescription: DescriptionString5to2000Bytes
   sequenceNumber: PositiveIntegerOrZero
   unlockingScript?: HexString
   unlockingScriptLength: PositiveInteger
@@ -295,7 +301,7 @@ export function validateCreateActionInput(
       i.inputDescription,
       'inputDescription',
       5,
-      50
+      2000
     ),
     unlockingScript,
     unlockingScriptLength,
@@ -307,7 +313,7 @@ export function validateCreateActionInput(
 export interface ValidCreateActionOutput {
   lockingScript: HexString
   satoshis: SatoshiValue
-  outputDescription: DescriptionString5to50Bytes
+  outputDescription: DescriptionString5to2000Bytes
   basket?: BasketStringUnder300Bytes
   customInstructions?: string
   tags: BasketStringUnder300Bytes[]
@@ -323,7 +329,7 @@ export function validateCreateActionOutput(
       o.outputDescription,
       'outputDescription',
       5,
-      50
+      2000
     ),
     basket: validateOptionalBasket(o.basket),
     customInstructions: o.customInstructions,
@@ -385,6 +391,8 @@ export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
   isSendWith: boolean
   // true if there is a new transaction (not no inputs and no outputs)
   isNewTx: boolean
+  // true if this is a request to remix change, `isNewTx` will also be true and `isSendWith` must be false
+  isRemixChange: boolean
   // true if any new transaction should NOT be sent to the network
   isNoSend: boolean
   // true if options.acceptDelayedBroadcast is true
@@ -392,7 +400,7 @@ export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
 }
 
 export interface ValidCreateActionArgs extends ValidProcessActionArgs {
-  description: DescriptionString5to50Bytes
+  description: DescriptionString5to2000Bytes
   inputBEEF?: BEEF
   inputs: sdk.ValidCreateActionInput[]
   outputs: sdk.ValidCreateActionOutput[]
@@ -423,7 +431,7 @@ export function validateCreateActionArgs(
   args: CreateActionArgs
 ): ValidCreateActionArgs {
   const vargs: ValidCreateActionArgs = {
-    description: validateStringLength(args.description, 'description', 5, 50),
+    description: validateStringLength(args.description, 'description', 5, 2000),
     inputBEEF: args.inputBEEF,
     inputs: defaultEmpty(args.inputs).map(i => validateCreateActionInput(i)),
     outputs: defaultEmpty(args.outputs).map(o => validateCreateActionOutput(o)),
@@ -435,24 +443,22 @@ export function validateCreateActionArgs(
     isDelayed: false,
     isNoSend: false,
     isNewTx: false,
+    isRemixChange: false,
     isSignAction: false,
     randomVals: undefined,
     includeAllSourceTransactions: false
   }
   vargs.isSendWith = vargs.options.sendWith.length > 0
-  vargs.isNewTx = vargs.inputs.length > 0 || vargs.outputs.length > 0
+  vargs.isRemixChange =
+    !vargs.isSendWith && vargs.inputs.length === 0 && vargs.outputs.length === 0
+  vargs.isNewTx =
+    vargs.isRemixChange || vargs.inputs.length > 0 || vargs.outputs.length > 0
   vargs.isSignAction =
     vargs.isNewTx &&
     (vargs.options.signAndProcess === false ||
       vargs.inputs.some(i => i.unlockingScript === undefined))
   vargs.isDelayed = vargs.options.acceptDelayedBroadcast
   vargs.isNoSend = vargs.options.noSend
-
-  if (!vargs.isSendWith && !vargs.isNewTx)
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'args',
-      'either at least one input or output, or a sendWith.'
-    )
 
   return vargs
 }
@@ -486,7 +492,8 @@ export function validateSignActionArgs(
     isSendWith: false,
     isDelayed: false,
     isNoSend: false,
-    isNewTx: true
+    isNewTx: true,
+    isRemixChange: false
   }
   vargs.isSendWith = vargs.options.sendWith.length > 0
   vargs.isDelayed = vargs.options.acceptDelayedBroadcast
@@ -589,7 +596,7 @@ export function validateInternalizeOutput(
 export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
   tx: AtomicBEEF
   outputs: InternalizeOutput[]
-  description: DescriptionString5to50Bytes
+  description: DescriptionString5to2000Bytes
   labels: LabelStringUnder300Bytes[]
   seekPermission: BooleanDefaultTrue
 }
@@ -610,7 +617,7 @@ export function validateInternalizeActionArgs(
   const vargs: ValidInternalizeActionArgs = {
     tx: args.tx,
     outputs: args.outputs.map(o => validateInternalizeOutput(o)),
-    description: validateStringLength(args.description, 'description', 5, 50),
+    description: validateStringLength(args.description, 'description', 5, 2000),
     labels: (args.labels || []).map(t => validateLabel(t)),
     seekPermission: defaultTrue(args.seekPermission)
   }

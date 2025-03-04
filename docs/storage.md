@@ -370,9 +370,11 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 ```ts
 export interface ProvenTxReqHistory {
-    notes?: Record<string, string>;
+    notes?: sdk.ReqHistoryNote[];
 }
 ```
+
+See also: [ReqHistoryNote](./client.md#type-reqhistorynote)
 
 ###### Property notes
 
@@ -380,8 +382,9 @@ Keys are Date().toISOString()
 Values are a description of what happened.
 
 ```ts
-notes?: Record<string, string>
+notes?: sdk.ReqHistoryNote[]
 ```
+See also: [ReqHistoryNote](./client.md#type-reqhistorynote)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1719,12 +1722,11 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     constructor(api?: TableProvenTxReq) 
     historySince(since: Date): ProvenTxReqHistory 
     historyPretty(since?: Date, indent = 0): string 
+    prettyNote(note: sdk.ReqHistoryNote): string 
     getHistorySummary(): ProvenTxReqHistorySummaryApi 
-    parseHistoryNote(note: string, summary?: ProvenTxReqHistorySummaryApi): string 
+    parseHistoryNote(note: sdk.ReqHistoryNote, summary?: ProvenTxReqHistorySummaryApi): string 
     addNotifyTransactionId(id: number) 
-    addHistoryNote<T extends {
-        what: string;
-    }>(note: string | T, when?: Date, noDupes?: boolean) 
+    addHistoryNote(note: sdk.ReqHistoryNote, noDupes?: boolean) 
     async updateStorage(storage: EntityStorage, trx?: sdk.TrxToken) 
     async updateStorageDynamicProperties(storage: WalletStorageManager | StorageProvider, trx?: sdk.TrxToken) 
     async insertOrMerge(storage: EntityStorage, trx?: sdk.TrxToken): Promise<EntityProvenTxReq> 
@@ -1769,7 +1771,24 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
 }
 ```
 
-See also: [EntityBase](./storage.md#class-entitybase), [EntityStorage](./storage.md#type-entitystorage), [ProvenTxReqHistory](./storage.md#interface-proventxreqhistory), [ProvenTxReqHistorySummaryApi](./storage.md#interface-proventxreqhistorysummaryapi), [ProvenTxReqNotify](./storage.md#interface-proventxreqnotify), [ProvenTxReqStatus](./client.md#type-proventxreqstatus), [StorageProvider](./storage.md#class-storageprovider), [SyncMap](./storage.md#interface-syncmap), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TrxToken](./client.md#interface-trxtoken), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+See also: [EntityBase](./storage.md#class-entitybase), [EntityStorage](./storage.md#type-entitystorage), [ProvenTxReqHistory](./storage.md#interface-proventxreqhistory), [ProvenTxReqHistorySummaryApi](./storage.md#interface-proventxreqhistorysummaryapi), [ProvenTxReqNotify](./storage.md#interface-proventxreqnotify), [ProvenTxReqStatus](./client.md#type-proventxreqstatus), [ReqHistoryNote](./client.md#type-reqhistorynote), [StorageProvider](./storage.md#class-storageprovider), [SyncMap](./storage.md#interface-syncmap), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TrxToken](./client.md#interface-trxtoken), [WalletStorageManager](./storage.md#class-walletstoragemanager)
+
+###### Method addHistoryNote
+
+Adds a note to history.
+Notes with identical property values to an existing note are ignored.
+
+```ts
+addHistoryNote(note: sdk.ReqHistoryNote, noDupes?: boolean) 
+```
+See also: [ReqHistoryNote](./client.md#type-reqhistorynote)
+
+Argument Details
+
++ **note**
+  + Note to add
++ **noDupes**
+  + if true, only newest note with same `what` value is retained.
 
 ###### Method equals
 
@@ -2262,17 +2281,20 @@ export class StorageClient implements sdk.WalletStorageProvider {
     async findCertificatesAuth(auth: sdk.AuthId, args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]> 
     async findOutputBasketsAuth(auth: sdk.AuthId, args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]> 
     async findOutputsAuth(auth: sdk.AuthId, args: sdk.FindOutputsArgs): Promise<TableOutput[]> 
-    findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]> 
+    async findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]> 
     async relinquishCertificate(auth: sdk.AuthId, args: RelinquishCertificateArgs): Promise<number> 
     async relinquishOutput(auth: sdk.AuthId, args: RelinquishOutputArgs): Promise<number> 
     async processSyncChunk(args: sdk.RequestSyncChunkArgs, chunk: sdk.SyncChunk): Promise<sdk.ProcessSyncChunkResult> 
     async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> 
     async updateProvenTxReqWithNewProvenTx(args: sdk.UpdateProvenTxReqWithNewProvenTxArgs): Promise<sdk.UpdateProvenTxReqWithNewProvenTxResult> 
     async setActive(auth: sdk.AuthId, newActiveStorageIdentityKey: string): Promise<number> 
+    validateDate(date: Date | string | number): Date 
+    validateEntity<T extends sdk.EntityTimeStamp>(entity: T, dateFields?: string[]): T 
+    validateEntities<T extends sdk.EntityTimeStamp>(entities: T[], dateFields?: string[]): T[] 
 }
 ```
 
-See also: [AuthId](./client.md#interface-authid), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableUser](./storage.md#interface-tableuser), [UpdateProvenTxReqWithNewProvenTxArgs](./client.md#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](./client.md#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [createAction](./storage.md#function-createaction), [getSyncChunk](./storage.md#function-getsyncchunk), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
+See also: [AuthId](./client.md#interface-authid), [EntityTimeStamp](./client.md#interface-entitytimestamp), [FindCertificatesArgs](./client.md#interface-findcertificatesargs), [FindOutputBasketsArgs](./client.md#interface-findoutputbasketsargs), [FindOutputsArgs](./client.md#interface-findoutputsargs), [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [ProcessSyncChunkResult](./client.md#interface-processsyncchunkresult), [RequestSyncChunkArgs](./client.md#interface-requestsyncchunkargs), [StorageCreateActionResult](./client.md#interface-storagecreateactionresult), [StorageProcessActionArgs](./client.md#interface-storageprocessactionargs), [StorageProcessActionResults](./client.md#interface-storageprocessactionresults), [SyncChunk](./client.md#interface-syncchunk), [TableCertificateX](./storage.md#interface-tablecertificatex), [TableOutput](./storage.md#interface-tableoutput), [TableOutputBasket](./storage.md#interface-tableoutputbasket), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [TableSettings](./storage.md#interface-tablesettings), [TableSyncState](./storage.md#interface-tablesyncstate), [TableUser](./storage.md#interface-tableuser), [UpdateProvenTxReqWithNewProvenTxArgs](./client.md#interface-updateproventxreqwithnewproventxargs), [UpdateProvenTxReqWithNewProvenTxResult](./client.md#interface-updateproventxreqwithnewproventxresult), [ValidCreateActionArgs](./client.md#interface-validcreateactionargs), [ValidListActionsArgs](./client.md#interface-validlistactionsargs), [ValidListCertificatesArgs](./client.md#interface-validlistcertificatesargs), [ValidListOutputsArgs](./client.md#interface-validlistoutputsargs), [WalletServices](./client.md#interface-walletservices), [WalletStorageProvider](./client.md#interface-walletstorageprovider), [createAction](./storage.md#function-createaction), [getSyncChunk](./storage.md#function-getsyncchunk), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [processAction](./storage.md#function-processaction)
 
 ###### Method abortAction
 
@@ -2449,7 +2471,7 @@ Find requests for transaction proofs.
 This retrieval method supports internal wallet operations.
 
 ```ts
-findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]> 
+async findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]> 
 ```
 See also: [FindProvenTxReqsArgs](./client.md#interface-findproventxreqsargs), [TableProvenTxReq](./storage.md#interface-tableproventxreq)
 
@@ -2811,6 +2833,30 @@ Argument Details
 
 + **args**
   + proof request and new transaction proof data
+
+###### Method validateEntities
+
+Helper to force uniform behavior across database engines.
+Use to process all arrays of records with time stamps retreived from database.
+
+```ts
+validateEntities<T extends sdk.EntityTimeStamp>(entities: T[], dateFields?: string[]): T[] 
+```
+See also: [EntityTimeStamp](./client.md#interface-entitytimestamp)
+
+Returns
+
+input `entities` array with contained values validated.
+
+###### Method validateEntity
+
+Helper to force uniform behavior across database engines.
+Use to process all individual records with time stamps retreived from database.
+
+```ts
+validateEntity<T extends sdk.EntityTimeStamp>(entity: T, dateFields?: string[]): T 
+```
+See also: [EntityTimeStamp](./client.md#interface-entitytimestamp)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3441,10 +3487,37 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export class StorageServer {
     constructor(storage: StorageProvider, options: WalletStorageServerOptions) 
     public start(): void 
+    validateDate(date: Date | string | number): Date 
+    validateEntity<T extends sdk.EntityTimeStamp>(entity: T, dateFields?: string[]): T 
+    validateEntities<T extends sdk.EntityTimeStamp>(entities: T[], dateFields?: string[]): T[] 
 }
 ```
 
-See also: [StorageProvider](./storage.md#class-storageprovider), [WalletStorageServerOptions](./storage.md#interface-walletstorageserveroptions)
+See also: [EntityTimeStamp](./client.md#interface-entitytimestamp), [StorageProvider](./storage.md#class-storageprovider), [WalletStorageServerOptions](./storage.md#interface-walletstorageserveroptions)
+
+###### Method validateEntities
+
+Helper to force uniform behavior across database engines.
+Use to process all arrays of records with time stamps retreived from database.
+
+```ts
+validateEntities<T extends sdk.EntityTimeStamp>(entities: T[], dateFields?: string[]): T[] 
+```
+See also: [EntityTimeStamp](./client.md#interface-entitytimestamp)
+
+Returns
+
+input `entities` array with contained values validated.
+
+###### Method validateEntity
+
+Helper to force uniform behavior across database engines.
+Use to process all individual records with time stamps retreived from database.
+
+```ts
+validateEntity<T extends sdk.EntityTimeStamp>(entity: T, dateFields?: string[]): T 
+```
+See also: [EntityTimeStamp](./client.md#interface-entitytimestamp)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3512,6 +3585,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
     getActiveSettings(): TableSettings 
     getActiveUser(): TableUser 
     getActiveStore(): string 
+    getActiveStoreName(): string 
     getBackupStores(): string[] 
     getConflictingStores(): string[] 
     getAllStores(): string[] 

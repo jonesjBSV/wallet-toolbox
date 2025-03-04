@@ -261,11 +261,9 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
 
     if (!req.rawTx) throw new sdk.WERR_INTERNAL('rawTx must be valid')
 
-    req.addHistoryNote({
-      what: 'getMerkleProof result',
-      result: gmpResult,
-      attempts: req.attempts
-    })
+    for (const note of gmpResult.notes || []) {
+      req.addHistoryNote(note, true)
+    }
 
     if (!gmpResult.name && !gmpResult.merklePath && !gmpResult.error) {
       // Most likely offline or now services configured.
@@ -285,11 +283,15 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
           reqAgeInMinutes > EntityProvenTx.getProofMinutes
         ) {
           // Start the process of setting transactions to 'failed'
-          req.addHistoryNote({
-            what: 'getMerkleProof invalid',
-            attempts: req.attempts,
-            ageInMinutes: reqAgeInMinutes
-          })
+          req.addHistoryNote(
+            {
+              what: 'getMerklePathGiveUp',
+              attempts: req.attempts,
+              limit: EntityProvenTx.getProofAttemptsLimit,
+              ageInMinutes: reqAgeInMinutes
+            },
+            true
+          )
           req.notified = false
           req.status = 'invalid'
         }
@@ -309,10 +311,12 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
         const leaf = proof.path[0].find(
           leaf => leaf.txid === true && leaf.hash === req.txid
         )
-        if (!leaf)
+        if (!leaf) {
+          req.addHistoryNote({ what: 'getMerklePathTxidNotFound' }, true)
           throw new sdk.WERR_INTERNAL(
             'merkle path does not contain leaf for txid'
           )
+        }
 
         const proven = new EntityProvenTx({
           created_at: now,
@@ -328,12 +332,17 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
         })
 
         return proven
-      } catch (err: unknown) {
-        req.addHistoryNote({
-          what: 'getMerkleProof catch',
-          proof,
-          error: sdk.WalletError.fromUnknown(err)
-        })
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        req.addHistoryNote(
+          {
+            what: 'getMerklePathProvenError',
+            attempts: req.attempts,
+            code: e.code,
+            description: e.description
+          },
+          true
+        )
       }
     }
   }

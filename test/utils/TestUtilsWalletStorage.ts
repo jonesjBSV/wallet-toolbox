@@ -83,6 +83,7 @@ export interface TuEnv {
    * file path to local sqlite file for testIdentityKey
    */
   testFilePath?: string
+  cloudMySQLConnection?: string
 }
 
 export abstract class TestUtilsWalletStorage {
@@ -134,6 +135,10 @@ export abstract class TestUtilsWalletStorage {
       chain === 'main'
         ? process.env.TEST_MAIN_FILEPATH
         : process.env.TEST_TEST_FILEPATH
+    const cloudMySQLConnection =
+      chain === 'main'
+        ? process.env.MAIN_CLOUD_MYSQL_CONNECTION
+        : process.env.TEST_CLOUD_MYSQL_CONNECTION
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
@@ -151,7 +156,8 @@ export abstract class TestUtilsWalletStorage {
       logTests,
       filePath,
       testIdentityKey,
-      testFilePath
+      testFilePath,
+      cloudMySQLConnection
     }
   }
 
@@ -330,6 +336,7 @@ export abstract class TestUtilsWalletStorage {
    * Creates a wallet with both local sqlite and cloud stores, the local store is left active.
    *
    * Requires a valid .env file with chain matching testIdentityKey and testFilePath properties valid.
+   * Or `args` with those properties.
    *
    * Verifies wallet has at least 1000 satoshis in at least 10 change utxos.
    *
@@ -337,77 +344,136 @@ export abstract class TestUtilsWalletStorage {
    *
    * @returns {TestWalletNoSetup}
    */
-  static async createTestWallet(chain: sdk.Chain): Promise<TestWalletNoSetup> {
-    const env = _tu.getEnv(chain)
-    if (!env.testIdentityKey || !env.testFilePath)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'env.testIdentityKey and env.testFilePath',
-        'valid'
-      )
+  static async createTestWallet(
+    args: sdk.Chain | CreateTestWalletArgs
+  ): Promise<TestWalletNoSetup> {
+    let chain: sdk.Chain
+    let rootKeyHex: string
+    let filePath: string
+    let addLocalBackup = false
+    let setActiveClient = false
+    let useMySQLConnectionForClient = false
+    if (typeof args === 'string') {
+      chain = args
+      const env = _tu.getEnv(chain)
+      if (!env.testIdentityKey || !env.testFilePath) {
+        throw new sdk.WERR_INVALID_PARAMETER(
+          'env.testIdentityKey and env.testFilePath',
+          'valid'
+        )
+      }
+      rootKeyHex = env.devKeys[env.testIdentityKey!]
+      filePath = env.testFilePath
+    } else {
+      chain = args.chain
+      rootKeyHex = args.rootKeyHex
+      filePath = args.filePath
+      addLocalBackup = args.addLocalBackup === true
+      setActiveClient = args.setActiveClient === true
+      useMySQLConnectionForClient = args.useMySQLConnectionForClient === true
+    }
 
-    const databaseName = path.parse(env.testFilePath!).name
-    const rootKeyHex = env.devKeys[env.testIdentityKey!]
+    const databaseName = path.parse(filePath).name
     const setup = await _tu.createSQLiteTestWallet({
-      filePath: env.testFilePath!,
+      filePath,
       rootKeyHex,
       databaseName,
       chain
     })
-    const localStorageIdentityKey = setup.storage.getActiveStore()
+    setup.localStorageIdentityKey = setup.storage.getActiveStore()
 
-    const endpointUrl =
-      chain === 'main'
-        ? 'https://storage.babbage.systems'
-        : 'https://staging-storage.babbage.systems'
-
-    const client = new StorageClient(setup.wallet, endpointUrl)
-    //await setup.wallet.storage.addWalletStorageProvider(client)
-
-    const backupName = `${databaseName}_backup`
-    const backupPath = env.testFilePath!.replace(databaseName, backupName)
-    const localBackup = new StorageKnex({
-      ...StorageKnex.defaultOptions(),
-      knex: _tu.createLocalSQLite(backupPath),
-      chain
-    })
-    await localBackup.migrate(backupName, randomBytesHex(33))
-    const backupSettings = await localBackup.makeAvailable()
-    await setup.wallet.storage.addWalletStorageProvider(localBackup)
-
-    const log = await setup.storage.setActive(localStorageIdentityKey)
-    console.log(log)
-
-    const basket = verifyOne(
-      await setup.activeStorage.findOutputBaskets({
-        partial: {
-          userId: setup.storage.getActiveUser().userId,
-          name: 'default'
-        }
+    let client: sdk.WalletStorageProvider
+    if (useMySQLConnectionForClient) {
+      const env = _tu.getEnv(chain)
+      if (!env.cloudMySQLConnection)
+        throw new sdk.WERR_INVALID_PARAMETER(
+          'env.cloundMySQLConnection',
+          'valid'
+        )
+      const connection = JSON.parse(env.cloudMySQLConnection)
+      client = new StorageKnex({
+        ...StorageKnex.defaultOptions(),
+        knex: _tu.createMySQLFromConnection(connection),
+        chain: env.chain
       })
-    )
-    if (
-      basket.minimumDesiredUTXOValue !== 3 ||
-      basket.numberOfDesiredUTXOs < 32
-    ) {
-      await setup.activeStorage.updateOutputBasket(basket.basketId, {
-        minimumDesiredUTXOValue: 3,
-        numberOfDesiredUTXOs: 32
+    } else {
+      const endpointUrl =
+        chain === 'main'
+          ? 'https://storage.babbage.systems'
+          : 'https://staging-storage.babbage.systems'
+
+      client = new StorageClient(setup.wallet, endpointUrl)
+    }
+    setup.clientStorageIdentityKey = (
+      await client.makeAvailable()
+    ).storageIdentityKey
+    await setup.wallet.storage.addWalletStorageProvider(client)
+
+    if (addLocalBackup) {
+      const backupName = `${databaseName}_backup`
+      const backupPath = filePath.replace(databaseName, backupName)
+      const localBackup = new StorageKnex({
+        ...StorageKnex.defaultOptions(),
+        knex: _tu.createLocalSQLite(backupPath),
+        chain
       })
+      await localBackup.migrate(backupName, randomBytesHex(33))
+      setup.localBackupStorageIdentityKey = (
+        await localBackup.makeAvailable()
+      ).storageIdentityKey
+      await setup.wallet.storage.addWalletStorageProvider(localBackup)
     }
 
-    const log2 = await setup.storage.updateBackups()
-    console.log(log2)
+    // SETTING ACTIVE
+    // SETTING ACTIVE
+    // SETTING ACTIVE
+    const log = await setup.storage.setActive(
+      setActiveClient
+        ? setup.clientStorageIdentityKey
+        : setup.localStorageIdentityKey
+    )
+    console.log(log)
+
+    let needsBackup = false
+
+    if (setup.storage.getActiveStore() === setup.localStorageIdentityKey) {
+      const basket = verifyOne(
+        await setup.activeStorage.findOutputBaskets({
+          partial: {
+            userId: setup.storage.getActiveUser().userId,
+            name: 'default'
+          }
+        })
+      )
+      if (
+        basket.minimumDesiredUTXOValue !== 5 ||
+        basket.numberOfDesiredUTXOs < 32
+      ) {
+        needsBackup = true
+        await setup.activeStorage.updateOutputBasket(basket.basketId, {
+          minimumDesiredUTXOValue: 5,
+          numberOfDesiredUTXOs: 32
+        })
+      }
+    }
 
     const balance = await setup.wallet.balance()
 
     if (balance.total < 1000) {
       throw new sdk.WERR_INSUFFICIENT_FUNDS(1000, 1000 - balance.total)
     }
+
     if (balance.utxos.length <= 10) {
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'change utxos count',
-        'greater than 10'
-      )
+      const args: CreateActionArgs = {
+        description: 'spread change'
+      }
+      await setup.wallet.createAction(args)
+      needsBackup = true
+    }
+
+    if (needsBackup) {
+      const log2 = await setup.storage.updateBackups()
+      console.log(log2)
     }
 
     return setup
@@ -1753,6 +1819,9 @@ export interface TestWallet<T> extends TestWalletOnly {
   services: Services
   monitor: Monitor
   wallet: Wallet
+  localStorageIdentityKey?: string
+  clientStorageIdentityKey?: string
+  localBackupStorageIdentityKey?: string
 }
 
 export interface TestWalletOnly {
@@ -2456,4 +2525,13 @@ export async function logInput(
 
 export function logBasket(basket: TableOutputBasket): string {
   return `\n-- Basket --\nName: ${basket.name}\n`
+}
+
+export interface CreateTestWalletArgs {
+  chain: sdk.Chain
+  rootKeyHex: string
+  filePath: string
+  addLocalBackup?: boolean
+  setActiveClient?: boolean
+  useMySQLConnectionForClient?: boolean
 }
