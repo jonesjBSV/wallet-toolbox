@@ -260,11 +260,17 @@ export function isHexString(s: string): boolean {
   return true
 }
 
+/**
+ * @typedef {string & { minLength: 5, maxLength: 2000 }} DescriptionString5to2000Bytes
+ * A string used for descriptions, with a length between 5 and 2000 characters.
+ */
+export type DescriptionString5to2000Bytes = string
+
 export interface ValidWalletSignerArgs {}
 
 export interface ValidCreateActionInput {
   outpoint: OutPoint
-  inputDescription: DescriptionString5to50Bytes
+  inputDescription: DescriptionString5to2000Bytes
   sequenceNumber: PositiveIntegerOrZero
   unlockingScript?: HexString
   unlockingScriptLength: PositiveInteger
@@ -295,7 +301,7 @@ export function validateCreateActionInput(
       i.inputDescription,
       'inputDescription',
       5,
-      50
+      2000
     ),
     unlockingScript,
     unlockingScriptLength,
@@ -307,7 +313,7 @@ export function validateCreateActionInput(
 export interface ValidCreateActionOutput {
   lockingScript: HexString
   satoshis: SatoshiValue
-  outputDescription: DescriptionString5to50Bytes
+  outputDescription: DescriptionString5to2000Bytes
   basket?: BasketStringUnder300Bytes
   customInstructions?: string
   tags: BasketStringUnder300Bytes[]
@@ -323,7 +329,7 @@ export function validateCreateActionOutput(
       o.outputDescription,
       'outputDescription',
       5,
-      50
+      2000
     ),
     basket: validateOptionalBasket(o.basket),
     customInstructions: o.customInstructions,
@@ -394,7 +400,7 @@ export interface ValidProcessActionArgs extends ValidWalletSignerArgs {
 }
 
 export interface ValidCreateActionArgs extends ValidProcessActionArgs {
-  description: DescriptionString5to50Bytes
+  description: DescriptionString5to2000Bytes
   inputBEEF?: BEEF
   inputs: sdk.ValidCreateActionInput[]
   outputs: sdk.ValidCreateActionOutput[]
@@ -425,7 +431,7 @@ export function validateCreateActionArgs(
   args: CreateActionArgs
 ): ValidCreateActionArgs {
   const vargs: ValidCreateActionArgs = {
-    description: validateStringLength(args.description, 'description', 5, 50),
+    description: validateStringLength(args.description, 'description', 5, 2000),
     inputBEEF: args.inputBEEF,
     inputs: defaultEmpty(args.inputs).map(i => validateCreateActionInput(i)),
     outputs: defaultEmpty(args.outputs).map(o => validateCreateActionOutput(o)),
@@ -590,7 +596,7 @@ export function validateInternalizeOutput(
 export interface ValidInternalizeActionArgs extends ValidWalletSignerArgs {
   tx: AtomicBEEF
   outputs: InternalizeOutput[]
-  description: DescriptionString5to50Bytes
+  description: DescriptionString5to2000Bytes
   labels: LabelStringUnder300Bytes[]
   seekPermission: BooleanDefaultTrue
 }
@@ -611,7 +617,7 @@ export function validateInternalizeActionArgs(
   const vargs: ValidInternalizeActionArgs = {
     tx: args.tx,
     outputs: args.outputs.map(o => validateInternalizeOutput(o)),
-    description: validateStringLength(args.description, 'description', 5, 50),
+    description: validateStringLength(args.description, 'description', 5, 2000),
     labels: (args.labels || []).map(t => validateLabel(t)),
     seekPermission: defaultTrue(args.seekPermission)
   }

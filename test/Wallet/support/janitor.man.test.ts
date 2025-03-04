@@ -20,7 +20,7 @@ describe('janitor tests', () => {
     const services = new Services(env.chain)
 
     const identityKey =
-      '03894bda9b11626c0280ec28f0d0193e9bd34446679ed1b32e5621e94e0e807073'
+      '0304985aa632dde471d3bf1ffb030d0af253fe65f5d186bb4cf878ca0fbee54c1c'
     const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(
       storage,
       services,
