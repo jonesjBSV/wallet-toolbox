@@ -1,4 +1,4 @@
-import { Beef, defaultHttpClient, HexString, HttpClient, Utils } from '@bsv/sdk'
+import { Beef, defaultHttpClient, HexString, HttpClient, MerklePath, Utils } from '@bsv/sdk'
 import { doubleSha256BE, sdk, wait } from '../../index.client'
 import { ReqHistoryNote } from '../../sdk'
 
@@ -188,6 +188,124 @@ export class Bitails {
     })
     return r
   }
+
+  async getMerklePath(
+    txid: string,
+    services: sdk.WalletServices
+  ): Promise<sdk.GetMerklePathResult> {
+    const r: sdk.GetMerklePathResult = { name: 'BitailsTsc', notes: [] }
+
+    const headers = this.getHttpHeaders()
+    const requestOptions = {
+      method: 'GET',
+      headers
+    }
+
+    for (let retry = 0; retry < 2; retry++) {
+      try {
+        /*
+        const response = await this.httpClient.request<
+          string
+        >(`${this.URL}/tx/${txid}/proof/tsc`, requestOptions)
+
+        if (response.statusText === 'Too Many Requests' && retry < 2) {
+          r.notes!.push({
+            what: 'getMerklePathRetry',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
+          await wait(2000)
+          continue
+        }
+
+        if (response.status === 404 && response.statusText === 'Not Found') {
+          r.notes!.push({
+            what: 'getMerklePathNotFound',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
+          return r
+        }
+
+        if (
+          !response.ok ||
+          response.status !== 200 ||
+          response.statusText !== 'OK'
+        ) {
+          r.notes!.push({
+            what: 'getMerklePathBadStatus',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
+          throw new sdk.WERR_INVALID_PARAMETER(
+            'txid',
+            `valid transaction. '${txid}' response ${response.statusText}`
+          )
+        }
+
+        if (!response.data) {
+          // Unmined, proof not yet available.
+          r.notes!.push({
+            what: 'getMerklePathNoData',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
+          return r
+        }
+
+        if (!Array.isArray(response.data)) response.data = [response.data]
+
+        if (response.data.length != 1) return r
+
+        const p = response.data[0]
+        const header = await services.hashToHeader(p.target)
+        if (header) {
+          const proof = {
+            index: p.index,
+            nodes: p.nodes,
+            height: header.height
+          }
+          //r.merklePath = convertProofToMerklePath(txid, proof)
+          r.header = header
+          r.notes!.push({
+            what: 'getMerklePathSuccess',
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
+        } else {
+          r.notes!.push({
+            what: 'getMerklePathNoHeader',
+            target: p.target,
+            name: r.name,
+            status: response.status,
+            statusText: response.statusText
+          })
+          throw new sdk.WERR_INVALID_PARAMETER(
+            'blockhash',
+            'a valid on-chain block hash'
+          )
+        }
+          */
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        r.notes!.push({
+          what: 'getMerklePathError',
+          name: r.name,
+          code: e.code,
+          description: e.description
+        })
+        r.error = e
+      }
+      return r
+    }
+    r.notes!.push({ what: 'getMerklePathInternal', name: r.name })
+    throw new sdk.WERR_INTERNAL()
+  }
 }
 
 interface BitailsPostRawsResult {
@@ -196,4 +314,61 @@ interface BitailsPostRawsResult {
     code: number
     message: string
   }
+}
+
+export interface BitailsMerkleProofBranch {
+  pos: 'L' | 'R'
+  hash: string
+}
+
+export interface BitailsMerkleProof {
+  blockhash: string
+  hash: string
+  merkleRoot: string
+  branches: BitailsMerkleProofBranch[]
+}
+
+export function convertProofToMerklePath(
+  blockHeight: number,
+  proof: BitailsMerkleProof
+): MerklePath {
+  const treeHeight = proof.branches.length
+  type Leaf = {
+    offset: number
+    hash?: string
+    txid?: boolean
+    duplicate?: boolean
+  }
+  const path: Leaf[][] = Array(treeHeight)
+    .fill(0)
+    .map(() => []);
+
+  for (let level = 0; level < treeHeight; level++) {
+    const branch = proof.branches[level]
+    path[level].push({
+      offset: branch.pos === 'L' ? 0 : 1, // These need adjusting...
+      hash: branch.hash.length === 64 ? branch.hash : undefined,
+      txid: false,
+      duplicate: branch.hash.length !== 64 ? true : undefined
+    })
+  }
+  // Adjust the offsets
+  let offset = 0
+  for (let level = treeHeight - 1; level >= 0; level--) {
+    const leaf = path[level][0]
+    offset = leaf.offset += offset * 2
+  }
+  // Add txid leaf
+  const b0 = path[0][0]
+  const isLeft = (b0.offset & 1) === 0
+  const leaf: Leaf = {
+    offset: b0.offset + (isLeft ? -1 : 1),
+    hash: proof.hash,
+    txid: true,
+  }
+  if (isLeft)
+    path[0].unshift(leaf);
+  else
+    path[0].push(leaf);
+  return new MerklePath(blockHeight, path)
 }

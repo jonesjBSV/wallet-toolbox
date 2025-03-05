@@ -135,7 +135,7 @@ export type ReqHistoryNote = {
 /**
  * `listOutputs` special operation basket name value.
  *
- * Returns wallets current change balance in the `totalOutputs` result property.
+ * Returns wallet's current change balance in the `totalOutputs` result property.
  * The `outputs` result property will always be an empty array.
  */
 export const specOpWalletBalance =

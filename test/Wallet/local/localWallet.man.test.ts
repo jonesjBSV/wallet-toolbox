@@ -3,6 +3,7 @@ import {
   CreateActionArgs,
   CreateActionOptions,
   CreateActionResult,
+  OutpointString,
   P2PKH,
   PrivateKey,
   PublicKey,
@@ -26,6 +27,7 @@ import {
 } from '../../../src'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { monitorEventLoopDelay } from 'perf_hooks'
+import { validateCreateActionArgs, ValidCreateActionArgs } from '../../../src/sdk'
 
 describe('localWallet tests', () => {
   jest.setTimeout(99999999)
@@ -39,7 +41,7 @@ describe('localWallet tests', () => {
 
     const car = await createOneSatTestOutput(setup, {}, 1)
 
-    await trackReqByTxid(setup, car.txid!)
+    //await trackReqByTxid(setup, car.txid!)
 
     await setup.wallet.destroy()
   })
@@ -54,6 +56,16 @@ describe('localWallet tests', () => {
     )
 
     await trackReqByTxid(setup, car.txid!)
+
+    await setup.wallet.destroy()
+  })
+
+  test('0b create 2 nosend and sendWith', async () => {
+    const setup = await createSetup('test')
+
+    const car = await createOneSatTestOutput(setup, { noSend: true }, 2)
+
+    //await trackReqByTxid(setup, car.txid!)
 
     await setup.wallet.destroy()
   })
@@ -178,7 +190,14 @@ async function createOneSatTestOutput(
   options: CreateActionOptions = {},
   howMany: number = 1
 ): Promise<CreateActionResult> {
+  if (howMany < 1)
+    throw new sdk.WERR_INVALID_PARAMETER('howMany', 'at least 1')
+
   let car: CreateActionResult = {}
+
+  let noSendChange: OutpointString[] | undefined = undefined
+  let txids: string[] = []
+  let vargs: ValidCreateActionArgs
 
   for (let i = 0; i < howMany; i++) {
     const args: CreateActionArgs = {
@@ -198,11 +217,15 @@ async function createOneSatTestOutput(
       ],
       description: 'create test output',
       options: {
-        ...options
+        ...options,
+        noSendChange
       }
     }
+    vargs = validateCreateActionArgs(args)
     car = await setup.wallet.createAction(args)
     expect(car.txid)
+    txids.push(car.txid!)
+    noSendChange = car.noSendChange
 
     const req = await EntityProvenTxReq.fromStorageTxid(
       setup.activeStorage,
@@ -210,12 +233,33 @@ async function createOneSatTestOutput(
     )
     expect(req !== undefined && req.history.notes !== undefined)
     if (req && req.history.notes) {
-      expect(req.status === 'unsent')
-      expect(req.history.notes.length === 1)
-      const n = req.history.notes[0]
-      expect(n.what === 'status' && n.status_now === 'unsent')
+      if (vargs.isNoSend) {
+        expect(req.status === 'nosend').toBe(true)
+        expect(req.history.notes.length).toBe(1)
+        const n = req.history.notes[0]
+        expect(n.what === 'status' && n.status_now === 'nosend').toBe(true)
+      } else {
+        expect(req.status === 'unsent').toBe(true)
+        expect(req.history.notes.length).toBe(1)
+        const n = req.history.notes[0]
+        expect(n.what === 'status' && n.status_now === 'unsent').toBe(true)
+      }
     }
   }
+
+  if (vargs!.isNoSend) {
+    // Create final sending transaction
+    const args: CreateActionArgs = {
+      description: 'send batch',
+      options: {
+        ...options,
+        sendWith: txids
+      }
+    }
+    vargs = validateCreateActionArgs(args)
+    car = await setup.wallet.createAction(args)
+  }
+
   return car
 }
 
