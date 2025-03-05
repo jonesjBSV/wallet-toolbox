@@ -1,9 +1,5 @@
 import { Beef, defaultHttpClient, HexString, HttpClient, Utils } from '@bsv/sdk'
-import {
-  doubleSha256BE,
-  sdk,
-  wait
-} from '../../index.client'
+import { doubleSha256BE, sdk, wait } from '../../index.client'
 import { ReqHistoryNote } from '../../sdk'
 
 export interface BitailsConfig {
@@ -25,9 +21,10 @@ export class Bitails {
   constructor(chain: sdk.Chain = 'main', config: BitailsConfig = {}) {
     const { apiKey, httpClient } = config
     this.chain = chain
-    this.URL = chain === 'main'
-     ? `https://api.bitails.io/`
-     : `https://test-api.bitails.io/`
+    this.URL =
+      chain === 'main'
+        ? `https://api.bitails.io/`
+        : `https://test-api.bitails.io/`
     this.httpClient = httpClient ?? defaultHttpClient()
     this.apiKey = apiKey ?? ''
   }
@@ -54,8 +51,10 @@ export class Bitails {
    * @returns
    */
   async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> {
-
-    const nn = () => ({ name: 'BitailsPostBeef', when: new Date().toISOString() })
+    const nn = () => ({
+      name: 'BitailsPostBeef',
+      when: new Date().toISOString()
+    })
     const nne = () => ({ ...nn(), beef: beef.toHex(), txids: txids.join(',') })
 
     const note: ReqHistoryNote = { ...nn(), what: 'postBeef' }
@@ -71,32 +70,30 @@ export class Bitails {
     r.notes!.unshift(note)
     if (r.status !== 'success')
       r.notes!.push({ ...nne(), what: 'postBeefError' })
-    else
-      r.notes!.push({ ...nn(), what: 'postBeefSuccess' })
+    else r.notes!.push({ ...nn(), what: 'postBeefSuccess' })
 
     return r
   }
 
   /**
    * @param raws Array of raw transactions to broadcast as hex strings
-   * @returns 
+   * @returns
    */
   async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> {
-
     const r: sdk.PostBeefResult = {
       name: 'BitailsPostRaws',
       status: 'success',
       txidResults: [],
       notes: []
     }
-    
+
     for (const raw of raws) {
       const txid = Utils.toHex(doubleSha256BE(Utils.toArray(raw, 'hex')))
       r.txidResults.push({
-          txid,
-          status: 'success',
-          notes: []
-        })
+        txid,
+        status: 'success',
+        notes: []
+      })
     }
 
     const headers = this.getHttpHeaders()
@@ -108,12 +105,20 @@ export class Bitails {
     const requestOptions = {
       method: 'POST',
       headers,
-      data 
+      data
     }
 
     const url = `${this.URL}tx/broadcast/multi`
-    const nn = () => ({ name: 'BitailsPostRawTx', when: new Date().toISOString() })
-    const nne = () => ({ ...nn(), raws: raws.join(','), txids: r.txidResults.map(r => r.txid).join(','), url })
+    const nn = () => ({
+      name: 'BitailsPostRawTx',
+      when: new Date().toISOString()
+    })
+    const nne = () => ({
+      ...nn(),
+      raws: raws.join(','),
+      txids: r.txidResults.map(r => r.txid).join(','),
+      url
+    })
 
     const retryLimit = 5
     for (let retry = 0; retry < retryLimit; retry++) {
@@ -131,14 +136,24 @@ export class Bitails {
           // status: 201, statusText: 'Created'
           const btrs: BitailsPostRawsResult[] = response.data
           for (const rt of r.txidResults) {
-            const btr = btrs.find(btr => btr.txid = rt.txid)
+            const btr = btrs.find(btr => (btr.txid = rt.txid))
             if (!btr) {
               rt.status = 'error'
-              rt.notes!.push({ ...nne(), what: 'postRawsMissingResult', txid: rt.txid })
+              rt.notes!.push({
+                ...nne(),
+                what: 'postRawsMissingResult',
+                txid: rt.txid
+              })
             } else if (btr.error) {
               // code: -25, message: 'missing-inputs'
               rt.status = 'error'
-              rt.notes!.push({ ...nne(), what: 'postRawsError', txid: rt.txid, code: btr.error.code, message: btr.error.message })
+              rt.notes!.push({
+                ...nne(),
+                what: 'postRawsError',
+                txid: rt.txid,
+                code: btr.error.code,
+                message: btr.error.message
+              })
             } else {
               rt.notes!.push({ ...nn(), what: 'postRawsSuccess' })
             }
@@ -176,9 +191,9 @@ export class Bitails {
 }
 
 interface BitailsPostRawsResult {
-  txid: string,
+  txid: string
   error?: {
-    code: number,
+    code: number
     message: string
   }
 }

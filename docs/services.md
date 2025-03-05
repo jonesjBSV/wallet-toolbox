@@ -25,6 +25,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | --- |
 | [ArcConfig](#interface-arcconfig) |
 | [ArcMinerGetTxData](#interface-arcminergettxdata) |
+| [BitailsConfig](#interface-bitailsconfig) |
 | [ExchangeRatesIoApi](#interface-exchangeratesioapi) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -117,6 +118,34 @@ export interface ArcMinerGetTxData {
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Interface: BitailsConfig
+
+```ts
+export interface BitailsConfig {
+    apiKey?: string;
+    httpClient?: HttpClient;
+}
+```
+
+###### Property apiKey
+
+Authentication token for BitTails API
+
+```ts
+apiKey?: string
+```
+
+###### Property httpClient
+
+The HTTP client used to make requests to the API.
+
+```ts
+httpClient?: HttpClient
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Interface: ExchangeRatesIoApi
 
 ```ts
@@ -137,6 +166,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | |
 | --- |
 | [ARC](#class-arc) |
+| [Bitails](#class-bitails) |
 | [SdkWhatsOnChain](#class-sdkwhatsonchain) |
 | [ServiceCollection](#class-servicecollection) |
 | [Services](#class-services) |
@@ -151,7 +181,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 Represents an ARC transaction broadcaster.
 
 ```ts
-export default class ARC {
+export class ARC {
     readonly URL: string;
     readonly apiKey: string | undefined;
     readonly deploymentId: string;
@@ -239,6 +269,49 @@ See also: [PostTxResultForTxid](./client.md#interface-posttxresultfortxid)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Class: Bitails
+
+```ts
+export class Bitails {
+    readonly chain: sdk.Chain;
+    readonly apiKey: string;
+    readonly URL: string;
+    readonly httpClient: HttpClient;
+    constructor(chain: sdk.Chain = "main", config: BitailsConfig = {}) 
+    getHttpHeaders(): Record<string, string> 
+    async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
+    async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> 
+}
+```
+
+See also: [BitailsConfig](./services.md#interface-bitailsconfig), [Chain](./client.md#type-chain), [PostBeefResult](./client.md#interface-postbeefresult)
+
+###### Method postBeef
+
+Bitails does not natively support a postBeef end-point aware of multiple txids of interest in the Beef.
+
+Send rawTx in `txids` order from beef.
+
+```ts
+async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
+```
+See also: [PostBeefResult](./client.md#interface-postbeefresult)
+
+###### Method postRaws
+
+```ts
+async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> 
+```
+See also: [PostBeefResult](./client.md#interface-postbeefresult)
+
+Argument Details
+
++ **raws**
+  + Array of raw transactions to broadcast as hex strings
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Class: SdkWhatsOnChain
 
 Represents a chain tracker based on What's On Chain .
@@ -314,6 +387,7 @@ export class Services implements sdk.WalletServices {
     options: sdk.WalletServicesOptions;
     whatsonchain: WhatsOnChain;
     arc: ARC;
+    bitails: Bitails;
     getMerklePathServices: ServiceCollection<sdk.GetMerklePathService>;
     getRawTxServices: ServiceCollection<sdk.GetRawTxService>;
     postBeefServices: ServiceCollection<sdk.PostBeefService>;
@@ -342,7 +416,7 @@ export class Services implements sdk.WalletServices {
 }
 ```
 
-See also: [ARC](./services.md#class-arc), [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
+See also: [ARC](./services.md#class-arc), [Bitails](./services.md#class-bitails), [BlockHeader](./client.md#interface-blockheader), [Chain](./client.md#type-chain), [FiatExchangeRates](./client.md#interface-fiatexchangerates), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [GetMerklePathService](./client.md#type-getmerklepathservice), [GetRawTxResult](./client.md#interface-getrawtxresult), [GetRawTxService](./client.md#type-getrawtxservice), [GetUtxoStatusOutputFormat](./client.md#type-getutxostatusoutputformat), [GetUtxoStatusResult](./client.md#interface-getutxostatusresult), [GetUtxoStatusService](./client.md#type-getutxostatusservice), [PostBeefResult](./client.md#interface-postbeefresult), [PostBeefService](./client.md#type-postbeefservice), [ServiceCollection](./services.md#class-servicecollection), [UpdateFiatExchangeRateService](./client.md#type-updatefiatexchangerateservice), [WalletServices](./client.md#interface-walletservices), [WalletServicesOptions](./client.md#interface-walletservicesoptions), [WhatsOnChain](./services.md#class-whatsonchain)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

@@ -1,5 +1,9 @@
 import { sdk, verifyOne } from '../../../src'
-import { specOpInvalidChange, specOpSetWalletChangeParams, specOpWalletBalance } from '../../../src/sdk'
+import {
+  specOpInvalidChange,
+  specOpSetWalletChangeParams,
+  specOpWalletBalance
+} from '../../../src/sdk'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('specOps tests', () => {
@@ -37,14 +41,22 @@ describe('specOps tests', () => {
   test('2 update default basket params', async () => {
     const setup = await createSetup('test')
 
-    const before = verifyOne(await setup.activeStorage.findOutputBaskets({ partial: { userId: setup.userId, name: 'default' }}))
+    const before = verifyOne(
+      await setup.activeStorage.findOutputBaskets({
+        partial: { userId: setup.userId, name: 'default' }
+      })
+    )
 
     const r = await setup.wallet.listOutputs({
       basket: specOpSetWalletChangeParams,
       tags: ['33', '6']
     })
 
-    const after = verifyOne(await setup.activeStorage.findOutputBaskets({ partial: { userId: setup.userId, name: 'default' }}))
+    const after = verifyOne(
+      await setup.activeStorage.findOutputBaskets({
+        partial: { userId: setup.userId, name: 'default' }
+      })
+    )
 
     expect(r.totalOutputs).toBe(0)
     expect(r.outputs.length).toBe(0)
@@ -54,7 +66,10 @@ describe('specOps tests', () => {
     // Restore original values...
     await setup.wallet.listOutputs({
       basket: specOpSetWalletChangeParams,
-      tags: [before.numberOfDesiredUTXOs.toString(), before.minimumDesiredUTXOValue.toString()]
+      tags: [
+        before.numberOfDesiredUTXOs.toString(),
+        before.minimumDesiredUTXOValue.toString()
+      ]
     })
 
     await setup.wallet.destroy()
