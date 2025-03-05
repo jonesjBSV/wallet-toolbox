@@ -197,8 +197,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         }
         if (response.ok) {
           const txid = response.data
-          r.notes!.push({ ...nn(), what: 'postRawTxRateSuccess' })
-          return r
+          r.notes!.push({ ...nn(), what: 'postRawTxSuccess' })
         } else {
           r.status = 'error'
           const n: ReqHistoryNote = {
@@ -233,6 +232,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         })
         r.data = `${e.code} ${e.description}`
       }
+      return r
     }
     r.status = 'error'
     r.notes!.push({

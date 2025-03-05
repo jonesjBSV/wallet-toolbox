@@ -35,7 +35,7 @@ function defaultDeploymentId(): string {
 /**
  * Represents an ARC transaction broadcaster.
  */
-export default class ARC {
+export class ARC {
   readonly URL: string
   readonly apiKey: string | undefined
   readonly deploymentId: string
