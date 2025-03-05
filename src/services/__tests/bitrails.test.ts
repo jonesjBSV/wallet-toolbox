@@ -1,75 +1,51 @@
-import { BitailsMerkleProof, convertProofToMerklePath } from "../providers/Bitails"
+import { convertProofToMerklePath, sdk, Services, TscMerkleProofApi } from "../../index.client"
+import { Bitails, BitailsMerkleProof } from "../providers/Bitails"
 
 describe('bitrails tests', () => {
     jest.setTimeout(99999999)
 
     test('0 verify merkle proof to merkle path', async () => {
-       const mp = convertProofToMerklePath(742198, proof1) 
-       const root = mp.computeRoot('c32597ddd7d8623d7eb1ddd854ab36541e037dc1f9f0ab7aaf55d3a1e5a17af0')
-       expect(root).toBe(proof1.merkleRoot)
+       const mp = convertProofToMerklePath('068f2ce0d01b5f1e7c7a07c209c3c67d583aeae83e11e92801b51c36f81d6b67', proof2)
+       const root = mp.computeRoot('068f2ce0d01b5f1e7c7a07c209c3c67d583aeae83e11e92801b51c36f81d6b67')
+       expect(root).toBe(proof2merkleRoot)
+    })
+
+    test('1 ', async () => {
+        const chain: sdk.Chain = 'main'
+        const bitails = new Bitails(chain)
+        const services = new Services(chain)
+
+        for (const txid of [
+        '068f2ce0d01b5f1e7c7a07c209c3c67d583aeae83e11e92801b51c36f81d6b67',
+        'a65c2663d817da6474f7805cf103be6259aae16b01468711552b737c41768c30',
+        '243fb25b94b5ef2f8554cd10d105005f51ff543d8b7a498c4e46ed304c3da24a'
+        ]) {
+            const mp = await bitails.getMerklePath(txid, services)
+            const root = mp.merklePath!.computeRoot(txid)
+            expect(root).toBe(proof2merkleRoot)
+        }
     })
 })
 
-const proof1: BitailsMerkleProof = {
-  "blockhash": "00000000000000001055c413778451e93e4ab0b4ee442900470abe777916da35",
-  "branches": [
-    {
-      "pos": "L",
-      "hash": "721de019439047ddf9e12b97bca5cd13fd268f5f98e87a9d3d36ab6ec75bd7b7"
-    },
-    {
-      "pos": "R",
-      "hash": "d84f9a2b20d422e752f67825d95898679dde0b27bb6beca93457f931df11e97b"
-    },
-    {
-      "pos": "L",
-      "hash": "c4f70a467c21815567e2f8757f1657a131ae7947e31e52d634cacf02e510bad9"
-    },
-    {
-      "pos": "R",
-      "hash": "62064a40c521dd7ae90b5e6c80c2b1af5c49255df3371867fc288eace572f0c8"
-    },
-    {
-      "pos": "R",
-      "hash": "687704a7494d2de9c05b51a87f28b64dac3bd62210794ab75d572a8d12c5ec91"
-    },
-    {
-      "pos": "R",
-      "hash": "0ba088aa95b3124ed707b2934f7bb29cae08db34b5f5c5d1e38de5a61f8ff054"
-    },
-    {
-      "pos": "R",
-      "hash": "bfe1a2e4e538d9e2116f4dcbab8a0772e8add62912cf9c1fc4265d47a404187c"
-    },
-    {
-      "pos": "R",
-      "hash": "9569c0d002e2dcdddd2c2da0ef13c3a8b7fe0acf551da8758d0e1543f296e63d"
-    },
-    {
-      "pos": "R",
-      "hash": "a7295ed632878ffed3bfb8546d01b69b0706817959dd6a3056c6e86092ecc18c"
-    },
-    {
-      "pos": "R",
-      "hash": "ca0b8b206113a74fcfba0253e7955e0a8b5156b2d12b047b844c3ff34523d041"
-    },
-    {
-      "pos": "R",
-      "hash": "9411902fe97e0830742444c5ddd1140bc6d6e8e7704b9bad30de2bf41c4632f9"
-    },
-    {
-      "pos": "R",
-      "hash": "22db03d45958fe89b5988c88b7765c8e2aad92526cd620f3d2a8f912e265b1d5"
-    },
-    {
-      "pos": "R",
-      "hash": "42ab5991b070de02dd215ca953b50add469f928414b17d9e244d0c9321817a7c"
-    },
-    {
-      "pos": "R",
-      "hash": "2686fa8d0b647a1b2283a610ffabed6c6c9f5447b9fc21c640974bd47b0a08b2"
-    }
-  ],
-  "hash": "c32597ddd7d8623d7eb1ddd854ab36541e037dc1f9f0ab7aaf55d3a1e5a17af0",
-  "merkleRoot": "22b294aac4c3f6f4fdae30dc4f46f68f90feb94f03531c32bcf2ce33be5d4cb0"
-}
+const proof2merkleRoot = "22b294aac4c3f6f4fdae30dc4f46f68f90feb94f03531c32bcf2ce33be5d4cb0"
+
+const proof2: TscMerkleProofApi = {
+    "index": 9443,
+    height: 742198,
+    "nodes": [
+      "463c37bf0ccde321b1dc8ee857e03b8eafe76e6b1803cc3a774cfef61c50c37b",
+      "debba259db996d6ca7c4fcfd168d3afe6bfdddab93298466d53ed0421634f405",
+      "6335d744771789ef69545b0f449bcde92ae7b9920e775a591fecc7fcfa37846e",
+      "38366b3723e8f166fbfe5d7528a57885f47aa25a8296c0679832a95c1e6d2f61",
+      "5a999d2186d10a787c3397938fd97a4b3e833aab8cff2ce24cfce7589b9b706b",
+      "db97fbd581b8769602c6079e7fe10eb34cd99b844598b31441018ac21babd7e7",
+      "583e044e2bbc6b19993e73c3363a8ce3b4580a54510524489daadc6c82205f5a",
+      "ba5d97e4fbedb84682f65b254c56f5826f1dc65bd376dc1660f23b81c4035b1d",
+      "bfa39460ee7a8293698e41134a53cfc5ba0054416ca092d79ecbf93ae2b8b71b",
+      "8f3d186687f3f8186c4cbddcf263bbb4b58e3c279e55f9def048076faff0cc83",
+      "287790c47a0044e8e51ee60df33d4d23b972b5a51d8e9be7ac8b635b9f1e7ffc",
+      "19444e7ad68681d847d4d88989efa5f13afa46d7cbb47e8ce91876555c3e414d",
+      "6d71f472dabd52216a3cb24090d580baed96497b449876c199f48ed07f5ea2b0",
+      "af4c17b677b0c7b4d85e7331b4e43fc16f9a7024c9417d7854c55a096ac098b3"
+    ]
+  }
