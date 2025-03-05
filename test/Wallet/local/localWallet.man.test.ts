@@ -27,7 +27,10 @@ import {
 } from '../../../src'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { monitorEventLoopDelay } from 'perf_hooks'
-import { validateCreateActionArgs, ValidCreateActionArgs } from '../../../src/sdk'
+import {
+  validateCreateActionArgs,
+  ValidCreateActionArgs
+} from '../../../src/sdk'
 
 describe('localWallet tests', () => {
   jest.setTimeout(99999999)
@@ -190,8 +193,7 @@ async function createOneSatTestOutput(
   options: CreateActionOptions = {},
   howMany: number = 1
 ): Promise<CreateActionResult> {
-  if (howMany < 1)
-    throw new sdk.WERR_INVALID_PARAMETER('howMany', 'at least 1')
+  if (howMany < 1) throw new sdk.WERR_INVALID_PARAMETER('howMany', 'at least 1')
 
   let car: CreateActionResult = {}
 

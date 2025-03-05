@@ -72,7 +72,10 @@ export class Services implements sdk.WalletServices {
     this.postBeefServices = new ServiceCollection<sdk.PostBeefService>()
       //.add({ name: 'TaalArcBeef', service: this.arc.postBeef.bind(this.arc) })
       //.add({ name: 'WhatsOnChain', service: this.whatsonchain.postBeef.bind(this.whatsonchain) })
-      .add({ name: 'Bitails', service: this.bitails.postBeef.bind(this.bitails) })
+      .add({
+        name: 'Bitails',
+        service: this.bitails.postBeef.bind(this.bitails)
+      })
 
     this.getUtxoStatusServices =
       new ServiceCollection<sdk.GetUtxoStatusService>().add({

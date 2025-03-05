@@ -14,11 +14,12 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [ArcConfig](#interface-arcconfig) | [PostBeefResult](#interface-postbeefresult) | [TableTransaction](#interface-tabletransaction) |
-| [ArcMinerGetTxData](#interface-arcminergettxdata) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [TableTxLabel](#interface-tabletxlabel) |
-| [AuthId](#interface-authid) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TableTxLabelMap](#interface-tabletxlabelmap) |
-| [BaseBlockHeader](#interface-baseblockheader) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TableUser](#interface-tableuser) |
-| [BitailsConfig](#interface-bitailsconfig) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [TaskPurgeParams](#interface-taskpurgeparams) |
+| [ArcConfig](#interface-arcconfig) | [PendingStorageInput](#interface-pendingstorageinput) | [TableSyncState](#interface-tablesyncstate) |
+| [ArcMinerGetTxData](#interface-arcminergettxdata) | [PostBeefResult](#interface-postbeefresult) | [TableTransaction](#interface-tabletransaction) |
+| [AuthId](#interface-authid) | [PostBeefResultForTxidApi](#interface-postbeefresultfortxidapi) | [TableTxLabel](#interface-tabletxlabel) |
+| [BaseBlockHeader](#interface-baseblockheader) | [PostReqsToNetworkDetails](#interface-postreqstonetworkdetails) | [TableTxLabelMap](#interface-tabletxlabelmap) |
+| [BitailsConfig](#interface-bitailsconfig) | [PostReqsToNetworkResult](#interface-postreqstonetworkresult) | [TableUser](#interface-tableuser) |
+| [BitailsMerkleProof](#interface-bitailsmerkleproof) | [PostTxResultForTxid](#interface-posttxresultfortxid) | [TaskPurgeParams](#interface-taskpurgeparams) |
 | [BlockHeader](#interface-blockheader) | [PostTxResultForTxidError](#interface-posttxresultfortxiderror) | [TrxToken](#interface-trxtoken) |
 | [BsvExchangeRate](#interface-bsvexchangerate) | [PostTxsResult](#interface-posttxsresult) | [TscMerkleProofApi](#interface-tscmerkleproofapi) |
 | [CertOpsWallet](#interface-certopswallet) | [ProcessSyncChunkResult](#interface-processsyncchunkresult) | [TxScriptOffsets](#interface-txscriptoffsets) |
@@ -63,7 +64,6 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [OutPoint](#interface-outpoint) | [TableProvenTxReq](#interface-tableproventxreq) | [WalletStorageWriter](#interface-walletstoragewriter) |
 | [Paged](#interface-paged) | [TableProvenTxReqDynamics](#interface-tableproventxreqdynamics) | [XValidCreateActionOutput](#interface-xvalidcreateactionoutput) |
 | [PendingSignAction](#interface-pendingsignaction) | [TableSettings](#interface-tablesettings) |  |
-| [PendingStorageInput](#interface-pendingstorageinput) | [TableSyncState](#interface-tablesyncstate) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -260,6 +260,20 @@ The HTTP client used to make requests to the API.
 
 ```ts
 httpClient?: HttpClient
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: BitailsMerkleProof
+
+```ts
+export interface BitailsMerkleProof {
+    index: number;
+    txOrId: string;
+    target: string;
+    nodes: string[];
+}
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -3806,10 +3820,11 @@ export class Bitails {
     getHttpHeaders(): Record<string, string> 
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
     async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> 
+    async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
 }
 ```
 
-See also: [BitailsConfig](./services.md#interface-bitailsconfig), [Chain](./client.md#type-chain), [PostBeefResult](./client.md#interface-postbeefresult)
+See also: [BitailsConfig](./services.md#interface-bitailsconfig), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [PostBeefResult](./client.md#interface-postbeefresult), [WalletServices](./client.md#interface-walletservices)
 
 ###### Method postBeef
 

@@ -1,5 +1,17 @@
-import { Beef, defaultHttpClient, HexString, HttpClient, MerklePath, Utils } from '@bsv/sdk'
-import { convertProofToMerklePath, doubleSha256BE, sdk, wait } from '../../index.client'
+import {
+  Beef,
+  defaultHttpClient,
+  HexString,
+  HttpClient,
+  MerklePath,
+  Utils
+} from '@bsv/sdk'
+import {
+  convertProofToMerklePath,
+  doubleSha256BE,
+  sdk,
+  wait
+} from '../../index.client'
 import { ReqHistoryNote } from '../../sdk'
 
 export interface BitailsConfig {
@@ -190,10 +202,10 @@ export class Bitails {
   }
 
   /**
-   * 
-   * @param txid 
-   * @param services 
-   * @returns 
+   *
+   * @param txid
+   * @param services
+   * @returns
    */
   async getMerklePath(
     txid: string,
@@ -203,7 +215,12 @@ export class Bitails {
 
     const url = `${this.URL}/tx/${txid}/proof/tsc`
 
-    const nn = () => ({ name: 'BitailsProofTsc', when: new Date().toISOString(), txid, url })
+    const nn = () => ({
+      name: 'BitailsProofTsc',
+      when: new Date().toISOString(),
+      txid,
+      url
+    })
 
     const headers = this.getHttpHeaders()
     const requestOptions = {
@@ -213,9 +230,18 @@ export class Bitails {
 
     for (let retry = 0; retry < 2; retry++) {
       try {
-        const response = await this.httpClient.request<BitailsMerkleProof>(url, requestOptions)
+        const response = await this.httpClient.request<BitailsMerkleProof>(
+          url,
+          requestOptions
+        )
 
-        const nne = () => ({ ...nn(), txid, url , status: response.status, statusText: response.statusText })
+        const nne = () => ({
+          ...nn(),
+          txid,
+          url,
+          status: response.status,
+          statusText: response.statusText
+        })
 
         if (response.statusText === 'Too Many Requests' && retry < 2) {
           r.notes!.push({ ...nne(), what: 'getMerklePathRetry' })
@@ -225,7 +251,11 @@ export class Bitails {
 
         if (response.status === 404 && response.statusText === 'Not Found') {
           r.notes!.push({ ...nne(), what: 'getMerklePathNotFound' })
-        } else if ( !response.ok || response.status !== 200 || response.statusText !== 'OK') {
+        } else if (
+          !response.ok ||
+          response.status !== 200 ||
+          response.statusText !== 'OK'
+        ) {
           r.notes!.push({ ...nne(), what: 'getMerklePathBadStatus' })
         } else if (!response.data) {
           // Unmined, proof not yet available.
@@ -234,17 +264,30 @@ export class Bitails {
           const p = response.data
           const header = await services.hashToHeader(p.target)
           if (header) {
-            const proof = { index: p.index, nodes: p.nodes, height: header.height }
+            const proof = {
+              index: p.index,
+              nodes: p.nodes,
+              height: header.height
+            }
             r.merklePath = convertProofToMerklePath(txid, proof)
             r.header = header
             r.notes!.push({ ...nne(), what: 'getMerklePathSuccess' })
           } else {
-            r.notes!.push({ ...nne(), what: 'getMerklePathNoHeader', target: p.target })
+            r.notes!.push({
+              ...nne(),
+              what: 'getMerklePathNoHeader',
+              target: p.target
+            })
           }
         }
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
-        r.notes!.push({ ...nn(), what: 'getMerklePathError', code: e.code, description: e.description })
+        r.notes!.push({
+          ...nn(),
+          what: 'getMerklePathError',
+          code: e.code,
+          description: e.description
+        })
         r.error = e
       }
       return r

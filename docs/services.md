@@ -26,6 +26,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [ArcConfig](#interface-arcconfig) |
 | [ArcMinerGetTxData](#interface-arcminergettxdata) |
 | [BitailsConfig](#interface-bitailsconfig) |
+| [BitailsMerkleProof](#interface-bitailsmerkleproof) |
 | [ExchangeRatesIoApi](#interface-exchangeratesioapi) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -141,6 +142,20 @@ The HTTP client used to make requests to the API.
 
 ```ts
 httpClient?: HttpClient
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Interface: BitailsMerkleProof
+
+```ts
+export interface BitailsMerkleProof {
+    index: number;
+    txOrId: string;
+    target: string;
+    nodes: string[];
+}
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -281,10 +296,11 @@ export class Bitails {
     getHttpHeaders(): Record<string, string> 
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult> 
     async postRaws(raws: HexString[]): Promise<sdk.PostBeefResult> 
+    async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> 
 }
 ```
 
-See also: [BitailsConfig](./services.md#interface-bitailsconfig), [Chain](./client.md#type-chain), [PostBeefResult](./client.md#interface-postbeefresult)
+See also: [BitailsConfig](./services.md#interface-bitailsconfig), [Chain](./client.md#type-chain), [GetMerklePathResult](./client.md#interface-getmerklepathresult), [PostBeefResult](./client.md#interface-postbeefresult), [WalletServices](./client.md#interface-walletservices)
 
 ###### Method postBeef
 
