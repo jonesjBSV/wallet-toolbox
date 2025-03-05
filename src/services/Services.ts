@@ -20,7 +20,8 @@ import {
   updateChaintracksFiatExchangeRates,
   updateExchangeratesapi
 } from './providers/echangeRates'
-import ARC from './providers/ARC'
+import { ARC } from './providers/ARC'
+import { Bitails } from './providers/Bitails'
 
 export class Services implements sdk.WalletServices {
   static createDefaultOptions(chain: sdk.Chain): sdk.WalletServicesOptions {
@@ -30,6 +31,7 @@ export class Services implements sdk.WalletServices {
   options: sdk.WalletServicesOptions
   whatsonchain: WhatsOnChain
   arc: ARC
+  bitails: Bitails
 
   getMerklePathServices: ServiceCollection<sdk.GetMerklePathService>
   getRawTxServices: ServiceCollection<sdk.GetRawTxService>
@@ -54,6 +56,8 @@ export class Services implements sdk.WalletServices {
 
     this.arc = new ARC(this.options.arcUrl, this.options.arcConfig)
 
+    this.bitails = new Bitails(this.chain)
+
     this.getMerklePathServices =
       new ServiceCollection<sdk.GetMerklePathService>().add({
         name: 'WhatsOnChain',
@@ -66,10 +70,11 @@ export class Services implements sdk.WalletServices {
     })
 
     this.postBeefServices = new ServiceCollection<sdk.PostBeefService>()
-      .add({ name: 'TaalArcBeef', service: this.arc.postBeef.bind(this.arc) })
+      //.add({ name: 'TaalArcBeef', service: this.arc.postBeef.bind(this.arc) })
+      //.add({ name: 'WhatsOnChain', service: this.whatsonchain.postBeef.bind(this.whatsonchain) })
       .add({
-        name: 'WhatsOnChain',
-        service: this.whatsonchain.postBeef.bind(this.whatsonchain)
+        name: 'Bitails',
+        service: this.bitails.postBeef.bind(this.bitails)
       })
 
     this.getUtxoStatusServices =

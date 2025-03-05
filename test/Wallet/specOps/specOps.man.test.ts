@@ -1,4 +1,9 @@
-import { sdk } from '../../../src'
+import { sdk, verifyOne } from '../../../src'
+import {
+  specOpInvalidChange,
+  specOpSetWalletChangeParams,
+  specOpWalletBalance
+} from '../../../src/sdk'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('specOps tests', () => {
@@ -11,9 +16,7 @@ describe('specOps tests', () => {
   test('0 wallet balance specOp', async () => {
     const setup = await createSetup('test')
 
-    const r = await setup.wallet.listOutputs({
-      basket: '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
-    })
+    const r = await setup.wallet.listOutputs({ basket: specOpWalletBalance })
 
     expect(r.totalOutputs > 0).toBe(true)
     expect(r.outputs.length === 0).toBe(true)
@@ -25,12 +28,49 @@ describe('specOps tests', () => {
     const setup = await createSetup('test')
 
     const r = await setup.wallet.listOutputs({
-      basket: '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
-      // tags: ['release']
+      basket: specOpInvalidChange
+      //tags: ['release', 'foobar']
     })
 
     expect(r.totalOutputs).toBe(0)
     expect(r.outputs.length).toBe(0)
+
+    await setup.wallet.destroy()
+  })
+
+  test('2 update default basket params', async () => {
+    const setup = await createSetup('test')
+
+    const before = verifyOne(
+      await setup.activeStorage.findOutputBaskets({
+        partial: { userId: setup.userId, name: 'default' }
+      })
+    )
+
+    const r = await setup.wallet.listOutputs({
+      basket: specOpSetWalletChangeParams,
+      tags: ['33', '6']
+    })
+
+    const after = verifyOne(
+      await setup.activeStorage.findOutputBaskets({
+        partial: { userId: setup.userId, name: 'default' }
+      })
+    )
+
+    expect(r.totalOutputs).toBe(0)
+    expect(r.outputs.length).toBe(0)
+    expect(after.minimumDesiredUTXOValue).toBe(6)
+    expect(after.numberOfDesiredUTXOs).toBe(33)
+
+    // Restore original values...
+    await setup.wallet.listOutputs({
+      basket: specOpSetWalletChangeParams,
+      tags: [
+        before.numberOfDesiredUTXOs.toString(),
+        before.minimumDesiredUTXOValue.toString()
+      ]
+    })
 
     await setup.wallet.destroy()
   })

@@ -131,3 +131,48 @@ export type ReqHistoryNote = {
   what: string
   [key: string]: string | number | undefined
 }
+
+/**
+ * `listOutputs` special operation basket name value.
+ *
+ * Returns wallet's current change balance in the `totalOutputs` result property.
+ * The `outputs` result property will always be an empty array.
+ */
+export const specOpWalletBalance =
+  '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
+
+/**
+ * `listOutputs` special operation basket name value.
+ *
+ * Returns currently spendable wallet change outputs that fail to validate as unspent transaction outputs.
+ *
+ * Optional tag value 'release'. If present, updates invalid change outputs to not spendable.
+ */
+export const specOpInvalidChange =
+  '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
+
+/**
+ * `listOutputs` special operation basket name value.
+ *
+ * Updates the wallet's automatic change management parameters.
+ *
+ * Tag at index 0 is the new desired number of spendable change outputs to maintain.
+ *
+ * Tag at index 1 is the new target for minimum satoshis when creating new change outputs.
+ */
+export const specOpSetWalletChangeParams =
+  'a4979d28ced8581e9c1c92f1001cc7cb3aabf8ea32e10888ad898f0a509a3929'
+
+/**
+ * @param basket Output basket name value.
+ * @returns true iff the `basket` name is a reserved `listOutputs` special operation identifier.
+ */
+export function isSpecOp(basket: string): boolean {
+  return (
+    [
+      specOpWalletBalance,
+      specOpInvalidChange,
+      specOpSetWalletChangeParams
+    ].indexOf(basket) >= 0
+  )
+}
