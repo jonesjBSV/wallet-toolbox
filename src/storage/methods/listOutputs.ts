@@ -5,7 +5,7 @@ import {
   WalletOutput
 } from '@bsv/sdk'
 import { TableOutput, TableOutputBasket, TableOutputTag } from '../index.client'
-import { asString, sdk, verifyId, verifyOne } from '../../index.client'
+import { asString, sdk, verifyId, verifyInteger, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 import { ValidListOutputsArgs } from '../../sdk'
 
@@ -13,14 +13,22 @@ interface SpecOp {
   name: string
   useBasket?: string
   ignoreLimit?: boolean
+  resultFromTags?: (
+    s: StorageKnex,
+    auth: sdk.AuthId,
+    vargs: ValidListOutputsArgs,
+    specOpTags: string[]
+  ) => Promise<ListOutputsResult>
   resultFromOutputs?: (
     s: StorageKnex,
+    auth: sdk.AuthId,
     vargs: ValidListOutputsArgs,
     specOpTags: string[],
     outputs: TableOutput[]
   ) => Promise<ListOutputsResult>
   filterOutputs?: (
     s: StorageKnex,
+    auth: sdk.AuthId,
     vargs: ValidListOutputsArgs,
     specOpTags: string[],
     outputs: TableOutput[]
@@ -31,6 +39,10 @@ interface SpecOp {
    * or an explicit array of tags to intercept.
    */
   tagsToIntercept?: string[]
+  /**
+   * How many positional tags to intercept.
+   */
+  tagsParamsCount?: number
 }
 
 const basketToSpecOp: Record<string, SpecOp> = {
@@ -40,6 +52,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
     ignoreLimit: true,
     resultFromOutputs: async (
       s: StorageKnex,
+      auth: sdk.AuthId,
       vargs: ValidListOutputsArgs,
       specOpTags: string[],
       outputs: TableOutput[]
@@ -56,6 +69,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
     tagsToIntercept: ['release'],
     filterOutputs: async (
       s: StorageKnex,
+      auth: sdk.AuthId,
       vargs: ValidListOutputsArgs,
       specOpTags: string[],
       outputs: TableOutput[]
@@ -91,6 +105,24 @@ const basketToSpecOp: Record<string, SpecOp> = {
       }
       return filteredOutputs
     }
+  },
+  [sdk.specOpSetWalletChangeParams]: {
+    name: 'setWalletChangeParams',
+    tagsParamsCount: 2,
+    resultFromTags: async (
+      s: StorageKnex,
+      auth: sdk.AuthId,
+      vargs: ValidListOutputsArgs,
+      specOpTags: string[]
+    ): Promise<ListOutputsResult> => {
+      if (specOpTags.length !== 2)
+        throw new sdk.WERR_INVALID_PARAMETER('numberOfDesiredUTXOs and minimumDesiredUTXOValue', 'valid')
+      const numberOfDesiredUTXOs: number = verifyInteger(Number(specOpTags[0]))
+      const minimumDesiredUTXOValue: number = verifyInteger(Number(specOpTags[1]))
+      const basket = verifyOne(await s.findOutputBaskets({ partial: { userId: verifyId(auth.userId), name: 'default' }}))
+      await s.updateOutputBasket(basket.basketId, { numberOfDesiredUTXOs, minimumDesiredUTXOValue })
+      return { totalOutputs: 0, outputs: [] }
+    }
   }
 }
 
@@ -125,7 +157,6 @@ export async function listOutputs(
     */
 
   let specOp: SpecOp | undefined = undefined
-  const specOpTags: string[] = []
   let basketId: number | undefined = undefined
   const basketsById: Record<number, TableOutputBasket> = {}
   if (vargs.basket) {
@@ -148,11 +179,16 @@ export async function listOutputs(
   }
 
   let tagIds: number[] = []
-  let tags = vargs.tags
+  let tags = [...vargs.tags]
+  const specOpTags: string[] = []
+  if (specOp && specOp.tagsParamsCount) {
+    specOpTags.push(...tags.splice(0, Math.min(tags.length, specOp.tagsParamsCount)))
+  }
   if (specOp && specOp.tagsToIntercept) {
     // Pull out tags used by current specOp
+    const ts = tags
     tags = []
-    for (const t of vargs.tags) {
+    for (const t of ts) {
       if (
         specOp.tagsToIntercept.length === 0 ||
         specOp.tagsToIntercept.indexOf(t) >= 0
@@ -162,6 +198,11 @@ export async function listOutputs(
         tags.push(t)
       }
     }
+  }
+
+  if (specOp && specOp.resultFromTags) {
+    const r = await specOp.resultFromTags(dsk, auth, vargs, specOpTags)
+    return r
   }
 
   if (tags && tags.length > 0) {
@@ -249,9 +290,9 @@ export async function listOutputs(
 
   if (specOp) {
     if (specOp.filterOutputs)
-      outputs = await specOp.filterOutputs(dsk, vargs, specOpTags, outputs)
+      outputs = await specOp.filterOutputs(dsk, auth, vargs, specOpTags, outputs)
     if (specOp.resultFromOutputs) {
-      const r = await specOp.resultFromOutputs(dsk, vargs, specOpTags, outputs)
+      const r = await specOp.resultFromOutputs(dsk, auth, vargs, specOpTags, outputs)
       return r
     }
   }
