@@ -202,7 +202,6 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         } else {
           r.status = 'error'
           const n: ReqHistoryNote = {
-            ...nn(),
             ...nne(),
             what: 'postRawTxError'
           }
@@ -227,7 +226,6 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         r.status = 'error'
         const e = sdk.WalletError.fromUnknown(eu)
         r.notes!.push({
-          ...nn(),
           ...nne(),
           what: 'postRawTxCatch',
           code: e.code,
@@ -238,7 +236,6 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     }
     r.status = 'error'
     r.notes!.push({
-      ...nn(),
       ...nne(),
       what: 'postRawTxRetryLimit',
       retryLimit
