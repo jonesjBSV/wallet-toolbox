@@ -1,6 +1,6 @@
 import { _tu } from '../../../test/utils/TestUtilsWalletStorage'
 import { sdk, wait } from '../../index.client'
-import ARC from '../providers/ARC'
+import { ARC } from '../providers/ARC'
 import { BeefTx } from '@bsv/sdk'
 import { arcDefaultUrl } from '../createDefaultWalletServicesOptions'
 import { Setup } from '../../index.all'
