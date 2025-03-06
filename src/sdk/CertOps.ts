@@ -38,10 +38,12 @@ export class CertOps extends BsvCertificate {
   _keyring?: Record<CertificateFieldNameUnder50Bytes, string>
   _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>
   _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>
+  _proveCertificate?: boolean
 
   constructor(
     public wallet: CertOpsWallet,
-    wc: WalletCertificate
+    wc: WalletCertificate,
+    proveCertificate?: boolean
   ) {
     super(
       wc.type,
@@ -52,6 +54,7 @@ export class CertOps extends BsvCertificate {
       wc.fields,
       wc.signature
     )
+    this._proveCertificate = proveCertificate
   }
 
   static async fromCounterparty(
@@ -62,7 +65,7 @@ export class CertOps extends BsvCertificate {
       counterparty: PubKeyHex
     }
   ): Promise<CertOps> {
-    const c = new CertOps(wallet, e.certificate)
+    const c = new CertOps(wallet, e.certificate, true)
     // confirm cert verifies and decrypts.
     await c.verify()
     await c.decryptFields(e.counterparty, e.keyring)
@@ -167,8 +170,8 @@ export class CertOps extends BsvCertificate {
         plaintext: fieldSymmetricKey.toArray(),
         counterparty,
         ...Certificate.getCertificateFieldEncryptionDetails(
-          this.serialNumber,
-          fieldName
+          fieldName,
+          this.serialNumber
         )
       })
       keyring[fieldName] = Utils.toBase64(encryptedFieldKey.ciphertext)
@@ -195,8 +198,8 @@ export class CertOps extends BsvCertificate {
           ciphertext: Utils.toArray(keyring[fieldName], 'base64'),
           counterparty: counterparty || this.subject,
           ...Certificate.getCertificateFieldEncryptionDetails(
-            this.serialNumber,
-            fieldName
+            fieldName,
+            this._proveCertificate ? undefined : this.serialNumber
           )
         })
 
@@ -278,8 +281,8 @@ export class CertOps extends BsvCertificate {
       // Create a keyID
       const encryptedFieldKey = this._keyring[fieldName]
       const protocol = Certificate.getCertificateFieldEncryptionDetails(
-        this.serialNumber,
-        fieldName
+        fieldName,
+        this.serialNumber
       )
 
       // Decrypt the master field key
