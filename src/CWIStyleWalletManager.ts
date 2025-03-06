@@ -495,7 +495,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
     outpoint: string
   ): Promise<{ beef: number[]; outputIndex: number } | undefined> {
     const results = await this.resolver.query({
-      service: 'ls_ump',
+      service: 'ls_users',
       query: {
         outpoint
       }
