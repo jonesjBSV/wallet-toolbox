@@ -225,6 +225,7 @@ export class WalletSettingsManager {
     // 4. Create a signable transaction action using the inputs and (optionally) outputs.
     const { signableTransaction } = await this.wallet.createAction({
       description: `${newLockingScript ? 'Update' : 'Delete'} a user settings token`,
+      inputBEEF: existingUtxos.BEEF!,
       inputs: [inputToConsume], // input index 0
       outputs,
       options: {
