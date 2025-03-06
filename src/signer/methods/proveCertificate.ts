@@ -1,4 +1,8 @@
-import { MasterCertificate, ProveCertificateResult, VerifiableCertificate } from '@bsv/sdk'
+import {
+  MasterCertificate,
+  ProveCertificateResult,
+  VerifiableCertificate
+} from '@bsv/sdk'
 import { sdk, Wallet } from '../../index.client'
 
 export async function proveCertificate(
@@ -26,17 +30,6 @@ export async function proveCertificate(
   if (lcr.certificates.length != 1)
     throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
   const storageCert = lcr.certificates[0]
-  // if (storageCert.subject != wallet.identityKey) {
-  //   // Certificate must have been issued to privileged identity
-  //   if (!wallet.privilegedKeyManager)
-  //     throw new sdk.WERR_INVALID_OPERATION(
-  //       'Wallet is not privileged. proveCertificate fails.'
-  //     )
-  //   proveWallet = wallet.privilegedKeyManager
-  // }
-
-  // TODO: Add support for privileged certificates
-
   const keyringForVerifier = await MasterCertificate.createKeyringForVerifier(
     wallet,
     storageCert.certifier,
@@ -44,7 +37,9 @@ export async function proveCertificate(
     storageCert.fields,
     vargs.fieldsToReveal,
     storageCert.keyring!,
-    storageCert.serialNumber
+    storageCert.serialNumber,
+    vargs.privileged,
+    vargs.privilegedReason
   )
 
   return { keyringForVerifier }

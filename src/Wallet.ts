@@ -455,16 +455,27 @@ export class Wallet implements WalletInterface, ProtoWallet {
       ).publicKey
       try {
         // Confirm that the information received adds up to a usable certificate...
-        await sdk.CertOps.fromCounterparty(
-          vargs.privileged ? this.privilegedKeyManager! : this,
-          {
-            certificate: { ...vargs },
-            keyring: vargs.keyringForSubject,
-            counterparty:
-              vargs.keyringRevealer === 'certifier'
-                ? vargs.certifier
-                : vargs.keyringRevealer
-          }
+        // TODO: Clean up MasterCertificate to support decrypt on instance 
+        const cert = new MasterCertificate(
+          vargs.type,
+          vargs.serialNumber,
+          vargs.subject,
+          vargs.certifier,
+          vargs.revocationOutpoint,
+          vargs.fields,
+          vargs.keyringForSubject,
+          vargs.signature,
+        )
+        await cert.verify()
+
+        // Verify certificate details
+        await MasterCertificate.decryptFields(
+          this,
+          vargs.keyringForSubject,
+          vargs.fields,
+          vargs.certifier,
+          vargs.privileged,
+          vargs.privilegedReason
         )
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
