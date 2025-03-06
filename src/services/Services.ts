@@ -58,38 +58,28 @@ export class Services implements sdk.WalletServices {
 
     this.bitails = new Bitails(this.chain)
 
-    this.getMerklePathServices =
-      new ServiceCollection<sdk.GetMerklePathService>().add({
-        name: 'WhatsOnChain',
-        service: this.whatsonchain.getMerklePath.bind(this.whatsonchain)
-      })
+    //prettier-ignore
+    this.getMerklePathServices = new ServiceCollection<sdk.GetMerklePathService>()
+      .add({ name: 'WhatsOnChain', service: this.whatsonchain.getMerklePath.bind(this.whatsonchain) })
 
-    this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>().add({
-      name: 'WhatsOnChain',
-      service: this.whatsonchain.getRawTxResult.bind(this.whatsonchain)
-    })
+    //prettier-ignore
+    this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>()
+      .add({ name: 'WhatsOnChain', service: this.whatsonchain.getRawTxResult.bind(this.whatsonchain) })
 
+    //prettier-ignore
     this.postBeefServices = new ServiceCollection<sdk.PostBeefService>()
       .add({ name: 'TaalArcBeef', service: this.arc.postBeef.bind(this.arc) })
-      .add({
-        name: 'WhatsOnChain',
-        service: this.whatsonchain.postBeef.bind(this.whatsonchain)
-      })
-    //.add({ name: 'Bitails', service: this.bitails.postBeef.bind(this.bitails) })
+    //  .add({ name: 'WhatsOnChain', service: this.whatsonchain.postBeef.bind(this.whatsonchain) })
+    // .add({ name: 'Bitails', service: this.bitails.postBeef.bind(this.bitails) })
 
-    this.getUtxoStatusServices =
-      new ServiceCollection<sdk.GetUtxoStatusService>().add({
-        name: 'WhatsOnChain',
-        service: this.whatsonchain.getUtxoStatus.bind(this.whatsonchain)
-      })
+    //prettier-ignore
+    this.getUtxoStatusServices = new ServiceCollection<sdk.GetUtxoStatusService>()
+      .add({ name: 'WhatsOnChain', service: this.whatsonchain.getUtxoStatus.bind(this.whatsonchain) })
 
-    this.updateFiatExchangeRateServices =
-      new ServiceCollection<sdk.UpdateFiatExchangeRateService>()
-        .add({
-          name: 'ChaintracksService',
-          service: updateChaintracksFiatExchangeRates
-        })
-        .add({ name: 'exchangeratesapi', service: updateExchangeratesapi })
+    //prettier-ignore
+    this.updateFiatExchangeRateServices = new ServiceCollection<sdk.UpdateFiatExchangeRateService>()
+      .add({ name: 'ChaintracksService', service: updateChaintracksFiatExchangeRates })
+      .add({ name: 'exchangeratesapi', service: updateExchangeratesapi })
   }
 
   async getChainTracker(): Promise<ChainTracker> {

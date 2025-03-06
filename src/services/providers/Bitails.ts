@@ -1,11 +1,4 @@
-import {
-  Beef,
-  defaultHttpClient,
-  HexString,
-  HttpClient,
-  MerklePath,
-  Utils
-} from '@bsv/sdk'
+import { Beef, defaultHttpClient, HexString, HttpClient, Utils } from '@bsv/sdk'
 import {
   convertProofToMerklePath,
   doubleSha256BE,

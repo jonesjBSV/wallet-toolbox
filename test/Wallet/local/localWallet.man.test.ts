@@ -58,7 +58,7 @@ describe('localWallet tests', () => {
       1
     )
 
-    await trackReqByTxid(setup, car.txid!)
+    // await trackReqByTxid(setup, car.txid!)
 
     await setup.wallet.destroy()
   })
