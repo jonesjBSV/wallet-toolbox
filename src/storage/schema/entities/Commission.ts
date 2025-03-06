@@ -139,7 +139,7 @@ export class EntityCommission extends EntityBase<TableCommission> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isRedeemed = ei.isRedeemed
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateCommission(this.id, this.toApi(), trx)
       wasMerged = true
     }

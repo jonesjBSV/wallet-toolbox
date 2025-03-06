@@ -588,6 +588,7 @@ export class WalletStorageManager implements sdk.WalletStorage {
         const ss = await EntitySyncState.fromStorage(writer, identityKey, readerSettings)
         const args = ss.makeRequestSyncChunkArgs(identityKey, writerSettings.storageIdentityKey)
         const chunk = await reader.getSyncChunk(args)
+        log += EntitySyncState.syncChunkSummary(chunk)
         const r = await writer.processSyncChunk(args, chunk)
         inserts += r.inserts
         updates += r.updates

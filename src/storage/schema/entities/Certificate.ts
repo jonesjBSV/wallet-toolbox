@@ -178,7 +178,7 @@ export class EntityCertificate extends EntityBase<TableCertificate> {
       this.signature = ei.signature
       this.verifier = ei.verifier
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateCertificate(this.id, this.toApi(), trx)
       wasMerged = true
     }

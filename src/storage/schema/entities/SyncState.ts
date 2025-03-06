@@ -78,6 +78,8 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
         remoteSettings.storageName
       )
     )
+    if (!api.syncMap || api.syncMap === '{}')
+      api.syncMap = JSON.stringify(createSyncMap())
     const ss = new EntitySyncState(api)
     return ss
   }
@@ -289,9 +291,47 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
       this.syncMap.commission,
       this.syncMap.provenTxReq
     ]) {
+      if (!ess || !ess.entityName)
+        debugger;
       a.offsets.push({ name: ess.entityName, offset: ess.count })
     }
     return a
+  }
+
+  static syncChunkSummary(c: sdk.SyncChunk) : string {
+    let log = ''
+    log += `SYNC CHUNK SUMMARY
+  from storage: ${c.fromStorageIdentityKey}
+  to storage: ${c.toStorageIdentityKey}
+  for user: ${c.userIdentityKey}
+`
+    if (c.user)
+      log += `  USER activeStorage ${c.user.activeStorage}\n`
+    if (!!c.provenTxs) {
+      log += `  PROVEN_TXS\n`
+      for (const r of c.provenTxs) {
+        log += `    ${r.provenTxId} ${r.txid}\n`
+      }
+    }
+    if (!!c.provenTxReqs) {
+      log += `  PROVEN_TX_REQS\n`
+      for (const r of c.provenTxReqs) {
+        log += `    ${r.provenTxReqId} ${r.txid} ${r.status} ${r.provenTxId || ''}\n`
+      }
+    }
+    if (!!c.transactions) {
+      log += `  TRANSACTIONS\n`
+      for (const r of c.transactions) {
+        log += `    ${r.transactionId} ${r.txid} ${r.status} ${r.provenTxId || ''} sats:${r.satoshis}\n`
+      }
+    }
+    if (!!c.outputs) {
+      log += `  OUTPUTS\n`
+      for (const r of c.outputs) {
+        log += `    ${r.outputId} ${r.txid}.${r.vout} ${r.transactionId} ${r.spendable ? 'spendable' : ''} sats:${r.satoshis}\n`
+      }
+    }
+    return log
   }
 
   async processSyncChunk(

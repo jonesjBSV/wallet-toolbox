@@ -113,7 +113,7 @@ export class EntityTxLabelMap extends EntityBase<TableTxLabelMap> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateTxLabelMap(this.transactionId, this.txLabelId, this.toApi(), trx)
       wasMerged = true
     }

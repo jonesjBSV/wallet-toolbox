@@ -281,7 +281,7 @@ export class EntityOutput extends EntityBase<TableOutput> {
       this.scriptLength = ei.scriptLength
       this.scriptOffset = ei.scriptOffset
       this.lockingScript = ei.lockingScript
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateOutput(this.id, this.toApi(), trx)
       wasMerged = true
     }

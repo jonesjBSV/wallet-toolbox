@@ -143,7 +143,7 @@ export class EntityOutputBasket extends EntityBase<TableOutputBasket> {
       this.minimumDesiredUTXOValue = ei.minimumDesiredUTXOValue
       this.numberOfDesiredUTXOs = ei.numberOfDesiredUTXOs
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateOutputBasket(this.id, this.toApi(), trx)
       wasMerged = true
     }

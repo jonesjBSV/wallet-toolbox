@@ -125,7 +125,7 @@ export class EntityCertificateField extends EntityBase<TableCertificateField> {
     if (ei.updated_at > this.updated_at) {
       this.fieldValue = ei.fieldValue
       this.masterKey = ei.masterKey
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateCertificateField(this.certificateId, this.fieldName, this.toApi(), trx)
       wasMerged = true
     }

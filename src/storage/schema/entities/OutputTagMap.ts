@@ -113,7 +113,7 @@ export class EntityOutputTagMap extends EntityBase<TableOutputTagMap> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateOutputTagMap(this.outputId, this.outputTagId, this.toApi(), trx)
       wasMerged = true
     }

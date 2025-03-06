@@ -565,7 +565,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     this.mergeHistory(ei, syncMap, true)
     this.mergeNotifyTransactionIds(ei, syncMap)
 
-    this.updated_at = new Date()
+    this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
     await storage.updateProvenTxReq(this.id, this.toApi(), trx)
     return false
   }
