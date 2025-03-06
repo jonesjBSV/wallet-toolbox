@@ -1,11 +1,5 @@
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableProvenTx,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableProvenTx, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityProvenTxReq, EntityStorage, SyncMap } from '.'
 
 export class EntityProvenTx extends EntityBase<TableProvenTx> {
@@ -25,11 +19,7 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
    * @param rawTx
    * @returns
    */
-  static async fromTxid(
-    txid: string,
-    services: sdk.WalletServices,
-    rawTx?: number[]
-  ): Promise<ProvenTxFromTxidResult> {
+  static async fromTxid(txid: string, services: sdk.WalletServices, rawTx?: number[]): Promise<ProvenTxFromTxidResult> {
     const r: ProvenTxFromTxidResult = { proven: undefined, rawTx }
 
     const chain = services.chain
@@ -200,9 +190,7 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
     syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<{ found: boolean; eo: EntityProvenTx; eiId: number }> {
-    const ef = verifyOneOrNone(
-      await storage.findProvenTxs({ partial: { txid: ei.txid }, trx })
-    )
+    const ef = verifyOneOrNone(await storage.findProvenTxs({ partial: { txid: ei.txid }, trx }))
     return {
       found: !!ef,
       eo: new EntityProvenTx(ef || { ...ei }),
@@ -210,12 +198,7 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.provenTxId = 0
     // TODO: Since these records are a shared resource, the record must be validated before accepting it...
     this.provenTxId = await storage.insertProvenTx(this.toApi(), trx)
@@ -274,14 +257,9 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
     if (!gmpResult.merklePath) {
       if (req.created_at) {
         const reqAgeInMsecs = Date.now() - req.created_at.getTime()
-        const reqAgeInMinutes = Math.ceil(
-          reqAgeInMsecs < 1 ? 0 : reqAgeInMsecs / (1000 * 60)
-        )
+        const reqAgeInMinutes = Math.ceil(reqAgeInMsecs < 1 ? 0 : reqAgeInMsecs / (1000 * 60))
 
-        if (
-          req.attempts > EntityProvenTx.getProofAttemptsLimit &&
-          reqAgeInMinutes > EntityProvenTx.getProofMinutes
-        ) {
+        if (req.attempts > EntityProvenTx.getProofAttemptsLimit && reqAgeInMinutes > EntityProvenTx.getProofMinutes) {
           // Start the process of setting transactions to 'failed'
           req.addHistoryNote(
             {
@@ -301,21 +279,15 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
 
     if (countsAsAttempt) req.attempts++
 
-    const merklePaths = Array.isArray(gmpResult.merklePath)
-      ? gmpResult.merklePath
-      : [gmpResult.merklePath]
+    const merklePaths = Array.isArray(gmpResult.merklePath) ? gmpResult.merklePath : [gmpResult.merklePath]
 
     for (const proof of merklePaths) {
       try {
         const now = new Date()
-        const leaf = proof.path[0].find(
-          leaf => leaf.txid === true && leaf.hash === req.txid
-        )
+        const leaf = proof.path[0].find(leaf => leaf.txid === true && leaf.hash === req.txid)
         if (!leaf) {
           req.addHistoryNote({ what: 'getMerklePathTxidNotFound' }, true)
-          throw new sdk.WERR_INTERNAL(
-            'merkle path does not contain leaf for txid'
-          )
+          throw new sdk.WERR_INTERNAL('merkle path does not contain leaf for txid')
         }
 
         const proven = new EntityProvenTx({

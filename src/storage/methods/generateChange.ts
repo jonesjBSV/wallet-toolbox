@@ -71,11 +71,7 @@ export async function generateChangeSdk(
      * @returns a random integer betweenn min and max, inclussive.
      */
     const rand = (min: number, max: number): number => {
-      if (max < min)
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'max',
-          `less than min (${min}). max is (${max})`
-        )
+      if (max < min) throw new sdk.WERR_INVALID_PARAMETER('max', `less than min (${min}). max is (${max})`)
       return Math.floor(nextRandomVal() * (max - min + 1) + min)
     }
 
@@ -87,8 +83,7 @@ export async function generateChangeSdk(
      */
     const funding = (): number => {
       return (
-        fixedInputs.reduce((a, e) => a + e.satoshis, 0) +
-        r.allocatedChangeInputs.reduce((a, e) => a + e.satoshis, 0)
+        fixedInputs.reduce((a, e) => a + e.satoshis, 0) + r.allocatedChangeInputs.reduce((a, e) => a + e.satoshis, 0)
       )
     }
 
@@ -108,21 +103,14 @@ export async function generateChangeSdk(
 
     const fee = (): number => funding() - spending() - change()
 
-    const size = (
-      addedChangeInputs?: number,
-      addedChangeOutputs?: number
-    ): number => {
+    const size = (addedChangeInputs?: number, addedChangeOutputs?: number): number => {
       const inputScriptLengths = [
         ...fixedInputs.map(x => x.unlockingScriptLength),
-        ...Array(
-          r.allocatedChangeInputs.length + (addedChangeInputs || 0)
-        ).fill(params.changeUnlockingScriptLength)
+        ...Array(r.allocatedChangeInputs.length + (addedChangeInputs || 0)).fill(params.changeUnlockingScriptLength)
       ]
       const outputScriptLengths = [
         ...fixedOutputs.map(x => x.lockingScriptLength),
-        ...Array(r.changeOutputs.length + (addedChangeOutputs || 0)).fill(
-          params.changeLockingScriptLength
-        )
+        ...Array(r.changeOutputs.length + (addedChangeOutputs || 0)).fill(params.changeLockingScriptLength)
       ]
       const size = transactionSize(inputScriptLengths, outputScriptLengths)
       return size
@@ -131,13 +119,8 @@ export async function generateChangeSdk(
     /**
      * @returns the target fee required for the transaction as currently configured under feeModel.
      */
-    const feeTarget = (
-      addedChangeInputs?: number,
-      addedChangeOutputs?: number
-    ): number => {
-      const fee = Math.ceil(
-        (size(addedChangeInputs, addedChangeOutputs) / 1000) * satsPerKb
-      )
+    const feeTarget = (addedChangeInputs?: number, addedChangeOutputs?: number): number => {
+      const fee = Math.ceil((size(addedChangeInputs, addedChangeOutputs) / 1000) * satsPerKb)
       return fee
     }
 
@@ -152,15 +135,8 @@ export async function generateChangeSdk(
      *
      * A negative value means the transaction is under funded, or over spends, and may be rejected.
      */
-    const feeExcess = (
-      addedChangeInputs?: number,
-      addedChangeOutputs?: number
-    ): number => {
-      const fe =
-        funding() -
-        spending() -
-        change() -
-        feeTarget(addedChangeInputs, addedChangeOutputs)
+    const feeExcess = (addedChangeInputs?: number, addedChangeOutputs?: number): number => {
+      const fe = funding() - spending() - change() - feeTarget(addedChangeInputs, addedChangeOutputs)
       if (!addedChangeInputs && !addedChangeOutputs) feeExcessNow = fe
       return fe
     }
@@ -199,10 +175,7 @@ export async function generateChangeSdk(
       (r.changeOutputs.length === 0 && feeExcess() > 0)
     ) {
       r.changeOutputs.push({
-        satoshis:
-          r.changeOutputs.length === 0
-            ? params.changeFirstSatoshis
-            : params.changeInitialSatoshis,
+        satoshis: r.changeOutputs.length === 0 ? params.changeFirstSatoshis : params.changeInitialSatoshis,
         lockingScriptLength: params.changeLockingScriptLength
       })
     }
@@ -218,13 +191,9 @@ export async function generateChangeSdk(
           exactSatoshis = -feeExcess(1)
         }
         const ao = addOutputToBalanceNewInput() ? 1 : 0
-        const targetSatoshis =
-          -feeExcess(1, ao) + (ao === 1 ? 2 * params.changeInitialSatoshis : 0)
+        const targetSatoshis = -feeExcess(1, ao) + (ao === 1 ? 2 * params.changeInitialSatoshis : 0)
 
-        const allocatedChangeInput = await allocateChangeInput(
-          targetSatoshis,
-          exactSatoshis
-        )
+        const allocatedChangeInput = await allocateChangeInput(targetSatoshis, exactSatoshis)
 
         if (!allocatedChangeInput) {
           // Unable to add another funding change input
@@ -238,9 +207,7 @@ export async function generateChangeSdk(
             r.changeOutputs.push({
               satoshis: Math.min(
                 feeExcess(),
-                r.changeOutputs.length === 0
-                  ? params.changeFirstSatoshis
-                  : params.changeInitialSatoshis
+                r.changeOutputs.length === 0 ? params.changeFirstSatoshis : params.changeInitialSatoshis
               ),
               lockingScriptLength: params.changeLockingScriptLength
             })
@@ -280,11 +247,7 @@ export async function generateChangeSdk(
 
     if (feeExcess() < 0 && vgcpr.hasMaxPossibleOutput !== undefined) {
       // Reduce the fixed output with satoshis of maxPossibleSatoshis to what will just fund the transaction...
-      if (
-        fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis !==
-        maxPossibleSatoshis
-      )
-        throw new sdk.WERR_INTERNAL()
+      if (fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis !== maxPossibleSatoshis) throw new sdk.WERR_INTERNAL()
       fixedOutputs[vgcpr.hasMaxPossibleOutput].satoshis += feeExcess()
       r.maxPossibleSatoshisAdjustment = {
         fixedOutputIndex: vgcpr.hasMaxPossibleOutput,
@@ -296,20 +259,14 @@ export async function generateChangeSdk(
      * Trigger an account funding event if we don't have enough to cover this transaction.
      */
     if (feeExcess() < 0) {
-      throw new sdk.WERR_INSUFFICIENT_FUNDS(
-        spending() + feeTarget(),
-        -feeExcessNow
-      )
+      throw new sdk.WERR_INSUFFICIENT_FUNDS(spending() + feeTarget(), -feeExcessNow)
     }
 
     /**
      * If needed, seek funding to avoid overspending on fees without a change output to recapture it.
      */
     if (r.changeOutputs.length === 0 && feeExcessNow > 0) {
-      throw new sdk.WERR_INSUFFICIENT_FUNDS(
-        spending() + feeTarget(),
-        params.changeFirstSatoshis
-      )
+      throw new sdk.WERR_INSUFFICIENT_FUNDS(spending() + feeTarget(), params.changeFirstSatoshis)
     }
 
     /**
@@ -320,18 +277,12 @@ export async function generateChangeSdk(
         r.changeOutputs[0].satoshis += feeExcessNow
         feeExcessNow = 0
       } else if (r.changeOutputs[0].satoshis < params.changeInitialSatoshis) {
-        const sats = Math.min(
-          feeExcessNow,
-          params.changeInitialSatoshis - r.changeOutputs[0].satoshis
-        )
+        const sats = Math.min(feeExcessNow, params.changeInitialSatoshis - r.changeOutputs[0].satoshis)
         feeExcessNow -= sats
         r.changeOutputs[0].satoshis += sats
       } else {
         // Distribute a random percentage between 25% and 50% but at least one satoshi
-        const sats = Math.max(
-          1,
-          Math.floor((rand(2500, 5000) / 10000) * feeExcessNow)
-        )
+        const sats = Math.max(1, Math.floor((rand(2500, 5000) / 10000) * feeExcessNow))
         feeExcessNow -= sats
         const index = rand(0, r.changeOutputs.length - 1)
         r.changeOutputs[index].satoshis += sats
@@ -370,11 +321,9 @@ export function validateGenerateChangeSdkResult(
   let ok = true
   let log = ''
   const sumIn =
-    params.fixedInputs.reduce((a, e) => a + e.satoshis, 0) +
-    r.allocatedChangeInputs.reduce((a, e) => a + e.satoshis, 0)
+    params.fixedInputs.reduce((a, e) => a + e.satoshis, 0) + r.allocatedChangeInputs.reduce((a, e) => a + e.satoshis, 0)
   const sumOut =
-    params.fixedOutputs.reduce((a, e) => a + e.satoshis, 0) +
-    r.changeOutputs.reduce((a, e) => a + e.satoshis, 0)
+    params.fixedOutputs.reduce((a, e) => a + e.satoshis, 0) + r.changeOutputs.reduce((a, e) => a + e.satoshis, 0)
   if (r.fee && Number.isInteger(r.fee) && r.fee < 0) {
     log += `basic fee error ${r.fee};`
     ok = false
@@ -393,14 +342,9 @@ export function validateGenerateChangeSdkResult(
   return { ok, log }
 }
 
-function logGenerateChangeSdkParams(
-  params: GenerateChangeSdkParams,
-  eu?: unknown
-) {
+function logGenerateChangeSdkParams(params: GenerateChangeSdkParams, eu?: unknown) {
   let s = JSON.stringify(params)
-  console.log(
-    `generateChangeSdk params length ${s.length}${eu ? ` error: ${eu}` : ''}`
-  )
+  console.log(`generateChangeSdk params length ${s.length}${eu ? ` error: ${eu}` : ''}`)
   let i = -1
   const maxlen = 99900
   for (;;) {
@@ -478,31 +422,19 @@ export interface ValidateGenerateChangeSdkParamsResult {
 export function validateGenerateChangeSdkParams(
   params: GenerateChangeSdkParams
 ): ValidateGenerateChangeSdkParamsResult {
-  if (!Array.isArray(params.fixedInputs))
-    throw new sdk.WERR_INVALID_PARAMETER('fixedInputs', 'an array of objects')
+  if (!Array.isArray(params.fixedInputs)) throw new sdk.WERR_INVALID_PARAMETER('fixedInputs', 'an array of objects')
 
   const r: ValidateGenerateChangeSdkParamsResult = {}
 
   params.fixedInputs.forEach((x, i) => {
     sdk.validateSatoshis(x.satoshis, `fixedInputs[${i}].satoshis`)
-    sdk.validateInteger(
-      x.unlockingScriptLength,
-      `fixedInputs[${i}].unlockingScriptLength`,
-      undefined,
-      0
-    )
+    sdk.validateInteger(x.unlockingScriptLength, `fixedInputs[${i}].unlockingScriptLength`, undefined, 0)
   })
 
-  if (!Array.isArray(params.fixedOutputs))
-    throw new sdk.WERR_INVALID_PARAMETER('fixedOutputs', 'an array of objects')
+  if (!Array.isArray(params.fixedOutputs)) throw new sdk.WERR_INVALID_PARAMETER('fixedOutputs', 'an array of objects')
   params.fixedOutputs.forEach((x, i) => {
     sdk.validateSatoshis(x.satoshis, `fixedOutputs[${i}].satoshis`)
-    sdk.validateInteger(
-      x.lockingScriptLength,
-      `fixedOutputs[${i}].lockingScriptLength`,
-      undefined,
-      0
-    )
+    sdk.validateInteger(x.lockingScriptLength, `fixedOutputs[${i}].lockingScriptLength`, undefined, 0)
     if (x.satoshis === maxPossibleSatoshis) {
       if (r.hasMaxPossibleOutput !== undefined)
         throw new sdk.WERR_INVALID_PARAMETER(
@@ -514,34 +446,24 @@ export function validateGenerateChangeSdkParams(
   })
 
   params.feeModel = validateStorageFeeModel(params.feeModel)
-  if (params.feeModel.model !== 'sat/kb')
-    throw new sdk.WERR_INVALID_PARAMETER('feeModel.model', `'sat/kb'`)
+  if (params.feeModel.model !== 'sat/kb') throw new sdk.WERR_INVALID_PARAMETER('feeModel.model', `'sat/kb'`)
 
   sdk.validateOptionalInteger(params.targetNetCount, `targetNetCount`)
 
   sdk.validateSatoshis(params.changeFirstSatoshis, 'changeFirstSatoshis', 1)
   sdk.validateSatoshis(params.changeInitialSatoshis, 'changeInitialSatoshis', 1)
 
-  sdk.validateInteger(
-    params.changeLockingScriptLength,
-    `changeLockingScriptLength`
-  )
-  sdk.validateInteger(
-    params.changeUnlockingScriptLength,
-    `changeUnlockingScriptLength`
-  )
+  sdk.validateInteger(params.changeLockingScriptLength, `changeLockingScriptLength`)
+  sdk.validateInteger(params.changeUnlockingScriptLength, `changeUnlockingScriptLength`)
 
   return r
 }
 
-export interface GenerateChangeSdkStorageChange
-  extends GenerateChangeSdkChangeInput {
+export interface GenerateChangeSdkStorageChange extends GenerateChangeSdkChangeInput {
   spendable: boolean
 }
 
-export function generateChangeSdkMakeStorage(
-  availableChange: GenerateChangeSdkChangeInput[]
-): {
+export function generateChangeSdkMakeStorage(availableChange: GenerateChangeSdkChangeInput[]): {
   allocateChangeInput: (
     targetSatoshis: number,
     exactSatoshis?: number
@@ -583,9 +505,7 @@ export function generateChangeSdkMakeStorage(
     log += `allocate target ${targetSatoshis} exact ${exactSatoshis}`
 
     if (exactSatoshis !== undefined) {
-      const exact = change.find(
-        c => c.spendable && c.satoshis === exactSatoshis
-      )
+      const exact = change.find(c => c.spendable && c.satoshis === exactSatoshis)
       if (exact) return allocate(exact)
     }
     const over = change.find(c => c.spendable && c.satoshis >= targetSatoshis)
@@ -606,8 +526,7 @@ export function generateChangeSdkMakeStorage(
     log += `release id ${outputId}\n`
     const c = change.find(x => x.outputId === outputId)
     if (!c) throw new sdk.WERR_INTERNAL(`unknown outputId ${outputId}`)
-    if (c.spendable)
-      throw new sdk.WERR_INTERNAL(`release of spendable outputId ${outputId}`)
+    if (c.spendable) throw new sdk.WERR_INTERNAL(`release of spendable outputId ${outputId}`)
     c.spendable = true
   }
 

@@ -1,8 +1,4 @@
-import {
-  _tu,
-  expectToThrowWERR,
-  TestWalletNoSetup
-} from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import * as bsv from '@bsv/sdk'
 
 describe('getKnownTxids Tests', () => {

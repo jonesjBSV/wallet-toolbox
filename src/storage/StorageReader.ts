@@ -55,10 +55,7 @@ export abstract class StorageReader implements sdk.WalletStorageSyncReader {
   }
 
   getSettings(): TableSettings {
-    if (!this._settings)
-      throw new sdk.WERR_INVALID_OPERATION(
-        'must call "makeAvailable" before accessing "settings"'
-      )
+    if (!this._settings) throw new sdk.WERR_INVALID_OPERATION('must call "makeAvailable" before accessing "settings"')
     return this._settings
   }
 
@@ -68,44 +65,23 @@ export abstract class StorageReader implements sdk.WalletStorageSyncReader {
 
   abstract destroy(): Promise<void>
 
-  abstract transaction<T>(
-    scope: (trx: sdk.TrxToken) => Promise<T>,
-    trx?: sdk.TrxToken
-  ): Promise<T>
+  abstract transaction<T>(scope: (trx: sdk.TrxToken) => Promise<T>, trx?: sdk.TrxToken): Promise<T>
 
   abstract readSettings(trx?: sdk.TrxToken): Promise<TableSettings>
 
-  abstract findCertificateFields(
-    args: sdk.FindCertificateFieldsArgs
-  ): Promise<TableCertificateField[]>
-  abstract findCertificates(
-    args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificateX[]>
-  abstract findCommissions(
-    args: sdk.FindCommissionsArgs
-  ): Promise<TableCommission[]>
-  abstract findMonitorEvents(
-    args: sdk.FindMonitorEventsArgs
-  ): Promise<TableMonitorEvent[]>
-  abstract findOutputBaskets(
-    args: sdk.FindOutputBasketsArgs
-  ): Promise<TableOutputBasket[]>
+  abstract findCertificateFields(args: sdk.FindCertificateFieldsArgs): Promise<TableCertificateField[]>
+  abstract findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]>
+  abstract findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]>
+  abstract findMonitorEvents(args: sdk.FindMonitorEventsArgs): Promise<TableMonitorEvent[]>
+  abstract findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]>
   abstract findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]>
-  abstract findOutputTags(
-    args: sdk.FindOutputTagsArgs
-  ): Promise<TableOutputTag[]>
-  abstract findSyncStates(
-    args: sdk.FindSyncStatesArgs
-  ): Promise<TableSyncState[]>
-  abstract findTransactions(
-    args: sdk.FindTransactionsArgs
-  ): Promise<TableTransaction[]>
+  abstract findOutputTags(args: sdk.FindOutputTagsArgs): Promise<TableOutputTag[]>
+  abstract findSyncStates(args: sdk.FindSyncStatesArgs): Promise<TableSyncState[]>
+  abstract findTransactions(args: sdk.FindTransactionsArgs): Promise<TableTransaction[]>
   abstract findTxLabels(args: sdk.FindTxLabelsArgs): Promise<TableTxLabel[]>
   abstract findUsers(args: sdk.FindUsersArgs): Promise<TableUser[]>
 
-  abstract countCertificateFields(
-    args: sdk.FindCertificateFieldsArgs
-  ): Promise<number>
+  abstract countCertificateFields(args: sdk.FindCertificateFieldsArgs): Promise<number>
   abstract countCertificates(args: sdk.FindCertificatesArgs): Promise<number>
   abstract countCommissions(args: sdk.FindCommissionsArgs): Promise<number>
   abstract countMonitorEvents(args: sdk.FindMonitorEventsArgs): Promise<number>
@@ -117,23 +93,13 @@ export abstract class StorageReader implements sdk.WalletStorageSyncReader {
   abstract countTxLabels(args: sdk.FindTxLabelsArgs): Promise<number>
   abstract countUsers(args: sdk.FindUsersArgs): Promise<number>
 
-  abstract getProvenTxsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableProvenTx[]>
-  abstract getProvenTxReqsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableProvenTxReq[]>
-  abstract getTxLabelMapsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableTxLabelMap[]>
-  abstract getOutputTagMapsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableOutputTagMap[]>
+  abstract getProvenTxsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTx[]>
+  abstract getProvenTxReqsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTxReq[]>
+  abstract getTxLabelMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableTxLabelMap[]>
+  abstract getOutputTagMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableOutputTagMap[]>
 
   async findUserByIdentityKey(key: string): Promise<TableUser | undefined> {
-    return verifyOneOrNone(
-      await this.findUsers({ partial: { identityKey: key } })
-    )
+    return verifyOneOrNone(await this.findUsers({ partial: { identityKey: key } }))
   }
 
   async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> {
@@ -146,10 +112,7 @@ export abstract class StorageReader implements sdk.WalletStorageSyncReader {
    * @returns
    */
   validateEntityDate(date: Date | string | number): Date | string {
-    if (!this.dbtype)
-      throw new sdk.WERR_INTERNAL(
-        'must call verifyReadyForDatabaseAccess first'
-      )
+    if (!this.dbtype) throw new sdk.WERR_INTERNAL('must call verifyReadyForDatabaseAccess first')
     let r: Date | string = this.validateDate(date)
     switch (this.dbtype) {
       case 'MySQL':
@@ -173,10 +136,7 @@ export abstract class StorageReader implements sdk.WalletStorageSyncReader {
     date: Date | string | number | null | undefined,
     useNowAsDefault?: boolean
   ): Date | string | undefined {
-    if (!this.dbtype)
-      throw new sdk.WERR_INTERNAL(
-        'must call verifyReadyForDatabaseAccess first'
-      )
+    if (!this.dbtype) throw new sdk.WERR_INTERNAL('must call verifyReadyForDatabaseAccess first')
     let r: Date | string | undefined = this.validateOptionalDate(date)
     if (!r && useNowAsDefault) r = new Date()
     switch (this.dbtype) {
@@ -198,18 +158,13 @@ export abstract class StorageReader implements sdk.WalletStorageSyncReader {
     return r
   }
 
-  validateOptionalDate(
-    date: Date | string | number | null | undefined
-  ): Date | undefined {
+  validateOptionalDate(date: Date | string | number | null | undefined): Date | undefined {
     if (date === null || date === undefined) return undefined
     return this.validateDate(date)
   }
 
   validateDateForWhere(date: Date | string | number): Date | string | number {
-    if (!this.dbtype)
-      throw new sdk.WERR_INTERNAL(
-        'must call verifyReadyForDatabaseAccess first'
-      )
+    if (!this.dbtype) throw new sdk.WERR_INTERNAL('must call verifyReadyForDatabaseAccess first')
     if (typeof date === 'number') date = validateSecondsSinceEpoch(date)
     const vdate = verifyTruthy(this.validateDate(date))
     let r: Date | string | number

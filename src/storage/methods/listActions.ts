@@ -58,15 +58,7 @@ export async function listActions(
     'version',
     'lockTime'
   ]
-  const stati: string[] = [
-    'completed',
-    'unprocessed',
-    'sending',
-    'unproven',
-    'unsigned',
-    'nosend',
-    'nonfinal'
-  ]
+  const stati: string[] = ['completed', 'unprocessed', 'sending', 'unproven', 'unsigned', 'nosend', 'nonfinal']
 
   const noLabels = labelIds.length === 0
 
@@ -94,16 +86,12 @@ export async function listActions(
   }
 
   const makeWithoutLabelsQueries = () => {
-    const q = k('transactions')
-      .where('userId', auth.userId)
-      .whereIn('status', stati)
+    const q = k('transactions').where('userId', auth.userId).whereIn('status', stati)
     const qcount = q.clone().count('transactionId as total')
     return { q, qcount }
   }
 
-  const { q, qcount } = noLabels
-    ? makeWithoutLabelsQueries()
-    : makeWithLabelsQueries()
+  const { q, qcount } = noLabels ? makeWithoutLabelsQueries() : makeWithLabelsQueries()
 
   q.limit(limit).offset(offset).orderBy('transactionId', 'asc')
 
@@ -136,9 +124,7 @@ export async function listActions(
         //    i++
         const action = r.actions[i]
         if (vargs.includeLabels) {
-          action.labels = (
-            await storage.getLabelsForTransactionId(tx.transactionId)
-          ).map(l => l.label)
+          action.labels = (await storage.getLabelsForTransactionId(tx.transactionId)).map(l => l.label)
         }
         if (vargs.includeOutputs) {
           const outputs: TableOutputX[] = await storage.findOutputs({
@@ -156,8 +142,7 @@ export async function listActions(
               outputDescription: o.outputDescription || '',
               basket: o.basket?.name || ''
             }
-            if (vargs.includeOutputLockingScripts)
-              wo.lockingScript = asString(o.lockingScript || [])
+            if (vargs.includeOutputLockingScripts) wo.lockingScript = asString(o.lockingScript || [])
             action.outputs.push(wo)
           }
         }
@@ -175,9 +160,7 @@ export async function listActions(
             }
             for (const o of inputs) {
               await storage.extendOutput(o, true, true)
-              const input = bsvTx?.inputs.find(
-                v => v.sourceTXID === o.txid && v.sourceOutputIndex === o.vout
-              )
+              const input = bsvTx?.inputs.find(v => v.sourceTXID === o.txid && v.sourceOutputIndex === o.vout)
               const wo: WalletActionInput = {
                 sourceOutpoint: `${o.txid}.${o.vout}`,
                 sourceSatoshis: o.satoshis || 0,

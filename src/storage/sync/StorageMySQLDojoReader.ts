@@ -46,16 +46,12 @@ export interface StorageMySQLDojoReaderOptions extends StorageReaderOptions {
   knex: Knex
 }
 
-export class StorageMySQLDojoReader
-  extends StorageReader
-  implements sdk.WalletStorageSyncReader
-{
+export class StorageMySQLDojoReader extends StorageReader implements sdk.WalletStorageSyncReader {
   knex: Knex
 
   constructor(options: StorageMySQLDojoReaderOptions) {
     super(options)
-    if (!options.knex)
-      throw new sdk.WERR_INVALID_PARAMETER('options.knex', `valid`)
+    if (!options.knex) throw new sdk.WERR_INVALID_PARAMETER('options.knex', `valid`)
     this.knex = options.knex
   }
 
@@ -63,10 +59,7 @@ export class StorageMySQLDojoReader
     await this.knex?.destroy()
   }
 
-  override async transaction<T>(
-    scope: (trx: sdk.TrxToken) => Promise<T>,
-    trx?: sdk.TrxToken
-  ): Promise<T> {
+  override async transaction<T>(scope: (trx: sdk.TrxToken) => Promise<T>, trx?: sdk.TrxToken): Promise<T> {
     if (trx) return await scope(trx)
 
     return await this.knex.transaction<T>(async knextrx => {
@@ -94,23 +87,15 @@ export class StorageMySQLDojoReader
       maxOutputScript: 256
     }
     if (r.storageName.startsWith('staging') && this.chain !== 'test')
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'chain',
-        `in aggreement with storage chain ${r.storageName}`
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('chain', `in aggreement with storage chain ${r.storageName}`)
     this._settings = r
     return r
   }
 
-  setupQuery<T extends object>(
-    table: string,
-    args: sdk.FindPartialSincePagedArgs<T>
-  ): Knex.QueryBuilder {
+  setupQuery<T extends object>(table: string, args: sdk.FindPartialSincePagedArgs<T>): Knex.QueryBuilder {
     let q = this.toDb(args.trx)<T>(table)
-    if (args.partial && Object.keys(args.partial).length > 0)
-      q.where(args.partial)
-    if (args.since)
-      q.where('updated_at', '>=', this.validateDateForWhere(args.since))
+    if (args.partial && Object.keys(args.partial).length > 0) q.where(args.partial)
+    if (args.since) q.where('updated_at', '>=', this.validateDateForWhere(args.since))
     if (args.paged) {
       q.limit(args.paged.limit)
       q.offset(args.paged.offset || 0)
@@ -121,9 +106,7 @@ export class StorageMySQLDojoReader
   findOutputBasketsQuery(args: sdk.FindOutputBasketsArgs): Knex.QueryBuilder {
     return this.setupQuery('output_baskets', args)
   }
-  async findOutputBaskets(
-    args: sdk.FindOutputBasketsArgs
-  ): Promise<TableOutputBasket[]> {
+  async findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]> {
     const q = this.findOutputBasketsQuery(args)
     const ds = await q
     const rs: TableOutputBasket[] = []
@@ -165,9 +148,7 @@ export class StorageMySQLDojoReader
   findOutputTagsQuery(args: sdk.FindOutputTagsArgs): Knex.QueryBuilder {
     return this.setupQuery('output_tags', args)
   }
-  async findOutputTags(
-    args: sdk.FindOutputTagsArgs
-  ): Promise<TableOutputTag[]> {
+  async findOutputTags(args: sdk.FindOutputTagsArgs): Promise<TableOutputTag[]> {
     const q = this.findOutputTagsQuery(args)
     const ds = await q
     const rs: TableOutputTag[] = []
@@ -184,10 +165,7 @@ export class StorageMySQLDojoReader
     }
     return this.validateEntities(rs, undefined, ['isDeleted'])
   }
-  findTransactionsQuery(
-    args: sdk.FindTransactionsArgs,
-    count?: boolean
-  ): Knex.QueryBuilder {
+  findTransactionsQuery(args: sdk.FindTransactionsArgs, count?: boolean): Knex.QueryBuilder {
     if (args.partial.rawTx)
       throw new sdk.WERR_INVALID_PARAMETER(
         'args.partial.rawTx',
@@ -201,16 +179,12 @@ export class StorageMySQLDojoReader
     const q = this.setupQuery('transactions', args)
     if (args.status && args.status.length > 0) q.whereIn('status', args.status)
     if (args.noRawTx && !count) {
-      const columns = transactionColumnsWithoutRawTx.map(
-        c => `transactions.${c}`
-      )
+      const columns = transactionColumnsWithoutRawTx.map(c => `transactions.${c}`)
       q.select(columns)
     }
     return q
   }
-  async findTransactions(
-    args: sdk.FindTransactionsArgs
-  ): Promise<TableTransaction[]> {
+  async findTransactions(args: sdk.FindTransactionsArgs): Promise<TableTransaction[]> {
     const q = this.findTransactionsQuery(args)
     const ds = await q
     const rs: TableTransaction[] = []
@@ -244,9 +218,7 @@ export class StorageMySQLDojoReader
       )
     return this.setupQuery('commissions', args)
   }
-  async findCommissions(
-    args: sdk.FindCommissionsArgs
-  ): Promise<TableCommission[]> {
+  async findCommissions(args: sdk.FindCommissionsArgs): Promise<TableCommission[]> {
     const q = this.findCommissionsQuery(args)
     const ds = await q
     const rs: TableCommission[] = []
@@ -270,10 +242,7 @@ export class StorageMySQLDojoReader
     if (s.length > maxLen) s = s.slice(0, maxLen)
     return s
   }
-  findOutputsQuery(
-    args: sdk.FindOutputsArgs,
-    count?: boolean
-  ): Knex.QueryBuilder {
+  findOutputsQuery(args: sdk.FindOutputsArgs, count?: boolean): Knex.QueryBuilder {
     if (args.partial.lockingScript)
       throw new sdk.WERR_INVALID_PARAMETER(
         'args.partial.lockingScript',
@@ -327,14 +296,11 @@ export class StorageMySQLDojoReader
   }
   findCertificatesQuery(args: sdk.FindCertificatesArgs): Knex.QueryBuilder {
     const q = this.setupQuery('certificates', args)
-    if (args.certifiers && args.certifiers.length > 0)
-      q.whereIn('certifier', args.certifiers)
+    if (args.certifiers && args.certifiers.length > 0) q.whereIn('certifier', args.certifiers)
     if (args.types && args.types.length > 0) q.whereIn('type', args.types)
     return q
   }
-  async findCertificates(
-    args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificateX[]> {
+  async findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]> {
     const q = this.findCertificatesQuery(args)
     const ds = await q
     const rs: TableCertificate[] = []
@@ -348,9 +314,7 @@ export class StorageMySQLDojoReader
         serialNumber: verifyTruthy(d.serialNumber).trim(), // base64
         certifier: verifyHexString(d.certifier),
         subject: verifyHexString(d.subject),
-        revocationOutpoint: verifyTruthy(d.revocationOutpoint)
-          .trim()
-          .toLowerCase(),
+        revocationOutpoint: verifyTruthy(d.revocationOutpoint).trim().toLowerCase(),
         signature: verifyHexString(d.signature),
         verifier: verifyOptionalHexString(d.validationKey),
         isDeleted: !!d.isDeleted
@@ -359,14 +323,10 @@ export class StorageMySQLDojoReader
     }
     return this.validateEntities(rs, undefined, ['isDeleted'])
   }
-  findCertificateFieldsQuery(
-    args: sdk.FindCertificateFieldsArgs
-  ): Knex.QueryBuilder {
+  findCertificateFieldsQuery(args: sdk.FindCertificateFieldsArgs): Knex.QueryBuilder {
     return this.setupQuery('certificate_fields', args)
   }
-  async findCertificateFields(
-    args: sdk.FindCertificateFieldsArgs
-  ): Promise<TableCertificateField[]> {
+  async findCertificateFields(args: sdk.FindCertificateFieldsArgs): Promise<TableCertificateField[]> {
     const q = this.findCertificateFieldsQuery(args)
     const ds = await q
     const rs: TableCertificateField[] = []
@@ -384,9 +344,7 @@ export class StorageMySQLDojoReader
     }
     return this.validateEntities(rs)
   }
-  override async findSyncStates(
-    args: sdk.FindSyncStatesArgs
-  ): Promise<TableSyncState[]> {
+  override async findSyncStates(args: sdk.FindSyncStatesArgs): Promise<TableSyncState[]> {
     const q = this.setupQuery('sync_state', args)
     const ds = await q
     const rs: TableSyncState[] = []
@@ -430,18 +388,14 @@ export class StorageMySQLDojoReader
     return this.validateEntities(rs)
   }
 
-  getProvenTxsForUserQuery(
-    args: sdk.FindForUserSincePagedArgs
-  ): Knex.QueryBuilder {
+  getProvenTxsForUserQuery(args: sdk.FindForUserSincePagedArgs): Knex.QueryBuilder {
     const k = this.toDb(args.trx)
     let q = k('proven_txs').where(function () {
       this.whereExists(
         k
           .select('*')
           .from('transactions')
-          .whereRaw(
-            `proven_txs.provenTxId = transactions.provenTxId and transactions.userId = ${args.userId}`
-          )
+          .whereRaw(`proven_txs.provenTxId = transactions.provenTxId and transactions.userId = ${args.userId}`)
       )
     })
     if (args.paged) {
@@ -451,9 +405,7 @@ export class StorageMySQLDojoReader
     if (args.since) q = q.where('updated_at', '>=', args.since)
     return q
   }
-  async getProvenTxsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableProvenTx[]> {
+  async getProvenTxsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTx[]> {
     const q = this.getProvenTxsForUserQuery(args)
     const ds = await q
     const rs: TableProvenTx[] = []
@@ -482,18 +434,14 @@ export class StorageMySQLDojoReader
     return this.validateEntities(rs)
   }
 
-  getProvenTxReqsForUserQuery(
-    args: sdk.FindForUserSincePagedArgs
-  ): Knex.QueryBuilder {
+  getProvenTxReqsForUserQuery(args: sdk.FindForUserSincePagedArgs): Knex.QueryBuilder {
     const k = this.toDb(args.trx)
     let q = k('proven_tx_reqs').where(function () {
       this.whereExists(
         k
           .select('*')
           .from('transactions')
-          .whereRaw(
-            `proven_tx_reqs.txid = transactions.txid and transactions.userId = ${args.userId}`
-          )
+          .whereRaw(`proven_tx_reqs.txid = transactions.txid and transactions.userId = ${args.userId}`)
       )
     })
     if (args.paged) {
@@ -504,9 +452,7 @@ export class StorageMySQLDojoReader
     return q
   }
 
-  async getProvenTxReqsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableProvenTxReq[]> {
+  async getProvenTxReqsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableProvenTxReq[]> {
     const q = this.getProvenTxReqsForUserQuery(args)
     const ds = await q
     const rs: TableProvenTxReq[] = []
@@ -531,20 +477,15 @@ export class StorageMySQLDojoReader
     return this.validateEntities(rs, undefined, ['notified'])
   }
 
-  getTxLabelMapsForUserQuery(
-    args: sdk.FindForUserSincePagedArgs
-  ): Knex.QueryBuilder {
+  getTxLabelMapsForUserQuery(args: sdk.FindForUserSincePagedArgs): Knex.QueryBuilder {
     const k = this.toDb(args.trx)
     let q = k('tx_labels_map').whereExists(
       k
         .select('*')
         .from('tx_labels')
-        .whereRaw(
-          `tx_labels.txLabelId = tx_labels_map.txLabelId and tx_labels.userId = ${args.userId}`
-        )
+        .whereRaw(`tx_labels.txLabelId = tx_labels_map.txLabelId and tx_labels.userId = ${args.userId}`)
     )
-    if (args.since)
-      q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
+    if (args.since) q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
     if (args.paged) {
       q = q.limit(args.paged.limit)
       q = q.offset(args.paged.offset || 0)
@@ -552,9 +493,7 @@ export class StorageMySQLDojoReader
     return q
   }
 
-  async getTxLabelMapsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableTxLabelMap[]> {
+  async getTxLabelMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableTxLabelMap[]> {
     const q = this.getTxLabelMapsForUserQuery(args)
     const ds = await q
     const rs: TableTxLabelMap[] = []
@@ -571,20 +510,15 @@ export class StorageMySQLDojoReader
     return this.validateEntities(rs, undefined, ['isDeleted'])
   }
 
-  getOutputTagMapsForUserQuery(
-    args: sdk.FindForUserSincePagedArgs
-  ): Knex.QueryBuilder {
+  getOutputTagMapsForUserQuery(args: sdk.FindForUserSincePagedArgs): Knex.QueryBuilder {
     const k = this.toDb(args.trx)
     let q = k('output_tags_map').whereExists(
       k
         .select('*')
         .from('output_tags')
-        .whereRaw(
-          `output_tags.outputTagId = output_tags_map.outputTagId and output_tags.userId = ${args.userId}`
-        )
+        .whereRaw(`output_tags.outputTagId = output_tags_map.outputTagId and output_tags.userId = ${args.userId}`)
     )
-    if (args.since)
-      q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
+    if (args.since) q = q.where('updated_at', '>=', this.validateDateForWhere(args.since))
     if (args.paged) {
       q = q.limit(args.paged.limit)
       q = q.offset(args.paged.offset || 0)
@@ -592,9 +526,7 @@ export class StorageMySQLDojoReader
     return q
   }
 
-  async getOutputTagMapsForUser(
-    args: sdk.FindForUserSincePagedArgs
-  ): Promise<TableOutputTagMap[]> {
+  async getOutputTagMapsForUser(args: sdk.FindForUserSincePagedArgs): Promise<TableOutputTagMap[]> {
     const q = this.getOutputTagMapsForUserQuery(args)
     const ds = await q
     const rs: TableOutputTagMap[] = []
@@ -611,9 +543,7 @@ export class StorageMySQLDojoReader
     return this.validateEntities(rs, undefined, ['isDeleted'])
   }
 
-  override countCertificateFields(
-    args: sdk.FindCertificateFieldsArgs
-  ): Promise<number> {
+  override countCertificateFields(args: sdk.FindCertificateFieldsArgs): Promise<number> {
     throw new Error('Method not implemented.')
   }
   override countCertificates(args: sdk.FindCertificatesArgs): Promise<number> {
@@ -622,9 +552,7 @@ export class StorageMySQLDojoReader
   override countCommissions(args: sdk.FindCommissionsArgs): Promise<number> {
     throw new Error('Method not implemented.')
   }
-  override countOutputBaskets(
-    args: sdk.FindOutputBasketsArgs
-  ): Promise<number> {
+  override countOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<number> {
     throw new Error('Method not implemented.')
   }
   override countOutputs(args: sdk.FindOutputsArgs): Promise<number> {
@@ -645,14 +573,10 @@ export class StorageMySQLDojoReader
   override countUsers(args: sdk.FindUsersArgs): Promise<number> {
     throw new Error('Method not implemented.')
   }
-  override findMonitorEvents(
-    args: sdk.FindMonitorEventsArgs
-  ): Promise<TableMonitorEvent[]> {
+  override findMonitorEvents(args: sdk.FindMonitorEventsArgs): Promise<TableMonitorEvent[]> {
     throw new Error('Method not implemented.')
   }
-  override countMonitorEvents(
-    args: sdk.FindMonitorEventsArgs
-  ): Promise<number> {
+  override countMonitorEvents(args: sdk.FindMonitorEventsArgs): Promise<number> {
     throw new Error('Method not implemented.')
   }
 
@@ -660,11 +584,7 @@ export class StorageMySQLDojoReader
    * Helper to force uniform behavior across database engines.
    * Use to process all individual records with time stamps retreived from database.
    */
-  validateEntity<T extends sdk.EntityTimeStamp>(
-    entity: T,
-    dateFields?: string[],
-    booleanFields?: string[]
-  ): T {
+  validateEntity<T extends sdk.EntityTimeStamp>(entity: T, dateFields?: string[], booleanFields?: string[]): T {
     entity.created_at = this.validateDate(entity.created_at)
     entity.updated_at = this.validateDate(entity.updated_at)
     if (dateFields) {
@@ -693,11 +613,7 @@ export class StorageMySQLDojoReader
    * Use to process all arrays of records with time stamps retreived from database.
    * @returns input `entities` array with contained values validated.
    */
-  validateEntities<T extends sdk.EntityTimeStamp>(
-    entities: T[],
-    dateFields?: string[],
-    booleanFields?: string[]
-  ): T[] {
+  validateEntities<T extends sdk.EntityTimeStamp>(entities: T[], dateFields?: string[], booleanFields?: string[]): T[] {
     for (let i = 0; i < entities.length; i++) {
       entities[i] = this.validateEntity(entities[i], dateFields, booleanFields)
     }
@@ -706,8 +622,7 @@ export class StorageMySQLDojoReader
 }
 
 function deserializeTscMerkleProofNodes(nodes: Buffer): string[] {
-  if (!Buffer.isBuffer(nodes))
-    throw new sdk.WERR_INTERNAL('Buffer or string expected.')
+  if (!Buffer.isBuffer(nodes)) throw new sdk.WERR_INTERNAL('Buffer or string expected.')
   const buffer = nodes
   const ns: string[] = []
   for (let offset = 0; offset < buffer.length; ) {
@@ -717,9 +632,7 @@ function deserializeTscMerkleProofNodes(nodes: Buffer): string[] {
       ns.push(asString(buffer.subarray(offset, offset + 32)))
       offset += 32
     } else {
-      throw new sdk.WERR_BAD_REQUEST(
-        `node type byte ${flag} is not supported here.`
-      )
+      throw new sdk.WERR_BAD_REQUEST(`node type byte ${flag} is not supported here.`)
     }
   }
   return ns
@@ -739,27 +652,16 @@ type DojoProvenTxReqStatusApi =
   | 'invalid'
   | 'doubleSpend'
 
-function convertReqStatus(
-  status: DojoProvenTxReqStatusApi
-): sdk.ProvenTxReqStatus {
+function convertReqStatus(status: DojoProvenTxReqStatusApi): sdk.ProvenTxReqStatus {
   return status
 }
 
-type DojoTransactionStatusApi =
-  | 'completed'
-  | 'failed'
-  | 'unprocessed'
-  | 'sending'
-  | 'unproven'
-  | 'unsigned'
-  | 'nosend'
+type DojoTransactionStatusApi = 'completed' | 'failed' | 'unprocessed' | 'sending' | 'unproven' | 'unsigned' | 'nosend'
 
 //type TransactionStatus =
 //   'completed' | 'failed' | 'unprocessed' | 'sending' | 'unproven' | 'unsigned' | 'nosend'
 
-function convertTxStatus(
-  status: DojoTransactionStatusApi
-): sdk.TransactionStatus {
+function convertTxStatus(status: DojoTransactionStatusApi): sdk.TransactionStatus {
   return status
 }
 
@@ -769,12 +671,9 @@ function nullToUndefined<T>(v: T): T | undefined {
   return v
 }
 
-function verifyOptionalInteger(
-  v: number | null | undefined
-): number | undefined {
+function verifyOptionalInteger(v: number | null | undefined): number | undefined {
   if (v === undefined || v === null) return undefined
-  if (typeof v !== 'number' || !Number.isInteger(v))
-    throw new sdk.WERR_INTERNAL('An integer is required.')
+  if (typeof v !== 'number' || !Number.isInteger(v)) throw new sdk.WERR_INTERNAL('An integer is required.')
   return v
 }
 

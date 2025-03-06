@@ -12,18 +12,11 @@ export class ChaintracksChainTracker implements ChainTracker {
   cache: Record<number, string>
   options: ChaintracksChainTrackerOptions
 
-  constructor(
-    chain?: sdk.Chain,
-    chaintracks?: ChaintracksServiceClient,
-    options?: ChaintracksChainTrackerOptions
-  ) {
+  constructor(chain?: sdk.Chain, chaintracks?: ChaintracksServiceClient, options?: ChaintracksChainTrackerOptions) {
     chain ||= 'main'
     this.chaintracks =
       chaintracks ??
-      new ChaintracksServiceClient(
-        chain,
-        `https://npm-registry.babbage.systems:808${chain === 'main' ? '4' : '3'}`
-      )
+      new ChaintracksServiceClient(chain, `https://npm-registry.babbage.systems:808${chain === 'main' ? '4' : '3'}`)
     this.cache = {}
     this.options = options || {}
   }
@@ -62,10 +55,7 @@ export class ChaintracksChainTracker implements ChainTracker {
       }
     }
 
-    if (!header)
-      throw new sdk.WERR_INTERNAL(
-        'no header should have returned false or thrown an error.'
-      )
+    if (!header) throw new sdk.WERR_INTERNAL('no header should have returned false or thrown an error.')
 
     this.cache[height] = header.merkleRoot
 

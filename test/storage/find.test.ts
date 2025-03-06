@@ -11,12 +11,7 @@ describe('find tests', () => {
   const env = _tu.getEnv(chain)
 
   beforeAll(async () => {
-    const localSQLiteFile = await _tu.newTmpFile(
-      'storagefindtest.sqlite',
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile('storagefindtest.sqlite', false, false, true)
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
     storages.push(
       new StorageKnex({
@@ -80,10 +75,7 @@ describe('find tests', () => {
           })
         ).length
       ).toBe(1)
-      expect(
-        (await storage.findCertificates({ partial: {}, certifiers: ['none'] }))
-          .length
-      ).toBe(0)
+      expect((await storage.findCertificates({ partial: {}, certifiers: ['none'] })).length).toBe(0)
       expect(
         (
           await storage.findCertificates({
@@ -92,18 +84,13 @@ describe('find tests', () => {
           })
         ).length
       ).toBe(1)
-      expect(
-        (await storage.findCertificates({ partial: {}, types: ['oblongata'] }))
-          .length
-      ).toBe(0)
+      expect((await storage.findCertificates({ partial: {}, types: ['oblongata'] })).length).toBe(0)
     }
   })
 
   test('4 find CertificateField', async () => {
     for (const { storage, setup } of setups) {
-      expect(
-        (await storage.findCertificateFields({ partial: {} })).length
-      ).toBe(3)
+      expect((await storage.findCertificateFields({ partial: {} })).length).toBe(3)
       expect(
         (
           await storage.findCertificateFields({
@@ -118,10 +105,7 @@ describe('find tests', () => {
           })
         ).length
       ).toBe(0)
-      expect(
-        (await storage.findCertificateFields({ partial: { userId: 99 } }))
-          .length
-      ).toBe(0)
+      expect((await storage.findCertificateFields({ partial: { userId: 99 } })).length).toBe(0)
       expect(
         (
           await storage.findCertificateFields({
@@ -129,10 +113,7 @@ describe('find tests', () => {
           })
         ).length
       ).toBe(2)
-      expect(
-        (await storage.findCertificateFields({ partial: { fieldName: 'bob' } }))
-          .length
-      ).toBe(1)
+      expect((await storage.findCertificateFields({ partial: { fieldName: 'bob' } })).length).toBe(1)
       expect(
         (
           await storage.findCertificateFields({
@@ -154,10 +135,7 @@ describe('find tests', () => {
           })
         ).length
       ).toBe(3)
-      expect(
-        (await storage.findOutputBaskets({ partial: {}, since: new Date() }))
-          .length
-      ).toBe(0)
+      expect((await storage.findOutputBaskets({ partial: {}, since: new Date() })).length).toBe(0)
     }
   })
 

@@ -1,25 +1,10 @@
-import {
-  Transaction as BsvTransaction,
-  Beef,
-  ChainTracker,
-  Utils
-} from '@bsv/sdk'
-import {
-  asArray,
-  asString,
-  doubleSha256BE,
-  sdk,
-  sha256Hash,
-  wait
-} from '../index.client'
+import { Transaction as BsvTransaction, Beef, ChainTracker, Utils } from '@bsv/sdk'
+import { asArray, asString, doubleSha256BE, sdk, sha256Hash, wait } from '../index.client'
 import { ServiceCollection } from './ServiceCollection'
 import { createDefaultWalletServicesOptions } from './createDefaultWalletServicesOptions'
 import { ChaintracksChainTracker } from './chaintracker'
 import { WhatsOnChain } from './providers/WhatsOnChain'
-import {
-  updateChaintracksFiatExchangeRates,
-  updateExchangeratesapi
-} from './providers/echangeRates'
+import { updateChaintracksFiatExchangeRates, updateExchangeratesapi } from './providers/echangeRates'
 import { ARC } from './providers/ARC'
 import { Bitails } from './providers/Bitails'
 
@@ -42,13 +27,9 @@ export class Services implements sdk.WalletServices {
   chain: sdk.Chain
 
   constructor(optionsOrChain: sdk.Chain | sdk.WalletServicesOptions) {
-    this.chain =
-      typeof optionsOrChain === 'string' ? optionsOrChain : optionsOrChain.chain
+    this.chain = typeof optionsOrChain === 'string' ? optionsOrChain : optionsOrChain.chain
 
-    this.options =
-      typeof optionsOrChain === 'string'
-        ? Services.createDefaultOptions(this.chain)
-        : optionsOrChain
+    this.options = typeof optionsOrChain === 'string' ? Services.createDefaultOptions(this.chain) : optionsOrChain
 
     this.whatsonchain = new WhatsOnChain(this.chain, {
       apiKey: this.options.taalApiKey
@@ -84,30 +65,20 @@ export class Services implements sdk.WalletServices {
 
   async getChainTracker(): Promise<ChainTracker> {
     if (!this.options.chaintracks)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'options.chaintracks',
-        `valid to enable 'getChainTracker' service.`
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('options.chaintracks', `valid to enable 'getChainTracker' service.`)
     return new ChaintracksChainTracker(this.chain, this.options.chaintracks)
   }
 
   async getBsvExchangeRate(): Promise<number> {
-    this.options.bsvExchangeRate =
-      await this.whatsonchain.updateBsvExchangeRate(
-        this.options.bsvExchangeRate,
-        this.options.bsvUpdateMsecs
-      )
+    this.options.bsvExchangeRate = await this.whatsonchain.updateBsvExchangeRate(
+      this.options.bsvExchangeRate,
+      this.options.bsvUpdateMsecs
+    )
     return this.options.bsvExchangeRate.rate
   }
 
-  async getFiatExchangeRate(
-    currency: 'USD' | 'GBP' | 'EUR',
-    base?: 'USD' | 'GBP' | 'EUR'
-  ): Promise<number> {
-    const rates = await this.updateFiatExchangeRates(
-      this.options.fiatExchangeRates,
-      this.options.fiatUpdateMsecs
-    )
+  async getFiatExchangeRate(currency: 'USD' | 'GBP' | 'EUR', base?: 'USD' | 'GBP' | 'EUR'): Promise<number> {
+    const rates = await this.updateFiatExchangeRates(this.options.fiatExchangeRates, this.options.fiatUpdateMsecs)
 
     this.options.fiatExchangeRates = rates
 
@@ -195,9 +166,7 @@ export class Services implements sdk.WalletServices {
           r0.error = undefined
           break
         }
-        r.error = new sdk.WERR_INTERNAL(
-          `computed txid ${hash} doesn't match requested value ${txid}`
-        )
+        r.error = new sdk.WERR_INTERNAL(`computed txid ${hash} doesn't match requested value ${txid}`)
         r.rawTx = undefined
       }
       if (r.error && !r0.error && !r0.rawTx)
@@ -211,10 +180,7 @@ export class Services implements sdk.WalletServices {
 
   async invokeChaintracksWithRetry<R>(method: () => Promise<R>): Promise<R> {
     if (!this.options.chaintracks)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'options.chaintracks',
-        'valid for this service operation.'
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('options.chaintracks', 'valid for this service operation.')
     for (let retry = 0; retry < 3; retry++) {
       try {
         const r: R = await method()
@@ -230,11 +196,7 @@ export class Services implements sdk.WalletServices {
   async getHeaderForHeight(height: number): Promise<number[]> {
     const method = async () => {
       const header = await this.options.chaintracks!.findHeaderForHeight(height)
-      if (!header)
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'hash',
-          `valid height '${height}' on mined chain ${this.chain}`
-        )
+      if (!header) throw new sdk.WERR_INVALID_PARAMETER('hash', `valid height '${height}' on mined chain ${this.chain}`)
       return toBinaryBaseBlockHeader(header)
     }
     return this.invokeChaintracksWithRetry(method)
@@ -249,22 +211,15 @@ export class Services implements sdk.WalletServices {
 
   async hashToHeader(hash: string): Promise<sdk.BlockHeader> {
     const method = async () => {
-      const header =
-        await this.options.chaintracks!.findHeaderForBlockHash(hash)
+      const header = await this.options.chaintracks!.findHeaderForBlockHash(hash)
       if (!header)
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'hash',
-          `valid blockhash '${hash}' on mined chain ${this.chain}`
-        )
+        throw new sdk.WERR_INVALID_PARAMETER('hash', `valid blockhash '${hash}' on mined chain ${this.chain}`)
       return header
     }
     return this.invokeChaintracksWithRetry(method)
   }
 
-  async getMerklePath(
-    txid: string,
-    useNext?: boolean
-  ): Promise<sdk.GetMerklePathResult> {
+  async getMerklePath(txid: string, useNext?: boolean): Promise<sdk.GetMerklePathResult> {
     if (useNext) this.getMerklePathServices.next()
 
     const r0: sdk.GetMerklePathResult = { notes: [] }
@@ -293,10 +248,7 @@ export class Services implements sdk.WalletServices {
 
   targetCurrencies = ['USD', 'GBP', 'EUR']
 
-  async updateFiatExchangeRates(
-    rates?: sdk.FiatExchangeRates,
-    updateMsecs?: number
-  ): Promise<sdk.FiatExchangeRates> {
+  async updateFiatExchangeRates(rates?: sdk.FiatExchangeRates, updateMsecs?: number): Promise<sdk.FiatExchangeRates> {
     updateMsecs ||= 1000 * 60 * 15
     const freshnessDate = new Date(Date.now() - updateMsecs)
     if (rates) {
@@ -320,9 +272,7 @@ export class Services implements sdk.WalletServices {
         }
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
-        console.error(
-          `updateFiatExchangeRates servcice name ${service.name} error ${e.message}`
-        )
+        console.error(`updateFiatExchangeRates servcice name ${service.name} error ${e.message}`)
       }
       services.next()
     }
@@ -336,9 +286,7 @@ export class Services implements sdk.WalletServices {
     return r0
   }
 
-  async nLockTimeIsFinal(
-    tx: string | number[] | BsvTransaction | number
-  ): Promise<boolean> {
+  async nLockTimeIsFinal(tx: string | number[] | BsvTransaction | number): Promise<boolean> {
     const MAXINT = 0xffffffff
     const BLOCK_LIMIT = 500000000
 
@@ -358,9 +306,7 @@ export class Services implements sdk.WalletServices {
         }
         nLockTime = tx.lockTime
       } else {
-        throw new sdk.WERR_INTERNAL(
-          'Should be either @bsv/sdk Transaction or babbage-bsv Transaction'
-        )
+        throw new sdk.WERR_INTERNAL('Should be either @bsv/sdk Transaction or babbage-bsv Transaction')
       }
     }
 
@@ -374,10 +320,7 @@ export class Services implements sdk.WalletServices {
   }
 }
 
-export function validateScriptHash(
-  output: string,
-  outputFormat?: sdk.GetUtxoStatusOutputFormat
-): string {
+export function validateScriptHash(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): string {
   let b = asArray(output)
   if (!outputFormat) {
     if (b.length === 32) outputFormat = 'hashLE'
@@ -393,10 +336,7 @@ export function validateScriptHash(
       b = sha256Hash(b).reverse()
       break
     default:
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'outputFormat',
-        `not be ${outputFormat}`
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('outputFormat', `not be ${outputFormat}`)
   }
   return asString(b)
 }

@@ -30,10 +30,7 @@ describe('walletStorageClient test', () => {
     const { wallet, storage } = ctx
 
     {
-      const client = new StorageClient(
-        wallet,
-        'https://staging-storage.babbage.systems'
-      )
+      const client = new StorageClient(wallet, 'https://staging-storage.babbage.systems')
       await storage.addWalletStorageProvider(client)
       await storage.updateBackups()
     }
@@ -70,10 +67,7 @@ describe('walletStorageClient test', () => {
     ctxs.push(main)
 
     {
-      const client = new StorageClient(
-        main.wallet,
-        'https://storage.babbage.systems'
-      )
+      const client = new StorageClient(main.wallet, 'https://storage.babbage.systems')
       await main.storage.addWalletStorageProvider(client)
       await main.storage.updateBackups()
     }

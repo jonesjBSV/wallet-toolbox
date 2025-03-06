@@ -34,9 +34,7 @@ export class StorageSyncReader implements sdk.WalletStorageSyncReader {
   async makeAvailable(): Promise<TableSettings> {
     await this.storage.makeAvailable()
     if (this.auth.userId === undefined) {
-      const user = await this.storage.findUserByIdentityKey(
-        this.auth.identityKey
-      )
+      const user = await this.storage.findUserByIdentityKey(this.auth.identityKey)
       if (!user) throw new sdk.WERR_UNAUTHORIZED()
       this.auth.userId = user.userId
     }
@@ -47,8 +45,7 @@ export class StorageSyncReader implements sdk.WalletStorageSyncReader {
   }
   async getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> {
     if (!this.auth.userId) await this.makeAvailable()
-    if (args.identityKey !== this.auth.identityKey)
-      throw new sdk.WERR_UNAUTHORIZED()
+    if (args.identityKey !== this.auth.identityKey) throw new sdk.WERR_UNAUTHORIZED()
     return await this.storage.getSyncChunk(args)
   }
 }

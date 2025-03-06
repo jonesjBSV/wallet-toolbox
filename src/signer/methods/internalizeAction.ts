@@ -47,10 +47,7 @@ export async function internalizeAction(
 
   for (const o of vargs.outputs) {
     if (o.outputIndex < 0 || o.outputIndex >= tx.outputs.length)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'outputIndex',
-        `a valid output index in range 0 to ${tx.outputs.length - 1}`
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('outputIndex', `a valid output index in range 0 to ${tx.outputs.length - 1}`)
     switch (o.protocol) {
       case 'basket insertion':
         setupBasketInsertionForOutput(o, vargs)
@@ -63,42 +60,24 @@ export async function internalizeAction(
     }
   }
 
-  const r: InternalizeActionResult =
-    await wallet.storage.internalizeAction(args)
+  const r: InternalizeActionResult = await wallet.storage.internalizeAction(args)
 
   return r
 
-  function setupWalletPaymentForOutput(
-    o: InternalizeOutput,
-    dargs: sdk.ValidInternalizeActionArgs
-  ) {
+  function setupWalletPaymentForOutput(o: InternalizeOutput, dargs: sdk.ValidInternalizeActionArgs) {
     const p = o.paymentRemittance
     const output = tx.outputs[o.outputIndex]
-    if (!p)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'paymentRemitance',
-        `valid for protocol ${o.protocol}`
-      )
+    if (!p) throw new sdk.WERR_INVALID_PARAMETER('paymentRemitance', `valid for protocol ${o.protocol}`)
 
     const keyID = `${p.derivationPrefix} ${p.derivationSuffix}`
 
-    const privKey = wallet.keyDeriver!.derivePrivateKey(
-      brc29ProtocolID,
-      keyID,
-      p.senderIdentityKey
-    )
+    const privKey = wallet.keyDeriver!.derivePrivateKey(brc29ProtocolID, keyID, p.senderIdentityKey)
     const expectedLockScript = new P2PKH().lock(privKey.toAddress())
     if (output.lockingScript.toHex() !== expectedLockScript.toHex())
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'paymentRemitance',
-        `locked by script conforming to BRC-29`
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('paymentRemitance', `locked by script conforming to BRC-29`)
   }
 
-  function setupBasketInsertionForOutput(
-    o: InternalizeOutput,
-    dargs: sdk.ValidInternalizeActionArgs
-  ) {
+  function setupBasketInsertionForOutput(o: InternalizeOutput, dargs: sdk.ValidInternalizeActionArgs) {
     /*
     No additional validations...
     */
@@ -109,19 +88,11 @@ export async function internalizeAction(
 
     // TODO: Add support for known txids...
 
-    const txValid = await ab.verify(
-      await wallet.getServices().getChainTracker(),
-      false
-    )
-    if (!txValid || !ab.atomicTxid)
-      throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF')
+    const txValid = await ab.verify(await wallet.getServices().getChainTracker(), false)
+    if (!txValid || !ab.atomicTxid) throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF')
     const txid = ab.atomicTxid
     const btx = ab.findTxid(txid)
-    if (!btx)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'tx',
-        `valid AtomicBEEF with newest txid of ${txid}`
-      )
+    if (!btx) throw new sdk.WERR_INVALID_PARAMETER('tx', `valid AtomicBEEF with newest txid of ${txid}`)
     const tx = btx.tx!
 
     /*

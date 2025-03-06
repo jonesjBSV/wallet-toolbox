@@ -63,11 +63,7 @@ export type ProvenTxReqStatus =
   | 'invalid'
   | 'doubleSpend'
 
-export const ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = [
-  'completed',
-  'invalid',
-  'doubleSpend'
-]
+export const ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = ['completed', 'invalid', 'doubleSpend']
 
 export const ProvenTxReqNonTerminalStatus: ProvenTxReqStatus[] = [
   'sending',
@@ -81,14 +77,7 @@ export const ProvenTxReqNonTerminalStatus: ProvenTxReqStatus[] = [
   'unconfirmed'
 ]
 
-export type TransactionStatus =
-  | 'completed'
-  | 'failed'
-  | 'unprocessed'
-  | 'sending'
-  | 'unproven'
-  | 'unsigned'
-  | 'nosend'
+export type TransactionStatus = 'completed' | 'failed' | 'unprocessed' | 'sending' | 'unproven' | 'unsigned' | 'nosend'
 
 export interface Paged {
   limit: number
@@ -138,8 +127,7 @@ export type ReqHistoryNote = {
  * Returns wallet's current change balance in the `totalOutputs` result property.
  * The `outputs` result property will always be an empty array.
  */
-export const specOpWalletBalance =
-  '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
+export const specOpWalletBalance = '893b7646de0e1c9f741bd6e9169b76a8847ae34adef7bef1e6a285371206d2e8'
 
 /**
  * `listOutputs` special operation basket name value.
@@ -148,8 +136,7 @@ export const specOpWalletBalance =
  *
  * Optional tag value 'release'. If present, updates invalid change outputs to not spendable.
  */
-export const specOpInvalidChange =
-  '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
+export const specOpInvalidChange = '5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57'
 
 /**
  * `listOutputs` special operation basket name value.
@@ -160,19 +147,12 @@ export const specOpInvalidChange =
  *
  * Tag at index 1 is the new target for minimum satoshis when creating new change outputs.
  */
-export const specOpSetWalletChangeParams =
-  'a4979d28ced8581e9c1c92f1001cc7cb3aabf8ea32e10888ad898f0a509a3929'
+export const specOpSetWalletChangeParams = 'a4979d28ced8581e9c1c92f1001cc7cb3aabf8ea32e10888ad898f0a509a3929'
 
 /**
  * @param basket Output basket name value.
  * @returns true iff the `basket` name is a reserved `listOutputs` special operation identifier.
  */
 export function isSpecOp(basket: string): boolean {
-  return (
-    [
-      specOpWalletBalance,
-      specOpInvalidChange,
-      specOpSetWalletChangeParams
-    ].indexOf(basket) >= 0
-  )
+  return [specOpWalletBalance, specOpInvalidChange, specOpSetWalletChangeParams].indexOf(basket) >= 0
 }

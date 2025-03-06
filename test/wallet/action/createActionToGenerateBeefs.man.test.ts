@@ -23,16 +23,14 @@ describe('createActionToGenerateBeefs test', () => {
       // Mock the services postBeef to avoid actually broadcasting new transactions and collect beef data.
       services.postBeef = jest
         .fn()
-        .mockImplementation(
-          (beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
-            const r: sdk.PostBeefResult = {
-              name: 'mock',
-              status: 'success',
-              txidResults: txids.map(txid => ({ txid, status: 'success' }))
-            }
-            return Promise.resolve([r])
+        .mockImplementation((beef: bsv.Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+          const r: sdk.PostBeefResult = {
+            name: 'mock',
+            status: 'success',
+            txidResults: txids.map(txid => ({ txid, status: 'success' }))
           }
-        )
+          return Promise.resolve([r])
+        })
     }
   })
 
@@ -135,8 +133,7 @@ describe('createActionToGenerateBeefs test', () => {
 
   test('3_test tranaction log', async () => {
     for (const { activeStorage: storage } of ctxs) {
-      const txid: bsv.HexString =
-        'ed11e4b7402e38bac0ec7431063ae7c14ee82370e5f1963d48ae27a70527f784'
+      const txid: bsv.HexString = 'ed11e4b7402e38bac0ec7431063ae7c14ee82370e5f1963d48ae27a70527f784'
       const rl = await logTransaction(storage, txid)
       console.log(rl)
       break

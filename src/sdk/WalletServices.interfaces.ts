@@ -1,10 +1,4 @@
-import {
-  ArcConfig,
-  Beef,
-  Transaction as BsvTransaction,
-  ChainTracker,
-  MerklePath
-} from '@bsv/sdk'
+import { ArcConfig, Beef, Transaction as BsvTransaction, ChainTracker, MerklePath } from '@bsv/sdk'
 import { sdk } from '../index.client'
 import { ChaintracksServiceClient } from '../services/chaintracker'
 /**
@@ -42,10 +36,7 @@ export interface WalletServices {
   /**
    * Approximate exchange rate currency per base.
    */
-  getFiatExchangeRate(
-    currency: 'USD' | 'GBP' | 'EUR',
-    base?: 'USD' | 'GBP' | 'EUR'
-  ): Promise<number>
+  getFiatExchangeRate(currency: 'USD' | 'GBP' | 'EUR', base?: 'USD' | 'GBP' | 'EUR'): Promise<number>
 
   /**
    * Attempts to obtain the raw transaction bytes associated with a 32 byte transaction hash (txid).
@@ -130,9 +121,7 @@ export interface WalletServices {
    * @returns whether the locktime value allows the transaction to be mined at the current chain height
    * @param txOrLockTime either a bitcoin locktime value or hex, binary, un-encoded Transaction
    */
-  nLockTimeIsFinal(
-    txOrLockTime: string | number[] | BsvTransaction | number
-  ): Promise<boolean>
+  nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>
 }
 
 export type GetUtxoStatusOutputFormat = 'hashLE' | 'hashBE' | 'script'
@@ -383,26 +372,13 @@ export type GetUtxoStatusService = (
   outputFormat?: GetUtxoStatusOutputFormat
 ) => Promise<GetUtxoStatusResult>
 
-export type GetMerklePathService = (
-  txid: string,
-  services: WalletServices
-) => Promise<GetMerklePathResult>
+export type GetMerklePathService = (txid: string, services: WalletServices) => Promise<GetMerklePathResult>
 
-export type GetRawTxService = (
-  txid: string,
-  chain: sdk.Chain
-) => Promise<GetRawTxResult>
+export type GetRawTxService = (txid: string, chain: sdk.Chain) => Promise<GetRawTxResult>
 
-export type PostTxsService = (
-  beef: Beef,
-  txids: string[],
-  services: WalletServices
-) => Promise<PostTxsResult>
+export type PostTxsService = (beef: Beef, txids: string[], services: WalletServices) => Promise<PostTxsResult>
 
-export type PostBeefService = (
-  beef: Beef,
-  txids: string[]
-) => Promise<PostBeefResult>
+export type PostBeefService = (beef: Beef, txids: string[]) => Promise<PostBeefResult>
 
 export type UpdateFiatExchangeRateService = (
   targetCurrencies: string[],

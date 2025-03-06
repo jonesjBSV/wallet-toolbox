@@ -1,7 +1,4 @@
-import {
-  ListCertificatesResult,
-  OriginatorDomainNameStringUnder250Bytes
-} from '@bsv/sdk'
+import { ListCertificatesResult, OriginatorDomainNameStringUnder250Bytes } from '@bsv/sdk'
 import { StorageProvider, TableCertificate } from '../index.client'
 import { sdk } from '../../index.client'
 
@@ -24,8 +21,7 @@ export async function listCertificates(
     if (vp.subject) partial['subject'] = vp.subject
     if (vp.serialNumber) partial['serialNumber'] = vp.serialNumber
     if (vp.certifier) partial['certifier'] = vp.certifier
-    if (vp.revocationOutpoint)
-      partial['revocationOutpoint'] = vp.revocationOutpoint
+    if (vp.revocationOutpoint) partial['revocationOutpoint'] = vp.revocationOutpoint
     if (vp.signature) partial['signature'] = vp.signature
   }
 
@@ -46,12 +42,8 @@ export async function listCertificates(
         })
         return {
           ...cert,
-          fields: Object.fromEntries(
-            fields.map(f => [f.fieldName, f.fieldValue])
-          ),
-          masterKeyring: Object.fromEntries(
-            fields.map(f => [f.fieldName, f.masterKey])
-          )
+          fields: Object.fromEntries(fields.map(f => [f.fieldName, f.fieldValue])),
+          masterKeyring: Object.fromEntries(fields.map(f => [f.fieldName, f.masterKey]))
         }
       })
     )
@@ -69,8 +61,7 @@ export async function listCertificates(
         keyring: cwf.masterKeyring
       }))
     }
-    if (r.certificates.length < paged.limit)
-      r.totalCertificates = r.certificates.length
+    if (r.certificates.length < paged.limit) r.totalCertificates = r.certificates.length
     else {
       r.totalCertificates = await storage.countCertificates(findCertsArgs)
     }

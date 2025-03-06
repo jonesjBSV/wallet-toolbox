@@ -53,12 +53,7 @@ export abstract class EntityBase<T> {
    * @param userId local userId
    * @param syncMap
    */
-  abstract mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void>
+  abstract mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void>
 
   /**
    * Perform a 'merge' / 'convergent' equality migration of state

@@ -1,9 +1,6 @@
 import { EntityTxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
 import { createSyncMap, sdk, SyncMap, TableTxLabel } from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 
 describe('TxLabel Class Tests', () => {
   jest.setTimeout(99999999) // Extend timeout for database operations
@@ -116,12 +113,7 @@ describe('TxLabel Class Tests', () => {
         updated_at: new Date('2023-01-01')
       }
 
-      const result = await txLabel.mergeExisting(
-        activeStorage,
-        undefined,
-        olderEi,
-        {} as any
-      )
+      const result = await txLabel.mergeExisting(activeStorage, undefined, olderEi, {} as any)
 
       const reloadedTxLabel = await activeStorage.findTxLabelById(txLabel.id)
 

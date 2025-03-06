@@ -28,10 +28,7 @@ export class WERR_INTERNAL extends WalletError {
  */
 export class WERR_INVALID_OPERATION extends WalletError {
   constructor(message?: string) {
-    super(
-      'WERR_INVALID_OPERATION',
-      message ?? `An invalid operation was requested.`
-    )
+    super('WERR_INVALID_OPERATION', message ?? `An invalid operation was requested.`)
   }
 }
 
@@ -40,10 +37,7 @@ export class WERR_INVALID_OPERATION extends WalletError {
  */
 export class WERR_BROADCAST_UNAVAILABLE extends WalletError {
   constructor(message?: string) {
-    super(
-      'WERR_BROADCAST_UNAVAILABLE',
-      `Unable to broadcast transaction at this time.`
-    )
+    super('WERR_BROADCAST_UNAVAILABLE', `Unable to broadcast transaction at this time.`)
   }
 }
 
@@ -57,10 +51,7 @@ export class WERR_INVALID_PARAMETER extends WalletError {
     public parameter: string,
     mustBe?: string
   ) {
-    super(
-      'WERR_INVALID_PARAMETER',
-      `The ${parameter} parameter must be ${mustBe ?? 'valid.'}`
-    )
+    super('WERR_INVALID_PARAMETER', `The ${parameter} parameter must be ${mustBe ?? 'valid.'}`)
   }
 }
 
@@ -71,10 +62,7 @@ export class WERR_INVALID_PARAMETER extends WalletError {
  */
 export class WERR_MISSING_PARAMETER extends WalletError {
   constructor(public parameter: string) {
-    super(
-      'WERR_MISSING_PARAMETER',
-      `The required ${parameter} parameter is missing.`
-    )
+    super('WERR_MISSING_PARAMETER', `The required ${parameter} parameter is missing.`)
   }
 }
 
@@ -92,11 +80,7 @@ export class WERR_BAD_REQUEST extends WalletError {
  */
 export class WERR_NETWORK_CHAIN extends WalletError {
   constructor(message?: string) {
-    super(
-      'WERR_NETWORK_CHAIN',
-      message ??
-        'Configured network chain is invalid or does not match across services.'
-    )
+    super('WERR_NETWORK_CHAIN', message ?? 'Configured network chain is invalid or does not match across services.')
   }
 }
 
@@ -105,10 +89,7 @@ export class WERR_NETWORK_CHAIN extends WalletError {
  */
 export class WERR_UNAUTHORIZED extends WalletError {
   constructor(message?: string) {
-    super(
-      'WERR_UNAUTHORIZED',
-      message ?? 'Access is denied due to an authorization error.'
-    )
+    super('WERR_UNAUTHORIZED', message ?? 'Access is denied due to an authorization error.')
   }
 }
 

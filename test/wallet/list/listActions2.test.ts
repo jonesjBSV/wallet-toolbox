@@ -1,11 +1,6 @@
 import * as bsv from '@bsv/sdk'
 import { sdk, StorageProvider } from '../../../src/index.client'
-import {
-  _tu,
-  expectToThrowWERR,
-  MockData,
-  TestWalletNoSetup
-} from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, MockData, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 const env = _tu.getEnv('test')
 const testName = () => expect.getState().currentTestName || 'test'
@@ -119,10 +114,7 @@ describe('listActions2 single action tests', () => {
         labels: ['']
       }
 
-      await expectToThrowWERR(
-        sdk.WERR_INVALID_PARAMETER,
-        async () => await wallet.listActions(args)
-      )
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
 
@@ -132,10 +124,7 @@ describe('listActions2 single action tests', () => {
         labels: [' ']
       }
 
-      await expectToThrowWERR(
-        sdk.WERR_INVALID_PARAMETER,
-        async () => await wallet.listActions(args)
-      )
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
 
@@ -174,10 +163,7 @@ describe('listActions2 single action tests', () => {
         labels: [maxLengthSpacesLabel]
       }
 
-      await expectToThrowWERR(
-        sdk.WERR_INVALID_PARAMETER,
-        async () => await wallet.listActions(args)
-      )
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
 
@@ -236,10 +222,7 @@ describe('listActions2 single action tests', () => {
         labels: [exceedingMaximumEmojisLabel]
       }
 
-      await expectToThrowWERR(
-        sdk.WERR_INVALID_PARAMETER,
-        async () => await wallet.listActions(args)
-      )
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
 
@@ -887,10 +870,7 @@ describe('listActions2 single action tests', () => {
         limit: 0
       }
 
-      await expectToThrowWERR(
-        sdk.WERR_INVALID_PARAMETER,
-        async () => await wallet.listActions(args)
-      )
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
 
@@ -901,10 +881,7 @@ describe('listActions2 single action tests', () => {
         limit: 10001
       }
 
-      await expectToThrowWERR(
-        sdk.WERR_INVALID_PARAMETER,
-        async () => await wallet.listActions(args)
-      )
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
 
@@ -1006,10 +983,7 @@ describe('listActions2 single action tests', () => {
         offset: -1
       }
 
-      await expectToThrowWERR(
-        sdk.WERR_INVALID_PARAMETER,
-        async () => await wallet.listActions(args)
-      )
+      await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, async () => await wallet.listActions(args))
     }
   })
 

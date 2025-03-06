@@ -1,16 +1,6 @@
 import { _tu, TestSetup1 } from '../utils/TestUtilsWalletStorage'
-import {
-  sdk,
-  StorageProvider,
-  StorageKnex,
-  verifyOne
-} from '../../src/index.all'
-import {
-  normalizeDate,
-  setLogging,
-  updateTable,
-  verifyValues
-} from '../utils/TestUtilsWalletStorage'
+import { sdk, StorageProvider, StorageKnex, verifyOne } from '../../src/index.all'
+import { normalizeDate, setLogging, updateTable, verifyValues } from '../utils/TestUtilsWalletStorage'
 import {
   TableProvenTx,
   TableProvenTxReq,
@@ -46,12 +36,7 @@ describe('update tests', () => {
     storages = []
     const databaseName = testName()
 
-    const localSQLiteFile = await _tu.newTmpFile(
-      `${databaseName}.sqlite`,
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile(`${databaseName}.sqlite`, false, false, true)
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
     storages.push(
       new StorageKnex({
@@ -124,11 +109,7 @@ describe('update tests', () => {
             merkleRoot: '1234',
             rawTx: [4, 3, 2, 1]
           }
-          await updateTable(
-            storage.updateProvenTx.bind(storage),
-            record[primaryKey],
-            testValues
-          )
+          await updateTable(storage.updateProvenTx.bind(storage), record[primaryKey], testValues)
           const updatedTx = verifyOne(
             await storage.findProvenTxs({
               partial: { [primaryKey]: record[primaryKey] }
@@ -176,9 +157,7 @@ describe('update tests', () => {
                   partial: { [primaryKey]: record[primaryKey] }
                 })
               )
-              expect(new Date(updatedRow[key]).toISOString()).toBe(
-                validDate.toISOString()
-              )
+              expect(new Date(updatedRow[key]).toISOString()).toBe(validDate.toISOString())
             }
             if (Array.isArray(value)) {
               const validArray = value.map(v => v + 1)
@@ -226,10 +205,7 @@ describe('update tests', () => {
             notify: JSON.stringify({ email: 'test@example.com', sent: true }),
             rawTx: [1, 2, 3, 4]
           }
-          const r1 = await storage.updateProvenTxReq(
-            record[primaryKey],
-            testValues
-          )
+          const r1 = await storage.updateProvenTxReq(record[primaryKey], testValues)
           expect(r1).toBe(1)
           const updatedRow = verifyOne(
             await storage.findProvenTxReqs({
@@ -244,37 +220,22 @@ describe('update tests', () => {
               expect(normalizedActual).toBe(normalizedExpected)
               continue
             }
-            if (
-              typeof value === 'string' &&
-              value.startsWith('{') &&
-              value.endsWith('}')
-            ) {
+            if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
               expect(JSON.parse(actualValue)).toStrictEqual(JSON.parse(value))
               continue
             }
-            if (
-              typeof value === 'string' ||
-              typeof value === 'number' ||
-              typeof value === 'boolean'
-            ) {
+            if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
               expect(actualValue).toBe(value)
               continue
             }
-            if (
-              typeof actualValue === 'object' &&
-              actualValue?.type === 'Buffer'
-            ) {
+            if (typeof actualValue === 'object' && actualValue?.type === 'Buffer') {
               const actualArray = actualValue.data || actualValue
               const expectedArray =
-                Buffer.isBuffer(value) || Array.isArray(value)
-                  ? Array.from(value as ArrayLike<number>)
-                  : value
+                Buffer.isBuffer(value) || Array.isArray(value) ? Array.from(value as ArrayLike<number>) : value
               expect(actualArray).toStrictEqual(expectedArray)
               continue
             }
-            expect(
-              JSON.stringify({ type: 'Buffer', data: actualValue })
-            ).toStrictEqual(JSON.stringify(value))
+            expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
           }
         } catch (error: any) {
           console.error(
@@ -300,10 +261,7 @@ describe('update tests', () => {
             updated_at: new Date('2024-12-30T23:05:00Z'),
             activeStorage: storage.getSettings().storageIdentityKey
           }
-          const updateResult = await storage.updateUser(
-            record[primaryKey],
-            testValues
-          )
+          const updateResult = await storage.updateUser(record[primaryKey], testValues)
           expect(updateResult).toBe(1)
           const updatedRow = verifyOne(
             await storage.findUsers({
@@ -350,10 +308,7 @@ describe('update tests', () => {
             signature: 'mockSignature',
             subject: 'mockSubject'
           }
-          const r1 = await storage.updateCertificate(
-            record[primaryKey],
-            testValues
-          )
+          const r1 = await storage.updateCertificate(record[primaryKey], testValues)
           expect(r1).toBe(1)
           const updatedRow = verifyOne(
             await storage.findCertificates({
@@ -368,11 +323,7 @@ describe('update tests', () => {
               expect(normalizedActual).toBe(normalizedExpected)
               continue
             }
-            if (
-              typeof value === 'string' &&
-              value.startsWith('{') &&
-              value.endsWith('}')
-            ) {
+            if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
               expect(JSON.parse(actualValue)).toStrictEqual(JSON.parse(value))
               continue
             }
@@ -382,9 +333,7 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(
-                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
-                )
+                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
               }
               continue
             }
@@ -392,21 +341,14 @@ describe('update tests', () => {
               expect(actualValue).toBe(value)
               continue
             }
-            if (
-              typeof actualValue === 'object' &&
-              actualValue?.type === 'Buffer'
-            ) {
+            if (typeof actualValue === 'object' && actualValue?.type === 'Buffer') {
               const actualArray = actualValue.data || actualValue
               const expectedArray =
-                Buffer.isBuffer(value) || Array.isArray(value)
-                  ? Array.from(value as ArrayLike<number>)
-                  : value
+                Buffer.isBuffer(value) || Array.isArray(value) ? Array.from(value as ArrayLike<number>) : value
               expect(actualArray).toStrictEqual(expectedArray)
               continue
             }
-            expect(
-              JSON.stringify({ type: 'Buffer', data: actualValue })
-            ).toStrictEqual(JSON.stringify(value))
+            expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
           }
         } catch (error: any) {
           console.error(
@@ -489,10 +431,7 @@ describe('update tests', () => {
             minimumDesiredUTXOValue: 5000,
             isDeleted: false
           }
-          const updateResult = await storage.updateOutputBasket(
-            record.basketId,
-            testValues
-          )
+          const updateResult = await storage.updateOutputBasket(record.basketId, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findOutputBaskets({
             partial: { basketId: record.basketId, name: testValues.name }
@@ -509,9 +448,7 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(
-                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
-                )
+                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
               }
               continue
             }
@@ -555,10 +492,7 @@ describe('update tests', () => {
             satoshis: 20000,
             version: 2
           }
-          const updateResult = await storage.updateTransaction(
-            record.transactionId,
-            testValues
-          )
+          const updateResult = await storage.updateTransaction(record.transactionId, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findTransactions({
             partial: { transactionId: record.transactionId }
@@ -589,9 +523,7 @@ describe('update tests', () => {
   })
 
   test('7a updateTransactionStatus', async () => {
-    const { activeStorage: storage } = await _tu.createLegacyWalletSQLiteCopy(
-      'updateTransactionStatus6a'
-    )
+    const { activeStorage: storage } = await _tu.createLegacyWalletSQLiteCopy('updateTransactionStatus6a')
 
     let tx = verifyOne(
       await storage.findTransactions({
@@ -628,10 +560,7 @@ describe('update tests', () => {
             isRedeemed: true,
             lockingScript: [1, 2, 3, 4]
           }
-          const updateResult = await storage.updateCommission(
-            record.commissionId,
-            testValues
-          )
+          const updateResult = await storage.updateCommission(record.commissionId, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findCommissions({
             partial: { commissionId: record.commissionId }
@@ -649,9 +578,7 @@ describe('update tests', () => {
               continue
             }
             if (Buffer.isBuffer(actualValue) || Array.isArray(actualValue)) {
-              expect(
-                JSON.stringify({ type: 'Buffer', data: actualValue })
-              ).toStrictEqual(JSON.stringify(value))
+              expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
               continue
             }
             expect(actualValue).toBe(value)
@@ -675,22 +602,16 @@ describe('update tests', () => {
         if (!record.transactionId) record.transactionId = 1
         if (!record.basketId) record.basketId = 1
         if (!record.userId || !record.transactionId || !record.basketId) {
-          throw new Error(
-            `Missing required foreign keys for record ${JSON.stringify(record)}`
-          )
+          throw new Error(`Missing required foreign keys for record ${JSON.stringify(record)}`)
         }
       }
       for (const record of records) {
         const existingRecords = await storage.findOutputs({ partial: {} })
-        const usedCombinations = new Set(
-          existingRecords.map(r => `${r.transactionId}-${r.vout}-${r.userId}`)
-        )
+        const usedCombinations = new Set(existingRecords.map(r => `${r.transactionId}-${r.vout}-${r.userId}`))
         let testTransactionId = record.transactionId
         let testVout = record.vout + 1
         let testUserId = record.userId
-        while (
-          usedCombinations.has(`${testTransactionId}-${testVout}-${testUserId}`)
-        ) {
+        while (usedCombinations.has(`${testTransactionId}-${testVout}-${testUserId}`)) {
           testVout += 1
         }
         try {
@@ -721,10 +642,7 @@ describe('update tests', () => {
             type: 'updated_type',
             outputDescription: 'outputDescription'
           }
-          const updateResult = await storage.updateOutput(
-            record.outputId,
-            testValues
-          )
+          const updateResult = await storage.updateOutput(record.outputId, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findOutputs({
             partial: { outputId: record.outputId }
@@ -742,18 +660,13 @@ describe('update tests', () => {
               continue
             }
             if (Buffer.isBuffer(actualValue) || Array.isArray(actualValue)) {
-              expect(
-                JSON.stringify({ type: 'Buffer', data: actualValue })
-              ).toStrictEqual(JSON.stringify(value))
+              expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
               continue
             }
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(
-            `Error updating or verifying Output record with outputId=${record[primaryKey]}:`,
-            error.message
-          )
+          console.error(`Error updating or verifying Output record with outputId=${record[primaryKey]}:`, error.message)
           throw error
         }
       }
@@ -768,9 +681,7 @@ describe('update tests', () => {
         if (!record.userId) record.userId = 1
         if (!record.tag) record.tag = `default_tag_${record.outputTagId}`
         if (!record.userId || !record.tag) {
-          throw new Error(
-            `Missing required fields for record ${JSON.stringify(record)}`
-          )
+          throw new Error(`Missing required fields for record ${JSON.stringify(record)}`)
         }
       }
       for (const record of records) {
@@ -784,10 +695,7 @@ describe('update tests', () => {
           isDeleted: false
         }
         try {
-          const updateResult = await storage.updateOutputTag(
-            record.outputTagId,
-            testValues
-          )
+          const updateResult = await storage.updateOutputTag(record.outputTagId, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findOutputTags({
             partial: { outputTagId: record.outputTagId }
@@ -804,9 +712,7 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(
-                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
-                )
+                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
               }
               continue
             }
@@ -834,14 +740,8 @@ describe('update tests', () => {
     for (const { storage } of setups) {
       const records = await storage.findOutputTagMaps({ partial: {} })
       for (const record of records) {
-        if (!record.outputTagId)
-          throw new Error(
-            `Missing outputTagId for record: ${JSON.stringify(record)}`
-          )
-        if (!record.outputId)
-          throw new Error(
-            `Missing outputId for record: ${JSON.stringify(record)}`
-          )
+        if (!record.outputTagId) throw new Error(`Missing outputTagId for record: ${JSON.stringify(record)}`)
+        if (!record.outputId) throw new Error(`Missing outputId for record: ${JSON.stringify(record)}`)
         try {
           const testValues: TableOutputTagMap = {
             outputTagId: record.outputTagId,
@@ -850,11 +750,7 @@ describe('update tests', () => {
             updated_at: new Date('2024-12-30T23:05:00Z'),
             isDeleted: false
           }
-          const updateResult = await storage.updateOutputTagMap(
-            record.outputId,
-            record.outputTagId,
-            testValues
-          )
+          const updateResult = await storage.updateOutputTagMap(record.outputId, record.outputTagId, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findOutputTagMaps({
             partial: {
@@ -874,9 +770,7 @@ describe('update tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(
-                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
-                )
+                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
               }
               continue
             }
@@ -905,9 +799,7 @@ describe('update tests', () => {
       const records = await storage.findTxLabels({ partial: {} })
       for (const record of records) {
         if (!record.userId) {
-          throw new Error(
-            `Missing required foreign key userId for record ${JSON.stringify(record)}`
-          )
+          throw new Error(`Missing required foreign key userId for record ${JSON.stringify(record)}`)
         }
       }
       for (const record of records) {
@@ -926,10 +818,7 @@ describe('update tests', () => {
         if (existingLabel.length > 0) {
           continue
         }
-        const updateResult = await storage.updateTxLabel(
-          record.txLabelId,
-          testValues
-        )
+        const updateResult = await storage.updateTxLabel(record.txLabelId, testValues)
         expect(updateResult).toBe(1)
         const updatedRecords = await storage.findTxLabels({
           partial: { txLabelId: record.txLabelId }
@@ -946,9 +835,7 @@ describe('update tests', () => {
             } else if (value === 0) {
               expect(actualValue).toBe(false)
             } else {
-              throw new Error(
-                `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
-              )
+              throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
             }
             continue
           }
@@ -971,9 +858,7 @@ describe('update tests', () => {
       const records = await storage.findTxLabelMaps({ partial: {} })
       for (const record of records) {
         if (!record.transactionId || !record.txLabelId) {
-          throw new Error(
-            `Missing required foreign keys for record ${JSON.stringify(record)}`
-          )
+          throw new Error(`Missing required foreign keys for record ${JSON.stringify(record)}`)
         }
       }
       for (const record of records) {
@@ -994,11 +879,7 @@ describe('update tests', () => {
           continue
         }
         try {
-          const updateResult = await storage.updateTxLabelMap(
-            record.transactionId,
-            record.txLabelId,
-            testValues
-          )
+          const updateResult = await storage.updateTxLabelMap(record.transactionId, record.txLabelId, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findTxLabelMaps({
             partial: {
@@ -1044,10 +925,7 @@ describe('update tests', () => {
             event: 'updated_event',
             details: 'Updated details'
           }
-          const updateResult = await storage.updateMonitorEvent(
-            record.id,
-            testValues
-          )
+          const updateResult = await storage.updateMonitorEvent(record.id, testValues)
           expect(updateResult).toBe(1)
           const updatedRecords = await storage.findMonitorEvents({
             partial: { id: record.id }
@@ -1067,10 +945,7 @@ describe('update tests', () => {
             expect(actualValue).toBe(value)
           }
         } catch (error: any) {
-          console.error(
-            `Error updating or verifying MonitorEvent record with id=${record[primaryKey]}:`,
-            error.message
-          )
+          console.error(`Error updating or verifying MonitorEvent record with id=${record[primaryKey]}:`, error.message)
           throw error
         }
       }
@@ -1083,9 +958,7 @@ describe('update tests', () => {
       const records = await storage.findSyncStates({ partial: {} })
       for (const record of records) {
         if (!record.userId) {
-          throw new Error(
-            `Missing required foreign key userId for record ${JSON.stringify(record)}`
-          )
+          throw new Error(`Missing required foreign key userId for record ${JSON.stringify(record)}`)
         }
       }
       for (const record of records) {
@@ -1105,10 +978,7 @@ describe('update tests', () => {
           syncMap: '{}',
           when: new Date('2025-01-01T02:00:00.000Z')
         }
-        const updateResult = await storage.updateSyncState(
-          record.syncStateId,
-          testValues
-        )
+        const updateResult = await storage.updateSyncState(record.syncStateId, testValues)
         expect(updateResult).toBe(1)
         const updatedRecords = await storage.findSyncStates({
           partial: { syncStateId: record.syncStateId }
@@ -1125,9 +995,7 @@ describe('update tests', () => {
             } else if (value === 0) {
               expect(actualValue).toBe(false)
             } else {
-              throw new Error(
-                `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
-              )
+              throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
             }
             continue
           }

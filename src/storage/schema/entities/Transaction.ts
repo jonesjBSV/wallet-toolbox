@@ -35,10 +35,7 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
    * Uses both spentBy and rawTx inputs (if available) to locate inputs from among user's outputs.
    * Not all transaction inputs correspond to prior storage outputs.
    */
-  async getInputs(
-    storage: EntityStorage,
-    trx?: sdk.TrxToken
-  ): Promise<TableOutput[]> {
+  async getInputs(storage: EntityStorage, trx?: sdk.TrxToken): Promise<TableOutput[]> {
     const inputs = await storage.findOutputs({
       partial: { userId: this.userId, spentBy: this.id },
       trx
@@ -56,8 +53,7 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
           trx
         })
       )
-      if (pso && !inputs.some(i => i.outputId === pso.outputId))
-        inputs.push(pso)
+      if (pso && !inputs.some(i => i.outputId === pso.outputId)) inputs.push(pso)
     }
     return inputs
   }
@@ -208,18 +204,12 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
     return 'transactions'
   }
 
-  override equals(
-    ei: TableTransaction,
-    syncMap?: SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableTransaction, syncMap?: SyncMap | undefined): boolean {
     const eo = this.toApi()
 
     // Properties that are never updated
     if (
-      eo.transactionId !==
-        (syncMap
-          ? syncMap.transaction.idMap[verifyId(ei.transactionId)]
-          : ei.transactionId) ||
+      eo.transactionId !== (syncMap ? syncMap.transaction.idMap[verifyId(ei.transactionId)] : ei.transactionId) ||
       eo.reference !== ei.reference
     )
       return false
@@ -239,11 +229,7 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
 
     if (
       !eo.provenTxId !== !ei.provenTxId ||
-      (ei.provenTxId &&
-        eo.provenTxId !==
-          (syncMap
-            ? syncMap.provenTx.idMap[verifyId(ei.provenTxId)]
-            : ei.provenTxId))
+      (ei.provenTxId && eo.provenTxId !== (syncMap ? syncMap.provenTx.idMap[verifyId(ei.provenTxId)] : ei.provenTxId))
     )
       return false
 
@@ -270,14 +256,8 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
-    if (this.provenTxId)
-      this.provenTxId = syncMap.provenTx.idMap[this.provenTxId]
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
+    if (this.provenTxId) this.provenTxId = syncMap.provenTx.idMap[this.provenTxId]
     this.userId = userId
     this.transactionId = 0
     this.transactionId = await storage.insertTransaction(this.toApi(), trx)
@@ -302,9 +282,7 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
       this.lockTime = ei.lockTime
       this.isOutgoing = ei.isOutgoing
       this.status = ei.status
-      this.provenTxId = ei.provenTxId
-        ? syncMap.provenTx.idMap[ei.provenTxId]
-        : undefined
+      this.provenTxId = ei.provenTxId ? syncMap.provenTx.idMap[ei.provenTxId] : undefined
       this.satoshis = ei.satoshis
       this.txid = ei.txid
       this.description = ei.description
@@ -317,10 +295,7 @@ export class EntityTransaction extends EntityBase<TableTransaction> {
     return wasMerged
   }
 
-  async getProvenTx(
-    storage: EntityStorage,
-    trx?: sdk.TrxToken
-  ): Promise<EntityProvenTx | undefined> {
+  async getProvenTx(storage: EntityStorage, trx?: sdk.TrxToken): Promise<EntityProvenTx | undefined> {
     if (!this.provenTxId) return undefined
     const p = verifyOneOrNone(
       await storage.findProvenTxs({

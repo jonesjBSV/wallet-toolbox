@@ -86,9 +86,7 @@ export interface LiveBlockHeader extends BlockHeader {
  * Type guard function.
  * @publicbody
  */
-export function isLive(
-  header: BlockHeader | LiveBlockHeader
-): header is LiveBlockHeader {
+export function isLive(header: BlockHeader | LiveBlockHeader): header is LiveBlockHeader {
   return (header as LiveBlockHeader).headerId !== undefined
 }
 
@@ -96,9 +94,7 @@ export function isLive(
  * Type guard function.
  * @publicbody
  */
-export function isBaseBlockHeader(
-  header: BaseBlockHeader | BlockHeader | LiveBlockHeader
-): header is BaseBlockHeader {
+export function isBaseBlockHeader(header: BaseBlockHeader | BlockHeader | LiveBlockHeader): header is BaseBlockHeader {
   return typeof header.previousHash === 'string'
 }
 
@@ -106,9 +102,7 @@ export function isBaseBlockHeader(
  * Type guard function.
  * @publicbody
  */
-export function isBlockHeader(
-  header: BaseBlockHeader | BlockHeader | LiveBlockHeader
-): header is LiveBlockHeader {
+export function isBlockHeader(header: BaseBlockHeader | BlockHeader | LiveBlockHeader): header is LiveBlockHeader {
   return 'height' in header && typeof header.previousHash === 'string'
 }
 
@@ -116,8 +110,6 @@ export function isBlockHeader(
  * Type guard function.
  * @publicbody
  */
-export function isLiveBlockHeader(
-  header: BaseBlockHeader | BlockHeader | LiveBlockHeader
-): header is LiveBlockHeader {
+export function isLiveBlockHeader(header: BaseBlockHeader | BlockHeader | LiveBlockHeader): header is LiveBlockHeader {
   return 'chainwork' in header && typeof header.previousHash === 'string'
 }

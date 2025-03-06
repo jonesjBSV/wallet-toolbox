@@ -1,9 +1,6 @@
 import { EntityUser } from '../../../../../src/storage/schema/entities/User'
 import { createSyncMap, sdk, SyncMap, TableUser } from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 describe('User class method tests', () => {
   jest.setTimeout(99999999) // Extend timeout for database operations
 
@@ -336,8 +333,8 @@ describe('User class method tests', () => {
     const trx = undefined // Optional transaction token, set as undefined.
 
     // The method should throw an error when called
-    await expect(
-      user.mergeNew(storage as any, userId, syncMap as any, trx)
-    ).rejects.toThrowError('a sync chunk merge must never create a new user')
+    await expect(user.mergeNew(storage as any, userId, syncMap as any, trx)).rejects.toThrowError(
+      'a sync chunk merge must never create a new user'
+    )
   })
 })

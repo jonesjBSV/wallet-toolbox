@@ -95,9 +95,7 @@ describe('setActive tests', () => {
         console.log(log)
       }
       {
-        const log = await s.storage.setActive(
-          localStore._settings!.storageIdentityKey
-        )
+        const log = await s.storage.setActive(localStore._settings!.storageIdentityKey)
         console.log(log)
       }
       {
@@ -132,9 +130,7 @@ describe('setActive tests', () => {
       console.log(log)
     }
     {
-      const log = await s.storage.setActive(
-        localStore._settings!.storageIdentityKey
-      )
+      const log = await s.storage.setActive(localStore._settings!.storageIdentityKey)
       console.log(log)
     }
     {

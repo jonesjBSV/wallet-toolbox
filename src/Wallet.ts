@@ -205,9 +205,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<GetPublicKeyResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.getPublicKey(args)
     }
@@ -219,9 +217,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<RevealCounterpartyKeyLinkageResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.revealCounterpartyKeyLinkage(args)
     }
@@ -233,65 +229,43 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<RevealSpecificKeyLinkageResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.revealSpecificKeyLinkage(args)
     }
     return this.proto.revealSpecificKeyLinkage(args)
   }
-  encrypt(
-    args: WalletEncryptArgs,
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<WalletEncryptResult> {
+  encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.encrypt(args)
     }
     return this.proto.encrypt(args)
   }
-  decrypt(
-    args: WalletDecryptArgs,
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<WalletDecryptResult> {
+  decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.decrypt(args)
     }
     return this.proto.decrypt(args)
   }
-  createHmac(
-    args: CreateHmacArgs,
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<CreateHmacResult> {
+  createHmac(args: CreateHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<CreateHmacResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.createHmac(args)
     }
     return this.proto.createHmac(args)
   }
-  verifyHmac(
-    args: VerifyHmacArgs,
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<VerifyHmacResult> {
+  verifyHmac(args: VerifyHmacArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<VerifyHmacResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.verifyHmac(args)
     }
@@ -303,9 +277,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<CreateSignatureResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.createSignature(args)
     }
@@ -317,9 +289,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<VerifySignatureResult> {
     if (args.privileged) {
       if (!this.privilegedKeyManager) {
-        throw new Error(
-          'Privileged operations require the Wallet to be configured with a privileged key manager.'
-        )
+        throw new Error('Privileged operations require the Wallet to be configured with a privileged key manager.')
       }
       return this.privilegedKeyManager.verifySignature(args)
     }
@@ -328,10 +298,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   getServices(): sdk.WalletServices {
     if (!this.services)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'services',
-        'valid in constructor arguments to be retreived here.'
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('services', 'valid in constructor arguments to be retreived here.')
     return this.services
   }
 
@@ -375,10 +342,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<ListActionsResult> {
     sdk.validateOriginator(originator)
-    const { vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateListActionsArgs
-    )
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListActionsArgs)
     const r = await this.storage.listActions(vargs)
     return r
   }
@@ -392,10 +356,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<ListOutputsResult> {
     sdk.validateOriginator(originator)
-    const { vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateListOutputsArgs
-    )
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListOutputsArgs)
     vargs.knownTxids = this.getKnownTxids()
     const r = await this.storage.listOutputs(vargs)
     if (r.BEEF) {
@@ -410,10 +371,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<ListCertificatesResult> {
     sdk.validateOriginator(originator)
-    const { vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateListCertificatesArgs
-    )
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListCertificatesArgs)
     const r = await this.storage.listCertificates(vargs)
     return r
   }
@@ -428,10 +386,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<AcquireCertificateResult> {
     sdk.validateOriginator(originator)
     if (args.acquisitionProtocol === 'direct') {
-      const { auth, vargs } = this.validateAuthAndArgs(
-        args,
-        sdk.validateAcquireDirectCertificateArgs
-      )
+      const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateAcquireDirectCertificateArgs)
       vargs.subject = (
         await this.getPublicKey({
           identityKey: true,
@@ -441,17 +396,11 @@ export class Wallet implements WalletInterface, ProtoWallet {
       ).publicKey
       try {
         // Confirm that the information received adds up to a usable certificate...
-        await sdk.CertOps.fromCounterparty(
-          vargs.privileged ? this.privilegedKeyManager! : this,
-          {
-            certificate: { ...vargs },
-            keyring: vargs.keyringForSubject,
-            counterparty:
-              vargs.keyringRevealer === 'certifier'
-                ? vargs.certifier
-                : vargs.keyringRevealer
-          }
-        )
+        await sdk.CertOps.fromCounterparty(vargs.privileged ? this.privilegedKeyManager! : this, {
+          certificate: { ...vargs },
+          keyring: vargs.keyringForSubject,
+          counterparty: vargs.keyringRevealer === 'certifier' ? vargs.certifier : vargs.keyringRevealer
+        })
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
         throw new sdk.WERR_INVALID_PARAMETER(
@@ -465,10 +414,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     }
 
     if (args.acquisitionProtocol === 'issuance') {
-      const { auth, vargs } = this.validateAuthAndArgs(
-        args,
-        sdk.validateAcquireIssuanceCertificateArgs
-      )
+      const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateAcquireIssuanceCertificateArgs)
       // Create a random nonce that the server can verify
       const clientNonce = await createNonce(this, vargs.certifier)
       // TODO: Consider adding support to request certificates from a certifier before acquiring a certificate.
@@ -476,29 +422,25 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
       // Create a certificate master keyring
       // The certifier is able to decrypt these fields as they are the counterparty
-      const { certificateFields, masterKeyring } =
-        await MasterCertificate.createCertificateFields(
-          this,
-          vargs.certifier,
-          vargs.fields
-        )
+      const { certificateFields, masterKeyring } = await MasterCertificate.createCertificateFields(
+        this,
+        vargs.certifier,
+        vargs.fields
+      )
 
       // Make a Certificate Signing Request (CSR) to the certifier
-      const response = await authClient.fetch(
-        `${vargs.certifierUrl}/signCertificate`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            clientNonce,
-            type: vargs.type,
-            fields: certificateFields,
-            masterKeyring
-          })
-        }
-      )
+      const response = await authClient.fetch(`${vargs.certifierUrl}/signCertificate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          clientNonce,
+          type: vargs.type,
+          fields: certificateFields,
+          masterKeyring
+        })
+      })
 
       if (response.headers.get('x-bsv-auth-identity-key') !== vargs.certifier) {
         throw new Error(
@@ -540,9 +482,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
       // Validate the certificate received
       if (signedCertificate.type !== vargs.type) {
-        throw new Error(
-          `Invalid certificate type! Expected: ${vargs.type}, Received: ${signedCertificate.type}`
-        )
+        throw new Error(`Invalid certificate type! Expected: ${vargs.type}, Received: ${signedCertificate.type}`)
       }
       if (signedCertificate.subject !== this.identityKey) {
         throw new Error(
@@ -550,20 +490,13 @@ export class Wallet implements WalletInterface, ProtoWallet {
         )
       }
       if (signedCertificate.certifier !== vargs.certifier) {
-        throw new Error(
-          `Invalid certifier! Expected: ${vargs.certifier}, Received: ${signedCertificate.certifier}`
-        )
+        throw new Error(`Invalid certifier! Expected: ${vargs.certifier}, Received: ${signedCertificate.certifier}`)
       }
       if (!signedCertificate.revocationOutpoint) {
         throw new Error(`Invalid revocationOutpoint!`)
       }
-      if (
-        Object.keys(signedCertificate.fields).length !==
-        Object.keys(certificateFields).length
-      ) {
-        throw new Error(
-          `Fields mismatch! Objects have different numbers of keys.`
-        )
+      if (Object.keys(signedCertificate.fields).length !== Object.keys(certificateFields).length) {
+        throw new Error(`Fields mismatch! Objects have different numbers of keys.`)
       }
       for (const field of Object.keys(certificateFields)) {
         if (!(field in signedCertificate.fields)) {
@@ -587,10 +520,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
       })
     }
 
-    throw new sdk.WERR_INVALID_PARAMETER(
-      'acquisitionProtocol',
-      `valid.${args.acquisitionProtocol} is unrecognized.`
-    )
+    throw new sdk.WERR_INVALID_PARAMETER('acquisitionProtocol', `valid.${args.acquisitionProtocol} is unrecognized.`)
   }
 
   async relinquishCertificate(
@@ -608,10 +538,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<ProveCertificateResult> {
     originator = sdk.validateOriginator(originator)
-    const { auth, vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateProveCertificateArgs
-    )
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateProveCertificateArgs)
     const r = await proveCertificate(this, auth, vargs)
     return r
   }
@@ -636,9 +563,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
   verifyReturnedTxidOnly(beef: Beef): Beef {
     if (this.returnTxidOnly) return beef
-    const onlyTxids = beef.txs
-      .filter(btx => btx.isTxidOnly)
-      .map(btx => btx.txid)
+    const onlyTxids = beef.txs.filter(btx => btx.isTxidOnly).map(btx => btx.txid)
     for (const txid of onlyTxids) {
       const btx = beef.findTxid(txid)
       const tx = this.beef.findAtomicTransaction(txid)
@@ -678,10 +603,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     args.options.trustSelf ||= this.trustSelf
     args.options.knownTxids = this.getKnownTxids(args.options.knownTxids)
 
-    const { auth, vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateCreateActionArgs
-    )
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateCreateActionArgs)
     vargs.includeAllSourceTransactions = this.includeAllSourceTransactions
     if (this.randomVals && this.randomVals.length > 1) {
       vargs.randomVals = [...this.randomVals]
@@ -712,10 +634,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<SignActionResult> {
     sdk.validateOriginator(originator)
 
-    const { auth, vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateSignActionArgs
-    )
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateSignActionArgs)
     const r = await signAction(this, auth, vargs)
 
     if (
@@ -747,10 +666,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<InternalizeActionResult> {
     sdk.validateOriginator(originator)
-    const { auth, vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateInternalizeActionArgs
-    )
+    const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateInternalizeActionArgs)
     const r = await internalizeAction(this, auth, args)
     return r
   }
@@ -760,18 +676,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<RelinquishOutputResult> {
     sdk.validateOriginator(originator)
-    const { vargs } = this.validateAuthAndArgs(
-      args,
-      sdk.validateRelinquishOutputArgs
-    )
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateRelinquishOutputArgs)
     const r = await this.storage.relinquishOutput(args)
     return { relinquished: true }
   }
 
-  async isAuthenticated(
-    args: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<AuthenticatedResult> {
+  async isAuthenticated(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> {
     sdk.validateOriginator(originator)
     const r: { authenticated: true } = {
       authenticated: true
@@ -787,10 +697,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     return { authenticated: true }
   }
 
-  async getHeight(
-    args: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetHeightResult> {
+  async getHeight(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeightResult> {
     sdk.validateOriginator(originator)
     const height = await this.getServices().getHeight()
     return { height }
@@ -801,24 +708,16 @@ export class Wallet implements WalletInterface, ProtoWallet {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<GetHeaderResult> {
     sdk.validateOriginator(originator)
-    const serializedHeader = await this.getServices().getHeaderForHeight(
-      args.height
-    )
+    const serializedHeader = await this.getServices().getHeaderForHeight(args.height)
     return { header: Utils.toHex(serializedHeader) }
   }
 
-  async getNetwork(
-    args: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetNetworkResult> {
+  async getNetwork(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> {
     sdk.validateOriginator(originator)
     return { network: toWalletNetwork(this.chain) }
   }
 
-  async getVersion(
-    args: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetVersionResult> {
+  async getVersion(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> {
     sdk.validateOriginator(originator)
     return { version: 'wallet-brc100-1.0.0' }
   }
@@ -846,9 +745,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const car = await this.createAction({
       outputs: [
         {
-          lockingScript: t
-            .lock(keyDeriver.rootKey.toString(), toWallet.identityKey)
-            .toHex(),
+          lockingScript: t.lock(keyDeriver.rootKey.toString(), toWallet.identityKey).toHex(),
           satoshis,
           outputDescription: label,
           tags: ['relinquish'],

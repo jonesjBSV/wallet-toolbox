@@ -24,16 +24,13 @@ export async function proveCertificate(
   }
 
   const lcr = await wallet.storage.listCertificates(lcargs)
-  if (lcr.certificates.length != 1)
-    throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
+  if (lcr.certificates.length != 1) throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
   const storageCert = lcr.certificates[0]
   let proveWallet: CertOpsWallet = wallet
   if (storageCert.subject != wallet.identityKey) {
     // Certificate must have been issued to privileged identity
     if (!wallet.privilegedKeyManager)
-      throw new sdk.WERR_INVALID_OPERATION(
-        'Wallet is not privileged. proveCertificate fails.'
-      )
+      throw new sdk.WERR_INVALID_OPERATION('Wallet is not privileged. proveCertificate fails.')
     proveWallet = wallet.privilegedKeyManager
   }
   const co = await sdk.CertOps.fromCounterparty(proveWallet, {

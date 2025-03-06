@@ -1,10 +1,5 @@
 import { Beef, defaultHttpClient, HexString, HttpClient, Utils } from '@bsv/sdk'
-import {
-  convertProofToMerklePath,
-  doubleSha256BE,
-  sdk,
-  wait
-} from '../../index.client'
+import { convertProofToMerklePath, doubleSha256BE, sdk, wait } from '../../index.client'
 import { ReqHistoryNote } from '../../sdk'
 
 export interface BitailsConfig {
@@ -26,10 +21,7 @@ export class Bitails {
   constructor(chain: sdk.Chain = 'main', config: BitailsConfig = {}) {
     const { apiKey, httpClient } = config
     this.chain = chain
-    this.URL =
-      chain === 'main'
-        ? `https://api.bitails.io/`
-        : `https://test-api.bitails.io/`
+    this.URL = chain === 'main' ? `https://api.bitails.io/` : `https://test-api.bitails.io/`
     this.httpClient = httpClient ?? defaultHttpClient()
     this.apiKey = apiKey ?? ''
   }
@@ -73,8 +65,7 @@ export class Bitails {
     const r = await this.postRaws(raws)
 
     r.notes!.unshift(note)
-    if (r.status !== 'success')
-      r.notes!.push({ ...nne(), what: 'postBeefError' })
+    if (r.status !== 'success') r.notes!.push({ ...nne(), what: 'postBeefError' })
     else r.notes!.push({ ...nn(), what: 'postBeefSuccess' })
 
     return r
@@ -128,10 +119,7 @@ export class Bitails {
     const retryLimit = 5
     for (let retry = 0; retry < retryLimit; retry++) {
       try {
-        const response = await this.httpClient.request<BitailsPostRawsResult[]>(
-          url,
-          requestOptions
-        )
+        const response = await this.httpClient.request<BitailsPostRawsResult[]>(url, requestOptions)
         if (response.statusText === 'Too Many Requests' && retry < 2) {
           r.notes!.push({ ...nn(), what: 'postRawsRateLimit' })
           await wait(2000)
@@ -162,8 +150,7 @@ export class Bitails {
             } else {
               rt.notes!.push({ ...nn(), what: 'postRawsSuccess' })
             }
-            if (rt.status !== 'success' && r.status === 'success')
-              r.status = 'error'
+            if (rt.status !== 'success' && r.status === 'success') r.status = 'error'
           }
         } else {
           r.status = 'error'
@@ -200,10 +187,7 @@ export class Bitails {
    * @param services
    * @returns
    */
-  async getMerklePath(
-    txid: string,
-    services: sdk.WalletServices
-  ): Promise<sdk.GetMerklePathResult> {
+  async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> {
     const r: sdk.GetMerklePathResult = { name: 'BitailsTsc', notes: [] }
 
     const url = `${this.URL}/tx/${txid}/proof/tsc`
@@ -223,10 +207,7 @@ export class Bitails {
 
     for (let retry = 0; retry < 2; retry++) {
       try {
-        const response = await this.httpClient.request<BitailsMerkleProof>(
-          url,
-          requestOptions
-        )
+        const response = await this.httpClient.request<BitailsMerkleProof>(url, requestOptions)
 
         const nne = () => ({
           ...nn(),
@@ -244,11 +225,7 @@ export class Bitails {
 
         if (response.status === 404 && response.statusText === 'Not Found') {
           r.notes!.push({ ...nne(), what: 'getMerklePathNotFound' })
-        } else if (
-          !response.ok ||
-          response.status !== 200 ||
-          response.statusText !== 'OK'
-        ) {
+        } else if (!response.ok || response.status !== 200 || response.statusText !== 'OK') {
           r.notes!.push({ ...nne(), what: 'getMerklePathBadStatus' })
         } else if (!response.data) {
           // Unmined, proof not yet available.

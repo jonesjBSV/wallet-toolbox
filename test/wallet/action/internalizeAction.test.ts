@@ -1,16 +1,6 @@
-import {
-  Beef,
-  CreateActionArgs,
-  InternalizeActionArgs,
-  P2PKH,
-  WalletProtocol
-} from '@bsv/sdk'
+import { Beef, CreateActionArgs, InternalizeActionArgs, P2PKH, WalletProtocol } from '@bsv/sdk'
 import { sdk } from '../../../src/index.all'
-import {
-  _tu,
-  expectToThrowWERR,
-  TestWalletNoSetup
-} from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('internalizeAction tests', () => {
   jest.setTimeout(99999999)
@@ -21,13 +11,8 @@ describe('internalizeAction tests', () => {
   const useSharedCtxs = true
 
   beforeAll(async () => {
-    if (env.runMySQL)
-      gctxs.push(
-        await _tu.createLegacyWalletMySQLCopy('actionInternalizeActionTests')
-      )
-    gctxs.push(
-      await _tu.createLegacyWalletSQLiteCopy('actionInternalizeActionTests')
-    )
+    if (env.runMySQL) gctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeActionTests'))
+    gctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeActionTests'))
   })
 
   afterAll(async () => {
@@ -51,9 +36,7 @@ describe('internalizeAction tests', () => {
       ]
 
       for (const args of invalidArgs) {
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
-          wallet.internalizeAction(args)
-        )
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.internalizeAction(args))
       }
     }
   })
@@ -62,13 +45,8 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (env.runMySQL)
-        ctxs.push(
-          await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction1Tests')
-        )
-      ctxs.push(
-        await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction1Tests')
-      )
+      if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction1Tests'))
+      ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction1Tests'))
     }
     for (const { wallet } of ctxs) {
       const root = '02135476'
@@ -133,9 +111,7 @@ describe('internalizeAction tests', () => {
         expect(ro[0].satoshis).toBe(outputSatoshis)
 
         // Validate custom instructions and tags
-        expect(ro[0].customInstructions).toBe(
-          JSON.stringify({ root, repeat: 8 })
-        )
+        expect(ro[0].customInstructions).toBe(JSON.stringify({ root, repeat: 8 }))
         const rtm = await fred.activeStorage.findOutputTagMaps({
           partial: { outputId: 1 }
         })
@@ -167,13 +143,8 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (env.runMySQL)
-        ctxs.push(
-          await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction2Tests')
-        )
-      ctxs.push(
-        await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction2Tests')
-      )
+      if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction2Tests'))
+      ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction2Tests'))
     }
     for (const { wallet } of ctxs) {
       const root = '02135476'
@@ -255,9 +226,7 @@ describe('internalizeAction tests', () => {
           expect(ro[0].satoshis).toBe(outputSatoshis1)
 
           // Validate custom instructions and tags
-          expect(ro[0].customInstructions).toBe(
-            JSON.stringify({ root, repeat: 8 })
-          )
+          expect(ro[0].customInstructions).toBe(JSON.stringify({ root, repeat: 8 }))
           const rtm = await fred.activeStorage.findOutputTagMaps({
             partial: { outputId: 1 }
           })
@@ -277,9 +246,7 @@ describe('internalizeAction tests', () => {
           expect(ro[0].basketId).toBe(2)
           expect(ro[0].satoshis).toBe(outputSatoshis2)
 
-          expect(ro[0].customInstructions).toBe(
-            JSON.stringify({ root, repeat: 8 })
-          )
+          expect(ro[0].customInstructions).toBe(JSON.stringify({ root, repeat: 8 }))
           const rtm = await fred.activeStorage.findOutputTagMaps({
             partial: { outputId: 2 }
           })
@@ -311,13 +278,8 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (env.runMySQL)
-        ctxs.push(
-          await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction3Tests')
-        )
-      ctxs.push(
-        await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction3Tests')
-      )
+      if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction3Tests'))
+      ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction3Tests'))
     }
     for (const { wallet, identityKey: senderIdentityKey } of ctxs) {
       const fred = await _tu.createSQLiteTestWallet({
@@ -407,13 +369,8 @@ describe('internalizeAction tests', () => {
     const ctxs: TestWalletNoSetup[] = []
     if (useSharedCtxs) ctxs.push(...gctxs)
     else {
-      if (env.runMySQL)
-        ctxs.push(
-          await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction4Tests')
-        )
-      ctxs.push(
-        await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction4Tests')
-      )
+      if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction4Tests'))
+      ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction4Tests'))
     }
     for (const { wallet, identityKey: senderIdentityKey } of ctxs) {
       const fred = await _tu.createSQLiteTestWallet({
@@ -529,13 +486,8 @@ describe('internalizeAction tests', () => {
 
   test('5_internalize 2 wallet payments and 2 basket insertions in receiving wallet with checks', async () => {
     const ctxs: TestWalletNoSetup[] = []
-    if (env.runMySQL)
-      ctxs.push(
-        await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction5Tests')
-      )
-    ctxs.push(
-      await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction5Tests')
-    )
+    if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('actionInternalizeAction5Tests'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('actionInternalizeAction5Tests'))
     for (const { wallet, identityKey: senderIdentityKey } of ctxs) {
       const fred = await _tu.createSQLiteTestWallet({
         chain: 'test',
@@ -678,9 +630,7 @@ describe('internalizeAction tests', () => {
           expect(ro[0].basketId).toBe(2)
           expect(ro[0].satoshis).toBe(outputSatoshis3)
 
-          expect(ro[0].customInstructions).toBe(
-            `3rd payment ${JSON.stringify({ root, repeat: 8 })}`
-          )
+          expect(ro[0].customInstructions).toBe(`3rd payment ${JSON.stringify({ root, repeat: 8 })}`)
           const rtm = await fred.activeStorage.findOutputTagMaps({
             partial: { outputId: 3 }
           })
@@ -700,9 +650,7 @@ describe('internalizeAction tests', () => {
           expect(ro[0].basketId).toBe(2)
           expect(ro[0].satoshis).toBe(outputSatoshis4)
 
-          expect(ro[0].customInstructions).toBe(
-            `4th payment ${JSON.stringify({ root, repeat: 8 })}`
-          )
+          expect(ro[0].customInstructions).toBe(`4th payment ${JSON.stringify({ root, repeat: 8 })}`)
           const rtm = await fred.activeStorage.findOutputTagMaps({
             partial: { outputId: 4 }
           })

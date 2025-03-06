@@ -7,8 +7,7 @@ describe('find tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (env.runMySQL)
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy('storagefindLegacytest'))
+    if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('storagefindLegacytest'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('storagefindLegacytest'))
   })
 
@@ -48,9 +47,7 @@ describe('find tests', () => {
           txStatus: ['sending']
         })
         expect(r.length).toBe(1)
-        expect(r[0].txid).toBe(
-          'a3a8fe7f541c1383ff7b975af49b27284ae720af5f2705d8409baaf519190d26'
-        )
+        expect(r[0].txid).toBe('a3a8fe7f541c1383ff7b975af49b27284ae720af5f2705d8409baaf519190d26')
         expect(r[0].vout).toBe(2)
       }
     }

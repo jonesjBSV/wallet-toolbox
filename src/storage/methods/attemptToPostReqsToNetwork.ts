@@ -61,10 +61,7 @@ export async function attemptToPostReqsToNetwork(
         await storage.mergeReqToBeefToShareExternally(rb.api, r.beef, [], trx)
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
-        if (
-          e.code === 'WERR_INVALID_PARAMETER' &&
-          (e as sdk.WERR_INVALID_PARAMETER).parameter === 'txid'
-        ) {
+        if (e.code === 'WERR_INVALID_PARAMETER' && (e as sdk.WERR_INVALID_PARAMETER).parameter === 'txid') {
           badReq = true
           rb.addHistoryNote({
             what: 'postToNetworkError',
@@ -114,10 +111,7 @@ export async function attemptToPostReqsToNetwork(
   } else {
     for (const d of r.details) {
       const pbrft = r.pbr.txidResults.find(t => t.txid === d.txid)
-      if (!pbrft)
-        throw new sdk.WERR_INTERNAL(
-          `postBeef service failed to return result for txid ${d.txid}`
-        )
+      if (!pbrft) throw new sdk.WERR_INTERNAL(`postBeef service failed to return result for txid ${d.txid}`)
       d.pbrft = pbrft
       if (r.pbr.data) d.data = JSON.stringify(r.pbr.data)
       if (r.pbr.error) d.error = r.pbr.error.code
@@ -142,11 +136,7 @@ export async function attemptToPostReqsToNetwork(
     // For each req, three outcomes are handled:
     // 1. success: req status from unprocessed(!isDelayed)/sending(isDelayed) to unmined, tx from sending to unproven
     if (d.status === 'success') {
-      if (
-        ['nosend', 'unprocessed', 'sending', 'unsent'].indexOf(d.req.status) >
-        -1
-      )
-        newReqStatus = 'unmined'
+      if (['nosend', 'unprocessed', 'sending', 'unsent'].indexOf(d.req.status) > -1) newReqStatus = 'unmined'
       newTxStatus = 'unproven' // but only if sending
     }
     // 2. doubleSpend: req status to doubleSpend, tx to failed
@@ -168,10 +158,7 @@ export async function attemptToPostReqsToNetwork(
     await d.req.updateStorageDynamicProperties(storage)
     if (newTxStatus) {
       const ids = d.req.notify.transactionIds
-      if (!ids || ids.length < 1)
-        throw new sdk.WERR_INTERNAL(
-          `req must have at least one transactionId to notify`
-        )
+      if (!ids || ids.length < 1) throw new sdk.WERR_INTERNAL(`req must have at least one transactionId to notify`)
       for (const id of ids) {
         await storage.updateTransactionStatus(newTxStatus, id)
       }
@@ -183,10 +170,7 @@ export async function attemptToPostReqsToNetwork(
   return r
 }
 
-export type PostReqsToNetworkDetailsStatus =
-  | 'success'
-  | 'doubleSpend'
-  | 'unknown'
+export type PostReqsToNetworkDetailsStatus = 'success' | 'doubleSpend' | 'unknown'
 
 export interface PostReqsToNetworkDetails {
   txid: string

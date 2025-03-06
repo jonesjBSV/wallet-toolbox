@@ -69,14 +69,7 @@ export class ARC {
       this.callbackUrl = undefined
     } else {
       const configObj: ArcConfig = config ?? {}
-      const {
-        apiKey,
-        deploymentId,
-        httpClient,
-        callbackToken,
-        callbackUrl,
-        headers
-      } = configObj
+      const { apiKey, deploymentId, httpClient, callbackToken, callbackUrl, headers } = configObj
       this.apiKey = apiKey
       this.httpClient = httpClient ?? defaultHttpClient()
       this.deploymentId = deploymentId ?? defaultDeploymentId()
@@ -129,10 +122,7 @@ export class ARC {
    * @param txids
    * @returns
    */
-  async postRawTx(
-    rawTx: HexString,
-    txids?: string[]
-  ): Promise<sdk.PostTxResultForTxid> {
+  async postRawTx(rawTx: HexString, txids?: string[]): Promise<sdk.PostTxResultForTxid> {
     let txid = Utils.toHex(doubleSha256BE(Utils.toArray(rawTx, 'hex')))
     if (txids) {
       txid = txids.slice(-1)[0]
@@ -157,10 +147,7 @@ export class ARC {
     const nne = () => ({ ...nn(), rawTx, txids: txids.join(','), url })
 
     try {
-      const response = await this.httpClient.request<ArcResponse>(
-        url,
-        requestOptions
-      )
+      const response = await this.httpClient.request<ArcResponse>(url, requestOptions)
 
       const { txid, extraInfo, txStatus, competingTxs } = response.data
       const nnr = () => ({
@@ -289,10 +276,7 @@ export class ARC {
           txid,
           returnedTxid: dr.txid
         })
-      } else if (
-        dr.txStatus === 'SEEN_ON_NETWORK' ||
-        dr.txStatus === 'STORED'
-      ) {
+      } else if (dr.txStatus === 'SEEN_ON_NETWORK' || dr.txStatus === 'STORED') {
         tr.data = dr.txStatus
         tr.notes!.push({
           ...nn(),
@@ -328,10 +312,7 @@ export class ARC {
       headers: this.requestHeaders()
     }
 
-    const response = await this.httpClient.request<ArcMinerGetTxData>(
-      `${this.URL}/v1/tx/${txid}`,
-      requestOptions
-    )
+    const response = await this.httpClient.request<ArcMinerGetTxData>(`${this.URL}/v1/tx/${txid}`, requestOptions)
 
     return response.data
   }

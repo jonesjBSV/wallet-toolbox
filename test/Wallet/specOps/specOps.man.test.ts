@@ -1,9 +1,5 @@
 import { sdk, verifyOne } from '../../../src'
-import {
-  specOpInvalidChange,
-  specOpSetWalletChangeParams,
-  specOpWalletBalance
-} from '../../../src/sdk'
+import { specOpInvalidChange, specOpSetWalletChangeParams, specOpWalletBalance } from '../../../src/sdk'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('specOps tests', () => {
@@ -66,10 +62,7 @@ describe('specOps tests', () => {
     // Restore original values...
     await setup.wallet.listOutputs({
       basket: specOpSetWalletChangeParams,
-      tags: [
-        before.numberOfDesiredUTXOs.toString(),
-        before.minimumDesiredUTXOValue.toString()
-      ]
+      tags: [before.numberOfDesiredUTXOs.toString(), before.minimumDesiredUTXOValue.toString()]
     })
 
     await setup.wallet.destroy()
@@ -78,10 +71,8 @@ describe('specOps tests', () => {
 
 async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
   const env = _tu.getEnv(chain)
-  if (!env.testIdentityKey)
-    throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
-  if (!env.testFilePath)
-    throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
+  if (!env.testIdentityKey) throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
+  if (!env.testFilePath) throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
 
   const setup = await _tu.createTestWallet({
     chain,

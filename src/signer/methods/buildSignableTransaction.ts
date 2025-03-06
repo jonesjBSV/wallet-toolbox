@@ -29,11 +29,7 @@ export function buildSignableTransaction(
   const voutToIndex = Array<number>(storageOutputs.length)
   for (let vout = 0; vout < storageOutputs.length; vout++) {
     const i = storageOutputs.findIndex(o => o.vout === vout)
-    if (i < 0)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'output.vout',
-        `sequential. ${vout} is missing`
-      )
+    if (i < 0) throw new sdk.WERR_INVALID_PARAMETER('output.vout', `sequential. ${vout} is missing`)
     voutToIndex[vout] = i
   }
 
@@ -44,10 +40,7 @@ export function buildSignableTransaction(
     const i = voutToIndex[vout]
     const out = storageOutputs[i]
     if (vout !== out.vout)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'output.vout',
-        `equal to array index. ${out.vout} !== ${vout}`
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('output.vout', `equal to array index. ${out.vout} !== ${vout}`)
 
     const change = out.providedBy === 'storage' && out.purpose === 'change'
 
@@ -78,11 +71,7 @@ export function buildSignableTransaction(
     inputs.push({ argsInput, storageInput })
   }
   inputs.sort((a, b) =>
-    a.storageInput.vin! < b.storageInput.vin!
-      ? -1
-      : a.storageInput.vin! === b.storageInput.vin!
-        ? 0
-        : 1
+    a.storageInput.vin! < b.storageInput.vin! ? -1 : a.storageInput.vin! === b.storageInput.vin! ? 0 : 1
   )
 
   const pendingStorageInputs: PendingStorageInput[] = []
@@ -97,12 +86,8 @@ export function buildSignableTransaction(
       // Type 1: User supplied input, with or without an explicit unlockingScript.
       // If without, signAction must be used to provide the actual unlockScript.
       const hasUnlock = typeof argsInput.unlockingScript === 'string'
-      const unlock = hasUnlock
-        ? asBsvSdkScript(argsInput.unlockingScript!)
-        : new Script()
-      const sourceTransaction = args.isSignAction
-        ? inputBeef?.findTxid(argsInput.outpoint.txid)?.tx
-        : undefined
+      const unlock = hasUnlock ? asBsvSdkScript(argsInput.unlockingScript!) : new Script()
+      const sourceTransaction = args.isSignAction ? inputBeef?.findTxid(argsInput.outpoint.txid)?.tx : undefined
       const inputToAdd: TransactionInput = {
         sourceTXID: argsInput.outpoint.txid,
         sourceOutputIndex: argsInput.outpoint.vout,

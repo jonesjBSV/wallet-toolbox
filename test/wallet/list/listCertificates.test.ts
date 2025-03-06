@@ -1,10 +1,6 @@
 import { ListCertificatesArgs } from '@bsv/sdk'
 import { sdk } from '../../../src/index.client'
-import {
-  _tu,
-  expectToThrowWERR,
-  TestWalletNoSetup
-} from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('listCertificates tests', () => {
   jest.setTimeout(99999999)
@@ -13,8 +9,7 @@ describe('listCertificates tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (env.runMySQL)
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy('listCertificatesTests'))
+    if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('listCertificatesTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('listCertificatesTests'))
   })
 
@@ -35,9 +30,7 @@ describe('listCertificates tests', () => {
       ]
 
       for (const args of invalidArgs) {
-        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
-          wallet.listCertificates(args)
-        )
+        await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.listCertificates(args))
       }
     }
   })
@@ -47,9 +40,7 @@ describe('listCertificates tests', () => {
       const tcs: { args: ListCertificatesArgs; count: number }[] = [
         {
           args: {
-            certifiers: [
-              '02cf6cdf466951d8dfc9e7c9367511d0007ed6fba35ed42d425cc412fd6cfd4a17'
-            ],
+            certifiers: ['02cf6cdf466951d8dfc9e7c9367511d0007ed6fba35ed42d425cc412fd6cfd4a17'],
             types: [],
             limit: 1
           },
@@ -57,9 +48,7 @@ describe('listCertificates tests', () => {
         },
         {
           args: {
-            certifiers: [
-              '02CF6CDF466951D8DFC9E7C9367511D0007ED6FBA35ED42D425CC412FD6CFD4A17'
-            ],
+            certifiers: ['02CF6CDF466951D8DFC9E7C9367511D0007ED6FBA35ED42D425CC412FD6CFD4A17'],
             types: [],
             limit: 10
           },

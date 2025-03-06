@@ -1,15 +1,7 @@
 import { Knex } from 'knex'
 import * as bsv from '@bsv/sdk'
-import {
-  createSyncMap,
-  sdk,
-  SyncMap,
-  TableTransaction
-} from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { createSyncMap, sdk, SyncMap, TableTransaction } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityTransaction } from '../../../../../src/storage/schema/entities/Transaction'
 
 describe('Transaction class method tests', () => {
@@ -166,11 +158,7 @@ describe('Transaction class method tests', () => {
   test('6_getInputs_combines_spentBy_and_rawTx_inputs', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert the transaction into the database
-      const txData = await _tu.insertTestTransaction(
-        activeStorage,
-        undefined,
-        true
-      )
+      const txData = await _tu.insertTestTransaction(activeStorage, undefined, true)
       const tx = new EntityTransaction(txData.tx)
 
       // Assign rawTx to simulate transaction inputs
@@ -217,11 +205,7 @@ describe('Transaction class method tests', () => {
   test('9_mergeExisting_updates_when_ei_updated_at_is_newer', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert a test transaction into the database
-      const txData = await _tu.insertTestTransaction(
-        activeStorage,
-        undefined,
-        true
-      )
+      const txData = await _tu.insertTestTransaction(activeStorage, undefined, true)
 
       // Create the `Transaction` instance with an earlier updated_at timestamp
       const tx = new EntityTransaction({
@@ -241,12 +225,7 @@ describe('Transaction class method tests', () => {
       syncMap.transaction.count = 1
 
       // Execute `mergeExisting`
-      const result = await tx.mergeExisting(
-        activeStorage,
-        new Date(),
-        ei,
-        syncMap
-      )
+      const result = await tx.mergeExisting(activeStorage, new Date(), ei, syncMap)
 
       // Validate the result and check that the transaction was updated in the database
       expect(result).toBe(true)
@@ -274,11 +253,7 @@ describe('Transaction class method tests', () => {
   test('11_getInputs_handles_storage_lookups_and_input_merging', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert a test transaction into the database
-      const { tx } = await _tu.insertTestTransaction(
-        activeStorage,
-        undefined,
-        true
-      )
+      const { tx } = await _tu.insertTestTransaction(activeStorage, undefined, true)
 
       // Create a Transaction instance with the inserted transaction's data
       const transaction = new EntityTransaction(tx)
@@ -377,11 +352,7 @@ describe('Transaction class method tests', () => {
   test('18_getInputs_merges_known_inputs_correctly', async () => {
     for (const { activeStorage } of ctxs) {
       // Step 1: Insert a Transaction
-      const { tx } = await _tu.insertTestTransaction(
-        activeStorage,
-        undefined,
-        true
-      )
+      const { tx } = await _tu.insertTestTransaction(activeStorage, undefined, true)
 
       // Step 2: Insert outputs associated with the transaction
       const output1 = await _tu.insertTestOutput(activeStorage, tx, 0, 100) // vout = 0
@@ -455,11 +426,7 @@ describe('Transaction class method tests', () => {
   test('25_equals_returns_false_for_mismatched_other_properties', async () => {
     for (const { activeStorage } of ctxs) {
       // Insert a test transaction to use as the baseline
-      const txData = await _tu.insertTestTransaction(
-        activeStorage,
-        undefined,
-        true
-      )
+      const txData = await _tu.insertTestTransaction(activeStorage, undefined, true)
 
       const syncMap = createSyncMap()
       syncMap.transaction.idMap = {
@@ -501,11 +468,7 @@ describe('Transaction class method tests', () => {
   test('26_getInputs_handles_known_and_unknown_inputs', async () => {
     for (const { activeStorage } of ctxs) {
       // Step 1: Insert a Transaction into the database
-      const { tx } = await _tu.insertTestTransaction(
-        activeStorage,
-        undefined,
-        true
-      )
+      const { tx } = await _tu.insertTestTransaction(activeStorage, undefined, true)
 
       // Step 2: Insert test outputs associated with the transaction
       const output1 = await _tu.insertTestOutput(activeStorage, tx, 0, 100) // vout = 0, satoshis = 100

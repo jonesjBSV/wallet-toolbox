@@ -1,8 +1,5 @@
 import { createSyncMap, sdk, TableCertificate } from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityCertificate } from '../../../../../src/storage/schema/entities/Certificate'
 
 describe('Certificate class method tests', () => {
@@ -41,14 +38,10 @@ describe('Certificate class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType').toString('base64'), // Base64-encoded string
         serialNumber: Buffer.from('serial123').toString('base64'), // Base64-encoded string
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // PubKeyHex
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // PubKeyHex
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // OutpointString
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // HexString
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // PubKeyHex
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // PubKeyHex
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // OutpointString
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // HexString
         isDeleted: false
       }
 
@@ -76,14 +69,10 @@ describe('Certificate class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType1').toString('base64'), // Unique Base64-encoded string
         serialNumber: Buffer.from('serial123-1').toString('base64'), // Unique Base64-encoded string
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // Same PubKeyHex
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // Same OutpointString
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // Same PubKeyHex
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // Same OutpointString
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       }
       const certificateData2: TableCertificate = {
@@ -93,14 +82,10 @@ describe('Certificate class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType2').toString('base64'), // Unique Base64-encoded string
         serialNumber: Buffer.from('serial123-2').toString('base64'), // Unique Base64-encoded string
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:1', // Unique OutpointString
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:1', // Unique OutpointString
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       }
 
@@ -147,14 +132,10 @@ describe('Certificate class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleTypeMerge').toString('base64'),
         serialNumber: Buffer.from('serialMerge123').toString('base64'),
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         isDeleted: false
       }
 
@@ -230,14 +211,10 @@ describe('Certificate class method tests', () => {
         userId: 1,
         type: 'exampleType',
         serialNumber: 'exampleSerialNumber',
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         isDeleted: false
       }
 
@@ -278,16 +255,10 @@ describe('Certificate class method tests', () => {
 
       // Verify that the entity is not updated
       expect(entity.type).toBe('exampleType')
-      expect(entity.subject).toBe(
-        '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678'
-      )
+      expect(entity.subject).toBe('02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678')
       expect(entity.serialNumber).toBe('exampleSerialNumber')
-      expect(entity.revocationOutpoint).toBe(
-        'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0'
-      )
-      expect(entity.signature).toBe(
-        'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890'
-      )
+      expect(entity.revocationOutpoint).toBe('abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0')
+      expect(entity.signature).toBe('abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890')
       expect(entity.isDeleted).toBe(0)
 
       // Verify that the database is not updated
@@ -297,16 +268,12 @@ describe('Certificate class method tests', () => {
       expect(unchangedRecord.length).toBe(1)
       expect(unchangedRecord[0]).toBeDefined()
       expect(unchangedRecord[0].type).toBe('exampleType')
-      expect(unchangedRecord[0].subject).toBe(
-        '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678'
-      )
+      expect(unchangedRecord[0].subject).toBe('02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678')
       expect(unchangedRecord[0].serialNumber).toBe('exampleSerialNumber')
       expect(unchangedRecord[0].revocationOutpoint).toBe(
         'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0'
       )
-      expect(unchangedRecord[0].signature).toBe(
-        'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890'
-      )
+      expect(unchangedRecord[0].signature).toBe('abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890')
       expect(unchangedRecord[0].isDeleted).toBe(false)
     }
   })

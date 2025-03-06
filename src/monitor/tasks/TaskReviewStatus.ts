@@ -29,9 +29,7 @@ export class TaskReviewStatus extends WalletMonitorTask {
 
   trigger(nowMsecsSinceEpoch: number): { run: boolean } {
     return {
-      run:
-        this.triggerMsecs > 0 &&
-        nowMsecsSinceEpoch - this.lastRunMsecsSinceEpoch > this.triggerMsecs
+      run: this.triggerMsecs > 0 && nowMsecsSinceEpoch - this.lastRunMsecsSinceEpoch > this.triggerMsecs
     }
   }
 

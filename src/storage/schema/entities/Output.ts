@@ -1,13 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  optionalArraysEqual,
-  sdk,
-  TableOutput,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, optionalArraysEqual, sdk, TableOutput, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityOutput extends EntityBase<TableOutput> {
@@ -209,18 +202,9 @@ export class EntityOutput extends EntityBase<TableOutput> {
 
   override equals(ei: TableOutput, syncMap?: SyncMap | undefined): boolean {
     if (
-      this.transactionId !==
-        (syncMap
-          ? syncMap.transaction.idMap[ei.transactionId]
-          : ei.transactionId) ||
-      this.basketId !==
-        (syncMap && ei.basketId
-          ? syncMap.outputBasket.idMap[ei.basketId]
-          : ei.basketId) ||
-      this.spentBy !==
-        (syncMap && ei.spentBy
-          ? syncMap.transaction.idMap[ei.spentBy]
-          : ei.spentBy) ||
+      this.transactionId !== (syncMap ? syncMap.transaction.idMap[ei.transactionId] : ei.transactionId) ||
+      this.basketId !== (syncMap && ei.basketId ? syncMap.outputBasket.idMap[ei.basketId] : ei.basketId) ||
+      this.spentBy !== (syncMap && ei.spentBy ? syncMap.transaction.idMap[ei.spentBy] : ei.spentBy) ||
       this.vout !== ei.vout ||
       this.satoshis !== ei.satoshis ||
       this.spendable !== ei.spendable ||
@@ -252,9 +236,7 @@ export class EntityOutput extends EntityBase<TableOutput> {
     trx?: sdk.TrxToken
   ): Promise<{ found: boolean; eo: EntityOutput; eiId: number }> {
     const transactionId = syncMap.transaction.idMap[ei.transactionId]
-    const basketId = ei.basketId
-      ? syncMap.outputBasket.idMap[ei.basketId]
-      : null
+    const basketId = ei.basketId ? syncMap.outputBasket.idMap[ei.basketId] : null
     const ef = verifyOneOrNone(
       await storage.findOutputs({
         partial: { userId, transactionId, vout: ei.vout },
@@ -268,20 +250,11 @@ export class EntityOutput extends EntityBase<TableOutput> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.userId = userId
-    this.basketId = this.basketId
-      ? syncMap.outputBasket.idMap[this.basketId]
-      : undefined
+    this.basketId = this.basketId ? syncMap.outputBasket.idMap[this.basketId] : undefined
     this.transactionId = syncMap.transaction.idMap[this.transactionId]
-    this.spentBy = this.spentBy
-      ? syncMap.transaction.idMap[this.spentBy]
-      : undefined
+    this.spentBy = this.spentBy ? syncMap.transaction.idMap[this.spentBy] : undefined
     this.outputId = 0
     this.outputId = await storage.insertOutput(this.toApi(), trx)
   }
@@ -295,9 +268,7 @@ export class EntityOutput extends EntityBase<TableOutput> {
   ): Promise<boolean> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
-      this.spentBy = ei.spentBy
-        ? syncMap.transaction.idMap[ei.spentBy]
-        : undefined
+      this.spentBy = ei.spentBy ? syncMap.transaction.idMap[ei.spentBy] : undefined
       this.spendable = ei.spendable
       this.change = ei.change
       this.type = ei.type

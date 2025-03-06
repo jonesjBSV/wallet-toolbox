@@ -181,14 +181,7 @@ export async function inputPushDrop(
     keyId: string
   }
 ) {
-  const {
-    protocol,
-    keyId,
-    fromIdentityKey,
-    satoshis,
-    beef: inputBeef,
-    outpoint
-  } = outputPushDrop
+  const { protocol, keyId, fromIdentityKey, satoshis, beef: inputBeef, outpoint } = outputPushDrop
 
   const { keyDeriver } = setup
 
@@ -196,14 +189,7 @@ export async function inputPushDrop(
 
   // Construct an "unlock" object which is then associated with the input to be signed
   // such that when the "sign" method is called, a signed "unlockingScript" is computed for that input.
-  const unlock = t.unlock(
-    protocol,
-    keyId,
-    fromIdentityKey,
-    'single',
-    false,
-    satoshis
-  )
+  const unlock = t.unlock(protocol, keyId, fromIdentityKey, 'single', false, satoshis)
 
   const label = 'inputPushDrop'
 
