@@ -1,4 +1,5 @@
 import {
+  CreateActionInput,
   LockingScript,
   PubKeyHex,
   PushDrop,
@@ -35,7 +36,6 @@ const PROTOCOL_ID: WalletProtocol = [2, 'wallet settings']
 const KEY_ID = '1'
 const SETTINGS_BASKET = 'wallet settings'
 const TOKEN_AMOUNT = 1
-const OUTPUT_INDEX = 0
 
 // Defaults can be overridden as needed
 export const DEFAULT_SETTINGS = {
@@ -107,7 +107,7 @@ export class WalletSettingsManager {
     private config: WalletSettingsManagerConfig = {
       defaultSettings: DEFAULT_SETTINGS
     }
-  ) {}
+  ) { }
 
   /**
    * Returns a user's wallet settings
@@ -128,7 +128,7 @@ export class WalletSettingsManager {
     }
 
     const { fields } = PushDrop.decode(
-      LockingScript.fromHex(results.outputs[OUTPUT_INDEX].lockingScript!)
+      LockingScript.fromHex(results.outputs[0].lockingScript!)
     )
     // Parse and return settings token
     return JSON.parse(Utils.toUTF8(fields[0]))
@@ -151,7 +151,7 @@ export class WalletSettingsManager {
     )
 
     // Consume any existing token and create a new one with the new locking script.
-    await this.consumeToken(lockingScript)
+    await this.updateToken(lockingScript)
   }
 
   /**
@@ -159,18 +159,17 @@ export class WalletSettingsManager {
    */
   async delete(): Promise<void> {
     // Consume the token; if none exists, consumeToken simply returns.
-    await this.consumeToken()
+    await this.updateToken()
   }
 
   /**
-   * Consumes an existing settings token.
-   * If a new locking script is provided, a new token is created with that script.
-   * Otherwise, the token is simply consumed (deleted).
+   * Updates a settings token. Any previous token is consumed, and if a new locking script
+   * is provided, it replaces what (if anything) was there before.
    *
-   * @param newLockingScript - Optional locking script for creating a new settings token.
-   * @returns {Promise<boolean>} - Returns false if no token was found; otherwise true.
+   * @param newLockingScript - Optional locking script for replacing the settings token.
+   * @returns {Promise<boolean>} - True if operation succeeded, throws an error otherwise.
    */
-  private async consumeToken(
+  private async updateToken(
     newLockingScript?: LockingScript
   ): Promise<boolean> {
     const pushdrop = new PushDrop(this.wallet)
@@ -180,37 +179,57 @@ export class WalletSettingsManager {
       basket: SETTINGS_BASKET,
       limit: 1
     })
+
+    // This is the "create a new token" path — no signAction, just a new locking script.
     if (!existingUtxos.outputs.length) {
-      // No token exists – nothing to consume.
-      return false
+      if (!newLockingScript) {
+        // The intention was to clear the token, but no tokn was found to clear.
+        // Thus, we are done.
+        return true
+      }
+      await this.wallet.createAction({
+        description: 'Create a user settings token',
+        outputs: [{
+          satoshis: TOKEN_AMOUNT,
+          lockingScript: newLockingScript.toHex(),
+          outputDescription: 'Wallet settings token',
+          basket: SETTINGS_BASKET
+        }],
+        options: {
+          randomizeOutputs: false
+        }
+      })
+      return true
     }
 
     // 2. Prepare the token UTXO for consumption.
-    const tokenOutput = existingUtxos.outputs[OUTPUT_INDEX]
-    const inputToConsume = {
+    const tokenOutput = existingUtxos.outputs[0]
+    const inputToConsume: CreateActionInput = {
       outpoint: tokenOutput.outpoint,
       unlockingScriptLength: 73,
-      inputDescription: 'Consume old settings token',
-      lockingScript: tokenOutput.lockingScript
+      inputDescription: 'Consume old wallet settings token'
     }
 
     // 3. Build the outputs array: if a new locking script is provided, add an output.
     const outputs = newLockingScript
       ? [
-          {
-            satoshis: TOKEN_AMOUNT,
-            lockingScript: newLockingScript.toHex(),
-            outputDescription: 'Wallet settings token',
-            basket: SETTINGS_BASKET
-          }
-        ]
+        {
+          satoshis: TOKEN_AMOUNT,
+          lockingScript: newLockingScript.toHex(),
+          outputDescription: 'Wallet settings token',
+          basket: SETTINGS_BASKET
+        }
+      ]
       : []
 
     // 4. Create a signable transaction action using the inputs and (optionally) outputs.
     const { signableTransaction } = await this.wallet.createAction({
-      description: '',
-      inputs: [inputToConsume],
-      outputs
+      description: `${newLockingScript ? 'Update' : 'Delete'} a user settings token`,
+      inputs: [inputToConsume], // input index 0
+      outputs,
+      options: {
+        randomizeOutputs: false
+      }
     })
     const tx = Transaction.fromBEEF(signableTransaction!.tx)
 
@@ -218,19 +237,15 @@ export class WalletSettingsManager {
     const unlocker = pushdrop.unlock(
       PROTOCOL_ID,
       KEY_ID,
-      'self',
-      'all',
-      false,
-      TOKEN_AMOUNT,
-      LockingScript.fromHex(tokenOutput.lockingScript!)
+      'self'
     )
-    const unlockingScript = await unlocker.sign(tx, OUTPUT_INDEX)
+    const unlockingScript = await unlocker.sign(tx, 0)
 
     // 6. Sign the transaction using our unlocking script.
     await this.wallet.signAction({
       reference: signableTransaction!.reference,
       spends: {
-        [OUTPUT_INDEX]: {
+        0: {
           unlockingScript: unlockingScript.toHex()
         }
       }
