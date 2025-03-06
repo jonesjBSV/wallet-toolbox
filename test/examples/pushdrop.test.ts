@@ -1,5 +1,6 @@
 import { Beef, PushDrop, SignActionArgs, WalletProtocol } from '@bsv/sdk'
 import { Setup, SetupWallet } from '../../src'
+import { logger } from '../utils/TestUtilsWalletStorage'
 
 describe('pushdrop example tests', () => {
   jest.setTimeout(99999999)
@@ -104,7 +105,7 @@ async function outputPushDrop(
       randomizeOutputs: false,
       // This example prefers to immediately wait for the new transaction to be broadcast to the network.
       // Typically, most production applications benefit from performance gains when broadcasts are handled in the background.
-      acceptDelayedBroadcast: false
+      acceptDelayedBroadcast: true
     },
     labels: [label],
     description: label
@@ -120,7 +121,7 @@ async function outputPushDrop(
   // The outpoint string is constructed from the new transaction's txid and the output index: zero.
   const outpoint = `${car.txid!}.0`
 
-  console.log(`
+  logger(`
 outputPushDrop to ${toIdentityKey}
 outpoint ${outpoint}
 satoshis ${satoshis}
@@ -251,7 +252,7 @@ export async function inputPushDrop(
     spends: { 0: { unlockingScript } },
     options: {
       // Force an immediate broadcast of the signed transaction.
-      acceptDelayedBroadcast: false
+      acceptDelayedBroadcast: true
     }
   }
 
@@ -268,7 +269,7 @@ export async function inputPushDrop(
     const beef = Beef.fromBinary(sar.tx!)
     const txid = sar.txid!
 
-    console.log(`
+    logger(`
 inputP2PKH to ${setup.identityKey}
 input's outpoint ${outpoint}
 satoshis ${satoshis}

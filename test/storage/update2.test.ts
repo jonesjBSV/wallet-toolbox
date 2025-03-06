@@ -295,14 +295,16 @@ describe('update2 tests', () => {
     const primaryKey = 'provenTxReqId'
     for (const { storage } of setups) {
       const records = await storage.findProvenTxReqs({ partial: {} })
+      let i = -1
       for (const record of records) {
+        i++
         try {
           const testValues: TableProvenTxReq = {
             provenTxReqId: record.provenTxReqId,
             provenTxId: 1,
             batch: `batch-001`,
             status: 'completed',
-            txid: `mockTxid-${Date.now()}`,
+            txid: `mockTxid-${i}`,
             created_at: new Date('2024-12-30T23:00:00Z'),
             updated_at: new Date('2024-12-30T23:05:00Z'),
             attempts: 3,

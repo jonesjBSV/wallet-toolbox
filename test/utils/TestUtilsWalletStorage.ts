@@ -384,7 +384,7 @@ export abstract class TestUtilsWalletStorage {
     const log = await setup.storage.setActive(
       setActiveClient ? setup.clientStorageIdentityKey : setup.localStorageIdentityKey
     )
-    console.log(log)
+    logger(log)
 
     let needsBackup = false
 
@@ -1456,7 +1456,10 @@ export abstract class TestUtilsWalletStorage {
   }> {
     let destroyWallet = false
     if (wallet === 'main' || wallet === 'test') {
-      wallet = (await _tu.createWalletSetupEnv(wallet)).wallet
+      const setup = await _tu.createWalletSetupEnv(wallet)
+      wallet = setup.wallet
+      if (!setup.storage.isActiveEnabled)
+        await setup.storage.setActive(setup.storage.getActiveStore())
       destroyWallet = true
     }
 
@@ -1710,8 +1713,11 @@ let logEnabled: boolean = false
  * log('Test message', someVariable);
  * log('Another message with multiple params', param1, param2);
  */
-export const log = (message: string, ...optionalParams: any[]): void => {
-  if (logEnabled) {
+export const logger = (message: string, ...optionalParams: any[]): void => {
+  const isSingleTest = process.argv.some(arg => 
+    arg === '--testNamePattern' || arg === '-t'
+  );
+  if (logEnabled || isSingleTest) {
     console.log(message, ...optionalParams)
   }
 }
@@ -1724,7 +1730,7 @@ export const log = (message: string, ...optionalParams: any[]): void => {
  */
 export const updateTable = async (updateFunction, id, testValues) => {
   for (const [key, value] of Object.entries(testValues)) {
-    log('id=', id, '[key]=', [key], 'value=', value)
+    logger('id=', id, '[key]=', [key], 'value=', value)
     await updateFunction(id, { [key]: value })
   }
 }
@@ -1787,7 +1793,7 @@ export const validateUpdateTime = (
   const referenceTimestamp = referenceTime.getTime()
 
   if (logEnabled) {
-    log(
+    logger(
       `Validation inputs:\n`,
       `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})\n`,
       `Expected Time: ${expectedTime.toISOString()} (Timestamp: ${expectedTimestamp})\n`,
@@ -1803,7 +1809,7 @@ export const validateUpdateTime = (
   // Updated: Allow test to pass if the difference is too large to fail
   if (!isWithinTolerance && Math.abs(actualTimestamp - expectedTimestamp) > 100000000) {
     if (logEnabled) {
-      log(
+      logger(
         `Skipping validation failure: The difference is unusually large (${Math.abs(actualTimestamp - expectedTimestamp)}ms). Validation passed for extreme outliers.`
       )
     }
@@ -1827,7 +1833,7 @@ export const validateUpdateTime = (
     )
   } else {
     if (logEnabled) {
-      log(`Validation succeeded:\n`, `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})`)
+      logger(`Validation succeeded:\n`, `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})`)
     }
   }
 
@@ -1868,7 +1874,7 @@ export const logUniqueConstraintError = (
     // Construct the expected error message string with the table name prefixed to each column
     const expectedErrorString = `SQLITE_CONSTRAINT: UNIQUE constraint failed: ${columnNames.map(col => `${tableName}.${col}`).join(', ')}`
 
-    log('expectedErrorString=', expectedErrorString)
+    logger('expectedErrorString=', expectedErrorString)
 
     // Check if the error message contains the expected string
     if (error.message.includes(expectedErrorString)) {
@@ -1909,9 +1915,9 @@ const logForeignConstraintError = (
 ): void => {
   if (logEnabled) {
     if (error.message.includes(`SQLITE_CONSTRAINT: FOREIGN KEY constraint failed`)) {
-      log(`${columnName} constraint error caught as expected:`, error.message)
+      logger(`${columnName} constraint error caught as expected:`, error.message)
     } else {
-      log('Unexpected error:', error.message)
+      logger('Unexpected error:', error.message)
       throw new Error(`Unexpected error: ${error.message}`)
     }
   }
@@ -1949,7 +1955,7 @@ export const triggerUniqueConstraintError = async (
 
   const rows = await storage[findMethod]({})
   if (logEnabled) {
-    log('rows=', rows)
+    logger('rows=', rows)
   }
 
   if (!rows || rows.length < 2) {
@@ -1969,7 +1975,7 @@ export const triggerUniqueConstraintError = async (
   }
 
   if (logEnabled) {
-    log('invalidValue=', invalidValue)
+    logger('invalidValue=', invalidValue)
   }
 
   // Create columnNames from invalidValue keys before the update
@@ -1977,7 +1983,7 @@ export const triggerUniqueConstraintError = async (
 
   try {
     if (logEnabled) {
-      log('update id=', id)
+      logger('update id=', id)
     }
 
     // Attempt the update with the new value that should trigger the constraint error
@@ -2045,7 +2051,7 @@ export const triggerForeignKeyConstraintError = async (
   try {
     // Attempt the update with the invalid value that should trigger the foreign key constraint error
     const r = await storage[updateMethod](id, invalidValue) // Pass the object with the column name and value
-    log('r=', r)
+    logger('r=', r)
     return false
   } catch (error: any) {
     logForeignConstraintError(error, tableName, columnName, logEnabled)

@@ -1,6 +1,6 @@
 import { verifyOne, verifyOneOrNone, verifyTruthy, wait, Wallet, WalletStorageManager } from '../../../src/index.client'
 import { StorageKnex } from '../../../src/storage/StorageKnex'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { _tu, logger, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('Wallet sync tests', () => {
   jest.setTimeout(99999999)
@@ -134,7 +134,7 @@ async function setActiveTwice(
 
   // sync to backup and make it active.
   const log = await storageManager.setActive(backupIdentityKey)
-  console.log(log)
+  logger(log)
 
   expect(storageManager.getActiveStore()).toBe(backupIdentityKey)
   expect(storageManager.getActiveUser().activeStorage).toBe(backupIdentityKey)
@@ -179,7 +179,7 @@ async function setActiveTwice(
 
   // sync back to original and make it active.
   const log2 = await storageManager.setActive(original.getSettings().storageIdentityKey)
-  console.log(log2)
+  logger(log2)
 
   originalUserAfter = verifyTruthy(await original.findUserById(originalAuth.userId!))
   backupUserAfter = verifyOne(

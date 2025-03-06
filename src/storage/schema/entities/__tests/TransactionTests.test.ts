@@ -224,6 +224,8 @@ describe('Transaction class method tests', () => {
       syncMap.transaction.idMap = { 456: 123 }
       syncMap.transaction.count = 1
 
+      const expectedMergeUpdatedAt = Math.max(ei.updated_at.getTime(), tx.updated_at.getTime())
+
       // Execute `mergeExisting`
       const result = await tx.mergeExisting(activeStorage, new Date(), ei, syncMap)
 
@@ -236,9 +238,8 @@ describe('Transaction class method tests', () => {
 
       expect(updatedTx[0]?.txid).toBe('newTxId')
       // Currently expecting current time and date, but should be the updated_at from the incoming entity
-      const now = Date.now()
       const updatedAtTime = updatedTx[0]?.updated_at.getTime()
-      expect(Math.abs(now - updatedAtTime)).toBeLessThan(5000) // Allow a 5-second tolerance
+      expect(updatedAtTime).toBe(expectedMergeUpdatedAt)
     }
   })
 
