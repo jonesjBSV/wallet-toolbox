@@ -4168,6 +4168,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface WalletSettings {
     trustSettings: TrustSettings;
     theme?: WalletTheme;
+    currency?: string;
 }
 ```
 
@@ -4892,10 +4893,6 @@ export class CertOps extends BsvCertificate {
     static async fromEncrypted(wallet: CertOpsWallet, wc: WalletCertificate, keyring: Record<CertificateFieldNameUnder50Bytes, string>): Promise<CertOps> 
     static async fromDecrypted(wallet: CertOpsWallet, wc: WalletCertificate): Promise<CertOps> 
     static copyFields<T>(fields: Record<CertificateFieldNameUnder50Bytes, T>): Record<CertificateFieldNameUnder50Bytes, T> 
-    static getProtocolForCertificateFieldEncryption(serialNumber: string, fieldName: string): {
-        protocolID: WalletProtocol;
-        keyID: string;
-    } 
     exportForSubject(): {
         certificate: WalletCertificate;
         keyring: Record<CertificateFieldNameUnder50Bytes, string>;
