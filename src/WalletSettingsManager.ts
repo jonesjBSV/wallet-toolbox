@@ -27,6 +27,7 @@ export interface WalletTheme {
 export interface WalletSettings {
   trustSettings: TrustSettings
   theme?: WalletTheme
+  currency?: string
 }
 export interface WalletSettingsManagerConfig {
   defaultSettings: WalletSettings
@@ -190,12 +191,14 @@ export class WalletSettingsManager {
       }
       await this.wallet.createAction({
         description: 'Create a user settings token',
-        outputs: [{
-          satoshis: TOKEN_AMOUNT,
-          lockingScript: newLockingScript.toHex(),
-          outputDescription: 'Wallet settings token',
-          basket: SETTINGS_BASKET
-        }],
+        outputs: [
+          {
+            satoshis: TOKEN_AMOUNT,
+            lockingScript: newLockingScript.toHex(),
+            outputDescription: 'Wallet settings token',
+            basket: SETTINGS_BASKET
+          }
+        ],
         options: {
           randomizeOutputs: false
         }
@@ -236,11 +239,7 @@ export class WalletSettingsManager {
     const tx = Transaction.fromBEEF(signableTransaction!.tx)
 
     // 5. Build and sign the unlocking script for the token being consumed.
-    const unlocker = pushdrop.unlock(
-      PROTOCOL_ID,
-      KEY_ID,
-      'self'
-    )
+    const unlocker = pushdrop.unlock(PROTOCOL_ID, KEY_ID, 'self')
     const unlockingScript = await unlocker.sign(tx, 0)
 
     // 6. Sign the transaction using our unlocking script.

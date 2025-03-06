@@ -1,6 +1,7 @@
 import {
   Base64String,
   Certificate as BsvCertificate,
+  Certificate,
   CertificateFieldNameUnder50Bytes,
   GetPublicKeyArgs,
   GetPublicKeyResult,
@@ -101,8 +102,8 @@ export class CertOps extends BsvCertificate {
     wc: WalletCertificate
   ): Promise<CertOps> {
     const c = new CertOps(wallet, wc)
-    ;({ fields: c._encryptedFields, keyring: c._keyring } =
-      await c.encryptFields())
+      ; ({ fields: c._encryptedFields, keyring: c._keyring } =
+        await c.encryptFields())
     c._decryptedFields = await c.decryptFields()
     return c
   }
@@ -113,16 +114,6 @@ export class CertOps extends BsvCertificate {
     const copy: Record<CertificateFieldNameUnder50Bytes, T> = {}
     for (const [n, v] of Object.entries(fields)) copy[n] = v
     return copy
-  }
-
-  static getProtocolForCertificateFieldEncryption(
-    serialNumber: string,
-    fieldName: string
-  ): { protocolID: WalletProtocol; keyID: string } {
-    return {
-      protocolID: [2, 'certificate field encryption'],
-      keyID: `${serialNumber} ${fieldName}`
-    }
   }
 
   exportForSubject(): {
@@ -175,7 +166,7 @@ export class CertOps extends BsvCertificate {
       const encryptedFieldKey = await this.wallet.encrypt({
         plaintext: fieldSymmetricKey.toArray(),
         counterparty,
-        ...CertOps.getProtocolForCertificateFieldEncryption(
+        ...Certificate.getCertificateFieldEncryptionDetails(
           this.serialNumber,
           fieldName
         )
@@ -203,7 +194,7 @@ export class CertOps extends BsvCertificate {
         const { plaintext: fieldRevelationKey } = await this.wallet.decrypt({
           ciphertext: Utils.toArray(keyring[fieldName], 'base64'),
           counterparty: counterparty || this.subject,
-          ...CertOps.getProtocolForCertificateFieldEncryption(
+          ...Certificate.getCertificateFieldEncryptionDetails(
             this.serialNumber,
             fieldName
           )
@@ -286,7 +277,7 @@ export class CertOps extends BsvCertificate {
     for (const fieldName of fieldsToReveal) {
       // Create a keyID
       const encryptedFieldKey = this._keyring[fieldName]
-      const protocol = CertOps.getProtocolForCertificateFieldEncryption(
+      const protocol = Certificate.getCertificateFieldEncryptionDetails(
         this.serialNumber,
         fieldName
       )
