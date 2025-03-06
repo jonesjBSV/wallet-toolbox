@@ -429,7 +429,7 @@ export interface FindMonitorEventsArgs extends sdk.FindSincePagedArgs {
  * Place holder for the transaction control object used by actual storage provider implementation.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TrxToken {}
+export interface TrxToken { }
 
 export interface UpdateProvenTxReqWithNewProvenTxArgs {
   provenTxReqId: number
