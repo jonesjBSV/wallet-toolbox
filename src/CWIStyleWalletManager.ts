@@ -1089,6 +1089,27 @@ export class CWIStyleWalletManager implements WalletInterface {
   }
 
   /**
+   * Retrieves the current recovery key.
+   * 
+   * @throws {Error} If the user is not authenticated, or if underlying token references are missing.
+   */
+  async getRecoveryKey(): Promise<number[]> {
+    if (!this.authenticated) {
+      throw new Error('Not authenticated.')
+    }
+    if (!this.currentUMPToken) {
+      throw new Error('No UMP token!')
+    }
+    return (
+      await this.underlyingPrivilegedKeyManager!.decrypt({
+        ciphertext: this.currentUMPToken.recoveryKeyEncrypted,
+        protocolID: [2, 'admin key wrapping'],
+        keyID: '1'
+      })
+    ).plaintext
+  }
+
+  /**
    * Changes the user's recovery key, prompting the user to save the new key.
    *
    * @throws {Error} If the user is not authenticated, or if underlying token references are missing.
@@ -1100,9 +1121,6 @@ export class CWIStyleWalletManager implements WalletInterface {
     if (!this.currentUMPToken) {
       throw new Error('No UMP token to update.')
     }
-
-    const recoveryKey = Random(32)
-    await this.recoveryKeySaver(recoveryKey)
 
     // Decrypt existing password/presentation keys via the privileged key manager:
     const passwordKey = (
@@ -1122,6 +1140,9 @@ export class CWIStyleWalletManager implements WalletInterface {
     const privilegedKey = new SymmetricKey(
       this.XOR(passwordKey, this.primaryKey!)
     ).decrypt(this.currentUMPToken.passwordPrimaryPrivileged) as number[]
+
+    const recoveryKey = Random(32)
+    await this.recoveryKeySaver(recoveryKey)
 
     await this.updateAuthFactors(
       this.currentUMPToken.passwordSalt,
