@@ -643,7 +643,9 @@ describe('update2 tests', () => {
         'updateUser',
         'users',
         'userId',
-        { userId: 2 }
+        {
+          userId: 2
+        }
       )
       await expect(Promise.resolve(r1)).resolves.toBe(true)
       const r2 = await triggerUniqueConstraintError(
@@ -652,7 +654,9 @@ describe('update2 tests', () => {
         'updateUser',
         'users',
         'userId',
-        { identityKey: 'mockDupIdentityKey' }
+        {
+          identityKey: 'mockDupIdentityKey'
+        }
       )
       await expect(Promise.resolve(r2)).resolves.toBe(true)
       const r3 = await triggerUniqueConstraintError(
@@ -661,7 +665,9 @@ describe('update2 tests', () => {
         'updateUser',
         'users',
         'userId',
-        { identityKey: 'mockUniqueIdentityKey' }
+        {
+          identityKey: 'mockUniqueIdentityKey'
+        }
       )
       await expect(Promise.resolve(r3)).resolves.toBe(false)
     }
@@ -676,7 +682,9 @@ describe('update2 tests', () => {
         'updateUser',
         'users',
         'userId',
-        { userId: 0 }
+        {
+          userId: 0
+        }
       )
       await expect(Promise.resolve(r1)).resolves.toBe(true)
       const r2 = await triggerForeignKeyConstraintError(
