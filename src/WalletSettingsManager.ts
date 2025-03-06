@@ -177,6 +177,7 @@ export class WalletSettingsManager {
     // 1. List the existing token UTXO(s) for the settings basket.
     const existingUtxos = await this.wallet.listOutputs({
       basket: SETTINGS_BASKET,
+      include: 'entire transactions',
       limit: 1
     })
 
