@@ -157,13 +157,13 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const args: WalletArgs = !isWalletSigner(argsOrSigner)
       ? argsOrSigner
       : {
-          chain: argsOrSigner.chain,
-          keyDeriver: argsOrSigner.keyDeriver,
-          storage: argsOrSigner.storage,
-          services,
-          monitor,
-          privilegedKeyManager
-        }
+        chain: argsOrSigner.chain,
+        keyDeriver: argsOrSigner.keyDeriver,
+        storage: argsOrSigner.storage,
+        services,
+        monitor,
+        privilegedKeyManager
+      }
 
     if (args.storage._authId.identityKey != args.keyDeriver.identityKey)
       throw new sdk.WERR_INVALID_PARAMETER(
@@ -663,7 +663,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const results = await queryOverlay(
       {
         identityKey: args.identityKey,
-        trustedCertifiers: trustSettings.trustedCertifiers
+        certifiers: trustSettings.trustedCertifiers.map(certifier => certifier.identityKey)
       },
       this.lookupResolver
     )
@@ -687,7 +687,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const results = await queryOverlay(
       {
         identityKey: args.attributes,
-        trustedCertifiers: trustSettings.trustedCertifiers
+        certifiers: trustSettings.trustedCertifiers.map(certifier => certifier.identityKey)
       },
       this.lookupResolver
     )
@@ -962,7 +962,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   async balance(basket: string = 'default'): Promise<sdk.WalletBalance> {
     const r: sdk.WalletBalance = { total: 0, utxos: [] }
     let offset = 0
-    for (;;) {
+    for (; ;) {
       const change = await this.listOutputs({
         basket,
         limit: 1000,
