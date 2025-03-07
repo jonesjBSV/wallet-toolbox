@@ -157,6 +157,8 @@ export const parseResults = async (
         const decryptedFields = await verifiableCert.decryptFields(
           new ProtoWallet('anyone')
         )
+        // Verify the certificate signature is correct
+        await verifiableCert.verify()
         verifiableCert.decryptedFields = decryptedFields
         parsedResults.push(verifiableCert)
       } catch (error) {
