@@ -419,6 +419,7 @@ export class Services implements sdk.WalletServices {
     get postBeefServicesCount() 
     get getUtxoStatsCount() 
     async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, useNext?: boolean): Promise<sdk.GetUtxoStatusResult> 
+    postBeefCount = 0;
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
     async getRawTx(txid: string, useNext?: boolean): Promise<sdk.GetRawTxResult> 
     async invokeChaintracksWithRetry<R>(method: () => Promise<R>): Promise<R> 

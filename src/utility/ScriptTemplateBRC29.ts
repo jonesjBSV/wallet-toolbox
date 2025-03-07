@@ -40,10 +40,7 @@ export class ScriptTemplateBRC29 implements ScriptTemplate {
 
   getKeyDeriver(privKey: PrivateKey | HexString): KeyDeriverApi {
     if (typeof privKey === 'string') privKey = PrivateKey.fromHex(privKey)
-    if (
-      !this.params.keyDeriver ||
-      this.params.keyDeriver.rootKey.toHex() !== privKey.toHex()
-    )
+    if (!this.params.keyDeriver || this.params.keyDeriver.rootKey.toHex() !== privKey.toHex())
       return new KeyDeriver(privKey)
     return this.params.keyDeriver
   }
@@ -65,13 +62,7 @@ export class ScriptTemplateBRC29 implements ScriptTemplate {
     const derivedPrivateKey = this.getKeyDeriver(unlockerPrivKey)
       .derivePrivateKey(brc29ProtocolID, this.getKeyID(), lockerPubKey)
       .toHex()
-    const r = this.p2pkh.unlock(
-      asBsvSdkPrivateKey(derivedPrivateKey),
-      'all',
-      false,
-      sourceSatoshis,
-      lockingScript
-    )
+    const r = this.p2pkh.unlock(asBsvSdkPrivateKey(derivedPrivateKey), 'all', false, sourceSatoshis, lockingScript)
     return r
   }
 

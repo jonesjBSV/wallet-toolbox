@@ -14,10 +14,7 @@ export async function acquireDirectCertificate(
     userId: auth.userId!,
     type: vargs.type,
     subject: vargs.subject,
-    verifier:
-      vargs.keyringRevealer === 'certifier'
-        ? vargs.certifier
-        : vargs.keyringRevealer,
+    verifier: vargs.keyringRevealer === 'certifier' ? vargs.certifier : vargs.keyringRevealer,
     serialNumber: vargs.serialNumber,
     certifier: vargs.certifier,
     revocationOutpoint: vargs.revocationOutpoint,

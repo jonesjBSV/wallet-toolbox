@@ -22,18 +22,11 @@ describe('generateChange tests', () => {
         { satoshis: 2, lockingScriptLength: 25 }
       ]
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":6323,"outputId":15005,"spendable":false}],"changeOutputs":[{"satoshis":1608,"lockingScriptLength":25}],"size":1739330,"fee":3479,"satsPerKb":2}'
     )
@@ -48,19 +41,12 @@ describe('generateChange tests', () => {
         { satoshis: 2, lockingScriptLength: 25 }
       ]
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
     availableChange[5].satoshis = 4715
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":4715,"outputId":15027,"spendable":false}],"changeOutputs":[],"size":1739296,"fee":3479,"satsPerKb":2}'
     )
@@ -75,19 +61,12 @@ describe('generateChange tests', () => {
         { satoshis: 200, lockingScriptLength: 25 }
       ]
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
     availableChange[5].satoshis = 4715
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":1575097,"outputId":15101,"spendable":false}],"changeOutputs":[{"satoshis":908230,"lockingScriptLength":25}],"size":432,"fee":1,"satsPerKb":2}'
     )
@@ -115,14 +94,9 @@ describe('generateChange tests', () => {
       { satoshis: 1000, outputId: 14178 }
     ]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":535280,"outputId":14146,"spendable":false},{"satoshis":160865,"outputId":14142,"spendable":false}],"changeOutputs":[{"satoshis":29277,"lockingScriptLength":25}],"size":580,"fee":2,"satsPerKb":2}'
     )
@@ -138,18 +112,11 @@ describe('generateChange tests', () => {
       ],
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":10735,"outputId":15106,"spendable":false}],"changeOutputs":[{"satoshis":1237,"lockingScriptLength":25},{"satoshis":1334,"lockingScriptLength":25},{"satoshis":1369,"lockingScriptLength":25},{"satoshis":1008,"lockingScriptLength":25},{"satoshis":1072,"lockingScriptLength":25}],"size":1739466,"fee":3479,"satsPerKb":2}'
     )
@@ -165,11 +132,9 @@ describe('generateChange tests', () => {
       ],
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] =
-      defAvailableChange().slice(1, 4)
+    const availableChange: GenerateChangeSdkChangeInput[] = defAvailableChange().slice(1, 4)
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
     expectToThrowWERR(sdk.WERR_INSUFFICIENT_FUNDS, () =>
       generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
@@ -187,8 +152,7 @@ describe('generateChange tests', () => {
     }
     const availableChange: GenerateChangeSdkChangeInput[] = []
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
     expectToThrowWERR(sdk.WERR_INSUFFICIENT_FUNDS, () =>
       generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
@@ -204,17 +168,11 @@ describe('generateChange tests', () => {
       ],
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] =
-      defAvailableChange().slice(1, 4)
+    const availableChange: GenerateChangeSdkChangeInput[] = defAvailableChange().slice(1, 4)
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":1004,"outputId":15011,"spendable":false},{"satoshis":1000,"outputId":15017,"spendable":false},{"satoshis":1000,"outputId":15013,"spendable":false}],"changeOutputs":[{"satoshis":688,"lockingScriptLength":25},{"satoshis":1000,"lockingScriptLength":25}],"size":39658,"fee":80,"satsPerKb":2}'
     )
@@ -231,17 +189,11 @@ describe('generateChange tests', () => {
       feeModel: { value: 5, model: 'sat/kb' },
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] =
-      defAvailableChange().slice(1, 4)
+    const availableChange: GenerateChangeSdkChangeInput[] = defAvailableChange().slice(1, 4)
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":1004,"outputId":15011,"spendable":false},{"satoshis":1000,"outputId":15017,"spendable":false},{"satoshis":1000,"outputId":15013,"spendable":false}],"changeOutputs":[{"satoshis":569,"lockingScriptLength":25},{"satoshis":1000,"lockingScriptLength":25}],"size":39658,"fee":199,"satsPerKb":5}'
     )
@@ -258,17 +210,11 @@ describe('generateChange tests', () => {
       feeModel: { value: 1, model: 'sat/kb' },
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] =
-      defAvailableChange().slice(1, 4)
+    const availableChange: GenerateChangeSdkChangeInput[] = defAvailableChange().slice(1, 4)
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":1004,"outputId":15011,"spendable":false},{"satoshis":1000,"outputId":15017,"spendable":false},{"satoshis":1000,"outputId":15013,"spendable":false}],"changeOutputs":[{"satoshis":728,"lockingScriptLength":25},{"satoshis":1000,"lockingScriptLength":25}],"size":39658,"fee":40,"satsPerKb":1}'
     )
@@ -285,18 +231,11 @@ describe('generateChange tests', () => {
       ],
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":10735,"outputId":15106,"spendable":false}],"changeOutputs":[{"satoshis":1526,"lockingScriptLength":25},{"satoshis":1738,"lockingScriptLength":25},{"satoshis":1816,"lockingScriptLength":25},{"satoshis":1016,"lockingScriptLength":25},{"satoshis":1157,"lockingScriptLength":25}],"size":1739549,"fee":3480,"satsPerKb":2}'
     )
@@ -313,18 +252,11 @@ describe('generateChange tests', () => {
       ],
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":10735,"outputId":15106,"spendable":false}],"changeOutputs":[{"satoshis":1526,"lockingScriptLength":25},{"satoshis":1738,"lockingScriptLength":25},{"satoshis":1816,"lockingScriptLength":25},{"satoshis":1016,"lockingScriptLength":25},{"satoshis":1157,"lockingScriptLength":25}],"size":1739749,"fee":3480,"satsPerKb":2}'
     )
@@ -336,18 +268,11 @@ describe('generateChange tests', () => {
       ...defParams,
       fixedInputs: [{ satoshis: 1001, unlockingScriptLength: 73 }]
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[],"changeOutputs":[{"satoshis":1000,"lockingScriptLength":25}],"size":158,"fee":1,"satsPerKb":2}'
     )
@@ -361,18 +286,11 @@ describe('generateChange tests', () => {
       fixedOutputs: [],
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
 
-    const { allocateChangeInput, releaseChangeInput, getLog } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput, getLog } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     //console.log(getLog())
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":6323,"outputId":15005,"spendable":false}],"changeOutputs":[{"satoshis":1597,"lockingScriptLength":25},{"satoshis":1837,"lockingScriptLength":25},{"satoshis":1925,"lockingScriptLength":25},{"satoshis":1019,"lockingScriptLength":25},{"satoshis":1178,"lockingScriptLength":25}],"size":411,"fee":1,"satsPerKb":2}'
@@ -387,18 +305,11 @@ describe('generateChange tests', () => {
       fixedOutputs: [],
       targetNetCount: 4
     }
-    const availableChange: GenerateChangeSdkChangeInput[] = [
-      ...defAvailableChange()
-    ]
+    const availableChange: GenerateChangeSdkChangeInput[] = [...defAvailableChange()]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":6323,"outputId":15005,"spendable":false}],"changeOutputs":[{"satoshis":1309,"lockingScriptLength":25},{"satoshis":1433,"lockingScriptLength":25},{"satoshis":1478,"lockingScriptLength":25},{"satoshis":1009,"lockingScriptLength":25},{"satoshis":1093,"lockingScriptLength":25}],"size":328,"fee":1,"satsPerKb":2}'
     )
@@ -427,14 +338,9 @@ describe('generateChange tests', () => {
       { satoshis: 1073, outputId: 16026 }
     ]
 
-    const { allocateChangeInput, releaseChangeInput } =
-      generateChangeSdkMakeStorage(availableChange)
+    const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-    const r = await generateChangeSdk(
-      params,
-      allocateChangeInput,
-      releaseChangeInput
-    )
+    const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
     expect(JSON.stringify(r)).toBe(
       '{"allocatedChangeInputs":[{"satoshis":474866,"outputId":15332,"spendable":false}],"changeOutputs":[{"satoshis":165863,"lockingScriptLength":25}],"size":433,"fee":1,"satsPerKb":2}'
     )
@@ -1031,18 +937,11 @@ describe('generateChange tests', () => {
       }
     ]) {
       const params: GenerateChangeSdkParams = { ...d.p }
-      const availableChange: GenerateChangeSdkChangeInput[] = [
-        ...d.availableChange
-      ]
+      const availableChange: GenerateChangeSdkChangeInput[] = [...d.availableChange]
 
-      const { allocateChangeInput, releaseChangeInput } =
-        generateChangeSdkMakeStorage(availableChange)
+      const { allocateChangeInput, releaseChangeInput } = generateChangeSdkMakeStorage(availableChange)
 
-      const r = await generateChangeSdk(
-        params,
-        allocateChangeInput,
-        releaseChangeInput
-      )
+      const r = await generateChangeSdk(params, allocateChangeInput, releaseChangeInput)
       expect(JSON.stringify(r)).toBe(er)
       expectTransactionSize(params, r)
     }
@@ -1050,10 +949,7 @@ describe('generateChange tests', () => {
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function expectToThrowWERR<R>(
-  expectedClass: new (...args: any[]) => any,
-  fn: () => Promise<R>
-): Promise<void> {
+async function expectToThrowWERR<R>(expectedClass: new (...args: any[]) => any, fn: () => Promise<R>): Promise<void> {
   try {
     await fn()
   } catch (eu: unknown) {
@@ -1065,25 +961,18 @@ async function expectToThrowWERR<R>(
   throw new Error(`${expectedClass.name} was not thrown`)
 }
 
-function makeTransaction(
-  params: GenerateChangeSdkParams,
-  results: GenerateChangeSdkResult
-): BsvTransaction {
+function makeTransaction(params: GenerateChangeSdkParams, results: GenerateChangeSdkResult): BsvTransaction {
   const tx = new BsvTransaction()
   for (const i of params.fixedInputs) {
     tx.inputs.push({
-      unlockingScript: Script.fromBinary(
-        Array(i.unlockingScriptLength).fill(0)
-      ),
+      unlockingScript: Script.fromBinary(Array(i.unlockingScriptLength).fill(0)),
       sourceOutputIndex: 0,
       sourceTXID: '00'.repeat(32)
     })
   }
   for (const i of results.allocatedChangeInputs) {
     tx.inputs.push({
-      unlockingScript: Script.fromBinary(
-        Array(params.changeUnlockingScriptLength).fill(0)
-      ),
+      unlockingScript: Script.fromBinary(Array(params.changeUnlockingScriptLength).fill(0)),
       sourceOutputIndex: 0,
       sourceTXID: '00'.repeat(32)
     })
@@ -1103,16 +992,10 @@ function makeTransaction(
   return tx
 }
 
-function expectTransactionSize(
-  params: GenerateChangeSdkParams,
-  results: GenerateChangeSdkResult
-) {
+function expectTransactionSize(params: GenerateChangeSdkParams, results: GenerateChangeSdkResult) {
   const tx = makeTransaction(params, results)
   const size = tx.toBinary().length
-  if (size !== results.size)
-    throw new sdk.WERR_INTERNAL(
-      `expectTransaction actual ${size} expected ${results.size}`
-    )
+  if (size !== results.size) throw new sdk.WERR_INTERNAL(`expectTransaction actual ${size} expected ${results.size}`)
 }
 
 const defParams: GenerateChangeSdkParams = {
@@ -1139,5 +1022,4 @@ const _defAvailableChange: GenerateChangeSdkChangeInput[] = [
   { satoshis: 3377, outputId: 15104 },
   { satoshis: 10735, outputId: 15106 }
 ]
-const defAvailableChange = (): GenerateChangeSdkChangeInput[] =>
-  JSON.parse(JSON.stringify(_defAvailableChange))
+const defAvailableChange = (): GenerateChangeSdkChangeInput[] => JSON.parse(JSON.stringify(_defAvailableChange))

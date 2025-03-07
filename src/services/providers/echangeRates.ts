@@ -7,10 +7,7 @@ export async function updateChaintracksFiatExchangeRates(
 ): Promise<sdk.FiatExchangeRates> {
   const url = options.chaintracksFiatExchangeRatesUrl
 
-  if (!url)
-    throw new sdk.WERR_MISSING_PARAMETER(
-      'options.chaintracksFiatExchangeRatesUrl'
-    )
+  if (!url) throw new sdk.WERR_MISSING_PARAMETER('options.chaintracksFiatExchangeRatesUrl')
 
   const r = await axios.get(url)
 
@@ -28,20 +25,14 @@ export async function updateExchangeratesapi(
   targetCurrencies: string[],
   options: sdk.WalletServicesOptions
 ): Promise<sdk.FiatExchangeRates> {
-  if (!options.exchangeratesapiKey)
-    throw new sdk.WERR_MISSING_PARAMETER('options.exchangeratesapiKey')
+  if (!options.exchangeratesapiKey) throw new sdk.WERR_MISSING_PARAMETER('options.exchangeratesapiKey')
 
   const iorates = await getExchangeRatesIo(options.exchangeratesapiKey)
 
-  if (!iorates.success)
-    throw new sdk.WERR_BAD_REQUEST(
-      `getExchangeRatesIo returned success ${iorates.success}`
-    )
+  if (!iorates.success) throw new sdk.WERR_BAD_REQUEST(`getExchangeRatesIo returned success ${iorates.success}`)
 
   if (!iorates.rates['USD'] || !iorates.rates[iorates.base])
-    throw new sdk.WERR_BAD_REQUEST(
-      `getExchangeRatesIo missing rates for 'USD' or base`
-    )
+    throw new sdk.WERR_BAD_REQUEST(`getExchangeRatesIo missing rates for 'USD' or base`)
 
   const r: sdk.FiatExchangeRates = {
     timestamp: new Date(iorates.timestamp * 1000),
@@ -60,9 +51,7 @@ export async function updateExchangeratesapi(
   }
 
   if (updates !== targetCurrencies.length)
-    throw new sdk.WERR_BAD_REQUEST(
-      `getExchangeRatesIo failed to update all target currencies`
-    )
+    throw new sdk.WERR_BAD_REQUEST(`getExchangeRatesIo failed to update all target currencies`)
 
   //console.log(`new fiat rates=${JSON.stringify(r)}`)
 
@@ -77,17 +66,13 @@ export interface ExchangeRatesIoApi {
   rates: Record<string, number>
 }
 
-export async function getExchangeRatesIo(
-  key: string
-): Promise<ExchangeRatesIoApi> {
+export async function getExchangeRatesIo(key: string): Promise<ExchangeRatesIoApi> {
   const url = `http://api.exchangeratesapi.io/v1/latest?access_key=${key}`
 
   const r = await axios.get(url)
 
   if (r.status !== 200 || !r.data) {
-    throw new sdk.WERR_BAD_REQUEST(
-      `getExchangeRatesIo returned status ${r.status}`
-    )
+    throw new sdk.WERR_BAD_REQUEST(`getExchangeRatesIo returned status ${r.status}`)
   }
 
   const rates = <ExchangeRatesIoApi>r.data

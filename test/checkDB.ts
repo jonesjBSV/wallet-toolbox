@@ -17,10 +17,7 @@ const runTest = async () => {
     if (err) {
       console.error('Error running PRAGMA foreign_keys:', err.message)
     } else {
-      console.log(
-        'Foreign key enforcement:',
-        row.foreign_keys === 1 ? 'Enabled' : 'Disabled'
-      )
+      console.log('Foreign key enforcement:', row.foreign_keys === 1 ? 'Enabled' : 'Disabled')
     }
   })
 
@@ -29,10 +26,7 @@ const runTest = async () => {
   for (const table of tables) {
     db.all(`PRAGMA foreign_key_list('${table}');`, (err, rows) => {
       if (err) {
-        console.error(
-          `Error querying foreign key list for table '${table}':`,
-          err.message
-        )
+        console.error(`Error querying foreign key list for table '${table}':`, err.message)
       } else {
         console.log(`Foreign key constraints for table '${table}':`)
         if (rows.length === 0) {

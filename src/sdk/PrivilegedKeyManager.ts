@@ -90,10 +90,7 @@ export class PrivilegedKeyManager implements ProtoWallet {
    * @param keyGetter - Asynchronous function that retrieves the PrivateKey from a secure environment.
    * @param retentionPeriod - Time in milliseconds to retain the obfuscated key in memory before zeroizing.
    */
-  constructor(
-    keyGetter: (reason: string) => Promise<PrivateKey>,
-    retentionPeriod = 120_000
-  ) {
+  constructor(keyGetter: (reason: string) => Promise<PrivateKey>, retentionPeriod = 120_000) {
     this.keyGetter = keyGetter
     this.retentionPeriod = retentionPeriod
 
@@ -192,8 +189,7 @@ export class PrivilegedKeyManager implements ProtoWallet {
     let offset = 0
 
     for (let i = 0; i < this.CHUNK_COUNT; i++) {
-      const size =
-        i === this.CHUNK_COUNT - 1 ? keyBytes.length - offset : chunkSize
+      const size = i === this.CHUNK_COUNT - 1 ? keyBytes.length - offset : chunkSize
       chunks.push(keyBytes.slice(offset, offset + size))
       offset += size
     }
@@ -256,9 +252,7 @@ export class PrivilegedKeyManager implements ProtoWallet {
     // if the numeric value has leading zeros.
     const buf = privKey.toArray()
     if (buf.length > 32) {
-      throw new Error(
-        'PrivilegedKeyManager: Expected a 32-byte key, but got more.'
-      )
+      throw new Error('PrivilegedKeyManager: Expected a 32-byte key, but got more.')
     }
     // Left-pad with zeros if needed
     const keyBytes = new Uint8Array(32)
@@ -336,67 +330,43 @@ export class PrivilegedKeyManager implements ProtoWallet {
     return fetchedKey
   }
 
-  async getPublicKey(
-    args: GetPublicKeyArgs
-  ): Promise<{ publicKey: PubKeyHex }> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).getPublicKey(args)
+  async getPublicKey(args: GetPublicKeyArgs): Promise<{ publicKey: PubKeyHex }> {
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).getPublicKey(args)
   }
 
   async revealCounterpartyKeyLinkage(
     args: RevealCounterpartyKeyLinkageArgs
   ): Promise<RevealCounterpartyKeyLinkageResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).revealCounterpartyKeyLinkage(args)
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).revealCounterpartyKeyLinkage(
+      args
+    )
   }
 
-  async revealSpecificKeyLinkage(
-    args: RevealSpecificKeyLinkageArgs
-  ): Promise<RevealSpecificKeyLinkageResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).revealSpecificKeyLinkage(args)
+  async revealSpecificKeyLinkage(args: RevealSpecificKeyLinkageArgs): Promise<RevealSpecificKeyLinkageResult> {
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).revealSpecificKeyLinkage(args)
   }
 
   async encrypt(args: WalletEncryptArgs): Promise<WalletEncryptResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).encrypt(args)
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).encrypt(args)
   }
 
   async decrypt(args: WalletDecryptArgs): Promise<WalletDecryptResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).decrypt(args)
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).decrypt(args)
   }
 
   async createHmac(args: CreateHmacArgs): Promise<CreateHmacResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).createHmac(args)
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).createHmac(args)
   }
 
   async verifyHmac(args: VerifyHmacArgs): Promise<VerifyHmacResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).verifyHmac(args)
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).verifyHmac(args)
   }
 
-  async createSignature(
-    args: CreateSignatureArgs
-  ): Promise<CreateSignatureResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).createSignature(args)
+  async createSignature(args: CreateSignatureArgs): Promise<CreateSignatureResult> {
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).createSignature(args)
   }
 
-  async verifySignature(
-    args: VerifySignatureArgs
-  ): Promise<VerifySignatureResult> {
-    return new ProtoWallet(
-      await this.getPrivilegedKey(args.privilegedReason as string)
-    ).verifySignature(args)
+  async verifySignature(args: VerifySignatureArgs): Promise<VerifySignatureResult> {
+    return new ProtoWallet(await this.getPrivilegedKey(args.privilegedReason as string)).verifySignature(args)
   }
 }

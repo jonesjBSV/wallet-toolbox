@@ -1,11 +1,4 @@
-import {
-  asString,
-  doubleSha256BE,
-  EntityProvenTx,
-  EntityProvenTxReq,
-  sdk,
-  TableProvenTxReq
-} from '../../index.client'
+import { asString, doubleSha256BE, EntityProvenTx, EntityProvenTxReq, sdk, TableProvenTxReq } from '../../index.client'
 import { Monitor } from '../Monitor'
 import { WalletMonitorTask } from './WalletMonitorTask'
 
@@ -45,8 +38,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
     return {
       run:
         TaskCheckForProofs.checkNow ||
-        (this.triggerMsecs > 0 &&
-          nowMsecsSinceEpoch - this.lastRunMsecsSinceEpoch > this.triggerMsecs)
+        (this.triggerMsecs > 0 && nowMsecsSinceEpoch - this.lastRunMsecsSinceEpoch > this.triggerMsecs)
     }
   }
 
@@ -60,14 +52,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
     for (;;) {
       const reqs = await this.storage.findProvenTxReqs({
         partial: {},
-        status: [
-          'callback',
-          'unmined',
-          'nosend',
-          'sending',
-          'unknown',
-          'unconfirmed'
-        ],
+        status: ['callback', 'unmined', 'nosend', 'sending', 'unknown', 'unconfirmed'],
         paged: { limit, offset }
       })
       if (reqs.length === 0) break
@@ -189,11 +174,7 @@ export class TaskCheckForProofs extends WalletMonitorTask {
       // one more time.
       //
       r = await this.monitor.services.getMerklePath(req.txid)
-      ptx = await EntityProvenTx.fromReq(
-        req,
-        r,
-        countsAsAttempt && req.status !== 'nosend'
-      )
+      ptx = await EntityProvenTx.fromReq(req, r, countsAsAttempt && req.status !== 'nosend')
 
       if (ptx) {
         // We have a merklePath proof for the request (and a block header)

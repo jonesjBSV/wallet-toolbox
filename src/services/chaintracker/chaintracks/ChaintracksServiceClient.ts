@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { asString, sdk } from '../../../index.client'
 
-import {
-  BaseBlockHeader,
-  BlockHeader,
-  isBaseBlockHeader
-} from './BlockHeaderApi'
+import { BaseBlockHeader, BlockHeader, isBaseBlockHeader } from './BlockHeaderApi'
 
 interface FetchStatus<T> {
   status: 'success' | 'error'
@@ -37,9 +33,7 @@ export class ChaintracksServiceClient {
     public serviceUrl: string,
     options?: ChaintracksServiceClientOptions
   ) {
-    this.options =
-      options ||
-      ChaintracksServiceClient.createChaintracksServiceClientOptions()
+    this.options = options || ChaintracksServiceClient.createChaintracksServiceClientOptions()
   }
 
   async currentHeight(): Promise<number> {
@@ -71,8 +65,7 @@ export class ChaintracksServiceClient {
 
   async getJson<T>(path: string): Promise<T> {
     const r = await this.getJsonOrUndefined<T>(path)
-    if (r === undefined)
-      throw new Error('Value was undefined. Requested object may not exist.')
+    if (r === undefined) throw new Error('Value was undefined. Requested object may not exist.')
     return r
   }
 
@@ -135,26 +128,15 @@ export class ChaintracksServiceClient {
     return await this.getJson(`/getHeaders?height=${height}&count=${count}`)
   }
   async findHeaderForHeight(height: number): Promise<BlockHeader | undefined> {
-    return await this.getJsonOrUndefined(
-      `/findHeaderHexForHeight?height=${height}`
-    )
+    return await this.getJsonOrUndefined(`/findHeaderHexForHeight?height=${height}`)
   }
   async findChainWorkForBlockHash(hash: string): Promise<string | undefined> {
-    return await this.getJsonOrUndefined(
-      `/findChainWorkHexForBlockHash?hash=${asString(hash)}`
-    )
+    return await this.getJsonOrUndefined(`/findChainWorkHexForBlockHash?hash=${asString(hash)}`)
   }
   async findHeaderForBlockHash(hash: string): Promise<BlockHeader | undefined> {
-    return await this.getJsonOrUndefined(
-      `/findHeaderHexForBlockHash?hash=${asString(hash)}`
-    )
+    return await this.getJsonOrUndefined(`/findHeaderHexForBlockHash?hash=${asString(hash)}`)
   }
-  async findHeaderForMerkleRoot(
-    merkleRoot: string,
-    height?: number
-  ): Promise<BlockHeader | undefined> {
-    return await this.getJsonOrUndefined(
-      `/findHeaderHexForMerkleRoot?root=${asString(merkleRoot)}&height=${height}`
-    )
+  async findHeaderForMerkleRoot(merkleRoot: string, height?: number): Promise<BlockHeader | undefined> {
+    return await this.getJsonOrUndefined(`/findHeaderHexForMerkleRoot?root=${asString(merkleRoot)}&height=${height}`)
   }
 }

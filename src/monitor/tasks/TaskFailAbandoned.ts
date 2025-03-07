@@ -32,9 +32,7 @@ export class TaskFailAbandoned extends WalletMonitorTask {
     let offset = 0
     for (;;) {
       const now = new Date()
-      const abandoned = new Date(
-        now.getTime() - this.monitor.options.abandonedMsecs
-      )
+      const abandoned = new Date(now.getTime() - this.monitor.options.abandonedMsecs)
       const done = await this.storage.runAsStorageProvider(async sp => {
         const txsAll = await sp.findTransactions({
           partial: {},

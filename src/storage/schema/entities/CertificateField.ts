@@ -1,11 +1,5 @@
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableCertificateField,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableCertificateField, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityCertificateField extends EntityBase<TableCertificateField> {
@@ -81,15 +75,9 @@ export class EntityCertificateField extends EntityBase<TableCertificateField> {
     return 'certificate_fields'
   }
 
-  override equals(
-    ei: TableCertificateField,
-    syncMap?: SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableCertificateField, syncMap?: SyncMap | undefined): boolean {
     if (
-      this.certificateId !==
-        (syncMap
-          ? syncMap.certificate.idMap[ei.certificateId]
-          : ei.certificateId) ||
+      this.certificateId !== (syncMap ? syncMap.certificate.idMap[ei.certificateId] : ei.certificateId) ||
       this.fieldName !== ei.fieldName ||
       this.fieldValue !== ei.fieldValue ||
       this.masterKey !== ei.masterKey
@@ -120,12 +108,7 @@ export class EntityCertificateField extends EntityBase<TableCertificateField> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.certificateId = syncMap.certificate.idMap[this.certificateId]
     this.userId = userId
     await storage.insertCertificateField(this.toApi(), trx)
@@ -142,13 +125,8 @@ export class EntityCertificateField extends EntityBase<TableCertificateField> {
     if (ei.updated_at > this.updated_at) {
       this.fieldValue = ei.fieldValue
       this.masterKey = ei.masterKey
-      this.updated_at = new Date()
-      await storage.updateCertificateField(
-        this.certificateId,
-        this.fieldName,
-        this.toApi(),
-        trx
-      )
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
+      await storage.updateCertificateField(this.certificateId, this.fieldName, this.toApi(), trx)
       wasMerged = true
     }
     return wasMerged

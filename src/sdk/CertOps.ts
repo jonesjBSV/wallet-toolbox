@@ -23,14 +23,8 @@ export interface CertOpsWallet {
     args: GetPublicKeyArgs,
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<GetPublicKeyResult>
-  encrypt(
-    args: WalletEncryptArgs,
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<WalletEncryptResult>
-  decrypt(
-    args: WalletDecryptArgs,
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<WalletDecryptResult>
+  encrypt(args: WalletEncryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletEncryptResult>
+  decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult>
 }
 
 export class CertOps extends BsvCertificate {
@@ -42,15 +36,7 @@ export class CertOps extends BsvCertificate {
     public wallet: CertOpsWallet,
     wc: WalletCertificate
   ) {
-    super(
-      wc.type,
-      wc.serialNumber,
-      wc.subject,
-      wc.certifier,
-      wc.revocationOutpoint,
-      wc.fields,
-      wc.signature
-    )
+    super(wc.type, wc.serialNumber, wc.subject, wc.certifier, wc.revocationOutpoint, wc.fields, wc.signature)
   }
 
   static async fromCounterparty(
@@ -96,13 +82,9 @@ export class CertOps extends BsvCertificate {
     return c
   }
 
-  static async fromDecrypted(
-    wallet: CertOpsWallet,
-    wc: WalletCertificate
-  ): Promise<CertOps> {
+  static async fromDecrypted(wallet: CertOpsWallet, wc: WalletCertificate): Promise<CertOps> {
     const c = new CertOps(wallet, wc)
-    ;({ fields: c._encryptedFields, keyring: c._keyring } =
-      await c.encryptFields())
+    ;({ fields: c._encryptedFields, keyring: c._keyring } = await c.encryptFields())
     c._decryptedFields = await c.decryptFields()
     return c
   }
@@ -129,15 +111,8 @@ export class CertOps extends BsvCertificate {
     certificate: WalletCertificate
     keyring: Record<CertificateFieldNameUnder50Bytes, string>
   } {
-    if (
-      !this._keyring ||
-      !this._encryptedFields ||
-      !this.signature ||
-      this.signature.length === 0
-    )
-      throw new WERR_INVALID_OPERATION(
-        `Certificate must be encrypted and signed prior to export.`
-      )
+    if (!this._keyring || !this._encryptedFields || !this.signature || this.signature.length === 0)
+      throw new WERR_INVALID_OPERATION(`Certificate must be encrypted and signed prior to export.`)
     const certificate = this.toWalletCertificate()
     const keyring = this._keyring!
     return { certificate, keyring }
@@ -155,30 +130,19 @@ export class CertOps extends BsvCertificate {
     fields: Record<CertificateFieldNameUnder50Bytes, string>
     keyring: Record<CertificateFieldNameUnder50Bytes, string>
   }> {
-    const fields: Record<CertificateFieldNameUnder50Bytes, string> =
-      this._decryptedFields || this.fields
-    const encryptedFields: Record<
-      CertificateFieldNameUnder50Bytes,
-      Base64String
-    > = {}
+    const fields: Record<CertificateFieldNameUnder50Bytes, string> = this._decryptedFields || this.fields
+    const encryptedFields: Record<CertificateFieldNameUnder50Bytes, Base64String> = {}
     const keyring: Record<CertificateFieldNameUnder50Bytes, Base64String> = {}
 
     for (const fieldName of Object.keys(fields)) {
       const fieldSymmetricKey = SymmetricKey.fromRandom()
-      const encryptedFieldValue = fieldSymmetricKey.encrypt(
-        Utils.toArray(this.fields[fieldName], 'utf8')
-      )
-      encryptedFields[fieldName] = Utils.toBase64(
-        encryptedFieldValue as number[]
-      )
+      const encryptedFieldValue = fieldSymmetricKey.encrypt(Utils.toArray(this.fields[fieldName], 'utf8'))
+      encryptedFields[fieldName] = Utils.toBase64(encryptedFieldValue as number[])
 
       const encryptedFieldKey = await this.wallet.encrypt({
         plaintext: fieldSymmetricKey.toArray(),
         counterparty,
-        ...CertOps.getProtocolForCertificateFieldEncryption(
-          this.serialNumber,
-          fieldName
-        )
+        ...CertOps.getProtocolForCertificateFieldEncryption(this.serialNumber, fieldName)
       })
       keyring[fieldName] = Utils.toBase64(encryptedFieldKey.ciphertext)
     }
@@ -193,8 +157,7 @@ export class CertOps extends BsvCertificate {
     keyring?: Record<CertificateFieldNameUnder50Bytes, string>
   ): Promise<Record<CertificateFieldNameUnder50Bytes, string>> {
     keyring ||= this._keyring
-    const fields: Record<CertificateFieldNameUnder50Bytes, Base64String> =
-      this._encryptedFields || this.fields
+    const fields: Record<CertificateFieldNameUnder50Bytes, Base64String> = this._encryptedFields || this.fields
     const decryptedFields: Record<CertificateFieldNameUnder50Bytes, string> = {}
     if (!keyring) throw new sdk.WERR_INVALID_PARAMETER('keyring', 'valid')
 
@@ -203,15 +166,10 @@ export class CertOps extends BsvCertificate {
         const { plaintext: fieldRevelationKey } = await this.wallet.decrypt({
           ciphertext: Utils.toArray(keyring[fieldName], 'base64'),
           counterparty: counterparty || this.subject,
-          ...CertOps.getProtocolForCertificateFieldEncryption(
-            this.serialNumber,
-            fieldName
-          )
+          ...CertOps.getProtocolForCertificateFieldEncryption(this.serialNumber, fieldName)
         })
 
-        const fieldValue = new SymmetricKey(fieldRevelationKey).decrypt(
-          Utils.toArray(fields[fieldName], 'base64')
-        )
+        const fieldValue = new SymmetricKey(fieldRevelationKey).decrypt(Utils.toArray(fields[fieldName], 'base64'))
         decryptedFields[fieldName] = Utils.toUTF8(fieldValue as number[])
       }
       this._keyring = keyring
@@ -233,20 +191,10 @@ export class CertOps extends BsvCertificate {
     keyring: Record<CertificateFieldNameUnder50Bytes, string>
     counterparty: PubKeyHex
   }> {
-    if (
-      !this._keyring ||
-      !this._encryptedFields ||
-      !this.signature ||
-      this.signature.length === 0
-    )
-      throw new WERR_INVALID_OPERATION(
-        `Certificate must be encrypted and signed prior to export.`
-      )
+    if (!this._keyring || !this._encryptedFields || !this.signature || this.signature.length === 0)
+      throw new WERR_INVALID_OPERATION(`Certificate must be encrypted and signed prior to export.`)
     const certificate = this.toWalletCertificate()
-    const keyring = await this.createKeyringForVerifier(
-      counterparty,
-      fieldsToReveal
-    )
+    const keyring = await this.createKeyringForVerifier(counterparty, fieldsToReveal)
     // The exported counterparty is who we are to them...
     return {
       certificate,
@@ -272,24 +220,14 @@ export class CertOps extends BsvCertificate {
     verifierIdentityKey: PubKeyHex,
     fieldsToReveal: CertificateFieldNameUnder50Bytes[]
   ): Promise<Record<CertificateFieldNameUnder50Bytes, Base64String>> {
-    if (!this._keyring || !this._encryptedFields)
-      throw new sdk.WERR_INVALID_OPERATION(`certificate must be encrypted`)
-    if (
-      !Array.isArray(fieldsToReveal) ||
-      fieldsToReveal.some(n => this._encryptedFields![n] === undefined)
-    )
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'fieldsToReveal',
-        `an array of certificate field names`
-      )
+    if (!this._keyring || !this._encryptedFields) throw new sdk.WERR_INVALID_OPERATION(`certificate must be encrypted`)
+    if (!Array.isArray(fieldsToReveal) || fieldsToReveal.some(n => this._encryptedFields![n] === undefined))
+      throw new sdk.WERR_INVALID_PARAMETER('fieldsToReveal', `an array of certificate field names`)
     const fieldRevelationKeyring = {}
     for (const fieldName of fieldsToReveal) {
       // Create a keyID
       const encryptedFieldKey = this._keyring[fieldName]
-      const protocol = CertOps.getProtocolForCertificateFieldEncryption(
-        this.serialNumber,
-        fieldName
-      )
+      const protocol = CertOps.getProtocolForCertificateFieldEncryption(this.serialNumber, fieldName)
 
       // Decrypt the master field key
       const { plaintext: fieldKey } = await this.wallet.decrypt({
@@ -300,27 +238,20 @@ export class CertOps extends BsvCertificate {
 
       // Verify that derived key actually decrypts requested field
       try {
-        new SymmetricKey(fieldKey).decrypt(
-          Utils.toArray(this.fields[fieldName], 'base64')
-        )
+        new SymmetricKey(fieldKey).decrypt(Utils.toArray(this.fields[fieldName], 'base64'))
       } catch (_) {
-        throw new sdk.WERR_INTERNAL(
-          `unable to decrypt field "${fieldName}" using derived field key.`
-        )
+        throw new sdk.WERR_INTERNAL(`unable to decrypt field "${fieldName}" using derived field key.`)
       }
 
       // Encrypt derived fieldRevelationKey for verifier
-      const { ciphertext: encryptedFieldRevelationKey } =
-        await this.wallet.encrypt({
-          plaintext: fieldKey,
-          counterparty: verifierIdentityKey,
-          ...protocol
-        })
+      const { ciphertext: encryptedFieldRevelationKey } = await this.wallet.encrypt({
+        plaintext: fieldKey,
+        counterparty: verifierIdentityKey,
+        ...protocol
+      })
 
       // Add encryptedFieldRevelationKey to fieldRevelationKeyring
-      fieldRevelationKeyring[fieldName] = Utils.toBase64(
-        encryptedFieldRevelationKey
-      )
+      fieldRevelationKeyring[fieldName] = Utils.toBase64(encryptedFieldRevelationKey)
     }
 
     // Return the field revelation keyring which can be used to create a verifiable certificate for a verifier.
@@ -333,10 +264,7 @@ export class CertOps extends BsvCertificate {
    */
   async encryptAndSignNewCertificate(): Promise<void> {
     if ((await getIdentityKey(this.wallet)) !== this.certifier)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'wallet',
-        'the certifier for new certificate issuance.'
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('wallet', 'the certifier for new certificate issuance.')
 
     await this.encryptFields(this.subject)
     await this.sign(this.wallet as unknown as WalletInterface)

@@ -88,10 +88,7 @@ export class MonitorDaemon {
       if (a.storageProvider) {
         await a.storageProvider.makeAvailable()
         const settings = await a.storageProvider.getSettings()
-        a.storageManager = new WalletStorageManager(
-          settings.storageIdentityKey,
-          a.storageProvider
-        )
+        a.storageManager = new WalletStorageManager(settings.storageIdentityKey, a.storageProvider)
         await a.storageManager.makeAvailable()
       } else if (!a.storageManager) {
         throw new sdk.WERR_INVALID_PARAMETER(
@@ -102,10 +99,7 @@ export class MonitorDaemon {
 
       if (a.servicesOptions) {
         if (a.servicesOptions.chain != a.chain)
-          throw new sdk.WERR_INVALID_PARAMETER(
-            'serviceOptions.chain',
-            'same as args.chain'
-          )
+          throw new sdk.WERR_INVALID_PARAMETER('serviceOptions.chain', 'same as args.chain')
         a.services = new Services(a.servicesOptions)
       }
 
@@ -115,11 +109,7 @@ export class MonitorDaemon {
 
       a.storageManager.setServices(a.services)
 
-      const monitorOptions = Monitor.createDefaultWalletMonitorOptions(
-        a.chain,
-        a.storageManager,
-        a.services
-      )
+      const monitorOptions = Monitor.createDefaultWalletMonitorOptions(a.chain, a.storageManager, a.services)
       a.monitor = new Monitor(monitorOptions)
     }
 
@@ -130,8 +120,7 @@ export class MonitorDaemon {
 
   async start(): Promise<void> {
     if (!this.setup) await this.createSetup()
-    if (!this.setup?.monitor)
-      throw new sdk.WERR_INTERNAL('createSetup failed to initialize setup')
+    if (!this.setup?.monitor) throw new sdk.WERR_INTERNAL('createSetup failed to initialize setup')
 
     const { monitor } = this.setup
 
@@ -144,11 +133,7 @@ export class MonitorDaemon {
   async stop(): Promise<void> {
     console.log('start of stop')
 
-    if (
-      !this.setup ||
-      (!this.doneTasks && !this.noRunTasks) ||
-      !this.doneListening
-    )
+    if (!this.setup || (!this.doneTasks && !this.noRunTasks) || !this.doneListening)
       throw new sdk.WERR_INTERNAL('call start or createSetup first')
 
     const { monitor } = this.setup
@@ -189,9 +174,7 @@ export class MonitorDaemon {
         console.log('done')
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
-        console.log(
-          `\n\nrunWatchman Main Error Handler\n\ncode: ${e.code}\nDescription: ${e.description}\n\n\n`
-        )
+        console.log(`\n\nrunWatchman Main Error Handler\n\ncode: ${e.code}\nDescription: ${e.description}\n\n\n`)
       }
     }
   }

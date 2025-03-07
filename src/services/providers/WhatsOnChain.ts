@@ -1,12 +1,5 @@
 import { Beef, HexString, Utils, WhatsOnChainConfig } from '@bsv/sdk'
-import {
-  asArray,
-  asString,
-  doubleSha256BE,
-  sdk,
-  validateScriptHash,
-  wait
-} from '../../index.client'
+import { asArray, asString, doubleSha256BE, sdk, validateScriptHash, wait } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
 import SdkWhatsOnChain from './SdkWhatsOnChain'
 import { ReqHistoryNote } from '../../sdk'
@@ -30,21 +23,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       headers: this.getHttpHeaders()
     }
 
-    const response = await this.httpClient.request<string>(
-      `${this.URL}/tx/hash/${txid}/propagation`,
-      requestOptions
-    )
+    const response = await this.httpClient.request<string>(`${this.URL}/tx/hash/${txid}/propagation`, requestOptions)
 
-    if (
-      !response.data ||
-      !response.ok ||
-      response.status !== 200 ||
-      response.statusText !== 'OK'
-    )
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'txid',
-        `valid transaction. '${txid}' response ${response.statusText}`
-      )
+    if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+      throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
 
     return 0
   }
@@ -64,28 +46,16 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     }
 
     for (let retry = 0; retry < 2; retry++) {
-      const response = await this.httpClient.request<string>(
-        `${this.URL}/tx/${txid}/hex`,
-        requestOptions
-      )
+      const response = await this.httpClient.request<string>(`${this.URL}/tx/${txid}/hex`, requestOptions)
       if (response.statusText === 'Too Many Requests' && retry < 2) {
         await wait(2000)
         continue
       }
 
-      if (response.status === 404 && response.statusText === 'Not Found')
-        return undefined
+      if (response.status === 404 && response.statusText === 'Not Found') return undefined
 
-      if (
-        !response.data ||
-        !response.ok ||
-        response.status !== 200 ||
-        response.statusText !== 'OK'
-      )
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'txid',
-          `valid transaction. '${txid}' response ${response.statusText}`
-        )
+      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+        throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
 
       return response.data
     }
@@ -138,9 +108,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
       const tr = await this.postRawTx(rawTx)
       if (txid !== tr.txid) {
-        throw new sdk.WERR_INTERNAL(
-          `woc returned txid ${tr.txid}, expected ${txid}`
-        )
+        throw new sdk.WERR_INTERNAL(`woc returned txid ${tr.txid}, expected ${txid}`)
       }
 
       r.txidResults.push(tr)
@@ -186,10 +154,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     const retryLimit = 5
     for (let retry = 0; retry < retryLimit; retry++) {
       try {
-        const response = await this.httpClient.request<string>(
-          url,
-          requestOptions
-        )
+        const response = await this.httpClient.request<string>(url, requestOptions)
         if (response.statusText === 'Too Many Requests' && retry < 2) {
           r.notes!.push({ ...nn(), what: 'postRawTxRateLimit' })
           await wait(2000)
@@ -212,10 +177,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
             n.statusText = response.data.slice(0, 128)
             r.data = `${r.data || ''} ${response.statusText}`
           }
-          if (
-            typeof response.status === 'string' ||
-            typeof response.status === 'number'
-          ) {
+          if (typeof response.status === 'string' || typeof response.status === 'number') {
             n.status = response.data.slice(0, 128)
             r.data = `${r.data || ''} ${response.status}`
           }
@@ -247,10 +209,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
    * @param txid
    * @returns
    */
-  async getMerklePath(
-    txid: string,
-    services: sdk.WalletServices
-  ): Promise<sdk.GetMerklePathResult> {
+  async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> {
     const r: sdk.GetMerklePathResult = { name: 'WoCTsc', notes: [] }
 
     const headers = this.getHttpHeaders()
@@ -261,9 +220,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
     for (let retry = 0; retry < 2; retry++) {
       try {
-        const response = await this.httpClient.request<
-          WhatsOnChainTscProof | WhatsOnChainTscProof[]
-        >(`${this.URL}/tx/${txid}/proof/tsc`, requestOptions)
+        const response = await this.httpClient.request<WhatsOnChainTscProof | WhatsOnChainTscProof[]>(
+          `${this.URL}/tx/${txid}/proof/tsc`,
+          requestOptions
+        )
         if (response.statusText === 'Too Many Requests' && retry < 2) {
           r.notes!.push({
             what: 'getMerklePathRetry',
@@ -285,21 +245,14 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           return r
         }
 
-        if (
-          !response.ok ||
-          response.status !== 200 ||
-          response.statusText !== 'OK'
-        ) {
+        if (!response.ok || response.status !== 200 || response.statusText !== 'OK') {
           r.notes!.push({
             what: 'getMerklePathBadStatus',
             name: r.name,
             status: response.status,
             statusText: response.statusText
           })
-          throw new sdk.WERR_INVALID_PARAMETER(
-            'txid',
-            `valid transaction. '${txid}' response ${response.statusText}`
-          )
+          throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
         }
 
         if (!response.data) {
@@ -341,10 +294,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
             status: response.status,
             statusText: response.statusText
           })
-          throw new sdk.WERR_INVALID_PARAMETER(
-            'blockhash',
-            'a valid on-chain block hash'
-          )
+          throw new sdk.WERR_INVALID_PARAMETER('blockhash', 'a valid on-chain block hash')
         }
       } catch (eu: unknown) {
         const e = sdk.WalletError.fromUnknown(eu)
@@ -362,10 +312,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     throw new sdk.WERR_INTERNAL()
   }
 
-  async updateBsvExchangeRate(
-    rate?: sdk.BsvExchangeRate,
-    updateMsecs?: number
-  ): Promise<sdk.BsvExchangeRate> {
+  async updateBsvExchangeRate(rate?: sdk.BsvExchangeRate, updateMsecs?: number): Promise<sdk.BsvExchangeRate> {
     if (rate) {
       // Check if the rate we know is stale enough to update.
       updateMsecs ||= 1000 * 60 * 15
@@ -388,15 +335,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         continue
       }
 
-      if (
-        !response.data ||
-        !response.ok ||
-        response.status !== 200 ||
-        response.statusText !== 'OK'
-      )
-        throw new sdk.WERR_INVALID_OPERATION(
-          `WoC exchangerate response ${response.statusText}`
-        )
+      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+        throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
 
       const wocrate = response.data
       if (wocrate.currency !== 'USD') wocrate.rate = NaN
@@ -412,10 +352,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     throw new sdk.WERR_INTERNAL()
   }
 
-  async getUtxoStatus(
-    output: string,
-    outputFormat?: sdk.GetUtxoStatusOutputFormat
-  ): Promise<sdk.GetUtxoStatusResult> {
+  async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> {
     const r: sdk.GetUtxoStatusResult = {
       name: 'WoC',
       status: 'error',
@@ -434,23 +371,17 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           headers: this.getHttpHeaders()
         }
 
-        const response = await this.httpClient.request<
-          WhatsOnChainUtxoStatus[]
-        >(`${this.URL}/script/${scriptHash}/unspent`, requestOptions)
+        const response = await this.httpClient.request<WhatsOnChainUtxoStatus[]>(
+          `${this.URL}/script/${scriptHash}/unspent`,
+          requestOptions
+        )
         if (response.statusText === 'Too Many Requests' && retry < 2) {
           await wait(2000)
           continue
         }
 
-        if (
-          !response.data ||
-          !response.ok ||
-          response.status !== 200 ||
-          response.statusText !== 'OK'
-        )
-          throw new sdk.WERR_INVALID_OPERATION(
-            `WoC exchangerate response ${response.statusText}`
-          )
+        if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+          throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
 
         if (Array.isArray(response.data)) {
           const data = response.data

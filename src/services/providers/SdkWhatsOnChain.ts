@@ -1,9 +1,4 @@
-import {
-  ChainTracker,
-  defaultHttpClient,
-  HttpClient,
-  WhatsOnChainConfig
-} from '@bsv/sdk'
+import { ChainTracker, defaultHttpClient, HttpClient, WhatsOnChainConfig } from '@bsv/sdk'
 
 interface WhatsOnChainBlockHeader {
   merkleroot: string
@@ -24,10 +19,7 @@ export default class SdkWhatsOnChain implements ChainTracker {
    * @param {'main' | 'test' | 'stn'} network - The BSV network to use when calling the WhatsOnChain API.
    * @param {WhatsOnChainConfig} config - Configuration options for the WhatsOnChain ChainTracker.
    */
-  constructor(
-    network: 'main' | 'test' | 'stn' = 'main',
-    config: WhatsOnChainConfig = {}
-  ) {
+  constructor(network: 'main' | 'test' | 'stn' = 'main', config: WhatsOnChainConfig = {}) {
     const { apiKey, httpClient } = config
     this.network = network
     this.URL = `https://api.whatsonchain.com/v1/bsv/${network}`
@@ -64,16 +56,11 @@ export default class SdkWhatsOnChain implements ChainTracker {
         headers: this.getHttpHeaders()
       }
 
-      const response = await this.httpClient.request<{ height: number }>(
-        `${this.URL}/block/headers`,
-        requestOptions
-      )
+      const response = await this.httpClient.request<{ height: number }>(`${this.URL}/block/headers`, requestOptions)
       if (response.ok) {
         return response.data[0].height
       } else {
-        throw new Error(
-          `Failed to get current height because of an error: ${JSON.stringify(response.data)} `
-        )
+        throw new Error(`Failed to get current height because of an error: ${JSON.stringify(response.data)} `)
       }
     } catch (error) {
       throw new Error(

@@ -19,13 +19,8 @@ describe('janitor tests', () => {
 
     const services = new Services(env.chain)
 
-    const identityKey =
-      '0304985aa632dde471d3bf1ffb030d0af253fe65f5d186bb4cf878ca0fbee54c1c'
-    const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(
-      storage,
-      services,
-      identityKey
-    )
+    const identityKey = '0304985aa632dde471d3bf1ffb030d0af253fe65f5d186bb4cf878ca0fbee54c1c'
+    const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(storage, services, identityKey)
     const outputsToUpdate = notUtxos.map(o => ({
       id: o.outputId,
       satoshis: o.satoshis

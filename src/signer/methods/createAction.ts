@@ -1,10 +1,4 @@
-import {
-  Beef,
-  CreateActionResult,
-  SendWithResult,
-  SignActionResult,
-  SignActionSpend
-} from '@bsv/sdk'
+import { Beef, CreateActionResult, SendWithResult, SignActionResult, SignActionSpend } from '@bsv/sdk'
 import { Script, Transaction } from '@bsv/sdk'
 import {
   asBsvSdkScript,
@@ -36,11 +30,8 @@ export async function createAction(
     prior.tx = await completeSignedTransaction(prior, {}, wallet)
 
     r.txid = prior.tx.id('hex')
-    r.noSendChange = prior.dcr.noSendChangeOutputVouts?.map(
-      vout => `${r.txid}.${vout}`
-    )
-    if (!vargs.options.returnTXIDOnly)
-      r.tx = makeAtomicBeef(prior.tx, prior.dcr.inputBeef!)
+    r.noSendChange = prior.dcr.noSendChangeOutputVouts?.map(vout => `${r.txid}.${vout}`)
+    if (!vargs.options.returnTXIDOnly) r.tx = makeAtomicBeef(prior.tx, prior.dcr.inputBeef!)
   }
 
   r.sendWithResults = await processAction(prior, wallet, auth, vargs)
@@ -48,10 +39,7 @@ export async function createAction(
   return r
 }
 
-async function createNewTx(
-  wallet: Wallet,
-  args: sdk.ValidCreateActionArgs
-): Promise<PendingSignAction> {
+async function createNewTx(wallet: Wallet, args: sdk.ValidCreateActionArgs): Promise<PendingSignAction> {
   const storageArgs = removeUnlockScripts(args)
   const dcr = await wallet.storage.createAction(storageArgs)
 
@@ -69,15 +57,12 @@ function makeSignableTransactionResult(
   wallet: Wallet,
   args: sdk.ValidCreateActionArgs
 ): CreateActionResult {
-  if (!prior.dcr.inputBeef)
-    throw new sdk.WERR_INTERNAL('prior.dcr.inputBeef must be valid')
+  if (!prior.dcr.inputBeef) throw new sdk.WERR_INTERNAL('prior.dcr.inputBeef must be valid')
 
   const txid = prior.tx.id('hex')
 
   const r: CreateActionResult = {
-    noSendChange: args.isNoSend
-      ? prior.dcr.noSendChangeOutputVouts?.map(vout => `${txid}.${vout}`)
-      : undefined,
+    noSendChange: args.isNoSend ? prior.dcr.noSendChangeOutputVouts?.map(vout => `${txid}.${vout}`) : undefined,
     signableTransaction: {
       reference: prior.dcr.reference,
       tx: makeSignableTransactionBeef(prior.tx, prior.dcr.inputBeef)
@@ -89,18 +74,13 @@ function makeSignableTransactionResult(
   return r
 }
 
-function makeSignableTransactionBeef(
-  tx: Transaction,
-  inputBEEF: number[]
-): number[] {
+function makeSignableTransactionBeef(tx: Transaction, inputBEEF: number[]): number[] {
   // This is a special case beef for transaction signing.
   // We only need the transaction being signed, and for each input, the raw source transaction.
   const beef = new Beef()
   for (const input of tx.inputs) {
     if (!input.sourceTransaction)
-      throw new sdk.WERR_INTERNAL(
-        'Every signableTransaction input must have a sourceTransaction'
-      )
+      throw new sdk.WERR_INTERNAL('Every signableTransaction input must have a sourceTransaction')
     beef.mergeRawTx(input.sourceTransaction!.toBinary())
   }
   beef.mergeRawTx(tx.toBinary())
@@ -140,12 +120,7 @@ export async function completeSignedTransaction(
     const vin = Number(key)
     const createInput = prior.args.inputs[vin]
     const input = prior.tx.inputs[vin]
-    if (
-      !createInput ||
-      !input ||
-      createInput.unlockingScript ||
-      !Number.isInteger(createInput.unlockingScriptLength)
-    )
+    if (!createInput || !input || createInput.unlockingScript || !Number.isInteger(createInput.unlockingScriptLength))
       throw new sdk.WERR_INVALID_PARAMETER(
         'args',
         `spend does not correspond to prior input with valid unlockingScriptLength.`
@@ -156,8 +131,7 @@ export async function completeSignedTransaction(
         `spend unlockingScript length ${spend.unlockingScript.length} exceeds expected length ${createInput.unlockingScriptLength}`
       )
     input.unlockingScript = asBsvSdkScript(spend.unlockingScript)
-    if (spend.sequenceNumber !== undefined)
-      input.sequence = spend.sequenceNumber
+    if (spend.sequenceNumber !== undefined) input.sequence = spend.sequenceNumber
   }
 
   const results = {
@@ -178,12 +152,7 @@ export async function completeSignedTransaction(
     const unlockerPubKey = pdi.unlockerPubKey || keys.publicKey
     const sourceSatoshis = pdi.sourceSatoshis
     const lockingScript = asBsvSdkScript(pdi.lockingScript)
-    const unlockTemplate = sabppp.unlock(
-      lockerPrivKey,
-      unlockerPubKey,
-      sourceSatoshis,
-      lockingScript
-    )
+    const unlockTemplate = sabppp.unlock(lockerPrivKey, unlockerPubKey, sourceSatoshis, lockingScript)
     const input = prior.tx.inputs[pdi.vin]
     input.unlockingScriptTemplate = unlockTemplate
   }
@@ -203,10 +172,7 @@ function removeUnlockScripts(args: sdk.ValidCreateActionArgs) {
     for (const i of args.inputs) {
       const di: sdk.ValidCreateActionInput = {
         ...i,
-        unlockingScriptLength:
-          i.unlockingScript !== undefined
-            ? i.unlockingScript.length
-            : i.unlockingScriptLength
+        unlockingScriptLength: i.unlockingScript !== undefined ? i.unlockingScript.length : i.unlockingScriptLength
       }
       delete di.unlockingScript
       storageArgs.inputs.push(di)
@@ -231,19 +197,14 @@ export async function processAction(
     rawTx: prior ? prior.tx.toBinary() : undefined,
     sendWith: vargs.isSendWith ? vargs.options.sendWith : []
   }
-  const r: sdk.StorageProcessActionResults =
-    await wallet.storage.processAction(args)
+  const r: sdk.StorageProcessActionResults = await wallet.storage.processAction(args)
 
   return r.sendWithResults
 }
 
-function makeDummyTransactionForOutputSatoshis(
-  vout: number,
-  satoshis: number
-): Transaction {
+function makeDummyTransactionForOutputSatoshis(vout: number, satoshis: number): Transaction {
   const tx = new Transaction()
-  for (let i = 0; i < vout; i++)
-    tx.addOutput({ lockingScript: new Script(), satoshis: 0 })
+  for (let i = 0; i < vout; i++) tx.addOutput({ lockingScript: new Script(), satoshis: 0 })
   tx.addOutput({ lockingScript: new Script(), satoshis })
   return tx
 }

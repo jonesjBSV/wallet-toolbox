@@ -1,9 +1,6 @@
 import * as bsv from '@bsv/sdk'
 import { StorageKnex, wait, WalletStorageManager } from '../..'
-import {
-  _tu,
-  TestWalletNoSetup
-} from '../../../test/utils/TestUtilsWalletStorage'
+import { _tu, TestWalletNoSetup } from '../../../test/utils/TestUtilsWalletStorage'
 
 import * as dotenv from 'dotenv'
 
@@ -15,13 +12,8 @@ describe('WalletStorageManager tests', () => {
   const ctxs: TestWalletNoSetup[] = []
 
   beforeAll(async () => {
-    if (env.runMySQL)
-      ctxs.push(
-        await _tu.createLegacyWalletMySQLCopy('walletStorageManagerTestSource')
-      )
-    ctxs.push(
-      await _tu.createLegacyWalletSQLiteCopy('walletStorageManagerTestSource')
-    )
+    if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('walletStorageManagerTestSource'))
+    ctxs.push(await _tu.createLegacyWalletSQLiteCopy('walletStorageManagerTestSource'))
   })
 
   afterAll(async () => {
@@ -105,11 +97,7 @@ describe('WalletStorageManager tests', () => {
     let log = ''
     for (const r of result) {
       const overlaps = result.filter(
-        r2 =>
-          r2.i != r.i &&
-          (r2.t != 'reader' || r.t != 'reader') &&
-          r.start > r2.start &&
-          r.start < r2.end
+        r2 => r2.i != r.i && (r2.t != 'reader' || r.t != 'reader') && r.start > r2.start && r.start < r2.end
       )
       if (overlaps.length > 0) {
         log += `${r.i} ${r.t} ${r.start} overlaps:\n`
@@ -196,11 +184,7 @@ describe('WalletStorageManager tests', () => {
     let log = ''
     for (const r of result) {
       const overlaps = result.filter(
-        r2 =>
-          r2.i != r.i &&
-          (r2.t != 'reader' || r.t != 'reader') &&
-          r.start > r2.start &&
-          r.start < r2.end
+        r2 => r2.i != r.i && (r2.t != 'reader' || r.t != 'reader') && r.start > r2.start && r.start < r2.end
       )
       if (overlaps.length > 0) {
         log += `${r.i} ${r.t} ${r.start} overlaps:\n`
@@ -280,8 +264,7 @@ describe('WalletStorageManager tests', () => {
         crs1.push(cr)
       }
       let j = 0
-      for (let i = 0; i < maxI; i++)
-        promises.push(makeWriter2(fred, crs1[j++], i, result))
+      for (let i = 0; i < maxI; i++) promises.push(makeWriter2(fred, crs1[j++], i, result))
       await Promise.all(promises)
       expect(result).toBeTruthy()
     }

@@ -1,8 +1,5 @@
 import { createSyncMap, sdk, SyncMap, TableOutput } from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityOutput } from '../../../../../src/storage/schema/entities/Output'
 
 describe('Output class method tests', () => {
@@ -270,9 +267,7 @@ describe('Output class method tests', () => {
 
     // Handle undefined lockingScript gracefully
     if (updatedRecord[0].lockingScript) {
-      expect(Buffer.from(updatedRecord[0].lockingScript).toJSON().data).toEqual(
-        [4, 5, 6]
-      )
+      expect(Buffer.from(updatedRecord[0].lockingScript).toJSON().data).toEqual([4, 5, 6])
     } else {
       throw new Error('lockingScript is undefined')
     }
@@ -327,13 +322,7 @@ describe('Output class method tests', () => {
     syncMap.outputBasket.idMap[1] = 1
 
     // Call mergeExisting
-    const wasMergedRaw = await entity.mergeExisting(
-      ctx.activeStorage,
-      undefined,
-      earlierData,
-      syncMap,
-      undefined
-    )
+    const wasMergedRaw = await entity.mergeExisting(ctx.activeStorage, undefined, earlierData, syncMap, undefined)
 
     const wasMerged = Boolean(wasMergedRaw)
 

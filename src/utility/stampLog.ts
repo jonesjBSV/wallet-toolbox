@@ -4,13 +4,9 @@
  * @param lineToAdd Content to add to line.
  * @returns undefined or log extended by time stamped `lineToAdd` and new line.
  */
-export function stampLog(
-  log: string | undefined | { log?: string },
-  lineToAdd: string
-): string | undefined {
+export function stampLog(log: string | undefined | { log?: string }, lineToAdd: string): string | undefined {
   const add = `${new Date().toISOString()} ${lineToAdd}\n`
-  if (typeof log === 'object' && typeof log.log === 'string')
-    return (log.log = log.log + add)
+  if (typeof log === 'object' && typeof log.log === 'string') return (log.log = log.log + add)
   if (typeof log === 'string') return log + add
   return undefined
 }

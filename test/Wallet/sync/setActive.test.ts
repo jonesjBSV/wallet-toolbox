@@ -1,7 +1,19 @@
 import knex from 'knex'
-import { sdk, Setup, StorageKnex } from '../../../src'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
-import { Database } from 'sqlite3'
+import { sdk, Setup, StorageKnex, wait } from '../../../src'
+import { _tu, logger, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+
+let done0 = false
+const waitFor0 = async () => {
+  while (!done0) await wait(100)
+}
+let done1 = false
+const waitFor1 = async () => {
+  while (!done1) await wait(100)
+}
+let done2 = false
+const waitFor2 = async () => {
+  while (!done2) await wait(100)
+}
 
 describe('setActive tests', () => {
   jest.setTimeout(99999999)
@@ -64,7 +76,7 @@ describe('setActive tests', () => {
       expect(s.storage.isAvailable() === true)
       expect(s.storage.isActiveEnabled === !first)
       const log = await s.storage.setActive(active)
-      console.log(log)
+      logger(log)
       expect(s.storage.getActiveStore()).toBe(active)
       expect(s.storage.isActiveEnabled === true)
       first = false
@@ -72,16 +84,53 @@ describe('setActive tests', () => {
   })
 
   test('1 setActive on main storage wallet with local backup', async () => {
-    if (Setup.noEnv('main')) return
-    const env = _tu.getEnv('main')
-    const s = await _tu.createTestWalletWithStorageClient({
-      chain: env.chain,
-      rootKeyHex: env.devKeys[env.identityKey]
-    })
-    const cloudStorageIdentityKey = s.storage.getActiveStore()
-    //const filePath = '/Users/tone/Kz/tone42_backup.sqlite' // env.filePath
-    const filePath = env.filePath
-    if (filePath) {
+    const chain: sdk.Chain = 'main'
+    if (Setup.noEnv(chain)) return
+    const env = _tu.getEnv(chain)
+    if (!env.filePath) return
+
+    try {
+      const s = await _tu.createTestWallet({
+        chain,
+        rootKeyHex: env.devKeys[env.identityKey],
+        filePath: env.filePath,
+        setActiveClient: true,
+        addLocalBackup: false,
+        useMySQLConnectionForClient: true
+      })
+
+      {
+        const log = await s.storage.setActive(s.clientStorageIdentityKey!)
+        logger(log)
+      }
+      {
+        const log = await s.storage.setActive(s.localStorageIdentityKey!)
+        logger(log)
+      }
+      {
+        const log = await s.storage.setActive(s.clientStorageIdentityKey!)
+        logger(log)
+      }
+      expect(s.storage.isActiveEnabled)
+
+      await s.wallet.destroy()
+    } finally {
+      done1 = true
+    }
+  })
+
+  test('2 setActive between two local backups', async () => {
+    await waitFor1()
+    try {
+      if (Setup.noEnv('main')) return
+      const env = _tu.getEnv('main')
+      const s = await _tu.createKnexTestWallet({
+        knex: _tu.createLocalSQLite(env.filePath!),
+        databaseName: `envFilePath for ${env.identityKey}`,
+        chain: env.chain
+      })
+      const envStorageIdentityKey = s.storage.getActiveStore()
+      const filePath = '/Users/tone/Kz/tone42_backup.sqlite'
       const localStore = (
         await _tu.createKnexTestWallet({
           knex: _tu.createLocalSQLite(filePath),
@@ -91,61 +140,26 @@ describe('setActive tests', () => {
       ).activeStorage
       await s.storage.addWalletStorageProvider(localStore)
       {
-        const log = await s.storage.setActive(cloudStorageIdentityKey)
-        console.log(log)
+        const log = await s.storage.setActive(envStorageIdentityKey)
+        logger(log)
       }
       {
-        const log = await s.storage.setActive(
-          localStore._settings!.storageIdentityKey
-        )
-        console.log(log)
+        const log = await s.storage.setActive(localStore._settings!.storageIdentityKey)
+        logger(log)
       }
       {
-        const log = await s.storage.setActive(cloudStorageIdentityKey)
-        console.log(log)
+        const log = await s.storage.setActive(envStorageIdentityKey)
+        logger(log)
       }
       expect(s.storage.isActiveEnabled)
+      await s.wallet.destroy()
+    } finally {
+      done2 = true
     }
-    await s.wallet.destroy()
-  })
-
-  test('2 setActive between two local backups', async () => {
-    if (Setup.noEnv('main')) return
-    const env = _tu.getEnv('main')
-    const s = await _tu.createKnexTestWallet({
-      knex: _tu.createLocalSQLite(env.filePath!),
-      databaseName: `envFilePath for ${env.identityKey}`,
-      chain: env.chain
-    })
-    const envStorageIdentityKey = s.storage.getActiveStore()
-    const filePath = '/Users/tone/Kz/tone42_backup.sqlite'
-    const localStore = (
-      await _tu.createKnexTestWallet({
-        knex: _tu.createLocalSQLite(filePath),
-        databaseName: `sqlite for ${env.identityKey}`,
-        chain: env.chain
-      })
-    ).activeStorage
-    await s.storage.addWalletStorageProvider(localStore)
-    {
-      const log = await s.storage.setActive(envStorageIdentityKey)
-      console.log(log)
-    }
-    {
-      const log = await s.storage.setActive(
-        localStore._settings!.storageIdentityKey
-      )
-      console.log(log)
-    }
-    {
-      const log = await s.storage.setActive(envStorageIdentityKey)
-      console.log(log)
-    }
-    expect(s.storage.isActiveEnabled)
-    await s.wallet.destroy()
   })
 
   test('3 compare wallet balances', async () => {
+    await waitFor2()
     const chain: sdk.Chain = 'test'
     if (Setup.noEnv(chain)) return
 

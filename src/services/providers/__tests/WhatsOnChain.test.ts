@@ -20,9 +20,7 @@ describe('whatsonchain tests', () => {
   if (_tu.noTestEnv('test')) return
 
   test('0 getRawTx testnet', async () => {
-    const rawTx = await wocTest.getRawTx(
-      '7e5b797b86abd31a654bf296900d6cb14d04ef0811568ff4675494af2d92166b'
-    )
+    const rawTx = await wocTest.getRawTx('7e5b797b86abd31a654bf296900d6cb14d04ef0811568ff4675494af2d92166b')
     expect(
       rawTx ===
         '010000000158EED5DBBB7E2F7D70C79A11B9B61AABEECFA5A7CEC679BEDD00F42C48A4BD45010000006B483045022100AE8BB45498A40E2AC797775C405C108168804CD84E8C09A9D42D280D18EDDB6D022024863BFAAC5FF3C24CA65E2F3677EDA092BC3CC5D2EFABA73264B8FF55CF416B412102094AAF520E14E1C4D68496822800BCC7D3B3B26CA368E004A2CB70B398D82FACFFFFFFFF0203000000000000007421020A624B72B34BC192851C5D8890926BBB70B31BC10FDD4E3BC6534E41B1C81B93AC03010203030405064630440220013B4984F4054C2FBCD2F448AB896CCA5C4E234BF765B0C7FB27EDE572A7F7DA02201A5C8D0D023F94C209046B9A2B96B2882C5E43B72D8115561DF8C07442010EEA6D7592090000000000001976A9146511FCE2F7EF785A2102142FBF381AD1291C918688AC00000000'
@@ -32,9 +30,7 @@ describe('whatsonchain tests', () => {
   })
 
   test('1 getRawTx mainnet', async () => {
-    const rawTx = await wocMain.getRawTx(
-      'd9978ffc6676523208f7b33bebf1b176388bbeace2c7ef67ce35c2eababa1805'
-    )
+    const rawTx = await wocMain.getRawTx('d9978ffc6676523208f7b33bebf1b176388bbeace2c7ef67ce35c2eababa1805')
     expect(
       rawTx ===
         '0100000001026A66A5F724EB490A55E0E08553286F08AD57E92C4BF34B5C44EA6BC0A49828020000006B483045022100C3D9A5ACA30C1F2E1A54532162E7AFE5AA69150E4C06D760414A16D1EA1BABD602205E0D9191838B0911A1E7328554A2B22EFAA80CF52B15FBA37C3046A0996C7AAD412103FA3CF488CA98D9F2DB91843F36BAF6BE39F6C947976C02394602D09FBC5F4CF4FFFFFFFF0210270000000000001976A91444C04354E88975C4BEF30CFE89D300CC7659F7E588AC96BC0000000000001976A9149A53E5CF5F1876924D98A8B35CA0BC693618682488AC00000000'
@@ -99,9 +95,7 @@ describe('whatsonchain tests', () => {
   test('5 getTxPropagation testnet', async () => {
     return
     // throwing internal server error 500 when tested.
-    const count = await wocTest.getTxPropagation(
-      '7e5b797b86abd31a654bf296900d6cb14d04ef0811568ff4675494af2d92166b'
-    )
+    const count = await wocTest.getTxPropagation('7e5b797b86abd31a654bf296900d6cb14d04ef0811568ff4675494af2d92166b')
     expect(count > 0)
 
     expect((await wocTest.getTxPropagation('1'.repeat(64))) === 0)
@@ -186,8 +180,7 @@ describe('whatsonchain tests', () => {
     } catch (eu: unknown) {
       const e = sdk.WalletError.fromUnknown(eu)
       expect(
-        e.message ===
-          'The rawTx parameter must be valid. unexpected response code 500: 258: txn-mempool-conflict' ||
+        e.message === 'The rawTx parameter must be valid. unexpected response code 500: 258: txn-mempool-conflict' ||
           'The rawTx parameter must be valid. unexpected response code 500: Missing inputs'
       )
     }
@@ -237,10 +230,7 @@ describe('whatsonchain tests', () => {
     if (!Setup.getEnv('main').filePath) return
 
     const c = await _tu.createWalletSetupEnv('main')
-    const client = new StorageClient(
-      c.wallet,
-      'https://storage.babbage.systems'
-    )
+    const client = new StorageClient(c.wallet, 'https://storage.babbage.systems')
     await c.storage.addWalletStorageProvider(client)
     await c.storage.updateBackups()
 

@@ -1,5 +1,6 @@
 import { Beef } from '@bsv/sdk'
 import { Services } from '../Services'
+import { logger } from '../../../test/utils/TestUtilsWalletStorage'
 
 describe('verifyBeef tests', () => {
   jest.setTimeout(99999999)
@@ -10,7 +11,7 @@ describe('verifyBeef tests', () => {
     const beef = Beef.fromString(bhex)
     const chaintracker = await new Services('main').getChainTracker()
 
-    console.log(beef.toLogString())
+    logger(beef.toLogString())
 
     const ok = await beef.verify(chaintracker, true)
     expect(ok)

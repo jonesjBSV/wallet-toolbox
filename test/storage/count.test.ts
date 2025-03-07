@@ -11,12 +11,7 @@ describe('count tests', () => {
   const env = _tu.getEnv(chain)
 
   beforeAll(async () => {
-    const localSQLiteFile = await _tu.newTmpFile(
-      'storagecounttest.sqlite',
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile('storagecounttest.sqlite', false, false, true)
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
     storages.push(
       new StorageKnex({
@@ -78,18 +73,14 @@ describe('count tests', () => {
           certifiers: [setup.u1cert1.certifier]
         })
       ).toBe(1)
-      expect(
-        await storage.countCertificates({ partial: {}, certifiers: ['none'] })
-      ).toBe(0)
+      expect(await storage.countCertificates({ partial: {}, certifiers: ['none'] })).toBe(0)
       expect(
         await storage.countCertificates({
           partial: {},
           types: [setup.u1cert2.type]
         })
       ).toBe(1)
-      expect(
-        await storage.countCertificates({ partial: {}, types: ['oblongata'] })
-      ).toBe(0)
+      expect(await storage.countCertificates({ partial: {}, types: ['oblongata'] })).toBe(0)
     }
   })
 
@@ -106,15 +97,9 @@ describe('count tests', () => {
           partial: { userId: setup.u2.userId }
         })
       ).toBe(0)
-      expect(
-        await storage.countCertificateFields({ partial: { userId: 99 } })
-      ).toBe(0)
-      expect(
-        await storage.countCertificateFields({ partial: { fieldName: 'name' } })
-      ).toBe(2)
-      expect(
-        await storage.countCertificateFields({ partial: { fieldName: 'bob' } })
-      ).toBe(1)
+      expect(await storage.countCertificateFields({ partial: { userId: 99 } })).toBe(0)
+      expect(await storage.countCertificateFields({ partial: { fieldName: 'name' } })).toBe(2)
+      expect(await storage.countCertificateFields({ partial: { fieldName: 'bob' } })).toBe(1)
       expect(
         await storage.countCertificateFields({
           partial: { fieldName: 'bob42' }
@@ -132,9 +117,7 @@ describe('count tests', () => {
           since: setup.u1.created_at
         })
       ).toBe(3)
-      expect(
-        await storage.countOutputBaskets({ partial: {}, since: new Date() })
-      ).toBe(0)
+      expect(await storage.countOutputBaskets({ partial: {}, since: new Date() })).toBe(0)
     }
   })
 

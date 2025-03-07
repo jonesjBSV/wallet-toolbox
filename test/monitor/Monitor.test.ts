@@ -1,22 +1,11 @@
 import { MerklePath } from '@bsv/sdk'
-import {
-  asArray,
-  EntityProvenTxReq,
-  sdk,
-  verifyOne,
-  verifyTruthy,
-  wait
-} from '../../src/index.client'
+import { asArray, EntityProvenTxReq, sdk, verifyOne, verifyTruthy, wait } from '../../src/index.client'
 import { TaskCheckForProofs } from '../../src/monitor/tasks/TaskCheckForProofs'
 import { TaskClock } from '../../src/monitor/tasks/TaskClock'
 import { TaskNewHeader } from '../../src/monitor/tasks/TaskNewHeader'
 import { TaskPurge } from '../../src/monitor/tasks/TaskPurge'
 import { TaskSendWaiting } from '../../src/monitor/tasks/TaskSendWaiting'
-import {
-  _tu,
-  TestSetup1Wallet,
-  TestWallet
-} from '../utils/TestUtilsWalletStorage'
+import { _tu, TestSetup1Wallet, TestWallet } from '../utils/TestUtilsWalletStorage'
 import exp from 'constants'
 import { TaskReviewStatus } from '../../src/monitor/tasks/TaskReviewStatus'
 
@@ -48,8 +37,7 @@ describe('Monitor tests', () => {
 
     // This test takes a bit over a minute to run... un-skip it to work on it.
     for (const { chain, wallet, services, monitor } of ctxs) {
-      if (!monitor)
-        throw new sdk.WERR_INTERNAL('test requires setup with monitor')
+      if (!monitor) throw new sdk.WERR_INTERNAL('test requires setup with monitor')
 
       {
         // The clock attempts to update nextMinute to msecs for each minute.
@@ -74,8 +62,7 @@ describe('Monitor tests', () => {
 
     // This test takes 10+ seconds to run... un-skip it to work on it.
     for (const { chain, wallet, services, monitor } of ctxs) {
-      if (!monitor)
-        throw new sdk.WERR_INTERNAL('test requires setup with monitor')
+      if (!monitor) throw new sdk.WERR_INTERNAL('test requires setup with monitor')
 
       {
         // The new header task polls chaintracks for latest header and if new sets flag to check for proofs.
@@ -104,8 +91,7 @@ describe('Monitor tests', () => {
         */
 
     for (const { chain, wallet, services, monitor } of ctxs) {
-      if (!monitor)
-        throw new sdk.WERR_INTERNAL('test requires setup with monitor')
+      if (!monitor) throw new sdk.WERR_INTERNAL('test requires setup with monitor')
 
       {
         const task = new TaskPurge(monitor, {
@@ -155,18 +141,13 @@ describe('Monitor tests', () => {
     })
 
     for (const { activeStorage: storage, monitor } of ctxs) {
-      if (!monitor)
-        throw new sdk.WERR_INTERNAL('test requires setup with monitor')
+      if (!monitor) throw new sdk.WERR_INTERNAL('test requires setup with monitor')
 
       {
         for (const txid of expectedTxids) {
           // no matching ProvenTx exists.
-          expect(
-            (await storage.findProvenTxs({ partial: { txid } })).length
-          ).toBe(0)
-          const req = verifyTruthy(
-            await EntityProvenTxReq.fromStorageTxid(storage, txid)
-          )
+          expect((await storage.findProvenTxs({ partial: { txid } })).length).toBe(0)
+          const req = verifyTruthy(await EntityProvenTxReq.fromStorageTxid(storage, txid))
           expect(req.status).toBe('unmined')
         }
 
@@ -176,13 +157,9 @@ describe('Monitor tests', () => {
         await monitor.runTask('CheckForProofs')
 
         for (const txid of expectedTxids) {
-          const proven = verifyOne(
-            await storage.findProvenTxs({ partial: { txid } })
-          )
+          const proven = verifyOne(await storage.findProvenTxs({ partial: { txid } }))
           expect(proven.merklePath).toBeTruthy()
-          const req = verifyTruthy(
-            await EntityProvenTxReq.fromStorageTxid(storage, txid)
-          )
+          const req = verifyTruthy(await EntityProvenTxReq.fromStorageTxid(storage, txid))
           expect(req.status).toBe('completed')
           expect(req.provenTxId).toBe(proven.provenTxId)
         }
@@ -215,20 +192,15 @@ describe('Monitor tests', () => {
     })
 
     for (const { activeStorage: storage, monitor } of ctxs) {
-      if (!monitor)
-        throw new sdk.WERR_INTERNAL('test requires setup with monitor')
+      if (!monitor) throw new sdk.WERR_INTERNAL('test requires setup with monitor')
 
       {
         const attempts: number[] = []
 
         for (const txid of expectedTxids) {
           // no matching ProvenTx exists.
-          expect(
-            (await storage.findProvenTxs({ partial: { txid } })).length
-          ).toBe(0)
-          const req = verifyTruthy(
-            await EntityProvenTxReq.fromStorageTxid(storage, txid)
-          )
+          expect((await storage.findProvenTxs({ partial: { txid } })).length).toBe(0)
+          const req = verifyTruthy(await EntityProvenTxReq.fromStorageTxid(storage, txid))
           expect(req.status).toBe('unmined')
           attempts.push(req.attempts)
         }
@@ -242,12 +214,8 @@ describe('Monitor tests', () => {
         for (const txid of expectedTxids) {
           i++
           // no matching ProvenTx exists.
-          expect(
-            (await storage.findProvenTxs({ partial: { txid } })).length
-          ).toBe(0)
-          const req = verifyTruthy(
-            await EntityProvenTxReq.fromStorageTxid(storage, txid)
-          )
+          expect((await storage.findProvenTxs({ partial: { txid } })).length).toBe(0)
+          const req = verifyTruthy(await EntityProvenTxReq.fromStorageTxid(storage, txid))
           expect(req.status).toBe('unmined')
           expect(req.attempts).toBeGreaterThanOrEqual(attempts[i])
         }
@@ -289,10 +257,8 @@ describe('Monitor tests', () => {
       ]),
       header: {
         version: 536870912,
-        previousHash:
-          '0000000039f1c7dc943d50883e531022825bf5c15a40db2cedde7d203ca3d644',
-        merkleRoot:
-          '68bde58600fbd2c716871356cc2ad34b43ac67ac8d7a879dd966429d5a6935b2',
+        previousHash: '0000000039f1c7dc943d50883e531022825bf5c15a40db2cedde7d203ca3d644',
+        merkleRoot: '68bde58600fbd2c716871356cc2ad34b43ac67ac8d7a879dd966429d5a6935b2',
         time: 1734530373,
         bits: 474103450,
         nonce: 3894752803,
@@ -326,10 +292,8 @@ describe('Monitor tests', () => {
       ]),
       header: {
         version: 536870912,
-        previousHash:
-          '0000000039f1c7dc943d50883e531022825bf5c15a40db2cedde7d203ca3d644',
-        merkleRoot:
-          '68bde58600fbd2c716871356cc2ad34b43ac67ac8d7a879dd966429d5a6935b2',
+        previousHash: '0000000039f1c7dc943d50883e531022825bf5c15a40db2cedde7d203ca3d644',
+        merkleRoot: '68bde58600fbd2c716871356cc2ad34b43ac67ac8d7a879dd966429d5a6935b2',
         time: 1734530373,
         bits: 474103450,
         nonce: 3894752803,
@@ -360,10 +324,8 @@ describe('Monitor tests', () => {
       ]),
       header: {
         version: 536870912,
-        previousHash:
-          '000000001888ff57f4848f181f9f69cab27f2388d7c2edd99b8c004ae482cca7',
-        merkleRoot:
-          'f990936bc3267ba4911acc490107ed1841eedbd2c5017e1074891285df30f255',
+        previousHash: '000000001888ff57f4848f181f9f69cab27f2388d7c2edd99b8c004ae482cca7',
+        merkleRoot: 'f990936bc3267ba4911acc490107ed1841eedbd2c5017e1074891285df30f255',
         time: 1734532172,
         bits: 474081547,
         nonce: 740519774,
@@ -391,10 +353,8 @@ describe('Monitor tests', () => {
       ]),
       header: {
         version: 536870912,
-        previousHash:
-          '000000001888ff57f4848f181f9f69cab27f2388d7c2edd99b8c004ae482cca7',
-        merkleRoot:
-          'f990936bc3267ba4911acc490107ed1841eedbd2c5017e1074891285df30f255',
+        previousHash: '000000001888ff57f4848f181f9f69cab27f2388d7c2edd99b8c004ae482cca7',
+        merkleRoot: 'f990936bc3267ba4911acc490107ed1841eedbd2c5017e1074891285df30f255',
         time: 1734532172,
         bits: 474081547,
         nonce: 740519774,
@@ -419,10 +379,8 @@ describe('Monitor tests', () => {
       ]),
       header: {
         version: 536870912,
-        previousHash:
-          '0000000012dbd406fef49503c545bafd940ba2f2c9b05ef351177b71fe96e7d8',
-        merkleRoot:
-          'c2714feeccc7db8ea4235799e6490271867008dd39e3cf8a6e9aa20fd47f3222',
+        previousHash: '0000000012dbd406fef49503c545bafd940ba2f2c9b05ef351177b71fe96e7d8',
+        merkleRoot: 'c2714feeccc7db8ea4235799e6490271867008dd39e3cf8a6e9aa20fd47f3222',
         time: 1734538772,
         bits: 474045917,
         nonce: 2431702809,
@@ -442,8 +400,7 @@ describe('Monitor tests', () => {
     })
 
     for (const { activeStorage: storage, monitor } of ctxs) {
-      if (!monitor)
-        throw new sdk.WERR_INTERNAL('test requires setup with monitor')
+      if (!monitor) throw new sdk.WERR_INTERNAL('test requires setup with monitor')
 
       {
         const task = new TaskSendWaiting(monitor, 1, 1)
@@ -457,16 +414,11 @@ describe('Monitor tests', () => {
           '6d68cc6fa7363e59aaccbaa65f0ca613a6ae8af718453ab5d3a2b022c59b5cc6'
         ]
         for (const txid of expectedTxids) {
-          const req = verifyOne(
-            await storage.findProvenTxReqs({ partial: { txid } })
-          )
+          const req = verifyOne(await storage.findProvenTxReqs({ partial: { txid } }))
           expect(req.status).toBe('unsent')
-          const notifyIds =
-            new EntityProvenTxReq(req).notify.transactionIds || []
+          const notifyIds = new EntityProvenTxReq(req).notify.transactionIds || []
           for (const transactionId of notifyIds) {
-            const tx = verifyTruthy(
-              await storage.findTransactionById(transactionId)
-            )
+            const tx = verifyTruthy(await storage.findTransactionById(transactionId))
             expect(['nosend', 'unprocessed', 'sending']).toContain(tx.status)
           }
         }
@@ -475,21 +427,15 @@ describe('Monitor tests', () => {
 
         expect(txidsPosted).toEqual(expectedTxids)
         for (const txid of expectedTxids) {
-          const req = verifyOne(
-            await storage.findProvenTxReqs({ partial: { txid } })
-          )
-          if (env.logTests)
-            console.log(new EntityProvenTxReq(req).historyPretty())
-          const notifyIds =
-            new EntityProvenTxReq(req).notify.transactionIds || []
+          const req = verifyOne(await storage.findProvenTxReqs({ partial: { txid } }))
+          if (env.logTests) console.log(new EntityProvenTxReq(req).historyPretty())
+          const notifyIds = new EntityProvenTxReq(req).notify.transactionIds || []
           switch (postBeefMockStatus) {
             case 'success':
               {
                 expect(req.status).toBe('unmined')
                 for (const transactionId of notifyIds) {
-                  const tx = verifyTruthy(
-                    await storage.findTransactionById(transactionId)
-                  )
+                  const tx = verifyTruthy(await storage.findTransactionById(transactionId))
                   expect(['unproven']).toContain(tx.status)
                 }
               }

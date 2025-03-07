@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableOutputTagMap,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableOutputTagMap, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityOutputTagMap extends EntityBase<TableOutputTagMap> {
@@ -68,19 +62,12 @@ export class EntityOutputTagMap extends EntityBase<TableOutputTagMap> {
     return 'output_tags_map'
   }
 
-  override equals(
-    ei: TableOutputTagMap,
-    syncMap?: SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableOutputTagMap, syncMap?: SyncMap | undefined): boolean {
     const eo = this.toApi()
 
     if (
-      eo.outputId !==
-        (syncMap ? syncMap.output.idMap[verifyId(ei.outputId)] : ei.outputId) ||
-      eo.outputTagId !==
-        (syncMap
-          ? syncMap.outputTag.idMap[verifyId(ei.outputTagId)]
-          : ei.outputTagId) ||
+      eo.outputId !== (syncMap ? syncMap.output.idMap[verifyId(ei.outputId)] : ei.outputId) ||
+      eo.outputTagId !== (syncMap ? syncMap.outputTag.idMap[verifyId(ei.outputTagId)] : ei.outputTagId) ||
       eo.isDeleted !== ei.isDeleted
     )
       return false
@@ -110,12 +97,7 @@ export class EntityOutputTagMap extends EntityBase<TableOutputTagMap> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.outputId = syncMap.output.idMap[this.outputId]
     this.outputTagId = syncMap.outputTag.idMap[this.outputTagId]
     await storage.insertOutputTagMap(this.toApi(), trx)
@@ -131,13 +113,8 @@ export class EntityOutputTagMap extends EntityBase<TableOutputTagMap> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
-      await storage.updateOutputTagMap(
-        this.outputId,
-        this.outputTagId,
-        this.toApi(),
-        trx
-      )
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
+      await storage.updateOutputTagMap(this.outputId, this.outputTagId, this.toApi(), trx)
       wasMerged = true
     }
     return wasMerged

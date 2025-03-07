@@ -29,12 +29,7 @@ export class KnexMigrations implements MigrationSource<string> {
     public storageIdentityKey: string,
     public maxOutputScriptLength: number
   ) {
-    this.migrations = this.setupMigrations(
-      chain,
-      storageName,
-      storageIdentityKey,
-      maxOutputScriptLength
-    )
+    this.migrations = this.setupMigrations(chain, storageName, storageIdentityKey, maxOutputScriptLength)
   }
 
   async getMigrations(): Promise<string[]> {
@@ -65,29 +60,13 @@ export class KnexMigrations implements MigrationSource<string> {
   ): Record<string, Migration> {
     const migrations: Record<string, Migration> = {}
 
-    const addTimeStamps = (
-      knex: Knex<any, any[]>,
-      table: Knex.CreateTableBuilder,
-      dbtype: DBType
-    ) => {
+    const addTimeStamps = (knex: Knex<any, any[]>, table: Knex.CreateTableBuilder, dbtype: DBType) => {
       if (dbtype === 'MySQL') {
-        table
-          .timestamp('created_at', { precision: 3 })
-          .defaultTo(knex.fn.now(3))
-          .notNullable()
-        table
-          .timestamp('updated_at', { precision: 3 })
-          .defaultTo(knex.fn.now(3))
-          .notNullable()
+        table.timestamp('created_at', { precision: 3 }).defaultTo(knex.fn.now(3)).notNullable()
+        table.timestamp('updated_at', { precision: 3 }).defaultTo(knex.fn.now(3)).notNullable()
       } else {
-        table
-          .timestamp('created_at', { precision: 3 })
-          .defaultTo(knex.fn.now())
-          .notNullable()
-        table
-          .timestamp('updated_at', { precision: 3 })
-          .defaultTo(knex.fn.now())
-          .notNullable()
+        table.timestamp('created_at', { precision: 3 }).defaultTo(knex.fn.now()).notNullable()
+        table.timestamp('updated_at', { precision: 3 }).defaultTo(knex.fn.now()).notNullable()
       }
     }
 
@@ -142,9 +121,7 @@ export class KnexMigrations implements MigrationSource<string> {
           knex
         })
         const settings = await storage.makeAvailable()
-        await knex.raw(
-          `update users set activeStorage = '${settings.storageIdentityKey}' where activeStorage is NULL`
-        )
+        await knex.raw(`update users set activeStorage = '${settings.storageIdentityKey}' where activeStorage is NULL`)
         await knex.schema.alterTable('users', table => {
           table.string('activeStorage').notNullable().alter()
         })
@@ -187,11 +164,7 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('proven_tx_reqs', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('provenTxReqId')
-          table
-            .integer('provenTxId')
-            .unsigned()
-            .references('provenTxId')
-            .inTable('proven_txs')
+          table.integer('provenTxId').unsigned().references('provenTxId').inTable('proven_txs')
           table.string('status', 16).notNullable().defaultTo('unknown')
           table.integer('attempts').unsigned().defaultTo(0).notNullable()
           table.boolean('notified').notNullable().defaultTo(false)
@@ -212,12 +185,7 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('certificates', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('certificateId')
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
           table.string('serialNumber', 100).notNullable()
           table.string('type', 100).notNullable()
           table.string('certifier', 100).notNullable()
@@ -230,18 +198,8 @@ export class KnexMigrations implements MigrationSource<string> {
         })
         await knex.schema.createTable('certificate_fields', table => {
           addTimeStamps(knex, table, dbtype)
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
-          table
-            .integer('certificateId')
-            .unsigned()
-            .references('certificateId')
-            .inTable('certificates')
-            .notNullable()
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
+          table.integer('certificateId').unsigned().references('certificateId').inTable('certificates').notNullable()
           table.string('fieldName', 100).notNullable()
           table.string('fieldValue').notNullable()
           table.string('masterKey', 255).defaultTo('').notNullable()
@@ -250,35 +208,18 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('output_baskets', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('basketId')
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
           table.string('name', 300).notNullable()
           table.integer('numberOfDesiredUTXOs', 6).defaultTo(6).notNullable()
-          table
-            .integer('minimumDesiredUTXOValue', 15)
-            .defaultTo(10000)
-            .notNullable()
+          table.integer('minimumDesiredUTXOValue', 15).defaultTo(10000).notNullable()
           table.boolean('isDeleted').notNullable().defaultTo(false)
           table.unique(['name', 'userId'])
         })
         await knex.schema.createTable('transactions', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('transactionId')
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
-          table
-            .integer('provenTxId')
-            .unsigned()
-            .references('provenTxId')
-            .inTable('proven_txs')
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
+          table.integer('provenTxId').unsigned().references('provenTxId').inTable('proven_txs')
           table.string('status', 64).notNullable()
           table.string('reference', 64).notNullable().unique()
           table.boolean('isOutgoing').notNullable()
@@ -294,12 +235,7 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('commissions', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('commissionId')
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
           table
             .integer('transactionId')
             .unsigned()
@@ -316,23 +252,9 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('outputs', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('outputId')
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
-          table
-            .integer('transactionId')
-            .unsigned()
-            .references('transactionId')
-            .inTable('transactions')
-            .notNullable()
-          table
-            .integer('basketId')
-            .unsigned()
-            .references('basketId')
-            .inTable('output_baskets')
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
+          table.integer('transactionId').unsigned().references('transactionId').inTable('transactions').notNullable()
+          table.integer('basketId').unsigned().references('basketId').inTable('output_baskets')
           table.boolean('spendable').defaultTo(false).notNullable()
           table.boolean('change').defaultTo(false).notNullable()
           table.integer('vout', 10).notNullable()
@@ -346,11 +268,7 @@ export class KnexMigrations implements MigrationSource<string> {
           table.string('derivationPrefix', 32)
           table.string('derivationSuffix', 32)
           table.string('customInstructions', 2500)
-          table
-            .integer('spentBy')
-            .unsigned()
-            .references('transactionId')
-            .inTable('transactions')
+          table.integer('spentBy').unsigned().references('transactionId').inTable('transactions')
           table.integer('sequenceNumber').unsigned().nullable()
           table.string('spendingDescription')
           table.bigint('scriptLength').unsigned().nullable()
@@ -361,30 +279,15 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('output_tags', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('outputTagId')
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
           table.string('tag', 150).notNullable()
           table.boolean('isDeleted').notNullable().defaultTo(false)
           table.unique(['tag', 'userId'])
         })
         await knex.schema.createTable('output_tags_map', table => {
           addTimeStamps(knex, table, dbtype)
-          table
-            .integer('outputTagId')
-            .unsigned()
-            .references('outputTagId')
-            .inTable('output_tags')
-            .notNullable()
-          table
-            .integer('outputId')
-            .unsigned()
-            .references('outputId')
-            .inTable('outputs')
-            .notNullable()
+          table.integer('outputTagId').unsigned().references('outputTagId').inTable('output_tags').notNullable()
+          table.integer('outputId').unsigned().references('outputId').inTable('outputs').notNullable()
           table.boolean('isDeleted').notNullable().defaultTo(false)
           table.unique(['outputTagId', 'outputId'])
           table.index('outputId')
@@ -392,30 +295,15 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('tx_labels', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('txLabelId')
-          table
-            .integer('userId')
-            .unsigned()
-            .references('userId')
-            .inTable('users')
-            .notNullable()
+          table.integer('userId').unsigned().references('userId').inTable('users').notNullable()
           table.string('label', 300).notNullable()
           table.boolean('isDeleted').notNullable().defaultTo(false)
           table.unique(['label', 'userId'])
         })
         await knex.schema.createTable('tx_labels_map', table => {
           addTimeStamps(knex, table, dbtype)
-          table
-            .integer('txLabelId')
-            .unsigned()
-            .references('txLabelId')
-            .inTable('tx_labels')
-            .notNullable()
-          table
-            .integer('transactionId')
-            .unsigned()
-            .references('transactionId')
-            .inTable('transactions')
-            .notNullable()
+          table.integer('txLabelId').unsigned().references('txLabelId').inTable('tx_labels').notNullable()
+          table.integer('transactionId').unsigned().references('transactionId').inTable('transactions').notNullable()
           table.boolean('isDeleted').notNullable().defaultTo(false)
           table.unique(['txLabelId', 'transactionId'])
           table.index('transactionId')
@@ -437,12 +325,7 @@ export class KnexMigrations implements MigrationSource<string> {
         await knex.schema.createTable('sync_states', table => {
           addTimeStamps(knex, table, dbtype)
           table.increments('syncStateId')
-          table
-            .integer('userId')
-            .unsigned()
-            .notNullable()
-            .references('userId')
-            .inTable('users')
+          table.integer('userId').unsigned().notNullable().references('userId').inTable('users')
           table.string('storageIdentityKey', 130).notNullable().defaultTo('')
           table.string('storageName').notNullable()
           table.string('status').notNullable().defaultTo('unknown')
@@ -458,22 +341,12 @@ export class KnexMigrations implements MigrationSource<string> {
         })
 
         if (dbtype === 'MySQL') {
-          await knex.raw(
-            'ALTER TABLE proven_tx_reqs MODIFY COLUMN rawTx LONGBLOB'
-          )
-          await knex.raw(
-            'ALTER TABLE proven_tx_reqs MODIFY COLUMN inputBEEF LONGBLOB'
-          )
+          await knex.raw('ALTER TABLE proven_tx_reqs MODIFY COLUMN rawTx LONGBLOB')
+          await knex.raw('ALTER TABLE proven_tx_reqs MODIFY COLUMN inputBEEF LONGBLOB')
           await knex.raw('ALTER TABLE proven_txs MODIFY COLUMN rawTx LONGBLOB')
-          await knex.raw(
-            'ALTER TABLE transactions MODIFY COLUMN rawTx LONGBLOB'
-          )
-          await knex.raw(
-            'ALTER TABLE transactions MODIFY COLUMN inputBEEF LONGBLOB'
-          )
-          await knex.raw(
-            'ALTER TABLE outputs MODIFY COLUMN lockingScript LONGBLOB'
-          )
+          await knex.raw('ALTER TABLE transactions MODIFY COLUMN rawTx LONGBLOB')
+          await knex.raw('ALTER TABLE transactions MODIFY COLUMN inputBEEF LONGBLOB')
+          await knex.raw('ALTER TABLE outputs MODIFY COLUMN lockingScript LONGBLOB')
         } else {
           await knex.schema.alterTable('proven_tx_reqs', table => {
             table.binary('rawTx', 10000000).alter()
@@ -538,16 +411,12 @@ export class KnexMigrations implements MigrationSource<string> {
       if (r['rows']) r = r.rows
       const dbtype: 'SQLite' | 'MySQL' | 'Unknown' = r[0].database_type
       if (dbtype === 'Unknown')
-        throw new sdk.WERR_NOT_IMPLEMENTED(
-          `Attempting to create database on unsuported engine.`
-        )
+        throw new sdk.WERR_NOT_IMPLEMENTED(`Attempting to create database on unsuported engine.`)
       return dbtype
     } catch (eu: unknown) {
       const e = sdk.WalletError.fromUnknown(eu)
       if (e.code === 'SQLITE_ERROR') return 'SQLite'
-      throw new sdk.WERR_NOT_IMPLEMENTED(
-        `Attempting to create database on unsuported engine.`
-      )
+      throw new sdk.WERR_NOT_IMPLEMENTED(`Attempting to create database on unsuported engine.`)
     }
   }
 }

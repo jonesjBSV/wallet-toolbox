@@ -32,8 +32,7 @@ describe('Wallet services tests', () => {
 
   test('0 getUtxoStatus', async () => {
     for (const { chain, wallet, services } of ctxs) {
-      if (!wallet.services || !services)
-        throw new sdk.WERR_INTERNAL('test requires setup with services')
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
       {
         const us = await wallet.services.getUtxoStatus(
           '4104eca750b68551fb5aa893acb428b6a7d2d673498fd055cf2a8d402211b9500bdc27936846c2aa45cf82afe2f566b69cd7f7298154b0ffb25fbfa4fef8986191c4ac',
@@ -53,8 +52,7 @@ describe('Wallet services tests', () => {
   // Underlying WoC service is rate limited
   test.skip('1 getBsvExchangeRate', async () => {
     for (const { chain, wallet, services } of ctxs) {
-      if (!wallet.services || !services)
-        throw new sdk.WERR_INTERNAL('test requires setup with services')
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
 
       {
         const usdPerBsv = await wallet.services.getBsvExchangeRate()
@@ -65,13 +63,9 @@ describe('Wallet services tests', () => {
 
   test('2 getFiatExchangeRate', async () => {
     for (const { chain, wallet, services } of ctxs) {
-      if (!wallet.services || !services)
-        throw new sdk.WERR_INTERNAL('test requires setup with services')
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
       {
-        const eurPerUsd = await wallet.services.getFiatExchangeRate(
-          'EUR',
-          'USD'
-        )
+        const eurPerUsd = await wallet.services.getFiatExchangeRate('EUR', 'USD')
         expect(eurPerUsd).toBeGreaterThan(0)
       }
     }
@@ -79,8 +73,7 @@ describe('Wallet services tests', () => {
 
   test('3 getChainTracker', async () => {
     for (const { chain, wallet, services } of ctxs) {
-      if (!wallet.services || !services)
-        throw new sdk.WERR_INTERNAL('test requires setup with services')
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
 
       {
         const chaintracker = await wallet.services.getChainTracker()
@@ -92,8 +85,7 @@ describe('Wallet services tests', () => {
 
   test('4 getMerklePath', async () => {
     for (const { chain, wallet, services } of ctxs) {
-      if (!wallet.services || !services)
-        throw new sdk.WERR_INTERNAL('test requires setup with services')
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
 
       {
         const mp = await wallet.services.getMerklePath(
@@ -109,12 +101,9 @@ describe('Wallet services tests', () => {
 
   test('5 getRawTx', async () => {
     for (const { chain, wallet, services } of ctxs) {
-      if (!wallet.services || !services)
-        throw new sdk.WERR_INTERNAL('test requires setup with services')
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
       {
-        const rawTx = await wallet.services.getRawTx(
-          '9cce99686bc8621db439b7150dd5b3b269e4b0628fd75160222c417d6f2b95e4'
-        )
+        const rawTx = await wallet.services.getRawTx('9cce99686bc8621db439b7150dd5b3b269e4b0628fd75160222c417d6f2b95e4')
         if (chain === 'main') expect(rawTx.rawTx!.length).toBe(176)
         else expect(rawTx.rawTx).not.toBeTruthy()
       }

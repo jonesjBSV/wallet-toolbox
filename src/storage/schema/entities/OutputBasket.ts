@@ -1,11 +1,5 @@
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableOutputBasket,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableOutputBasket, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityOutputBasket extends EntityBase<TableOutputBasket> {
@@ -100,8 +94,7 @@ export class EntityOutputBasket extends EntityBase<TableOutputBasket> {
     )
       return false
     if (syncMap) {
-      if (eo.basketId !== syncMap.outputBasket.idMap[verifyId(ei.basketId)])
-        return false
+      if (eo.basketId !== syncMap.outputBasket.idMap[verifyId(ei.basketId)]) return false
     } else {
       if (eo.basketId !== ei.basketId || eo.userId !== ei.userId) return false
     }
@@ -129,12 +122,7 @@ export class EntityOutputBasket extends EntityBase<TableOutputBasket> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.userId = userId
     this.name ||= 'default'
     this.basketId = 0
@@ -155,7 +143,7 @@ export class EntityOutputBasket extends EntityBase<TableOutputBasket> {
       this.minimumDesiredUTXOValue = ei.minimumDesiredUTXOValue
       this.numberOfDesiredUTXOs = ei.numberOfDesiredUTXOs
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateOutputBasket(this.id, this.toApi(), trx)
       wasMerged = true
     }

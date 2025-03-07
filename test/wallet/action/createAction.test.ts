@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AtomicBEEF, Beef, CreateActionArgs, SignActionArgs } from '@bsv/sdk'
 import { sdk, StorageKnex } from '../../../src/index.all'
-import {
-  _tu,
-  expectToThrowWERR,
-  TestWalletNoSetup
-} from '../../utils/TestUtilsWalletStorage'
+import { _tu, expectToThrowWERR, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 const noLog = true
 
@@ -20,8 +16,7 @@ describe('createAction test', () => {
 
   beforeEach(async () => {
     ctxs = []
-    if (env.runMySQL)
-      ctxs.push(await _tu.createLegacyWalletMySQLCopy('createActionTests'))
+    if (env.runMySQL) ctxs.push(await _tu.createLegacyWalletMySQLCopy('createActionTests'))
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy(`${testName()}`))
     _tu.mockPostServicesAsSuccess(ctxs)
   })
@@ -65,9 +60,7 @@ describe('createAction test', () => {
         ]
 
         for (const a of args) {
-          await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () =>
-            wallet.createAction(a)
-          )
+          await expectToThrowWERR(sdk.WERR_INVALID_PARAMETER, () => wallet.createAction(a))
         }
       }
     }
@@ -95,10 +88,7 @@ describe('createAction test', () => {
       }
 
       const cr = await wallet.createAction(createArgs)
-      expect(
-        cr.txid ===
-          '4f428a93c43c2d120204ecdc06f7916be8a5f4542cc8839a0fd79bd1b44582f3'
-      )
+      expect(cr.txid === '4f428a93c43c2d120204ecdc06f7916be8a5f4542cc8839a0fd79bd1b44582f3')
     }
   })
 

@@ -1,12 +1,7 @@
 /* Additional update tests for setting edge cases and exercising contraints (unique/foreign) */
 /* Requires a new DB for each test                                                           */
 import { _tu, TestSetup1 } from '../utils/TestUtilsWalletStorage'
-import {
-  sdk,
-  StorageProvider,
-  StorageKnex,
-  verifyOne
-} from '../../src/index.all'
+import { sdk, StorageProvider, StorageKnex, verifyOne } from '../../src/index.all'
 import {
   normalizeDate,
   setLogging,
@@ -44,12 +39,7 @@ describe('update2 tests', () => {
   const chain: sdk.Chain = 'test'
 
   const createDB = async (databaseName: string): Promise<void> => {
-    const localSQLiteFile = await _tu.newTmpFile(
-      `${databaseName}.sqlite`,
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile(`${databaseName}.sqlite`, false, false, true)
 
     // Need to pool connections
     const knexSQLite: Knex = knex({
@@ -132,11 +122,7 @@ describe('update2 tests', () => {
             merkleRoot: '1234',
             rawTx: [4, 3, 2, 1]
           }
-          await updateTable(
-            storage.updateProvenTx.bind(storage),
-            record[primaryKey],
-            testValues
-          )
+          await updateTable(storage.updateProvenTx.bind(storage), record[primaryKey], testValues)
           const updatedTx = verifyOne(
             await storage.findProvenTxs({
               partial: { [primaryKey]: record[primaryKey] }
@@ -184,9 +170,7 @@ describe('update2 tests', () => {
                   partial: { [primaryKey]: record[primaryKey] }
                 })
               )
-              expect(new Date(updatedRow[key]).toISOString()).toBe(
-                validDate.toISOString()
-              )
+              expect(new Date(updatedRow[key]).toISOString()).toBe(validDate.toISOString())
             }
             if (Array.isArray(value)) {
               const validArray = value.map(v => v + 1)
@@ -254,24 +238,8 @@ describe('update2 tests', () => {
               partial: { provenTxId: record.provenTxId }
             })
           )
-          expect(
-            validateUpdateTime(
-              t.created_at,
-              updates.created_at,
-              referenceTime,
-              10,
-              false
-            )
-          ).toBe(true)
-          expect(
-            validateUpdateTime(
-              t.updated_at,
-              updates.updated_at,
-              referenceTime,
-              10,
-              false
-            )
-          ).toBe(true)
+          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime, 10, false)).toBe(true)
+          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime, 10, false)).toBe(true)
         }
       }
     }
@@ -297,21 +265,14 @@ describe('update2 tests', () => {
         expect(r).toBeGreaterThan(0)
         const insertedRecords = await storage.findProvenTxs({ partial: {} })
         expect(insertedRecords.length).toBeGreaterThan(0)
-        const foundRecord = insertedRecords.find(
-          record => record.provenTxId === 3
-        )
+        const foundRecord = insertedRecords.find(record => record.provenTxId === 3)
         expect(foundRecord).toBeDefined()
         expect(foundRecord?.txid).toBe('mockTxid')
       } catch (error: any) {
-        console.error(
-          'Error inserting initial record:',
-          (error as Error).message
-        )
+        console.error('Error inserting initial record:', (error as Error).message)
         return
       }
-      await expect(
-        storage.updateProvenTx(1, { provenTxId: 0 })
-      ).rejects.toThrow(/FOREIGN KEY constraint failed/)
+      await expect(storage.updateProvenTx(1, { provenTxId: 0 })).rejects.toThrow(/FOREIGN KEY constraint failed/)
       const r1 = await storage.updateProvenTx(3, { provenTxId: 0 })
       await expect(Promise.resolve(r1)).resolves.toBe(1)
       const r2 = await storage.findProvenTxs({ partial: {} })
@@ -334,14 +295,16 @@ describe('update2 tests', () => {
     const primaryKey = 'provenTxReqId'
     for (const { storage } of setups) {
       const records = await storage.findProvenTxReqs({ partial: {} })
+      let i = -1
       for (const record of records) {
+        i++
         try {
           const testValues: TableProvenTxReq = {
             provenTxReqId: record.provenTxReqId,
             provenTxId: 1,
             batch: `batch-001`,
             status: 'completed',
-            txid: `mockTxid-${Date.now()}`,
+            txid: `mockTxid-${i}`,
             created_at: new Date('2024-12-30T23:00:00Z'),
             updated_at: new Date('2024-12-30T23:05:00Z'),
             attempts: 3,
@@ -351,10 +314,7 @@ describe('update2 tests', () => {
             notify: JSON.stringify({ email: 'test@example.com', sent: true }),
             rawTx: [1, 2, 3, 4]
           }
-          const r1 = await storage.updateProvenTxReq(
-            record[primaryKey],
-            testValues
-          )
+          const r1 = await storage.updateProvenTxReq(record[primaryKey], testValues)
           expect(r1).toBe(1)
           const updatedRow = verifyOne(
             await storage.findProvenTxReqs({
@@ -369,37 +329,22 @@ describe('update2 tests', () => {
               expect(normalizedActual).toBe(normalizedExpected)
               continue
             }
-            if (
-              typeof value === 'string' &&
-              value.startsWith('{') &&
-              value.endsWith('}')
-            ) {
+            if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
               expect(JSON.parse(actualValue)).toStrictEqual(JSON.parse(value))
               continue
             }
-            if (
-              typeof value === 'string' ||
-              typeof value === 'number' ||
-              typeof value === 'boolean'
-            ) {
+            if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
               expect(actualValue).toBe(value)
               continue
             }
-            if (
-              typeof actualValue === 'object' &&
-              actualValue?.type === 'Buffer'
-            ) {
+            if (typeof actualValue === 'object' && actualValue?.type === 'Buffer') {
               const actualArray = actualValue.data || actualValue
               const expectedArray =
-                Buffer.isBuffer(value) || Array.isArray(value)
-                  ? Array.from(value as ArrayLike<number>)
-                  : value
+                Buffer.isBuffer(value) || Array.isArray(value) ? Array.from(value as ArrayLike<number>) : value
               expect(actualArray).toStrictEqual(expectedArray)
               continue
             }
-            expect(
-              JSON.stringify({ type: 'Buffer', data: actualValue })
-            ).toStrictEqual(JSON.stringify(value))
+            expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
           }
         } catch (error: any) {
           console.error(
@@ -453,12 +398,8 @@ describe('update2 tests', () => {
               partial: { provenTxReqId: record.provenTxReqId }
             })
           )
-          expect(
-            validateUpdateTime(t.created_at, updates.created_at, referenceTime)
-          ).toBe(true)
-          expect(
-            validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)
-          ).toBe(true)
+          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime)).toBe(true)
+          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)).toBe(true)
         }
       }
     }
@@ -501,16 +442,12 @@ describe('update2 tests', () => {
       const r3 = await storage.updateProvenTxReq(3, { batch: 'updatedBatch' })
       await expect(Promise.resolve(r3)).resolves.toBe(1)
       const updatedRecords = await storage.findProvenTxReqs({ partial: {} })
-      const updatedBatch = updatedRecords.find(
-        r => r.provenTxReqId === 3
-      )?.batch
+      const updatedBatch = updatedRecords.find(r => r.provenTxReqId === 3)?.batch
       expect(updatedBatch).toBe('updatedBatch')
       try {
         const r4 = await storage.updateProvenTxReq(4, { batch: 'updatedBatch' })
         if (r4 === 0) {
-          console.warn(
-            'No rows updated. Ensure UNIQUE constraint exists on the batch column if rejection is expected.'
-          )
+          console.warn('No rows updated. Ensure UNIQUE constraint exists on the batch column if rejection is expected.')
         } else {
           await expect(Promise.resolve(r4)).resolves.toBe(1)
         }
@@ -519,13 +456,9 @@ describe('update2 tests', () => {
       }
       const r5 = await storage.updateProvenTxReq(3, { txid: 'newValidTxid' })
       await expect(Promise.resolve(r5)).resolves.toBe(1)
-      await expect(
-        storage.updateProvenTxReq(4, { txid: 'newValidTxid' })
-      ).rejects.toThrow(/UNIQUE constraint failed/)
+      await expect(storage.updateProvenTxReq(4, { txid: 'newValidTxid' })).rejects.toThrow(/UNIQUE constraint failed/)
       const finalRecords = await storage.findProvenTxReqs({ partial: {} })
-      expect(finalRecords.find(r => r.provenTxReqId === 4)?.txid).toBe(
-        'mockTxid2'
-      )
+      expect(finalRecords.find(r => r.provenTxReqId === 4)?.txid).toBe('mockTxid2')
       await storage.updateProvenTxReq(3, { batch: 'batch', txid: 'mockTxid1' })
     }
   })
@@ -544,10 +477,7 @@ describe('update2 tests', () => {
             updated_at: new Date('2024-12-30T23:05:00Z'),
             activeStorage: storage.getSettings().storageIdentityKey
           }
-          const updateResult = await storage.updateUser(
-            record[primaryKey],
-            testValues
-          )
+          const updateResult = await storage.updateUser(record[primaryKey], testValues)
           expect(updateResult).toBe(1)
           const updatedRow = verifyOne(
             await storage.findUsers({
@@ -611,15 +541,9 @@ describe('update2 tests', () => {
           await storage.updateUser(record.userId, {
             updated_at: updates.updated_at
           })
-          const t = verifyOne(
-            await storage.findUsers({ partial: { userId: record.userId } })
-          )
-          expect(
-            validateUpdateTime(t.created_at, updates.created_at, referenceTime)
-          ).toBe(true)
-          expect(
-            validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)
-          ).toBe(true)
+          const t = verifyOne(await storage.findUsers({ partial: { userId: record.userId } }))
+          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime)).toBe(true)
+          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)).toBe(true)
         }
       }
     }
@@ -637,38 +561,17 @@ describe('update2 tests', () => {
         console.error('Error updating second record:', error.message)
         return
       }
-      const r1 = await triggerUniqueConstraintError(
-        storage,
-        'findUsers',
-        'updateUser',
-        'users',
-        'userId',
-        {
-          userId: 2
-        }
-      )
+      const r1 = await triggerUniqueConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', {
+        userId: 2
+      })
       await expect(Promise.resolve(r1)).resolves.toBe(true)
-      const r2 = await triggerUniqueConstraintError(
-        storage,
-        'findUsers',
-        'updateUser',
-        'users',
-        'userId',
-        {
-          identityKey: 'mockDupIdentityKey'
-        }
-      )
+      const r2 = await triggerUniqueConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', {
+        identityKey: 'mockDupIdentityKey'
+      })
       await expect(Promise.resolve(r2)).resolves.toBe(true)
-      const r3 = await triggerUniqueConstraintError(
-        storage,
-        'findUsers',
-        'updateUser',
-        'users',
-        'userId',
-        {
-          identityKey: 'mockUniqueIdentityKey'
-        }
-      )
+      const r3 = await triggerUniqueConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', {
+        identityKey: 'mockUniqueIdentityKey'
+      })
       await expect(Promise.resolve(r3)).resolves.toBe(false)
     }
   })
@@ -676,16 +579,9 @@ describe('update2 tests', () => {
   test('11_update User trigger DB foreign key constraint errors', async () => {
     await createDB('User11')
     for (const { storage } of setups) {
-      const r1 = await triggerForeignKeyConstraintError(
-        storage,
-        'findUsers',
-        'updateUser',
-        'users',
-        'userId',
-        {
-          userId: 0
-        }
-      )
+      const r1 = await triggerForeignKeyConstraintError(storage, 'findUsers', 'updateUser', 'users', 'userId', {
+        userId: 0
+      })
       await expect(Promise.resolve(r1)).resolves.toBe(true)
       const r2 = await triggerForeignKeyConstraintError(
         storage,
@@ -717,12 +613,8 @@ describe('update2 tests', () => {
         console.error('Error inserting initial record:', error.message)
         return
       }
-      await expect(storage.updateUser(1, { userId: 0 })).rejects.toThrow(
-        /FOREIGN KEY constraint failed/
-      )
-      await expect(storage.updateUser(2, { userId: 0 })).rejects.toThrow(
-        /FOREIGN KEY constraint failed/
-      )
+      await expect(storage.updateUser(1, { userId: 0 })).rejects.toThrow(/FOREIGN KEY constraint failed/)
+      await expect(storage.updateUser(2, { userId: 0 })).rejects.toThrow(/FOREIGN KEY constraint failed/)
       const r1 = await storage.updateUser(3, { userId: 0 })
       await expect(Promise.resolve(r1)).resolves.toBe(1)
       const r2 = await storage.findUsers({ partial: {} })
@@ -741,9 +633,7 @@ describe('update2 tests', () => {
       expect(r6[0].userId).toBe(1)
       expect(r6[1].userId).toBe(2)
       expect(r6[2].userId).toBe(9999)
-      await expect(storage.updateUser(1, { userId: 9999 })).rejects.toThrow(
-        /UNIQUE constraint failed/
-      )
+      await expect(storage.updateUser(1, { userId: 9999 })).rejects.toThrow(/UNIQUE constraint failed/)
       const r7 = await storage.findUsers({ partial: {} })
       expect(r7[0].userId).toBe(1)
       expect(r7[1].userId).toBe(2)
@@ -756,9 +646,9 @@ describe('update2 tests', () => {
       expect(r9[0].identityKey).not.toBe('mockValidIdentityKey')
       expect(r9[1].identityKey).not.toBe('mockValidIdentityKey')
       expect(r9[2].identityKey).toBe('mockValidIdentityKey')
-      await expect(
-        storage.updateUser(2, { identityKey: 'mockValidIdentityKey' })
-      ).rejects.toThrow(/UNIQUE constraint failed/)
+      await expect(storage.updateUser(2, { identityKey: 'mockValidIdentityKey' })).rejects.toThrow(
+        /UNIQUE constraint failed/
+      )
       const r10 = await storage.findUsers({ partial: {} })
       expect(r10[0].identityKey).not.toBe('mockValidIdentityKey')
       expect(r10[1].identityKey).not.toBe('mockValidIdentityKey')
@@ -803,10 +693,7 @@ describe('update2 tests', () => {
             signature: 'mockSignature',
             subject: 'mockSubject'
           }
-          const r1 = await storage.updateCertificate(
-            record[primaryKey],
-            testValues
-          )
+          const r1 = await storage.updateCertificate(record[primaryKey], testValues)
           expect(r1).toBe(1)
           const updatedRow = verifyOne(
             await storage.findCertificates({
@@ -821,11 +708,7 @@ describe('update2 tests', () => {
               expect(normalizedActual).toBe(normalizedExpected)
               continue
             }
-            if (
-              typeof value === 'string' &&
-              value.startsWith('{') &&
-              value.endsWith('}')
-            ) {
+            if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
               expect(JSON.parse(actualValue)).toStrictEqual(JSON.parse(value))
               continue
             }
@@ -835,9 +718,7 @@ describe('update2 tests', () => {
               } else if (value === 0) {
                 expect(actualValue).toBe(false)
               } else {
-                throw new Error(
-                  `Unexpected value for expectedValue: ${value}. Must be 0 or 1.`
-                )
+                throw new Error(`Unexpected value for expectedValue: ${value}. Must be 0 or 1.`)
               }
               continue
             }
@@ -845,21 +726,14 @@ describe('update2 tests', () => {
               expect(actualValue).toBe(value)
               continue
             }
-            if (
-              typeof actualValue === 'object' &&
-              actualValue?.type === 'Buffer'
-            ) {
+            if (typeof actualValue === 'object' && actualValue?.type === 'Buffer') {
               const actualArray = actualValue.data || actualValue
               const expectedArray =
-                Buffer.isBuffer(value) || Array.isArray(value)
-                  ? Array.from(value as ArrayLike<number>)
-                  : value
+                Buffer.isBuffer(value) || Array.isArray(value) ? Array.from(value as ArrayLike<number>) : value
               expect(actualArray).toStrictEqual(expectedArray)
               continue
             }
-            expect(
-              JSON.stringify({ type: 'Buffer', data: actualValue })
-            ).toStrictEqual(JSON.stringify(value))
+            expect(JSON.stringify({ type: 'Buffer', data: actualValue })).toStrictEqual(JSON.stringify(value))
           }
         } catch (error: any) {
           console.error(
@@ -913,12 +787,8 @@ describe('update2 tests', () => {
               partial: { certificateId: record.certificateId }
             })
           )
-          expect(
-            validateUpdateTime(t.created_at, updates.created_at, referenceTime)
-          ).toBe(true)
-          expect(
-            validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)
-          ).toBe(true)
+          expect(validateUpdateTime(t.created_at, updates.created_at, referenceTime)).toBe(true)
+          expect(validateUpdateTime(t.updated_at, updates.updated_at, referenceTime)).toBe(true)
         }
       }
     }

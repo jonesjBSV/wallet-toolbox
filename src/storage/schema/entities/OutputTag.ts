@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableOutputTag,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableOutputTag, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityOutputTag extends EntityBase<TableOutputTag> {
@@ -94,9 +88,7 @@ export class EntityOutputTag extends EntityBase<TableOutputTag> {
     syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<{ found: boolean; eo: EntityOutputTag; eiId: number }> {
-    const ef = verifyOneOrNone(
-      await storage.findOutputTags({ partial: { tag: ei.tag, userId }, trx })
-    )
+    const ef = verifyOneOrNone(await storage.findOutputTags({ partial: { tag: ei.tag, userId }, trx }))
     return {
       found: !!ef,
       eo: new EntityOutputTag(ef || { ...ei }),
@@ -104,12 +96,7 @@ export class EntityOutputTag extends EntityBase<TableOutputTag> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.userId = userId
     this.outputTagId = 0
     this.outputTagId = await storage.insertOutputTag(this.toApi(), trx)
@@ -125,7 +112,7 @@ export class EntityOutputTag extends EntityBase<TableOutputTag> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateOutputTag(this.id, this.toApi(), trx)
       wasMerged = true
     }

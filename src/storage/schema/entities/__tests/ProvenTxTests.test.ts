@@ -1,9 +1,6 @@
 import * as bsv from '@bsv/sdk'
 import { createSyncMap, sdk, SyncMap } from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityProvenTx } from '../../../../../src/storage/schema/entities/ProvenTx'
 
 describe('ProvenTx class method tests', () => {
@@ -33,8 +30,7 @@ describe('ProvenTx class method tests', () => {
 
   test('0_fromTxid: valid txid with rawTx and Merkle proof (real database)', async () => {
     const ctx = ctxs[0]
-    const txid =
-      '2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122' // Using a valid txid from the table
+    const txid = '2795b293c698b2244147aaba745db887a632d21990c474df46d842ec3e52f122' // Using a valid txid from the table
 
     // Fetch the rawTx and Merkle proof data directly from the database
     const provenTxRecord = await ctx.activeStorage.findProvenTxs({
@@ -202,8 +198,7 @@ describe('ProvenTx class method tests', () => {
     provenTx.provenTxId = 2
     provenTx.created_at = new Date('2025-02-01T00:00:00Z')
     provenTx.updated_at = new Date('2025-02-02T00:00:00Z')
-    provenTx.txid =
-      'a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7'
+    provenTx.txid = 'a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7'
     provenTx.height = 456
     provenTx.index = 1
     provenTx.merklePath = [0x07, 0x08, 0x09]
@@ -215,9 +210,7 @@ describe('ProvenTx class method tests', () => {
     expect(provenTx.provenTxId).toBe(2)
     expect(provenTx.created_at).toEqual(new Date('2025-02-01T00:00:00Z'))
     expect(provenTx.updated_at).toEqual(new Date('2025-02-02T00:00:00Z'))
-    expect(provenTx.txid).toBe(
-      'a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7'
-    )
+    expect(provenTx.txid).toBe('a3b2f0935c7b5bb7a841a09e535c13be86f4df0e7a91cebdc33812bfcc0eb9d7')
     expect(provenTx.height).toBe(456)
     expect(provenTx.index).toBe(1)
     expect(provenTx.merklePath).toEqual([0x07, 0x08, 0x09])
@@ -469,13 +462,7 @@ describe('ProvenTx class method tests', () => {
     const mockTrx: sdk.TrxToken = {}
 
     // Call the mergeExisting method
-    const result = await provenTx.mergeExisting(
-      mockStorage,
-      new Date(),
-      provenTx.toApi(),
-      mockSyncMap,
-      mockTrx
-    )
+    const result = await provenTx.mergeExisting(mockStorage, new Date(), provenTx.toApi(), mockSyncMap, mockTrx)
 
     // Assert that it always returns false
     expect(result).toBe(false)

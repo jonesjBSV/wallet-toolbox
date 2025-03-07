@@ -35,33 +35,15 @@ import {
   verifyTruthy
 } from '../index.client'
 import { getBeefForTransaction } from './methods/getBeefForTransaction'
-import {
-  GetReqsAndBeefDetail,
-  GetReqsAndBeefResult,
-  processAction
-} from './methods/processAction'
-import {
-  attemptToPostReqsToNetwork,
-  PostReqsToNetworkResult
-} from './methods/attemptToPostReqsToNetwork'
+import { GetReqsAndBeefDetail, GetReqsAndBeefResult, processAction } from './methods/processAction'
+import { attemptToPostReqsToNetwork, PostReqsToNetworkResult } from './methods/attemptToPostReqsToNetwork'
 import { listCertificates } from './methods/listCertificates'
 import { createAction } from './methods/createAction'
 import { internalizeAction } from './methods/internalizeAction'
-import {
-  StorageReaderWriter,
-  StorageReaderWriterOptions
-} from './StorageReaderWriter'
-import {
-  EntityProvenTx,
-  EntityProvenTxReq,
-  EntitySyncState,
-  EntityTransaction
-} from './schema/entities'
+import { StorageReaderWriter, StorageReaderWriterOptions } from './StorageReaderWriter'
+import { EntityProvenTx, EntityProvenTxReq, EntitySyncState, EntityTransaction } from './schema/entities'
 
-export abstract class StorageProvider
-  extends StorageReaderWriter
-  implements sdk.WalletStorageProvider
-{
+export abstract class StorageProvider extends StorageReaderWriter implements sdk.WalletStorageProvider {
   isDirty = false
   _services?: sdk.WalletServices
   feeModel: sdk.StorageFeeModel
@@ -92,15 +74,9 @@ export abstract class StorageProvider
     this.commissionSatoshis = options.commissionSatoshis
   }
 
-  abstract reviewStatus(args: {
-    agedLimit: Date
-    trx?: sdk.TrxToken
-  }): Promise<{ log: string }>
+  abstract reviewStatus(args: { agedLimit: Date; trx?: sdk.TrxToken }): Promise<{ log: string }>
 
-  abstract purgeData(
-    params: sdk.PurgeParams,
-    trx?: sdk.TrxToken
-  ): Promise<sdk.PurgeResults>
+  abstract purgeData(params: sdk.PurgeParams, trx?: sdk.TrxToken): Promise<sdk.PurgeResults>
 
   abstract allocateChangeInput(
     userId: number,
@@ -111,10 +87,7 @@ export abstract class StorageProvider
     transactionId: number
   ): Promise<TableOutput | undefined>
 
-  abstract getProvenOrRawTx(
-    txid: string,
-    trx?: sdk.TrxToken
-  ): Promise<sdk.ProvenOrRawTx>
+  abstract getProvenOrRawTx(txid: string, trx?: sdk.TrxToken): Promise<sdk.ProvenOrRawTx>
   abstract getRawTxOfKnownValidTransaction(
     txid?: string,
     offset?: number,
@@ -122,46 +95,18 @@ export abstract class StorageProvider
     trx?: sdk.TrxToken
   ): Promise<number[] | undefined>
 
-  abstract getLabelsForTransactionId(
-    transactionId?: number,
-    trx?: sdk.TrxToken
-  ): Promise<TableTxLabel[]>
-  abstract getTagsForOutputId(
-    outputId: number,
-    trx?: sdk.TrxToken
-  ): Promise<TableOutputTag[]>
+  abstract getLabelsForTransactionId(transactionId?: number, trx?: sdk.TrxToken): Promise<TableTxLabel[]>
+  abstract getTagsForOutputId(outputId: number, trx?: sdk.TrxToken): Promise<TableOutputTag[]>
 
-  abstract listActions(
-    auth: sdk.AuthId,
-    args: sdk.ValidListActionsArgs
-  ): Promise<ListActionsResult>
-  abstract listOutputs(
-    auth: sdk.AuthId,
-    args: sdk.ValidListOutputsArgs
-  ): Promise<ListOutputsResult>
+  abstract listActions(auth: sdk.AuthId, args: sdk.ValidListActionsArgs): Promise<ListActionsResult>
+  abstract listOutputs(auth: sdk.AuthId, args: sdk.ValidListOutputsArgs): Promise<ListOutputsResult>
 
-  abstract countChangeInputs(
-    userId: number,
-    basketId: number,
-    excludeSending: boolean
-  ): Promise<number>
+  abstract countChangeInputs(userId: number, basketId: number, excludeSending: boolean): Promise<number>
 
-  abstract findCertificatesAuth(
-    auth: sdk.AuthId,
-    args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificateX[]>
-  abstract findOutputBasketsAuth(
-    auth: sdk.AuthId,
-    args: sdk.FindOutputBasketsArgs
-  ): Promise<TableOutputBasket[]>
-  abstract findOutputsAuth(
-    auth: sdk.AuthId,
-    args: sdk.FindOutputsArgs
-  ): Promise<TableOutput[]>
-  abstract insertCertificateAuth(
-    auth: sdk.AuthId,
-    certificate: TableCertificateX
-  ): Promise<number>
+  abstract findCertificatesAuth(auth: sdk.AuthId, args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]>
+  abstract findOutputBasketsAuth(auth: sdk.AuthId, args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]>
+  abstract findOutputsAuth(auth: sdk.AuthId, args: sdk.FindOutputsArgs): Promise<TableOutput[]>
+  abstract insertCertificateAuth(auth: sdk.AuthId, certificate: TableCertificateX): Promise<number>
 
   override isStorageProvider(): boolean {
     return true
@@ -171,17 +116,12 @@ export abstract class StorageProvider
     this._services = v
   }
   getServices(): sdk.WalletServices {
-    if (!this._services)
-      throw new sdk.WERR_INVALID_OPERATION('Must setServices first.')
+    if (!this._services) throw new sdk.WERR_INVALID_OPERATION('Must setServices first.')
     return this._services
   }
 
-  async abortAction(
-    auth: sdk.AuthId,
-    args: AbortActionArgs
-  ): Promise<AbortActionResult> {
-    if (!auth.userId)
-      throw new sdk.WERR_INVALID_PARAMETER('auth.userId', 'valid')
+  async abortAction(auth: sdk.AuthId, args: AbortActionArgs): Promise<AbortActionResult> {
+    if (!auth.userId) throw new sdk.WERR_INVALID_PARAMETER('auth.userId', 'valid')
 
     const userId = auth.userId
     let reference: string | undefined = args.reference
@@ -207,28 +147,13 @@ export abstract class StorageProvider
           })
         )
       }
-      const unAbortableStatus: sdk.TransactionStatus[] = [
-        'completed',
-        'failed',
-        'sending',
-        'unproven'
-      ]
-      if (
-        !tx ||
-        !tx.isOutgoing ||
-        -1 < unAbortableStatus.findIndex(s => s === tx.status)
-      )
+      const unAbortableStatus: sdk.TransactionStatus[] = ['completed', 'failed', 'sending', 'unproven']
+      if (!tx || !tx.isOutgoing || -1 < unAbortableStatus.findIndex(s => s === tx.status))
         throw new sdk.WERR_INVALID_PARAMETER(
           'reference',
           'an inprocess, outgoing action that has not been signed and shared to the network.'
         )
-      await this.updateTransactionStatus(
-        'failed',
-        tx.transactionId,
-        userId,
-        reference,
-        trx
-      )
+      await this.updateTransactionStatus('failed', tx.transactionId, userId, reference, trx)
       if (tx.txid) {
         const req = await EntityProvenTxReq.fromStorageTxid(this, tx.txid, trx)
         if (req) {
@@ -245,10 +170,7 @@ export abstract class StorageProvider
     return r
   }
 
-  async internalizeAction(
-    auth: sdk.AuthId,
-    args: InternalizeActionArgs
-  ): Promise<InternalizeActionResult> {
+  async internalizeAction(auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult> {
     return await internalizeAction(this, auth, args)
   }
 
@@ -278,28 +200,14 @@ export abstract class StorageProvider
       }
       r.details.push(d)
       try {
-        d.proven = verifyOneOrNone(
-          await this.findProvenTxs({ partial: { txid }, trx })
-        )
+        d.proven = verifyOneOrNone(await this.findProvenTxs({ partial: { txid }, trx }))
         if (d.proven) d.status = 'alreadySent'
         else {
-          const alreadySentStatus = [
-            'unmined',
-            'callback',
-            'unconfirmed',
-            'completed'
-          ]
-          const readyToSendStatus = [
-            'sending',
-            'unsent',
-            'nosend',
-            'unprocessed'
-          ]
+          const alreadySentStatus = ['unmined', 'callback', 'unconfirmed', 'completed']
+          const readyToSendStatus = ['sending', 'unsent', 'nosend', 'unprocessed']
           const errorStatus = ['unknown', 'nonfinal', 'invalid', 'doubleSpend']
 
-          d.req = verifyOneOrNone(
-            await this.findProvenTxReqs({ partial: { txid }, trx })
-          )
+          d.req = verifyOneOrNone(await this.findProvenTxReqs({ partial: { txid }, trx }))
           if (!d.req) {
             d.status = 'error'
             d.error = `ERR_UNKNOWN_TXID: ${txid} was not found.`
@@ -319,12 +227,7 @@ export abstract class StorageProvider
           }
 
           if (d.status === 'readyToSend') {
-            await this.mergeReqToBeefToShareExternally(
-              d.req!,
-              r.beef,
-              knownTxids,
-              trx
-            )
+            await this.mergeReqToBeefToShareExternally(d.req!, r.beef, knownTxids, trx)
           }
         }
       } catch (eu: unknown) {
@@ -342,29 +245,17 @@ export abstract class StorageProvider
     trx?: sdk.TrxToken
   ): Promise<void> {
     const { rawTx, inputBEEF: beef } = req
-    if (!rawTx || !beef)
-      throw new sdk.WERR_INTERNAL(`req rawTx and beef must be valid.`)
+    if (!rawTx || !beef) throw new sdk.WERR_INTERNAL(`req rawTx and beef must be valid.`)
     mergeToBeef.mergeRawTx(asArray(rawTx))
     mergeToBeef.mergeBeef(asArray(beef))
     const tx = BsvTransaction.fromBinary(asArray(rawTx))
     for (const input of tx.inputs) {
-      if (!input.sourceTXID)
-        throw new sdk.WERR_INTERNAL(
-          `req all transaction inputs must have valid sourceTXID`
-        )
+      if (!input.sourceTXID) throw new sdk.WERR_INTERNAL(`req all transaction inputs must have valid sourceTXID`)
       const txid = input.sourceTXID
       const btx = mergeToBeef.findTxid(txid)
       if (!btx) {
-        if (knownTxids && knownTxids.indexOf(txid) > -1)
-          mergeToBeef.mergeTxidOnly(txid)
-        else
-          await this.getValidBeefForKnownTxid(
-            txid,
-            mergeToBeef,
-            undefined,
-            knownTxids,
-            trx
-          )
+        if (knownTxids && knownTxids.indexOf(txid) > -1) mergeToBeef.mergeTxidOnly(txid)
+        else await this.getValidBeefForKnownTxid(txid, mergeToBeef, undefined, knownTxids, trx)
       }
     }
   }
@@ -383,26 +274,17 @@ export abstract class StorageProvider
    * @param trx
    * @returns
    */
-  async getProvenOrReq(
-    txid: string,
-    newReq?: TableProvenTxReq,
-    trx?: sdk.TrxToken
-  ): Promise<sdk.StorageProvenOrReq> {
-    if (newReq && txid !== newReq.txid)
-      throw new sdk.WERR_INVALID_PARAMETER('newReq', `same txid`)
+  async getProvenOrReq(txid: string, newReq?: TableProvenTxReq, trx?: sdk.TrxToken): Promise<sdk.StorageProvenOrReq> {
+    if (newReq && txid !== newReq.txid) throw new sdk.WERR_INVALID_PARAMETER('newReq', `same txid`)
 
     const r: sdk.StorageProvenOrReq = { proven: undefined, req: undefined }
 
-    r.proven = verifyOneOrNone(
-      await this.findProvenTxs({ partial: { txid }, trx })
-    )
+    r.proven = verifyOneOrNone(await this.findProvenTxs({ partial: { txid }, trx }))
     if (r.proven) return r
 
     for (let retry = 0; ; retry++) {
       try {
-        r.req = verifyOneOrNone(
-          await this.findProvenTxReqs({ partial: { txid }, trx })
-        )
+        r.req = verifyOneOrNone(await this.findProvenTxReqs({ partial: { txid }, trx }))
         if (!r.req && !newReq) break
         if (!r.req && newReq) {
           await this.insertProvenTxReq(newReq, trx)
@@ -423,19 +305,10 @@ export abstract class StorageProvider
     return r
   }
 
-  async updateTransactionsStatus(
-    transactionIds: number[],
-    status: sdk.TransactionStatus
-  ): Promise<void> {
+  async updateTransactionsStatus(transactionIds: number[], status: sdk.TransactionStatus): Promise<void> {
     await this.transaction(async trx => {
       for (const id of transactionIds) {
-        await this.updateTransactionStatus(
-          status,
-          id,
-          undefined,
-          undefined,
-          trx
-        )
+        await this.updateTransactionStatus(status, id, undefined, undefined, trx)
       }
     })
   }
@@ -459,9 +332,7 @@ export abstract class StorageProvider
     trx?: sdk.TrxToken
   ): Promise<void> {
     if (!transactionId && !(userId && reference))
-      throw new sdk.WERR_MISSING_PARAMETER(
-        'either transactionId or userId and reference'
-      )
+      throw new sdk.WERR_MISSING_PARAMETER('either transactionId or userId and reference')
 
     await this.transaction(async trx => {
       const where: Partial<TableTransaction> = {}
@@ -469,27 +340,18 @@ export abstract class StorageProvider
       if (userId) where.userId = userId
       if (reference) where.reference = reference
 
-      const tx = verifyOne(
-        await this.findTransactions({ partial: where, noRawTx: true, trx })
-      )
+      const tx = verifyOne(await this.findTransactions({ partial: where, noRawTx: true, trx }))
 
       //if (tx.status === status)
       // no change required. Assume inputs and outputs spendable and spentBy are valid for status.
       //return
 
       // Once completed, this method cannot be used to "uncomplete" transaction.
-      if (
-        (status !== 'completed' && tx.status === 'completed') ||
-        tx.provenTxId
-      )
-        throw new sdk.WERR_INVALID_OPERATION(
-          'The status of a "completed" transaction cannot be changed.'
-        )
+      if ((status !== 'completed' && tx.status === 'completed') || tx.provenTxId)
+        throw new sdk.WERR_INVALID_OPERATION('The status of a "completed" transaction cannot be changed.')
       // It is not possible to un-fail a transaction. Information is lost and not recoverable.
       if (status !== 'failed' && tx.status === 'failed')
-        throw new sdk.WERR_INVALID_OPERATION(
-          `A "failed" transaction may not be un-failed by this method.`
-        )
+        throw new sdk.WERR_INVALID_OPERATION(`A "failed" transaction may not be un-failed by this method.`)
 
       switch (status) {
         case 'failed':
@@ -501,11 +363,7 @@ export abstract class StorageProvider
             for (const input of inputs) {
               // input is a prior output belonging to userId that reference this transaction either by `spentBy`
               // or by txid and vout.
-              await this.updateOutput(
-                verifyId(input.outputId),
-                { spendable: true, spentBy: undefined },
-                trx
-              )
+              await this.updateOutput(verifyId(input.outputId), { spendable: true, spentBy: undefined }, trx)
             }
           }
           break
@@ -524,39 +382,24 @@ export abstract class StorageProvider
     }, trx)
   }
 
-  async createAction(
-    auth: sdk.AuthId,
-    args: sdk.ValidCreateActionArgs
-  ): Promise<sdk.StorageCreateActionResult> {
+  async createAction(auth: sdk.AuthId, args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     return await createAction(this, auth, args)
   }
-  async processAction(
-    auth: sdk.AuthId,
-    args: sdk.StorageProcessActionArgs
-  ): Promise<sdk.StorageProcessActionResults> {
+  async processAction(auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> {
     if (!auth.userId) throw new sdk.WERR_UNAUTHORIZED()
     return await processAction(this, auth, args)
   }
 
-  async attemptToPostReqsToNetwork(
-    reqs: EntityProvenTxReq[],
-    trx?: sdk.TrxToken
-  ): Promise<PostReqsToNetworkResult> {
+  async attemptToPostReqsToNetwork(reqs: EntityProvenTxReq[], trx?: sdk.TrxToken): Promise<PostReqsToNetworkResult> {
     return await attemptToPostReqsToNetwork(this, reqs, trx)
   }
 
-  async listCertificates(
-    auth: sdk.AuthId,
-    args: sdk.ValidListCertificatesArgs
-  ): Promise<ListCertificatesResult> {
+  async listCertificates(auth: sdk.AuthId, args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult> {
     return await listCertificates(this, auth, args)
   }
 
-  async verifyKnownValidTransaction(
-    txid: string,
-    trx?: sdk.TrxToken
-  ): Promise<boolean> {
+  async verifyKnownValidTransaction(txid: string, trx?: sdk.TrxToken): Promise<boolean> {
     const { proven, rawTx } = await this.getProvenOrRawTx(txid, trx)
     return proven != undefined || rawTx != undefined
   }
@@ -568,18 +411,8 @@ export abstract class StorageProvider
     knownTxids?: string[],
     trx?: sdk.TrxToken
   ): Promise<Beef> {
-    const beef = await this.getValidBeefForTxid(
-      txid,
-      mergeToBeef,
-      trustSelf,
-      knownTxids,
-      trx
-    )
-    if (!beef)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'txid',
-        `${txid} is not known to storage.`
-      )
+    const beef = await this.getValidBeefForTxid(txid, mergeToBeef, trustSelf, knownTxids, trx)
+    if (!beef) throw new sdk.WERR_INVALID_PARAMETER('txid', `${txid} is not known to storage.`)
     return beef
   }
 
@@ -612,16 +445,8 @@ export abstract class StorageProvider
         for (const input of tx.inputs) {
           const btx = beef.findTxid(input.sourceTXID!)
           if (!btx) {
-            if (knownTxids && knownTxids.indexOf(input.sourceTXID!) > -1)
-              beef.mergeTxidOnly(input.sourceTXID!)
-            else
-              await this.getValidBeefForKnownTxid(
-                input.sourceTXID!,
-                beef,
-                trustSelf,
-                knownTxids,
-                trx
-              )
+            if (knownTxids && knownTxids.indexOf(input.sourceTXID!) > -1) beef.mergeTxidOnly(input.sourceTXID!)
+            else await this.getValidBeefForKnownTxid(input.sourceTXID!, beef, trustSelf, knownTxids, trx)
           }
         }
         return beef
@@ -631,26 +456,15 @@ export abstract class StorageProvider
     return undefined
   }
 
-  async getBeefForTransaction(
-    txid: string,
-    options: sdk.StorageGetBeefOptions
-  ): Promise<Beef> {
+  async getBeefForTransaction(txid: string, options: sdk.StorageGetBeefOptions): Promise<Beef> {
     return await getBeefForTransaction(this, txid, options)
   }
 
-  async findMonitorEventById(
-    id: number,
-    trx?: sdk.TrxToken
-  ): Promise<TableMonitorEvent | undefined> {
-    return verifyOneOrNone(
-      await this.findMonitorEvents({ partial: { id }, trx })
-    )
+  async findMonitorEventById(id: number, trx?: sdk.TrxToken): Promise<TableMonitorEvent | undefined> {
+    return verifyOneOrNone(await this.findMonitorEvents({ partial: { id }, trx }))
   }
 
-  async relinquishCertificate(
-    auth: sdk.AuthId,
-    args: RelinquishCertificateArgs
-  ): Promise<number> {
+  async relinquishCertificate(auth: sdk.AuthId, args: RelinquishCertificateArgs): Promise<number> {
     const vargs = sdk.validateRelinquishCertificateArgs(args)
     const cert = verifyOne(
       await this.findCertificates({
@@ -666,25 +480,15 @@ export abstract class StorageProvider
     })
   }
 
-  async relinquishOutput(
-    auth: sdk.AuthId,
-    args: RelinquishOutputArgs
-  ): Promise<number> {
+  async relinquishOutput(auth: sdk.AuthId, args: RelinquishOutputArgs): Promise<number> {
     const vargs = sdk.validateRelinquishOutputArgs(args)
     const { txid, vout } = sdk.parseWalletOutpoint(vargs.output)
-    const output = verifyOne(
-      await this.findOutputs({ partial: { txid, vout } })
-    )
+    const output = verifyOne(await this.findOutputs({ partial: { txid, vout } }))
     return await this.updateOutput(output.outputId, { basketId: undefined })
   }
 
-  async processSyncChunk(
-    args: sdk.RequestSyncChunkArgs,
-    chunk: sdk.SyncChunk
-  ): Promise<sdk.ProcessSyncChunkResult> {
-    const user = verifyTruthy(
-      await this.findUserByIdentityKey(args.identityKey)
-    )
+  async processSyncChunk(args: sdk.RequestSyncChunkArgs, chunk: sdk.SyncChunk): Promise<sdk.ProcessSyncChunkResult> {
+    const user = verifyTruthy(await this.findUserByIdentityKey(args.identityKey))
     const ss = new EntitySyncState(
       verifyOne(
         await this.findSyncStates({
@@ -719,9 +523,7 @@ export abstract class StorageProvider
     let proven: EntityProvenTx
     if (req.provenTxId) {
       // Someone beat us to it, grab what we need for results...
-      proven = new EntityProvenTx(
-        verifyOne(await this.findProvenTxs({ partial: { txid: args.txid } }))
-      )
+      proven = new EntityProvenTx(verifyOne(await this.findProvenTxs({ partial: { txid: args.txid } })))
     } else {
       let isNew: boolean
       ;({ proven, isNew } = await this.transaction(async trx => {
@@ -760,14 +562,9 @@ export abstract class StorageProvider
               })
               req.addHistoryNote({ what: 'notifyTxOfProof', transactionId: id })
             } catch (eu: unknown) {
-              const e = sdk.WalletError.fromUnknown(eu)
-              req.addHistoryNote({
-                what: 'notifyTxOfProofError',
-                transactionId: id,
-                provenTxId: proven.provenTxId,
-                code: e.code,
-                description: e.description
-              })
+              const { code, description } = sdk.WalletError.fromUnknown(eu)
+              const { provenTxId } = proven
+              req.addHistoryNote({ what: 'notifyTxOfProofError', id, provenTxId, code, description })
             }
           }
           await req.updateStorageDynamicProperties(this)
@@ -795,9 +592,7 @@ export abstract class StorageProvider
     const invalidSpendableOutputs: TableOutput[] = []
     const users = await this.findUsers({ partial: {} })
     for (const { userId } of users) {
-      const defaultBasket = verifyOne(
-        await this.findOutputBaskets({ partial: { userId, name: 'default' } })
-      )
+      const defaultBasket = verifyOne(await this.findOutputBaskets({ partial: { userId, name: 'default' } }))
       const where: Partial<TableOutput> = {
         userId,
         basketId: defaultBasket.basketId,
@@ -810,21 +605,13 @@ export abstract class StorageProvider
         if (o.spendable) {
           let ok = false
           if (o.lockingScript && o.lockingScript.length > 0) {
-            const r = await this.getServices().getUtxoStatus(
-              asString(o.lockingScript),
-              'script'
-            )
+            const r = await this.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
             if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
               const tx = await this.findTransactionById(o.transactionId)
               if (
                 tx &&
                 tx.txid &&
-                r.details.some(
-                  d =>
-                    d.txid === tx.txid &&
-                    d.satoshis === o.satoshis &&
-                    d.index === o.vout
-                )
+                r.details.some(d => d.txid === tx.txid && d.satoshis === o.satoshis && d.index === o.vout)
               ) {
                 ok = true
               }
@@ -872,16 +659,13 @@ export interface StorageProviderOptions extends StorageReaderWriterOptions {
   commissionPubKeyHex?: PubKeyHex
 }
 
-export function validateStorageFeeModel(
-  v?: sdk.StorageFeeModel
-): sdk.StorageFeeModel {
+export function validateStorageFeeModel(v?: sdk.StorageFeeModel): sdk.StorageFeeModel {
   const r: sdk.StorageFeeModel = {
     model: 'sat/kb',
     value: 1
   }
   if (typeof v === 'object') {
-    if (v.model !== 'sat/kb')
-      throw new sdk.WERR_INVALID_PARAMETER('StorageFeeModel.model', `"sat/kb"`)
+    if (v.model !== 'sat/kb') throw new sdk.WERR_INVALID_PARAMETER('StorageFeeModel.model', `"sat/kb"`)
     if (typeof v.value === 'number') {
       r.value = v.value
     }

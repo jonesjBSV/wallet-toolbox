@@ -10,9 +10,7 @@ export async function reviewStatus(
 ): Promise<{ log: string }> {
   const r: { log: string } = { log: '' }
 
-  const runReviewStatusQuery = async <T extends object>(
-    pq: ReviewStatusQuery
-  ): Promise<void> => {
+  const runReviewStatusQuery = async <T extends object>(pq: ReviewStatusQuery): Promise<void> => {
     try {
       pq.sql = pq.q.toString()
       const count = await pq.q
@@ -71,15 +69,11 @@ export async function reviewStatus(
     q: k<TableTransaction>('transactions')
       .update({
         status: 'completed',
-        provenTxId: k.raw(
-          '(SELECT provenTxId FROM proven_txs AS p WHERE transactions.txid = p.txid)'
-        )
+        provenTxId: k.raw('(SELECT provenTxId FROM proven_txs AS p WHERE transactions.txid = p.txid)')
       })
       .whereNull('provenTxId')
       .whereExists(function () {
-        this.select(k.raw(1))
-          .from('proven_txs as p')
-          .whereRaw('transactions.txid = p.txid')
+        this.select(k.raw(1)).from('proven_txs as p').whereRaw('transactions.txid = p.txid')
       })
   })
 

@@ -1,15 +1,6 @@
 import { EntitySyncState } from '../../../../../src/storage/schema/entities/SyncState'
-import {
-  createSyncMap,
-  EntityStorage,
-  sdk,
-  SyncMap,
-  TableSyncState
-} from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { createSyncMap, EntityStorage, sdk, SyncMap, TableSyncState } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 
 describe('SyncState class method tests', () => {
   jest.setTimeout(99999999)
@@ -173,11 +164,7 @@ describe('SyncState class method tests', () => {
       toStorageIdentityKey: 'toKey'
     }
 
-    const result = await syncState.processSyncChunk(
-      ctx.activeStorage,
-      args,
-      chunk
-    )
+    const result = await syncState.processSyncChunk(ctx.activeStorage, args, chunk)
 
     expect(result.done).toBe(true)
     expect(result.updates).toBe(0)
@@ -285,9 +272,7 @@ describe('SyncState class method tests', () => {
 
     const syncMap = createSyncMap()
 
-    await expect(
-      syncState.mergeNew(mockStorage, 1, syncMap, undefined)
-    ).resolves.toBeUndefined()
+    await expect(syncState.mergeNew(mockStorage, 1, syncMap, undefined)).resolves.toBeUndefined()
   })
 
   // Test: mergeExisting method (always returns false)
@@ -297,13 +282,7 @@ describe('SyncState class method tests', () => {
 
     const syncMap = createSyncMap()
 
-    const result = await syncState.mergeExisting(
-      mockStorage,
-      new Date(),
-      {} as TableSyncState,
-      syncMap,
-      undefined
-    )
+    const result = await syncState.mergeExisting(mockStorage, new Date(), {} as TableSyncState, syncMap, undefined)
     expect(result).toBe(false)
   })
 })

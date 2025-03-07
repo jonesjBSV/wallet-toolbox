@@ -9,11 +9,7 @@ export class WalletSigner {
   keyDeriver: KeyDeriver
   storage: WalletStorageManager
 
-  constructor(
-    chain: sdk.Chain,
-    keyDeriver: KeyDeriver,
-    storage: WalletStorageManager
-  ) {
+  constructor(chain: sdk.Chain, keyDeriver: KeyDeriver, storage: WalletStorageManager) {
     this.chain = chain
     this.keyDeriver = keyDeriver
     this.storage = storage

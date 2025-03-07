@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableTxLabel,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableTxLabel, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityTxLabel extends EntityBase<TableTxLabel> {
@@ -94,9 +88,7 @@ export class EntityTxLabel extends EntityBase<TableTxLabel> {
     syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<{ found: boolean; eo: EntityTxLabel; eiId: number }> {
-    const ef = verifyOneOrNone(
-      await storage.findTxLabels({ partial: { label: ei.label, userId }, trx })
-    )
+    const ef = verifyOneOrNone(await storage.findTxLabels({ partial: { label: ei.label, userId }, trx }))
     return {
       found: !!ef,
       eo: new EntityTxLabel(ef || { ...ei }),
@@ -104,12 +96,7 @@ export class EntityTxLabel extends EntityBase<TableTxLabel> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.userId = userId
     this.txLabelId = 0
     this.txLabelId = await storage.insertTxLabel(this.toApi(), trx)
@@ -125,7 +112,7 @@ export class EntityTxLabel extends EntityBase<TableTxLabel> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateTxLabel(this.id, this.toApi(), trx)
       wasMerged = true
     }

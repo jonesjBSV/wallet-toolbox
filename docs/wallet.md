@@ -3462,6 +3462,8 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 export interface WalletServicesOptions {
     chain: sdk.Chain;
     taalApiKey?: string;
+    bitailsApiKey?: string;
+    whatsOnChainApiKey?: string;
     bsvExchangeRate: BsvExchangeRate;
     bsvUpdateMsecs: number;
     fiatExchangeRates: FiatExchangeRates;
@@ -4658,6 +4660,41 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
     override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> 
     override async mergeExisting(storage: EntityStorage, since: Date | undefined, ei: TableSyncState, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<boolean> 
     makeRequestSyncChunkArgs(forIdentityKey: string, forStorageIdentityKey: string, maxRoughSize?: number, maxItems?: number): sdk.RequestSyncChunkArgs 
+    static syncChunkSummary(c: sdk.SyncChunk): string {
+        let log = "";
+        log += `SYNC CHUNK SUMMARY
+  from storage: ${c.fromStorageIdentityKey}
+  to storage: ${c.toStorageIdentityKey}
+  for user: ${c.userIdentityKey}
+`;
+        if (c.user)
+            log += `  USER activeStorage ${c.user.activeStorage}\n`;
+        if (!!c.provenTxs) {
+            log += `  PROVEN_TXS\n`;
+            for (const r of c.provenTxs) {
+                log += `    ${r.provenTxId} ${r.txid}\n`;
+            }
+        }
+        if (!!c.provenTxReqs) {
+            log += `  PROVEN_TX_REQS\n`;
+            for (const r of c.provenTxReqs) {
+                log += `    ${r.provenTxReqId} ${r.txid} ${r.status} ${r.provenTxId || ""}\n`;
+            }
+        }
+        if (!!c.transactions) {
+            log += `  TRANSACTIONS\n`;
+            for (const r of c.transactions) {
+                log += `    ${r.transactionId} ${r.txid} ${r.status} ${r.provenTxId || ""} sats:${r.satoshis}\n`;
+            }
+        }
+        if (!!c.outputs) {
+            log += `  OUTPUTS\n`;
+            for (const r of c.outputs) {
+                log += `    ${r.outputId} ${r.txid}.${r.vout} ${r.transactionId} ${r.spendable ? "spendable" : ""} sats:${r.satoshis}\n`;
+            }
+        }
+        return log;
+    }
     async processSyncChunk(writer: EntityStorage, args: sdk.RequestSyncChunkArgs, chunk: sdk.SyncChunk): Promise<{
         done: boolean;
         maxUpdated_at: Date | undefined;
@@ -5218,6 +5255,7 @@ export class Services implements sdk.WalletServices {
     get postBeefServicesCount() 
     get getUtxoStatsCount() 
     async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, useNext?: boolean): Promise<sdk.GetUtxoStatusResult> 
+    postBeefCount = 0;
     async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> 
     async getRawTx(txid: string, useNext?: boolean): Promise<sdk.GetRawTxResult> 
     async invokeChaintracksWithRetry<R>(method: () => Promise<R>): Promise<R> 
@@ -9106,11 +9144,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ##### Variable: ProvenTxReqTerminalStatus
 
 ```ts
-ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = [
-    "completed",
-    "invalid",
-    "doubleSpend"
-]
+ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = ["completed", "invalid", "doubleSpend"]
 ```
 
 See also: [ProvenTxReqStatus](./client.md#type-proventxreqstatus)
