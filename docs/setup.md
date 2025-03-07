@@ -460,20 +460,12 @@ DEV_KEYS = '{
         return log;
     }
     static getEnv(chain: sdk.Chain): SetupEnv {
-        const identityKey = chain === "main"
-            ? process.env.MY_MAIN_IDENTITY
-            : process.env.MY_TEST_IDENTITY;
-        const identityKey2 = chain === "main"
-            ? process.env.MY_MAIN_IDENTITY2
-            : process.env.MY_TEST_IDENTITY2;
-        const filePath = chain === "main"
-            ? process.env.MY_MAIN_FILEPATH
-            : process.env.MY_TEST_FILEPATH;
+        const identityKey = chain === "main" ? process.env.MY_MAIN_IDENTITY : process.env.MY_TEST_IDENTITY;
+        const identityKey2 = chain === "main" ? process.env.MY_MAIN_IDENTITY2 : process.env.MY_TEST_IDENTITY2;
+        const filePath = chain === "main" ? process.env.MY_MAIN_FILEPATH : process.env.MY_TEST_FILEPATH;
         const DEV_KEYS = process.env.DEV_KEYS || "{}";
         const mySQLConnection = process.env.MYSQL_CONNECTION || "{}";
-        const taalApiKey = verifyTruthy(chain === "main"
-            ? process.env.MAIN_TAAL_API_KEY
-            : process.env.TEST_TAAL_API_KEY, `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`);
+        const taalApiKey = verifyTruthy(chain === "main" ? process.env.MAIN_TAAL_API_KEY : process.env.TEST_TAAL_API_KEY, `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`);
         if (!identityKey || !identityKey2)
             throw new sdk.WERR_INVALID_OPERATION(".env is not a valid SetupEnv configuration.");
         return {
@@ -532,8 +524,7 @@ DEV_KEYS = '{
     }): Promise<Wallet> 
     static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> {
         const wo = await Setup.createWallet(args);
-        const endpointUrl = args.endpointUrl ||
-            `https://${args.env.chain !== "main" ? "staging-" : ""}storage.babbage.systems`;
+        const endpointUrl = args.endpointUrl || `https://${args.env.chain !== "main" ? "staging-" : ""}storage.babbage.systems`;
         const client = new StorageClient(wo.wallet, endpointUrl);
         await wo.storage.addWalletStorageProvider(client);
         await wo.storage.makeAvailable();
@@ -792,20 +783,12 @@ Access private keys through the `devKeys` object: `devKeys[identityKey]`
 
 ```ts
 static getEnv(chain: sdk.Chain): SetupEnv {
-    const identityKey = chain === "main"
-        ? process.env.MY_MAIN_IDENTITY
-        : process.env.MY_TEST_IDENTITY;
-    const identityKey2 = chain === "main"
-        ? process.env.MY_MAIN_IDENTITY2
-        : process.env.MY_TEST_IDENTITY2;
-    const filePath = chain === "main"
-        ? process.env.MY_MAIN_FILEPATH
-        : process.env.MY_TEST_FILEPATH;
+    const identityKey = chain === "main" ? process.env.MY_MAIN_IDENTITY : process.env.MY_TEST_IDENTITY;
+    const identityKey2 = chain === "main" ? process.env.MY_MAIN_IDENTITY2 : process.env.MY_TEST_IDENTITY2;
+    const filePath = chain === "main" ? process.env.MY_MAIN_FILEPATH : process.env.MY_TEST_FILEPATH;
     const DEV_KEYS = process.env.DEV_KEYS || "{}";
     const mySQLConnection = process.env.MYSQL_CONNECTION || "{}";
-    const taalApiKey = verifyTruthy(chain === "main"
-        ? process.env.MAIN_TAAL_API_KEY
-        : process.env.TEST_TAAL_API_KEY, `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`);
+    const taalApiKey = verifyTruthy(chain === "main" ? process.env.MAIN_TAAL_API_KEY : process.env.TEST_TAAL_API_KEY, `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`);
     if (!identityKey || !identityKey2)
         throw new sdk.WERR_INVALID_OPERATION(".env is not a valid SetupEnv configuration.");
     return {

@@ -263,7 +263,7 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
           // Start the process of setting transactions to 'failed'
           const limit = EntityProvenTx.getProofAttemptsLimit
           const { attempts } = req
-          req.addHistoryNote( { what: 'getMerklePathGiveUp', attempts, limit, ageInMinutes }, true)
+          req.addHistoryNote({ what: 'getMerklePathGiveUp', attempts, limit, ageInMinutes }, true)
           req.notified = false
           req.status = 'invalid'
         }

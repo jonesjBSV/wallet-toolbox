@@ -131,7 +131,8 @@ export abstract class TestUtilsWalletStorage {
     const runSlowTests = !!process.env.RUNSLOWTESTS
     const taalApiKey = (chain === 'main' ? process.env.MAIN_TAAL_API_KEY : process.env.TEST_TAAL_API_KEY) || ''
     const bitailsApiKey = (chain === 'main' ? process.env.MAIN_BITAILS_API_KEY : process.env.TEST_BITAILS_API_KEY) || ''
-    const whatsonchainApiKey = (chain === 'main' ? process.env.MAIN_WHATSONCHAIN_API_KEY : process.env.TEST_WHATSONCHAIN_API_KEY) || ''
+    const whatsonchainApiKey =
+      (chain === 'main' ? process.env.MAIN_WHATSONCHAIN_API_KEY : process.env.TEST_WHATSONCHAIN_API_KEY) || ''
     return {
       chain,
       identityKey,
@@ -276,7 +277,7 @@ export abstract class TestUtilsWalletStorage {
     const keyDeriver = new KeyDeriver(rootKey)
     const chain = args.chain
     const storage = new WalletStorageManager(identityKey, args.active, args.backups)
-    if (storage.canMakeAvailable()) await storage.makeAvailable();
+    if (storage.canMakeAvailable()) await storage.makeAvailable()
     const env = _tu.getEnv(args.chain!)
     const serviceOptions: WalletServicesOptions = Services.createDefaultOptions(env.chain)
     serviceOptions.taalApiKey = env.taalApiKey
