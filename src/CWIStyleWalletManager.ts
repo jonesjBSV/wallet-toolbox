@@ -1090,7 +1090,7 @@ export class CWIStyleWalletManager implements WalletInterface {
 
   /**
    * Retrieves the current recovery key.
-   * 
+   *
    * @throws {Error} If the user is not authenticated, or if underlying token references are missing.
    */
   async getRecoveryKey(): Promise<number[]> {

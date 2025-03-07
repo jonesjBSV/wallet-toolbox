@@ -4627,6 +4627,7 @@ export class CWIStyleWalletManager implements WalletInterface {
     async loadSnapshot(snapshot: number[]): Promise<void> 
     destroy(): void 
     async changePassword(newPassword: string): Promise<void> 
+    async getRecoveryKey(): Promise<number[]> 
     async changeRecoveryKey(): Promise<void> 
     async changePresentationKey(presentationKey: number[]): Promise<void> 
     async getPublicKey(args: GetPublicKeyArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetPublicKeyResult> 
@@ -4772,6 +4773,18 @@ Destroys the underlying wallet, returning to a default state
 destroy(): void 
 ```
 
+###### Method getRecoveryKey
+
+Retrieves the current recovery key.
+
+```ts
+async getRecoveryKey(): Promise<number[]> 
+```
+
+Throws
+
+If the user is not authenticated, or if underlying token references are missing.
+
 ###### Method loadSnapshot
 
 Loads a previously saved state snapshot (e.g. from `saveSnapshot`).
@@ -4879,7 +4892,8 @@ export class CertOps extends BsvCertificate {
     _keyring?: Record<CertificateFieldNameUnder50Bytes, string>;
     _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
     _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>;
-    constructor(public wallet: CertOpsWallet, wc: WalletCertificate) 
+    _proveCertificate?: boolean;
+    constructor(public wallet: CertOpsWallet, wc: WalletCertificate, proveCertificate?: boolean) 
     static async fromCounterparty(wallet: CertOpsWallet, e: {
         certificate: WalletCertificate;
         keyring: Record<CertificateFieldNameUnder50Bytes, string>;
@@ -4912,7 +4926,7 @@ export class CertOps extends BsvCertificate {
 }
 ```
 
-See also: [CertOpsWallet](./client.md#interface-certopswallet)
+See also: [CertOpsWallet](./client.md#interface-certopswallet), [proveCertificate](./client.md#function-provecertificate)
 
 ###### Method createKeyringForVerifier
 
@@ -11303,11 +11317,12 @@ parseResults = async (lookupResult: LookupAnswer): Promise<VerifiableCertificate
         const parsedResults: VerifiableCertificate[] = [];
         for (const output of lookupResult.outputs) {
             try {
-                const tx = Transaction.fromAtomicBEEF(output.beef);
-                const decodedOutput = PushDrop.decode(tx.outputs[OUTPUT_INDEX].lockingScript);
+                const tx = Transaction.fromBEEF(output.beef);
+                const decodedOutput = PushDrop.decode(tx.outputs[output.outputIndex].lockingScript);
                 const certificate: VerifiableCertificate = JSON.parse(Utils.toUTF8(decodedOutput.fields[0]));
-                const verifiableCert = new VerifiableCertificate(certificate.type, certificate.serialNumber, certificate.subject, certificate.revocationOutpoint, certificate.certifier, certificate.fields, certificate.keyring, certificate.signature);
+                const verifiableCert = new VerifiableCertificate(certificate.type, certificate.serialNumber, certificate.subject, certificate.certifier, certificate.revocationOutpoint, certificate.fields, certificate.keyring, certificate.signature);
                 const decryptedFields = await verifiableCert.decryptFields(new ProtoWallet("anyone"));
+                await verifiableCert.verify();
                 verifiableCert.decryptedFields = decryptedFields;
                 parsedResults.push(verifiableCert);
             }

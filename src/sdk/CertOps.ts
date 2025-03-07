@@ -105,8 +105,8 @@ export class CertOps extends BsvCertificate {
     wc: WalletCertificate
   ): Promise<CertOps> {
     const c = new CertOps(wallet, wc)
-      ; ({ fields: c._encryptedFields, keyring: c._keyring } =
-        await c.encryptFields())
+    ;({ fields: c._encryptedFields, keyring: c._keyring } =
+      await c.encryptFields())
     c._decryptedFields = await c.decryptFields()
     return c
   }
