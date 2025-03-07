@@ -70,8 +70,8 @@ const basketToSpecOp: Record<string, SpecOp> = {
       outputs: TableOutput[]
     ): Promise<TableOutput[]> => {
       const filteredOutputs: TableOutput[] = []
-      let ok = false
       for (const o of outputs) {
+        let ok = false
         if (o.lockingScript && o.lockingScript.length > 0) {
           const r = await s.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
           if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
