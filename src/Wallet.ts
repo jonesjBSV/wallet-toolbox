@@ -157,13 +157,13 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const args: WalletArgs = !isWalletSigner(argsOrSigner)
       ? argsOrSigner
       : {
-        chain: argsOrSigner.chain,
-        keyDeriver: argsOrSigner.keyDeriver,
-        storage: argsOrSigner.storage,
-        services,
-        monitor,
-        privilegedKeyManager
-      }
+          chain: argsOrSigner.chain,
+          keyDeriver: argsOrSigner.keyDeriver,
+          storage: argsOrSigner.storage,
+          services,
+          monitor,
+          privilegedKeyManager
+        }
 
     if (args.storage._authId.identityKey != args.keyDeriver.identityKey)
       throw new sdk.WERR_INVALID_PARAMETER(
@@ -173,9 +173,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
     this.settingsManager =
       args.settingsManager || new WalletSettingsManager(this)
-    this.lookupResolver = args.lookupResolver || new LookupResolver()
-
     this.chain = args.chain
+    this.lookupResolver =
+      args.lookupResolver ||
+      new LookupResolver({
+        networkPreset: toWalletNetwork(this.chain)
+      })
     this.keyDeriver = args.keyDeriver
     this.storage = args.storage
     this.proto = new ProtoWallet(args.keyDeriver)
@@ -455,7 +458,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
       ).publicKey
       try {
         // Confirm that the information received adds up to a usable certificate...
-        // TODO: Clean up MasterCertificate to support decrypt on instance 
+        // TODO: Clean up MasterCertificate to support decrypt on instance
         const cert = new MasterCertificate(
           vargs.type,
           vargs.serialNumber,
@@ -464,7 +467,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
           vargs.revocationOutpoint,
           vargs.fields,
           vargs.keyringForSubject,
-          vargs.signature,
+          vargs.signature
         )
         await cert.verify()
 
@@ -959,7 +962,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
   async balance(basket: string = 'default'): Promise<sdk.WalletBalance> {
     const r: sdk.WalletBalance = { total: 0, utxos: [] }
     let offset = 0
-    for (; ;) {
+    for (;;) {
       const change = await this.listOutputs({
         basket,
         limit: 1000,
