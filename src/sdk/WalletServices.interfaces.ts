@@ -141,6 +141,8 @@ export interface FiatExchangeRates {
 export interface WalletServicesOptions {
   chain: sdk.Chain
   taalApiKey?: string
+  bitailsApiKey?: string
+  whatsOnChainApiKey?: string
   bsvExchangeRate: BsvExchangeRate
   bsvUpdateMsecs: number
   fiatExchangeRates: FiatExchangeRates

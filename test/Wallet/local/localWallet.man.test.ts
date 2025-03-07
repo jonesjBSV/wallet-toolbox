@@ -36,116 +36,82 @@ describe('localWallet tests', () => {
   if (_tu.noTestEnv('test')) return
   if (_tu.noTestEnv('main')) return
 
-  test('0 create 1 sat delayed', async () => {
+  test('0 monitor runOnce', async () => {
     const setup = await createSetup('test')
-
-    const car = await createOneSatTestOutput(setup, {}, 1)
-
-    //await trackReqByTxid(setup, car.txid!)
-
-    await setup.wallet.destroy()
-  })
-
-  test('0a create 1 sat immediate', async () => {
-    const setup = await createSetup('test')
-
-    const car = await createOneSatTestOutput(setup, { acceptDelayedBroadcast: false }, 1)
-
-    // await trackReqByTxid(setup, car.txid!)
-
-    await setup.wallet.destroy()
-  })
-
-  test('0b create 2 nosend and sendWith', async () => {
-    const setup = await createSetup('test')
-
-    const car = await createOneSatTestOutput(setup, { noSend: true }, 2)
-
-    //await trackReqByTxid(setup, car.txid!)
-
+    await setup.monitor.runOnce()
     await setup.wallet.destroy()
   })
 
   test('1 recover 1 sat outputs', async () => {
     const setup = await createSetup('test')
-
     await recoverOneSatTestOutputs(setup)
-
     await setup.wallet.destroy()
   })
 
-  test('2 monitor runOnce', async () => {
+  test('2 create 1 sat delayed', async () => {
     const setup = await createSetup('test')
+    const car = await createOneSatTestOutput(setup, {}, 1)
+    //await trackReqByTxid(setup, car.txid!)
+    await setup.wallet.destroy()
+  })
 
-    await setup.monitor.runOnce()
+  test('2a create 1 sat immediate', async () => {
+    const setup = await createSetup('test')
+    const car = await createOneSatTestOutput(setup, { acceptDelayedBroadcast: false }, 1)
+    // await trackReqByTxid(setup, car.txid!)
+    await setup.wallet.destroy()
+  })
 
+  test('2b create 2 nosend and sendWith', async () => {
+    const setup = await createSetup('test')
+    const car = await createOneSatTestOutput(setup, { noSend: true }, 2)
+    //await trackReqByTxid(setup, car.txid!)
     await setup.wallet.destroy()
   })
 
   test('3 return active to cloud client', async () => {
     const setup = await createSetup('test')
-
     const localBalance = await setup.wallet.balance()
-
     const log = await setup.storage.setActive(setup.clientStorageIdentityKey!)
     console.log(log)
-
     console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
-
     const clientBalance = await setup.wallet.balance()
-
     expect(localBalance.total).toBe(clientBalance.total)
-
     await setup.wallet.destroy()
   })
 
   test('4 review change utxos', async () => {
     const setup = await createSetup('test')
-
     const storage = setup.activeStorage
     const services = setup.services
-
     const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(storage, services)
-    const outputsToUpdate = notUtxos.map(o => ({
-      id: o.outputId,
-      satoshis: o.satoshis
-    }))
-
+    const outputsToUpdate = notUtxos.map(o => ({ id: o.outputId, satoshis: o.satoshis }))
     const total: number = outputsToUpdate.reduce((t, o) => t + o.satoshis, 0)
-
     debugger
     // *** About set spendable = false for outputs ***/
     for (const o of outputsToUpdate) {
       await storage.updateOutput(o.id, { spendable: false })
     }
-
     await setup.wallet.destroy()
   })
 
   test('5 review synchunk', async () => {
     const setup = await createSetup('test')
-
     const identityKey = setup.identityKey
     const reader = setup.activeStorage
     const readerSettings = reader.getSettings()
     const writer = setup.storage._backups![0].storage
     const writerSettings = writer.getSettings()
-
     const ss = await EntitySyncState.fromStorage(writer, identityKey, readerSettings)
-
     const args = ss.makeRequestSyncChunkArgs(identityKey, writerSettings.storageIdentityKey)
-
     const chunk = await reader.getSyncChunk(args)
-
     await setup.wallet.destroy()
   })
 
   test('6 backup', async () => {
     const setup = await createSetup('test')
-
     const log = await setup.storage.updateBackups()
     console.log(log)
-
     await setup.wallet.destroy()
   })
 })

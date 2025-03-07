@@ -48,11 +48,7 @@ export async function attemptToPostReqsToNetwork(
     }
     if (rb.attempts > 10) {
       badReq = true
-      rb.addHistoryNote({
-        what: 'postToNetworkError',
-        error: 'too many attempts',
-        attempts: rb.attempts
-      })
+      rb.addHistoryNote({ what: 'postToNetworkError', error: 'too many attempts', attempts: rb.attempts })
     }
 
     // Accumulate batch beefs.
@@ -63,10 +59,7 @@ export async function attemptToPostReqsToNetwork(
         const e = sdk.WalletError.fromUnknown(eu)
         if (e.code === 'WERR_INVALID_PARAMETER' && (e as sdk.WERR_INVALID_PARAMETER).parameter === 'txid') {
           badReq = true
-          rb.addHistoryNote({
-            what: 'postToNetworkError',
-            error: 'depends on unknown txid'
-          })
+          rb.addHistoryNote({ what: 'postToNetworkError', error: 'depends on unknown txid' })
         }
       }
     }
@@ -98,7 +91,7 @@ export async function attemptToPostReqsToNetwork(
       if (r) notes.push(...(r.notes || []))
     }
     for (const n of notes) {
-      req.addHistoryNote(n, true)
+      req.addHistoryNote(n)
     }
     await req.updateStorageDynamicProperties(storage)
     await req.refreshFromStorage(storage)
@@ -121,12 +114,7 @@ export async function attemptToPostReqsToNetwork(
         // If any txid result fails, the aggregate result is error.
         r.status = 'error'
       d.req.attempts++
-      d.req.addHistoryNote({
-        what: 'postToNetwork',
-        name: r.pbr.name,
-        status: d.status,
-        error: d.error
-      })
+      d.req.addHistoryNote({ what: 'postToNetwork', name: r.pbr.name, status: d.status, error: d.error })
     }
   }
 

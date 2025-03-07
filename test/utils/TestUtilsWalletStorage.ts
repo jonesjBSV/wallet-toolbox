@@ -58,6 +58,7 @@ import {
 import { Knex, knex as makeKnex } from 'knex'
 
 import * as dotenv from 'dotenv'
+import { WalletServicesOptions } from '../../src/sdk'
 dotenv.config()
 
 const localMySqlConnection = process.env.MYSQL_CONNECTION || ''
@@ -67,6 +68,8 @@ export interface TuEnv {
   identityKey: string
   identityKey2: string
   taalApiKey: string
+  bitailsApiKey: string
+  whatsonchainApiKey: string
   devKeys: Record<string, string>
   runMySQL: boolean
   runSlowTests: boolean
@@ -126,13 +129,16 @@ export abstract class TestUtilsWalletStorage {
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
     const runSlowTests = !!process.env.RUNSLOWTESTS
-    const mainTaalApiKey = process.env.MAIN_TAAL_API_KEY || ''
-    const testTaalApiKey = process.env.TEST_TAAL_API_KEY || ''
+    const taalApiKey = (chain === 'main' ? process.env.MAIN_TAAL_API_KEY : process.env.TEST_TAAL_API_KEY) || ''
+    const bitailsApiKey = (chain === 'main' ? process.env.MAIN_BITAILS_API_KEY : process.env.TEST_BITAILS_API_KEY) || ''
+    const whatsonchainApiKey = (chain === 'main' ? process.env.MAIN_WHATSONCHAIN_API_KEY : process.env.TEST_WHATSONCHAIN_API_KEY) || ''
     return {
       chain,
       identityKey,
       identityKey2,
-      taalApiKey: chain === 'main' ? mainTaalApiKey : testTaalApiKey,
+      taalApiKey,
+      bitailsApiKey,
+      whatsonchainApiKey,
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
       runMySQL,
       runSlowTests,
@@ -270,8 +276,14 @@ export abstract class TestUtilsWalletStorage {
     const keyDeriver = new KeyDeriver(rootKey)
     const chain = args.chain
     const storage = new WalletStorageManager(identityKey, args.active, args.backups)
-    if (storage.canMakeAvailable()) await storage.makeAvailable()
-    const services = new Services(args.chain)
+    if (storage.canMakeAvailable()) await storage.makeAvailable();
+    const env = _tu.getEnv(args.chain!)
+    const serviceOptions: WalletServicesOptions = Services.createDefaultOptions(env.chain)
+    serviceOptions.taalApiKey = env.taalApiKey
+    serviceOptions.arcConfig.apiKey = env.taalApiKey
+    serviceOptions.bitailsApiKey = env.bitailsApiKey
+    serviceOptions.whatsOnChainApiKey = env.whatsonchainApiKey
+    const services = new Services(serviceOptions)
     const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
     monitor.addDefaultTasks()
@@ -1458,8 +1470,7 @@ export abstract class TestUtilsWalletStorage {
     if (wallet === 'main' || wallet === 'test') {
       const setup = await _tu.createWalletSetupEnv(wallet)
       wallet = setup.wallet
-      if (!setup.storage.isActiveEnabled)
-        await setup.storage.setActive(setup.storage.getActiveStore())
+      if (!setup.storage.isActiveEnabled) await setup.storage.setActive(setup.storage.getActiveStore())
       destroyWallet = true
     }
 
@@ -1714,9 +1725,7 @@ let logEnabled: boolean = false
  * log('Another message with multiple params', param1, param2);
  */
 export const logger = (message: string, ...optionalParams: any[]): void => {
-  const isSingleTest = process.argv.some(arg => 
-    arg === '--testNamePattern' || arg === '-t'
-  );
+  const isSingleTest = process.argv.some(arg => arg === '--testNamePattern' || arg === '-t')
   if (logEnabled || isSingleTest) {
     console.log(message, ...optionalParams)
   }

@@ -353,11 +353,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   }
   set status(v: sdk.ProvenTxReqStatus) {
     if (v !== this.api.status) {
-      this.addHistoryNote({
-        what: 'status',
-        status_was: this.api.status,
-        status_now: v
-      })
+      this.addHistoryNote({ what: 'status', status_was: this.api.status, status_now: v })
       this.api.status = v
     }
   }

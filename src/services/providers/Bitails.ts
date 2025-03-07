@@ -96,7 +96,6 @@ export class Bitails {
     headers['Content-Type'] = 'application/json'
     //headers['Accept'] = 'text/json'
 
-    //const data = JSON.stringify({ raws })
     const data = { raws: raws }
     const requestOptions = {
       method: 'POST',
@@ -116,68 +115,38 @@ export class Bitails {
       url
     })
 
-    const retryLimit = 5
-    for (let retry = 0; retry < retryLimit; retry++) {
-      try {
-        const response = await this.httpClient.request<BitailsPostRawsResult[]>(url, requestOptions)
-        if (response.statusText === 'Too Many Requests' && retry < 2) {
-          r.notes!.push({ ...nn(), what: 'postRawsRateLimit' })
-          await wait(2000)
-          continue
-        }
-        if (response.ok) {
-          // status: 201, statusText: 'Created'
-          const btrs: BitailsPostRawsResult[] = response.data
-          for (const rt of r.txidResults) {
-            const btr = btrs.find(btr => (btr.txid = rt.txid))
-            if (!btr) {
-              rt.status = 'error'
-              rt.notes!.push({
-                ...nne(),
-                what: 'postRawsMissingResult',
-                txid: rt.txid
-              })
-            } else if (btr.error) {
-              // code: -25, message: 'missing-inputs'
-              rt.status = 'error'
-              rt.notes!.push({
-                ...nne(),
-                what: 'postRawsError',
-                txid: rt.txid,
-                code: btr.error.code,
-                message: btr.error.message
-              })
-            } else {
-              rt.notes!.push({ ...nn(), what: 'postRawsSuccess' })
-            }
-            if (rt.status !== 'success' && r.status === 'success') r.status = 'error'
+    try {
+      const response = await this.httpClient.request<BitailsPostRawsResult[]>(url, requestOptions)
+      if (response.ok) {
+        // status: 201, statusText: 'Created'
+        const btrs: BitailsPostRawsResult[] = response.data
+        for (const rt of r.txidResults) {
+          const btr = btrs.find(btr => (btr.txid = rt.txid))
+          const txid = rt.txid
+          if (!btr) {
+            rt.status = 'error'
+            rt.notes!.push({ ...nne(), what: 'postRawsMissingResult', txid })
+          } else if (btr.error) {
+            // code: -25, message: 'missing-inputs'
+            rt.status = 'error'
+            const { code, message } = btr.error
+            rt.notes!.push({ ...nne(), what: 'postRawsError', txid, code, message })
+          } else {
+            rt.notes!.push({ ...nn(), what: 'postRawsSuccess' })
           }
-        } else {
-          r.status = 'error'
-          const n: ReqHistoryNote = {
-            ...nne(),
-            what: 'postRawsError'
-          }
-          r.notes!.push(n)
+          if (rt.status !== 'success' && r.status === 'success') r.status = 'error'
         }
-      } catch (eu: unknown) {
+      } else {
         r.status = 'error'
-        const e = sdk.WalletError.fromUnknown(eu)
-        r.notes!.push({
-          ...nne(),
-          what: 'postRawsCatch',
-          code: e.code,
-          description: e.description
-        })
+        const n: ReqHistoryNote = { ...nne(), what: 'postRawsError' }
+        r.notes!.push(n)
       }
-      return r
+    } catch (eu: unknown) {
+      r.status = 'error'
+      const e = sdk.WalletError.fromUnknown(eu)
+      const { code, description } = e
+      r.notes!.push({ ...nne(), what: 'postRawsCatch', code, description })
     }
-    r.status = 'error'
-    r.notes!.push({
-      ...nne(),
-      what: 'postRawsRetryLimit',
-      retryLimit
-    })
     return r
   }
 
@@ -190,79 +159,42 @@ export class Bitails {
   async getMerklePath(txid: string, services: sdk.WalletServices): Promise<sdk.GetMerklePathResult> {
     const r: sdk.GetMerklePathResult = { name: 'BitailsTsc', notes: [] }
 
-    const url = `${this.URL}/tx/${txid}/proof/tsc`
+    const url = `${this.URL}tx/${txid}/proof/tsc`
 
-    const nn = () => ({
-      name: 'BitailsProofTsc',
-      when: new Date().toISOString(),
-      txid,
-      url
-    })
+    const nn = () => ({ name: 'BitailsProofTsc', when: new Date().toISOString(), txid, url })
 
     const headers = this.getHttpHeaders()
-    const requestOptions = {
-      method: 'GET',
-      headers
-    }
+    const requestOptions = { method: 'GET', headers }
 
-    for (let retry = 0; retry < 2; retry++) {
-      try {
-        const response = await this.httpClient.request<BitailsMerkleProof>(url, requestOptions)
+    try {
+      const response = await this.httpClient.request<BitailsMerkleProof>(url, requestOptions)
 
-        const nne = () => ({
-          ...nn(),
-          txid,
-          url,
-          status: response.status,
-          statusText: response.statusText
-        })
+      const nne = () => ({ ...nn(), txid, url, status: response.status, statusText: response.statusText })
 
-        if (response.statusText === 'Too Many Requests' && retry < 2) {
-          r.notes!.push({ ...nne(), what: 'getMerklePathRetry' })
-          await wait(2000)
-          continue
-        }
-
-        if (response.status === 404 && response.statusText === 'Not Found') {
-          r.notes!.push({ ...nne(), what: 'getMerklePathNotFound' })
-        } else if (!response.ok || response.status !== 200 || response.statusText !== 'OK') {
-          r.notes!.push({ ...nne(), what: 'getMerklePathBadStatus' })
-        } else if (!response.data) {
-          // Unmined, proof not yet available.
-          r.notes!.push({ ...nne(), what: 'getMerklePathNoData' })
+      if (response.status === 404 && response.statusText === 'Not Found') {
+        r.notes!.push({ ...nn(), what: 'getMerklePathNotFound' })
+      } else if (!response.ok || response.status !== 200 || response.statusText !== 'OK') {
+        r.notes!.push({ ...nne(), what: 'getMerklePathBadStatus' })
+      } else if (!response.data) {
+        r.notes!.push({ ...nne(), what: 'getMerklePathNoData' })
+      } else {
+        const p = response.data
+        const header = await services.hashToHeader(p.target)
+        if (header) {
+          const proof = { index: p.index, nodes: p.nodes, height: header.height }
+          r.merklePath = convertProofToMerklePath(txid, proof)
+          r.header = header
+          r.notes!.push({ ...nne(), what: 'getMerklePathSuccess' })
         } else {
-          const p = response.data
-          const header = await services.hashToHeader(p.target)
-          if (header) {
-            const proof = {
-              index: p.index,
-              nodes: p.nodes,
-              height: header.height
-            }
-            r.merklePath = convertProofToMerklePath(txid, proof)
-            r.header = header
-            r.notes!.push({ ...nne(), what: 'getMerklePathSuccess' })
-          } else {
-            r.notes!.push({
-              ...nne(),
-              what: 'getMerklePathNoHeader',
-              target: p.target
-            })
-          }
+          r.notes!.push({ ...nne(), what: 'getMerklePathNoHeader', target: p.target })
         }
-      } catch (eu: unknown) {
-        const e = sdk.WalletError.fromUnknown(eu)
-        r.notes!.push({
-          ...nn(),
-          what: 'getMerklePathError',
-          code: e.code,
-          description: e.description
-        })
-        r.error = e
       }
-      return r
+    } catch (eu: unknown) {
+      const e = sdk.WalletError.fromUnknown(eu)
+      const { code, description } = e
+      r.notes!.push({ ...nn(), what: 'getMerklePathCatch', code, description })
+      r.error = e
     }
-    r.notes!.push({ ...nn(), what: 'getMerklePathInternal' })
     return r
   }
 }

@@ -31,9 +31,7 @@ export class Services implements sdk.WalletServices {
 
     this.options = typeof optionsOrChain === 'string' ? Services.createDefaultOptions(this.chain) : optionsOrChain
 
-    this.whatsonchain = new WhatsOnChain(this.chain, {
-      apiKey: this.options.taalApiKey
-    })
+    this.whatsonchain = new WhatsOnChain(this.chain, { apiKey: this.options.whatsOnChainApiKey })
 
     this.arc = new ARC(this.options.arcUrl, this.options.arcConfig)
 
@@ -41,7 +39,8 @@ export class Services implements sdk.WalletServices {
 
     //prettier-ignore
     this.getMerklePathServices = new ServiceCollection<sdk.GetMerklePathService>()
-      .add({ name: 'WhatsOnChain', service: this.whatsonchain.getMerklePath.bind(this.whatsonchain) })
+      //.add({ name: 'WhatsOnChain', service: this.whatsonchain.getMerklePath.bind(this.whatsonchain) })
+      .add({ name: 'Bitails', service: this.bitails.getMerklePath.bind(this.bitails) })
 
     //prettier-ignore
     this.getRawTxServices = new ServiceCollection<sdk.GetRawTxService>()
@@ -50,8 +49,8 @@ export class Services implements sdk.WalletServices {
     //prettier-ignore
     this.postBeefServices = new ServiceCollection<sdk.PostBeefService>()
       .add({ name: 'TaalArcBeef', service: this.arc.postBeef.bind(this.arc) })
-    //  .add({ name: 'WhatsOnChain', service: this.whatsonchain.postBeef.bind(this.whatsonchain) })
-    // .add({ name: 'Bitails', service: this.bitails.postBeef.bind(this.bitails) })
+      .add({ name: 'WhatsOnChain', service: this.whatsonchain.postBeef.bind(this.whatsonchain) })
+      .add({ name: 'Bitails', service: this.bitails.postBeef.bind(this.bitails) })
 
     //prettier-ignore
     this.getUtxoStatusServices = new ServiceCollection<sdk.GetUtxoStatusService>()
@@ -132,6 +131,8 @@ export class Services implements sdk.WalletServices {
     return r0
   }
 
+  postBeefCount = 0
+
   /**
    *
    * @param beef
@@ -139,8 +140,14 @@ export class Services implements sdk.WalletServices {
    * @returns
    */
   async postBeef(beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> {
+    this.postBeefCount++
+    const services = [...this.postBeefServices.allServices]
+    for (let i = this.postBeefCount % services.length; i > 0; i--) {
+      // roll the array of services so the providers aren't always called in the same order.
+      services.unshift(services.pop()!)
+    }
     let rs = await Promise.all(
-      this.postBeefServices.allServices.map(async service => {
+      services.map(async service => {
         const r = await service(beef, txids)
         return r
       })

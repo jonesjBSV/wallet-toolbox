@@ -256,20 +256,14 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
 
     if (!gmpResult.merklePath) {
       if (req.created_at) {
-        const reqAgeInMsecs = Date.now() - req.created_at.getTime()
-        const reqAgeInMinutes = Math.ceil(reqAgeInMsecs < 1 ? 0 : reqAgeInMsecs / (1000 * 60))
+        const ageInMsecs = Date.now() - req.created_at.getTime()
+        const ageInMinutes = Math.ceil(ageInMsecs < 1 ? 0 : ageInMsecs / (1000 * 60))
 
-        if (req.attempts > EntityProvenTx.getProofAttemptsLimit && reqAgeInMinutes > EntityProvenTx.getProofMinutes) {
+        if (req.attempts > EntityProvenTx.getProofAttemptsLimit && ageInMinutes > EntityProvenTx.getProofMinutes) {
           // Start the process of setting transactions to 'failed'
-          req.addHistoryNote(
-            {
-              what: 'getMerklePathGiveUp',
-              attempts: req.attempts,
-              limit: EntityProvenTx.getProofAttemptsLimit,
-              ageInMinutes: reqAgeInMinutes
-            },
-            true
-          )
+          const limit = EntityProvenTx.getProofAttemptsLimit
+          const { attempts } = req
+          req.addHistoryNote( { what: 'getMerklePathGiveUp', attempts, limit, ageInMinutes }, true)
           req.notified = false
           req.status = 'invalid'
         }
@@ -305,16 +299,9 @@ export class EntityProvenTx extends EntityBase<TableProvenTx> {
 
         return proven
       } catch (eu: unknown) {
-        const e = sdk.WalletError.fromUnknown(eu)
-        req.addHistoryNote(
-          {
-            what: 'getMerklePathProvenError',
-            attempts: req.attempts,
-            code: e.code,
-            description: e.description
-          },
-          true
-        )
+        const { code, description } = sdk.WalletError.fromUnknown(eu)
+        const { attempts } = req
+        req.addHistoryNote({ what: 'getMerklePathProvenError', attempts, code, description }, true)
       }
     }
   }

@@ -562,14 +562,9 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
               })
               req.addHistoryNote({ what: 'notifyTxOfProof', transactionId: id })
             } catch (eu: unknown) {
-              const e = sdk.WalletError.fromUnknown(eu)
-              req.addHistoryNote({
-                what: 'notifyTxOfProofError',
-                transactionId: id,
-                provenTxId: proven.provenTxId,
-                code: e.code,
-                description: e.description
-              })
+              const { code, description } = sdk.WalletError.fromUnknown(eu)
+              const { provenTxId } = proven
+              req.addHistoryNote({ what: 'notifyTxOfProofError', id, provenTxId, code, description })
             }
           }
           await req.updateStorageDynamicProperties(this)

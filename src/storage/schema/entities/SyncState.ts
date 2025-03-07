@@ -78,8 +78,7 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
         remoteSettings.storageName
       )
     )
-    if (!api.syncMap || api.syncMap === '{}')
-      api.syncMap = JSON.stringify(createSyncMap())
+    if (!api.syncMap || api.syncMap === '{}') api.syncMap = JSON.stringify(createSyncMap())
     const ss = new EntitySyncState(api)
     return ss
   }
@@ -291,22 +290,20 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
       this.syncMap.commission,
       this.syncMap.provenTxReq
     ]) {
-      if (!ess || !ess.entityName)
-        debugger;
+      if (!ess || !ess.entityName) debugger
       a.offsets.push({ name: ess.entityName, offset: ess.count })
     }
     return a
   }
 
-  static syncChunkSummary(c: sdk.SyncChunk) : string {
+  static syncChunkSummary(c: sdk.SyncChunk): string {
     let log = ''
     log += `SYNC CHUNK SUMMARY
   from storage: ${c.fromStorageIdentityKey}
   to storage: ${c.toStorageIdentityKey}
   for user: ${c.userIdentityKey}
 `
-    if (c.user)
-      log += `  USER activeStorage ${c.user.activeStorage}\n`
+    if (c.user) log += `  USER activeStorage ${c.user.activeStorage}\n`
     if (!!c.provenTxs) {
       log += `  PROVEN_TXS\n`
       for (const r of c.provenTxs) {
