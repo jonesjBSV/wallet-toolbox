@@ -134,10 +134,10 @@ export const parseResults = async (
 
     for (const output of lookupResult.outputs) {
       try {
-        const tx = Transaction.fromAtomicBEEF(output.beef)
+        const tx = Transaction.fromBEEF(output.beef)
         // Decode the Identity token fields from the Bitcoin outputScript
         const decodedOutput = PushDrop.decode(
-          tx.outputs[OUTPUT_INDEX].lockingScript
+          tx.outputs[output.outputIndex].lockingScript
         )
 
         // Parse out the certificate and relevant data
@@ -148,8 +148,8 @@ export const parseResults = async (
           certificate.type,
           certificate.serialNumber,
           certificate.subject,
-          certificate.revocationOutpoint,
           certificate.certifier,
+          certificate.revocationOutpoint,
           certificate.fields,
           certificate.keyring,
           certificate.signature
