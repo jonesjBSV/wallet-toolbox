@@ -90,7 +90,7 @@ describe('localWallet tests', () => {
       limit: 1000
     })
     if (lor.totalOutputs > 0) {
-      debugger;
+      debugger
       const lor = await setup.wallet.listOutputs({
         basket: specOpInvalidChange,
         tags: ['release']
