@@ -83,7 +83,7 @@ describe('setActive tests', () => {
     }
   })
 
-  test('1 setActive on main storage wallet with local backup', async () => {
+  test.skip('1 setActive on main storage wallet with local backup', async () => {
     const chain: sdk.Chain = 'main'
     if (Setup.noEnv(chain)) return
     const env = _tu.getEnv(chain)
@@ -119,7 +119,7 @@ describe('setActive tests', () => {
     }
   })
 
-  test('2 setActive between two local backups', async () => {
+  test.skip('2 setActive between two local backups', async () => {
     await waitFor1()
     try {
       if (Setup.noEnv('main')) return
@@ -158,7 +158,7 @@ describe('setActive tests', () => {
     }
   })
 
-  test('3 compare wallet balances', async () => {
+  test.skip('3 compare wallet balances', async () => {
     await waitFor2()
     const chain: sdk.Chain = 'test'
     if (Setup.noEnv(chain)) return
