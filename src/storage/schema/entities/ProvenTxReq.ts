@@ -22,31 +22,18 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     txid: string,
     trx?: sdk.TrxToken
   ): Promise<EntityProvenTxReq | undefined> {
-    const reqApi = verifyOneOrNone(
-      await storage.findProvenTxReqs({ partial: { txid }, trx })
-    )
+    const reqApi = verifyOneOrNone(await storage.findProvenTxReqs({ partial: { txid }, trx }))
     if (!reqApi) return undefined
     return new EntityProvenTxReq(reqApi)
   }
 
-  static async fromStorageId(
-    storage: EntityStorage,
-    id: number,
-    trx?: sdk.TrxToken
-  ): Promise<EntityProvenTxReq> {
-    const reqApi = verifyOneOrNone(
-      await storage.findProvenTxReqs({ partial: { provenTxReqId: id }, trx })
-    )
-    if (!reqApi)
-      throw new sdk.WERR_INTERNAL(`proven_tx_reqs with id ${id} is missing.`)
+  static async fromStorageId(storage: EntityStorage, id: number, trx?: sdk.TrxToken): Promise<EntityProvenTxReq> {
+    const reqApi = verifyOneOrNone(await storage.findProvenTxReqs({ partial: { provenTxReqId: id }, trx }))
+    if (!reqApi) throw new sdk.WERR_INTERNAL(`proven_tx_reqs with id ${id} is missing.`)
     return new EntityProvenTxReq(reqApi)
   }
 
-  static fromTxid(
-    txid: string,
-    rawTx: number[],
-    inputBEEF?: number[]
-  ): EntityProvenTxReq {
+  static fromTxid(txid: string, rawTx: number[], inputBEEF?: number[]): EntityProvenTxReq {
     const now = new Date()
     return new EntityProvenTxReq({
       provenTxReqId: 0,
@@ -110,19 +97,14 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
       // Cleanup null values and duplicates.
       const transactionIds: number[] = []
       for (const id of this.notify.transactionIds) {
-        if (Number.isInteger(id) && !transactionIds.some(txid => txid === id))
-          transactionIds.push(id)
+        if (Number.isInteger(id) && !transactionIds.some(txid => txid === id)) transactionIds.push(id)
       }
       this.notify.transactionIds = transactionIds
     }
   }
 
-  async refreshFromStorage(
-    storage: EntityStorage | WalletStorageManager
-  ): Promise<void> {
-    const newApi = verifyOne(
-      await storage.findProvenTxReqs({ partial: { provenTxReqId: this.id } })
-    )
+  async refreshFromStorage(storage: EntityStorage | WalletStorageManager): Promise<void> {
+    const newApi = verifyOne(await storage.findProvenTxReqs({ partial: { provenTxReqId: this.id } }))
     this.api = newApi
     this.unpackApi()
   }
@@ -156,8 +138,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     const filter = since.toISOString()
     const notes = this.history.notes
     if (notes && fh.notes) {
-      for (const note of notes)
-        if (note.when && note.when > filter) fh.notes.push(note)
+      for (const note of notes) if (note.when && note.when > filter) fh.notes.push(note)
     }
     return fh
   }
@@ -203,10 +184,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     return summary
   }
 
-  parseHistoryNote(
-    note: sdk.ReqHistoryNote,
-    summary?: ProvenTxReqHistorySummaryApi
-  ): string {
+  parseHistoryNote(note: sdk.ReqHistoryNote, summary?: ProvenTxReqHistorySummaryApi): string {
     const c = summary || {
       setToCompleted: false,
       setToUnmined: false,
@@ -255,13 +233,10 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   }
 
   addNotifyTransactionId(id: number) {
-    if (!Number.isInteger(id))
-      throw new sdk.WERR_INVALID_PARAMETER('id', 'integer')
+    if (!Number.isInteger(id)) throw new sdk.WERR_INVALID_PARAMETER('id', 'integer')
     const s = new Set(this.notify.transactionIds || [])
     s.add(id)
-    this.notify.transactionIds = [...s].sort((a, b) =>
-      a > b ? 1 : a < b ? -1 : 0
-    )
+    this.notify.transactionIds = [...s].sort((a, b) => (a > b ? 1 : a < b ? -1 : 0))
     this.notified = false
   }
 
@@ -276,9 +251,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     if (!note.when) note.when = new Date().toISOString()
     if (noDupes) {
       // Remove any existing notes with same 'what' value and either no 'when' or an earlier 'when'
-      this.history.notes = this.history.notes!.filter(
-        n => n.what !== note.what || (n.when && n.when > note.when!)
-      )
+      this.history.notes = this.history.notes!.filter(n => n.what !== note.what || (n.when && n.when > note.when!))
     }
     let addNote = true
     for (const n of this.history.notes) {
@@ -297,9 +270,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
       const k = (n: sdk.ReqHistoryNote): string => {
         return `${n.when} ${n.what}`
       }
-      this.history.notes.sort((a, b) =>
-        k(a) < k(b) ? -1 : k(a) > k(b) ? 1 : 0
-      )
+      this.history.notes.sort((a, b) => (k(a) < k(b) ? -1 : k(a) > k(b) ? 1 : 0))
     }
   }
 
@@ -333,10 +304,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
    * @param storage
    * @param trx
    */
-  async updateStorageDynamicProperties(
-    storage: WalletStorageManager | StorageProvider,
-    trx?: sdk.TrxToken
-  ) {
+  async updateStorageDynamicProperties(storage: WalletStorageManager | StorageProvider, trx?: sdk.TrxToken) {
     this.updated_at = new Date()
     this.updateApi()
     const update: Partial<TableProvenTxReqDynamics> = {
@@ -360,16 +328,10 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     }
   }
 
-  async insertOrMerge(
-    storage: EntityStorage,
-    trx?: sdk.TrxToken
-  ): Promise<EntityProvenTxReq> {
+  async insertOrMerge(storage: EntityStorage, trx?: sdk.TrxToken): Promise<EntityProvenTxReq> {
     const req = await storage.transaction<EntityProvenTxReq>(async trx => {
       let reqApi0 = this.toApi()
-      const { req: reqApi1, isNew } = await storage.findOrInsertProvenTxReq(
-        reqApi0,
-        trx
-      )
+      const { req: reqApi1, isNew } = await storage.findOrInsertProvenTxReq(reqApi0, trx)
       if (isNew) {
         return new EntityProvenTxReq(reqApi1)
       } else {
@@ -391,11 +353,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   }
   set status(v: sdk.ProvenTxReqStatus) {
     if (v !== this.api.status) {
-      this.addHistoryNote({
-        what: 'status',
-        status_was: this.api.status,
-        status_now: v
-      })
+      this.addHistoryNote({ what: 'status', status_was: this.api.status, status_now: v })
       this.api.status = v
     }
   }
@@ -476,19 +434,14 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   /**
    * 'convergent' equality must satisfy (A sync B) equals (B sync A)
    */
-  override equals(
-    ei: TableProvenTxReq,
-    syncMap?: SyncMap | undefined
-  ): boolean {
+  override equals(ei: TableProvenTxReq, syncMap?: SyncMap | undefined): boolean {
     const eo = this.toApi()
     if (
       eo.txid != ei.txid ||
       !arraysEqual(eo.rawTx, ei.rawTx) ||
       (!eo.inputBEEF && ei.inputBEEF) ||
       (eo.inputBEEF && !ei.inputBEEF) ||
-      (eo.inputBEEF &&
-        ei.inputBEEF &&
-        !arraysEqual(eo.inputBEEF, ei.inputBEEF)) ||
+      (eo.inputBEEF && ei.inputBEEF && !arraysEqual(eo.inputBEEF, ei.inputBEEF)) ||
       eo.batch != ei.batch
     )
       return false
@@ -497,12 +450,10 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
         // attempts doesn't matter for convergent equality
         // history doesn't matter for convergent equality
         // only local transactionIds matter, that cared about this txid in sorted order
-        eo.provenTxReqId !==
-          syncMap.provenTxReq.idMap[verifyId(ei.provenTxReqId)] ||
+        eo.provenTxReqId !== syncMap.provenTxReq.idMap[verifyId(ei.provenTxReqId)] ||
         (!eo.provenTxId && ei.provenTxId) ||
         (eo.provenTxId && !ei.provenTxId) ||
-        (ei.provenTxId &&
-          eo.provenTxId !== syncMap.provenTx.idMap[ei.provenTxId])
+        (ei.provenTxId && eo.provenTxId !== syncMap.provenTx.idMap[ei.provenTxId])
         // || eo.created_at !== minDate(ei.created_at, eo.created_at)
         // || eo.updated_at !== maxDate(ei.updated_at, eo.updated_at)
       )
@@ -529,9 +480,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     syncMap: SyncMap,
     trx?: sdk.TrxToken
   ): Promise<{ found: boolean; eo: EntityProvenTxReq; eiId: number }> {
-    const ef = verifyOneOrNone(
-      await storage.findProvenTxReqs({ partial: { txid: ei.txid }, trx })
-    )
+    const ef = verifyOneOrNone(await storage.findProvenTxReqs({ partial: { txid: ei.txid }, trx }))
     return {
       found: !!ef,
       eo: new EntityProvenTxReq(ef || { ...ei }),
@@ -544,8 +493,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     const externalIds = this.notify.transactionIds || []
     this.notify.transactionIds = []
     for (const transactionId of externalIds) {
-      const localTxId: number | undefined =
-        syncMap.transaction.idMap[transactionId]
+      const localTxId: number | undefined = syncMap.transaction.idMap[transactionId]
       if (localTxId) {
         this.addNotifyTransactionId(localTxId)
       }
@@ -558,9 +506,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     if (eie.notify.transactionIds) {
       this.notify.transactionIds ||= []
       for (const transactionId of eie.notify.transactionIds) {
-        const localTxId: number | undefined = syncMap
-          ? syncMap.transaction.idMap[transactionId]
-          : transactionId
+        const localTxId: number | undefined = syncMap ? syncMap.transaction.idMap[transactionId] : transactionId
         if (localTxId) {
           this.addNotifyTransactionId(localTxId)
         }
@@ -569,11 +515,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mergeHistory(
-    ei: TableProvenTxReq,
-    syncMap?: SyncMap,
-    noDupes?: boolean
-  ): void {
+  mergeHistory(ei: TableProvenTxReq, syncMap?: SyncMap, noDupes?: boolean): void {
     const eie = new EntityProvenTxReq(ei)
     if (eie.history.notes) {
       for (const note of eie.history.notes) {
@@ -586,14 +528,8 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     return sdk.ProvenTxReqTerminalStatus.some(s => s === status)
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
-    if (this.provenTxId)
-      this.provenTxId = syncMap.provenTx.idMap[this.provenTxId]
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
+    if (this.provenTxId) this.provenTxId = syncMap.provenTx.idMap[this.provenTxId]
     this.mapNotifyTransactionIds(syncMap)
     this.provenTxReqId = 0
     this.provenTxReqId = await storage.insertProvenTxReq(this.toApi(), trx)
@@ -625,7 +561,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     this.mergeHistory(ei, syncMap, true)
     this.mergeNotifyTransactionIds(ei, syncMap)
 
-    this.updated_at = new Date()
+    this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
     await storage.updateProvenTxReq(this.id, this.toApi(), trx)
     return false
   }

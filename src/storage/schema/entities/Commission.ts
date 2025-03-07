@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableCommission,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableCommission, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityCommission extends EntityBase<TableCommission> {
@@ -102,10 +96,7 @@ export class EntityCommission extends EntityBase<TableCommission> {
   override equals(ei: TableCommission, syncMap?: SyncMap | undefined): boolean {
     if (
       this.isRedeemed !== ei.isRedeemed ||
-      this.transactionId !==
-        (syncMap
-          ? syncMap.transaction.idMap[ei.transactionId]
-          : ei.transactionId) ||
+      this.transactionId !== (syncMap ? syncMap.transaction.idMap[ei.transactionId] : ei.transactionId) ||
       this.keyOffset !== ei.keyOffset ||
       !arraysEqual(this.lockingScript, ei.lockingScript) ||
       this.satoshis !== ei.satoshis
@@ -123,9 +114,7 @@ export class EntityCommission extends EntityBase<TableCommission> {
     trx?: sdk.TrxToken
   ): Promise<{ found: boolean; eo: EntityCommission; eiId: number }> {
     const transactionId = syncMap.transaction.idMap[ei.transactionId]
-    const ef = verifyOneOrNone(
-      await storage.findCommissions({ partial: { transactionId, userId }, trx })
-    )
+    const ef = verifyOneOrNone(await storage.findCommissions({ partial: { transactionId, userId }, trx }))
     return {
       found: !!ef,
       eo: new EntityCommission(ef || { ...ei }),
@@ -133,14 +122,8 @@ export class EntityCommission extends EntityBase<TableCommission> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
-    if (this.transactionId)
-      this.transactionId = syncMap.transaction.idMap[this.transactionId]
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
+    if (this.transactionId) this.transactionId = syncMap.transaction.idMap[this.transactionId]
     this.userId = userId
     this.commissionId = 0
     this.commissionId = await storage.insertCommission(this.toApi(), trx)
@@ -156,7 +139,7 @@ export class EntityCommission extends EntityBase<TableCommission> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isRedeemed = ei.isRedeemed
-      this.updated_at = new Date()
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
       await storage.updateCommission(this.id, this.toApi(), trx)
       wasMerged = true
     }

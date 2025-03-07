@@ -102,31 +102,18 @@ DEV_KEYS = '{
    */
   static getEnv(chain: sdk.Chain): SetupEnv {
     // Identity keys of the lead maintainer of this repo...
-    const identityKey =
-      chain === 'main'
-        ? process.env.MY_MAIN_IDENTITY
-        : process.env.MY_TEST_IDENTITY
-    const identityKey2 =
-      chain === 'main'
-        ? process.env.MY_MAIN_IDENTITY2
-        : process.env.MY_TEST_IDENTITY2
-    const filePath =
-      chain === 'main'
-        ? process.env.MY_MAIN_FILEPATH
-        : process.env.MY_TEST_FILEPATH
+    const identityKey = chain === 'main' ? process.env.MY_MAIN_IDENTITY : process.env.MY_TEST_IDENTITY
+    const identityKey2 = chain === 'main' ? process.env.MY_MAIN_IDENTITY2 : process.env.MY_TEST_IDENTITY2
+    const filePath = chain === 'main' ? process.env.MY_MAIN_FILEPATH : process.env.MY_TEST_FILEPATH
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const mySQLConnection = process.env.MYSQL_CONNECTION || '{}'
     const taalApiKey = verifyTruthy(
-      chain === 'main'
-        ? process.env.MAIN_TAAL_API_KEY
-        : process.env.TEST_TAAL_API_KEY,
+      chain === 'main' ? process.env.MAIN_TAAL_API_KEY : process.env.TEST_TAAL_API_KEY,
       `.env value for '${chain.toUpperCase()}_TAAL_API_KEY' is required.`
     )
 
     if (!identityKey || !identityKey2)
-      throw new sdk.WERR_INVALID_OPERATION(
-        '.env is not a valid SetupEnv configuration.'
-      )
+      throw new sdk.WERR_INVALID_OPERATION('.env is not a valid SetupEnv configuration.')
 
     return {
       chain,
@@ -153,20 +140,12 @@ DEV_KEYS = '{
     const rootKey = PrivateKey.fromHex(args.rootKeyHex)
     const identityKey = rootKey.toPublicKey().toString()
     const keyDeriver = new KeyDeriver(rootKey)
-    const storage = new WalletStorageManager(
-      identityKey,
-      args.active,
-      args.backups
-    )
+    const storage = new WalletStorageManager(identityKey, args.active, args.backups)
     if (storage.canMakeAvailable()) await storage.makeAvailable()
     const serviceOptions = Services.createDefaultOptions(chain)
     serviceOptions.taalApiKey = args.env.taalApiKey
     const services = new Services(serviceOptions)
-    const monopts = Monitor.createDefaultWalletMonitorOptions(
-      chain,
-      storage,
-      services
-    )
+    const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
     monitor.addDefaultTasks()
     const privilegedKeyManager = args.privilegedKeyGetter
@@ -208,9 +187,7 @@ DEV_KEYS = '{
     privilegedKeyGetter?: () => Promise<PrivateKey>
   }): Promise<Wallet> {
     const chain = args.chain
-    const endpointUrl =
-      args.storageUrl ||
-      `https://${args.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
+    const endpointUrl = args.storageUrl || `https://${args.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
     const rootKey = PrivateKey.fromHex(args.rootKeyHex)
     const keyDeriver = new KeyDeriver(rootKey)
     const storage = new WalletStorageManager(keyDeriver.identityKey)
@@ -234,14 +211,11 @@ DEV_KEYS = '{
   /**
    * @publicbody
    */
-  static async createWalletClient(
-    args: SetupWalletClientArgs
-  ): Promise<SetupWalletClient> {
+  static async createWalletClient(args: SetupWalletClientArgs): Promise<SetupWalletClient> {
     const wo = await Setup.createWallet(args)
 
     const endpointUrl =
-      args.endpointUrl ||
-      `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
+      args.endpointUrl || `https://${args.env.chain !== 'main' ? 'staging-' : ''}storage.babbage.systems`
 
     const client = new StorageClient(wo.wallet, endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
@@ -276,10 +250,7 @@ DEV_KEYS = '{
   /**
    * @publicbody
    */
-  static getUnlockP2PKH(
-    priv: PrivateKey,
-    satoshis: number
-  ): sdk.ScriptTemplateUnlock {
+  static getUnlockP2PKH(priv: PrivateKey, satoshis: number): sdk.ScriptTemplateUnlock {
     const p2pkh = new P2PKH()
     const lock = Setup.getLockP2PKH(Setup.getKeyPair(priv).address)
     // Prepare to pay with SIGHASH_ALL and without ANYONE_CAN_PAY.
@@ -381,9 +352,7 @@ DEV_KEYS = '{
    *
    * @publicbody
    */
-  static async createWalletKnex(
-    args: SetupWalletKnexArgs
-  ): Promise<SetupWalletKnex> {
+  static async createWalletKnex(args: SetupWalletKnexArgs): Promise<SetupWalletKnex> {
     const wo = await Setup.createWallet(args)
     const activeStorage = await Setup.createStorageKnex(args)
     await wo.storage.addWalletStorageProvider(activeStorage)
@@ -400,9 +369,7 @@ DEV_KEYS = '{
   /**
    * @returns {StorageKnex} - `Knex` based storage provider for a wallet. May be used for either active storage or backup storage.
    */
-  static async createStorageKnex(
-    args: SetupWalletKnexArgs
-  ): Promise<StorageKnex> {
+  static async createStorageKnex(args: SetupWalletKnexArgs): Promise<StorageKnex> {
     // Create a temporary wallet setup to consistently resolve optional args.
     const wo = await Setup.createWallet(args)
     const storage = new StorageKnex({
@@ -452,9 +419,7 @@ DEV_KEYS = '{
   /**
    * @publicbody
    */
-  static async createWalletMySQL(
-    args: SetupWalletMySQLArgs
-  ): Promise<SetupWalletKnex> {
+  static async createWalletMySQL(args: SetupWalletMySQLArgs): Promise<SetupWalletKnex> {
     return await this.createWalletKnex({
       ...args,
       knex: Setup.createMySQLKnex(args.env.mySQLConnection, args.databaseName)
@@ -464,9 +429,7 @@ DEV_KEYS = '{
   /**
    * @publicbody
    */
-  static async createWalletSQLite(
-    args: SetupWalletSQLiteArgs
-  ): Promise<SetupWalletKnex> {
+  static async createWalletSQLite(args: SetupWalletSQLiteArgs): Promise<SetupWalletKnex> {
     return await this.createWalletKnex({
       ...args,
       knex: Setup.createSQLiteKnex(args.filePath)

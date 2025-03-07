@@ -1,12 +1,5 @@
-import {
-  mockUnderlyingWallet,
-  MockedBSV_SDK,
-  MockTransaction
-} from './WalletPermissionsManager.fixtures'
-import {
-  WalletPermissionsManager,
-  PermissionsManagerConfig
-} from '../WalletPermissionsManager'
+import { mockUnderlyingWallet, MockedBSV_SDK, MockTransaction } from './WalletPermissionsManager.fixtures'
+import { WalletPermissionsManager, PermissionsManagerConfig } from '../WalletPermissionsManager'
 
 jest.mock('@bsv/sdk', () => MockedBSV_SDK)
 
@@ -40,11 +33,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       differentiatePrivilegedOperations: true
     }
     // We pass "admin.test" as the admin origin
-    manager = new WalletPermissionsManager(
-      underlying,
-      'admin.test',
-      defaultConfig
-    )
+    manager = new WalletPermissionsManager(underlying, 'admin.test', defaultConfig)
 
     // For these tests, we don't want to deal with UI prompts or real user interactions.
     // We stub out any permission requests by auto-granting ephemeral in all cases
@@ -118,9 +107,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
     mockTx.outputs = [{ satoshis: 600 }, { satoshis: 400 }]
 
     // Now override fromAtomicBEEF to return our mockTx:
-    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(
-      mockTx
-    )
+    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
 
     // Attempt to create an action from a non-admin origin
     await manager.createAction(
@@ -209,15 +196,12 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       }
     ]
     mockTx.outputs = [{ satoshis: 100 }]
-    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(
-      mockTx
-    )
+    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
 
     await expect(
       manager.createAction(
         {
-          description:
-            'User tries to spend 100 + fee=100 from 0 input => netSpent=200',
+          description: 'User tries to spend 100 + fee=100 from 0 input => netSpent=200',
           outputs: [
             {
               lockingScript: 'abc123',
@@ -292,15 +276,9 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
   })
 
   it('should proxy abortAction calls directly', async () => {
-    const result = await manager.abortAction(
-      { reference: 'abort-me' },
-      'someuser.com'
-    )
+    const result = await manager.abortAction({ reference: 'abort-me' }, 'someuser.com')
     expect(underlying.abortAction).toHaveBeenCalledTimes(1)
-    expect(underlying.abortAction).toHaveBeenCalledWith(
-      { reference: 'abort-me' },
-      'someuser.com'
-    )
+    expect(underlying.abortAction).toHaveBeenCalledWith({ reference: 'abort-me' }, 'someuser.com')
     expect(result).toEqual({ aborted: true })
   })
 
@@ -340,10 +318,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
     // If it works, it returns the decrypted string. Our underlying mock decrypt => "[42,42]" => "**"
     // So let's expect the final returned fields to be "**".
 
-    const result = await manager.listActions(
-      { labels: ['some-label'] },
-      'nonadmin.com'
-    )
+    const result = await manager.listActions({ labels: ['some-label'] }, 'nonadmin.com')
 
     expect(underlying.listActions).toHaveBeenCalledTimes(1)
     // The manager calls ensureLabelAccess first, which triggers a protocol permission request
@@ -377,9 +352,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
     // Then it encrypts 'plaintext instructions' before passing it to underlying
     expect(underlying.internalizeAction).toHaveBeenCalledTimes(1)
     const callArgs = underlying.internalizeAction.mock.calls[0][0]
-    expect(callArgs.outputs[0].insertionRemittance.customInstructions).not.toBe(
-      'plaintext instructions'
-    )
+    expect(callArgs.outputs[0].insertionRemittance.customInstructions).not.toBe('plaintext instructions')
     // There's no direct check that the string is "**" or something, because it's encrypted.
     // We just confirm it was changed from the original plaintext.
   })
@@ -401,10 +374,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       ]
     })
 
-    const result = await manager.listOutputs(
-      { basket: 'user-basket' },
-      'app.example.com'
-    )
+    const result = await manager.listOutputs({ basket: 'user-basket' }, 'app.example.com')
     // manager ephemeral-grants basket permission
     expect(underlying.listOutputs).toHaveBeenCalledTimes(2)
     expect(underlying.listOutputs.mock.calls).toEqual([
@@ -436,10 +406,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       'nonadmin.com'
     )
     expect(underlying.relinquishOutput).toHaveBeenCalledTimes(1)
-    expect(underlying.relinquishOutput).toHaveBeenCalledWith(
-      { output: 'xxx.0', basket: 'some-basket' },
-      'nonadmin.com'
-    )
+    expect(underlying.relinquishOutput).toHaveBeenCalledWith({ output: 'xxx.0', basket: 'some-basket' }, 'nonadmin.com')
   })
 
   /* -------------------------------------------------------------------------
@@ -672,19 +639,13 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
    * ----------------------------------------------------------------------- */
 
   it('should call discoverByIdentityKey after ensuring identity resolution permission', async () => {
-    const result = await manager.discoverByIdentityKey(
-      { identityKey: '0222fff...' },
-      'someone-trying-lookup.com'
-    )
+    const result = await manager.discoverByIdentityKey({ identityKey: '0222fff...' }, 'someone-trying-lookup.com')
     expect(underlying.discoverByIdentityKey).toHaveBeenCalledTimes(1)
     expect(result.certificates.length).toBe(0)
   })
 
   it('should call discoverByAttributes after ensuring identity resolution permission', async () => {
-    const result = await manager.discoverByAttributes(
-      { attributes: { name: 'Bob' } },
-      'someone-trying-lookup.com'
-    )
+    const result = await manager.discoverByAttributes({ attributes: { name: 'Bob' } }, 'someone-trying-lookup.com')
     expect(underlying.discoverByAttributes).toHaveBeenCalledTimes(1)
     expect(result.certificates.length).toBe(0)
   })
@@ -713,10 +674,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
   })
 
   it('should proxy getHeaderForHeight', async () => {
-    const result = await manager.getHeaderForHeight(
-      { height: 100000 },
-      'someone.com'
-    )
+    const result = await manager.getHeaderForHeight({ height: 100000 }, 'someone.com')
     expect(result.header).toMatch(/000000000000abc/)
     expect(underlying.getHeaderForHeight).toHaveBeenCalledTimes(1)
   })
@@ -739,15 +697,10 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
 
   it('should propagate errors from the underlying wallet calls', async () => {
     // Let's have underlying.createAction throw
-    underlying.createAction.mockRejectedValueOnce(
-      new Error('Under-wallet failure')
-    )
+    underlying.createAction.mockRejectedValueOnce(new Error('Under-wallet failure'))
 
-    await expect(
-      manager.createAction(
-        { description: 'test error', outputs: [] },
-        'someuser.com'
-      )
-    ).rejects.toThrow(/Under-wallet failure/)
+    await expect(manager.createAction({ description: 'test error', outputs: [] }, 'someuser.com')).rejects.toThrow(
+      /Under-wallet failure/
+    )
   })
 })

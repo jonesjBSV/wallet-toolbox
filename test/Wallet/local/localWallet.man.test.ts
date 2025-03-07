@@ -27,10 +27,7 @@ import {
 } from '../../../src'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { monitorEventLoopDelay } from 'perf_hooks'
-import {
-  validateCreateActionArgs,
-  ValidCreateActionArgs
-} from '../../../src/sdk'
+import { validateCreateActionArgs, ValidCreateActionArgs } from '../../../src/sdk'
 
 describe('localWallet tests', () => {
   jest.setTimeout(99999999)
@@ -39,140 +36,90 @@ describe('localWallet tests', () => {
   if (_tu.noTestEnv('test')) return
   if (_tu.noTestEnv('main')) return
 
-  test('0 create 1 sat delayed', async () => {
+  test('0 monitor runOnce', async () => {
     const setup = await createSetup('test')
-
-    const car = await createOneSatTestOutput(setup, {}, 1)
-
-    //await trackReqByTxid(setup, car.txid!)
-
-    await setup.wallet.destroy()
-  })
-
-  test('0a create 1 sat immediate', async () => {
-    const setup = await createSetup('test')
-
-    const car = await createOneSatTestOutput(
-      setup,
-      { acceptDelayedBroadcast: false },
-      1
-    )
-
-    await trackReqByTxid(setup, car.txid!)
-
-    await setup.wallet.destroy()
-  })
-
-  test('0b create 2 nosend and sendWith', async () => {
-    const setup = await createSetup('test')
-
-    const car = await createOneSatTestOutput(setup, { noSend: true }, 2)
-
-    //await trackReqByTxid(setup, car.txid!)
-
+    await setup.monitor.runOnce()
     await setup.wallet.destroy()
   })
 
   test('1 recover 1 sat outputs', async () => {
     const setup = await createSetup('test')
-
     await recoverOneSatTestOutputs(setup)
-
     await setup.wallet.destroy()
   })
 
-  test('2 monitor runOnce', async () => {
+  test('2 create 1 sat delayed', async () => {
     const setup = await createSetup('test')
+    const car = await createOneSatTestOutput(setup, {}, 1)
+    //await trackReqByTxid(setup, car.txid!)
+    await setup.wallet.destroy()
+  })
 
-    await setup.monitor.runOnce()
+  test('2a create 1 sat immediate', async () => {
+    const setup = await createSetup('test')
+    const car = await createOneSatTestOutput(setup, { acceptDelayedBroadcast: false }, 1)
+    // await trackReqByTxid(setup, car.txid!)
+    await setup.wallet.destroy()
+  })
 
+  test('2b create 2 nosend and sendWith', async () => {
+    const setup = await createSetup('test')
+    const car = await createOneSatTestOutput(setup, { noSend: true }, 2)
+    //await trackReqByTxid(setup, car.txid!)
     await setup.wallet.destroy()
   })
 
   test('3 return active to cloud client', async () => {
     const setup = await createSetup('test')
-
     const localBalance = await setup.wallet.balance()
-
     const log = await setup.storage.setActive(setup.clientStorageIdentityKey!)
     console.log(log)
-
     console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
-
     const clientBalance = await setup.wallet.balance()
-
     expect(localBalance.total).toBe(clientBalance.total)
-
     await setup.wallet.destroy()
   })
 
   test('4 review change utxos', async () => {
     const setup = await createSetup('test')
-
     const storage = setup.activeStorage
     const services = setup.services
-
-    const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(
-      storage,
-      services
-    )
-    const outputsToUpdate = notUtxos.map(o => ({
-      id: o.outputId,
-      satoshis: o.satoshis
-    }))
-
+    const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(storage, services)
+    const outputsToUpdate = notUtxos.map(o => ({ id: o.outputId, satoshis: o.satoshis }))
     const total: number = outputsToUpdate.reduce((t, o) => t + o.satoshis, 0)
-
     debugger
     // *** About set spendable = false for outputs ***/
     for (const o of outputsToUpdate) {
       await storage.updateOutput(o.id, { spendable: false })
     }
-
     await setup.wallet.destroy()
   })
 
   test('5 review synchunk', async () => {
     const setup = await createSetup('test')
-
     const identityKey = setup.identityKey
     const reader = setup.activeStorage
     const readerSettings = reader.getSettings()
     const writer = setup.storage._backups![0].storage
     const writerSettings = writer.getSettings()
-
-    const ss = await EntitySyncState.fromStorage(
-      writer,
-      identityKey,
-      readerSettings
-    )
-
-    const args = ss.makeRequestSyncChunkArgs(
-      identityKey,
-      writerSettings.storageIdentityKey
-    )
-
+    const ss = await EntitySyncState.fromStorage(writer, identityKey, readerSettings)
+    const args = ss.makeRequestSyncChunkArgs(identityKey, writerSettings.storageIdentityKey)
     const chunk = await reader.getSyncChunk(args)
-
     await setup.wallet.destroy()
   })
 
   test('6 backup', async () => {
     const setup = await createSetup('test')
-
     const log = await setup.storage.updateBackups()
     console.log(log)
-
     await setup.wallet.destroy()
   })
 })
 
 async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
   const env = _tu.getEnv(chain)
-  if (!env.testIdentityKey)
-    throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
-  if (!env.testFilePath)
-    throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
+  if (!env.testIdentityKey) throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
+  if (!env.testFilePath) throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
 
   const setup = await _tu.createTestWallet({
     chain,
@@ -205,9 +152,7 @@ async function createOneSatTestOutput(
     const args: CreateActionArgs = {
       outputs: [
         {
-          lockingScript: new P2PKH()
-            .lock(PublicKey.fromString(setup.identityKey).toAddress())
-            .toHex(),
+          lockingScript: new P2PKH().lock(PublicKey.fromString(setup.identityKey).toAddress()).toHex(),
           satoshis: 1,
           outputDescription: 'test output',
           customInstructions: JSON.stringify({
@@ -229,10 +174,7 @@ async function createOneSatTestOutput(
     txids.push(car.txid!)
     noSendChange = car.noSendChange
 
-    const req = await EntityProvenTxReq.fromStorageTxid(
-      setup.activeStorage,
-      car.txid!
-    )
+    const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, car.txid!)
     expect(req !== undefined && req.history.notes !== undefined)
     if (req && req.history.notes) {
       if (vargs.isNoSend) {
@@ -265,9 +207,7 @@ async function createOneSatTestOutput(
   return car
 }
 
-async function recoverOneSatTestOutputs(
-  setup: TestWalletNoSetup
-): Promise<void> {
+async function recoverOneSatTestOutputs(setup: TestWalletNoSetup): Promise<void> {
   const outputs = await setup.wallet.listOutputs({
     basket: 'test-output',
     include: 'entire transactions',
@@ -309,10 +249,7 @@ async function recoverOneSatTestOutputs(
   }
 }
 
-async function trackReqByTxid(
-  setup: TestWalletNoSetup,
-  txid: string
-): Promise<void> {
+async function trackReqByTxid(setup: TestWalletNoSetup, txid: string): Promise<void> {
   const req = await EntityProvenTxReq.fromStorageTxid(setup.activeStorage, txid)
 
   expect(req !== undefined && req.history.notes !== undefined)
@@ -356,9 +293,7 @@ export async function confirmSpendableOutputs(
   const users = await storage.findUsers({ partial })
 
   for (const { userId } of users) {
-    const defaultBasket = verifyOne(
-      await storage.findOutputBaskets({ partial: { userId, name: 'default' } })
-    )
+    const defaultBasket = verifyOne(await storage.findOutputBaskets({ partial: { userId, name: 'default' } }))
     const where: Partial<TableOutput> = {
       userId,
       basketId: defaultBasket.basketId,
@@ -375,10 +310,7 @@ export async function confirmSpendableOutputs(
         let ok = false
 
         if (o.lockingScript && o.lockingScript.length > 0) {
-          const r = await services.getUtxoStatus(
-            asString(o.lockingScript),
-            'script'
-          )
+          const r = await services.getUtxoStatus(asString(o.lockingScript), 'script')
 
           if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
             const tx = await storage.findTransactionById(o.transactionId)
@@ -386,12 +318,7 @@ export async function confirmSpendableOutputs(
             if (
               tx &&
               tx.txid &&
-              r.details.some(
-                d =>
-                  d.txid === tx.txid &&
-                  d.satoshis === o.satoshis &&
-                  d.index === o.vout
-              )
+              r.details.some(d => d.txid === tx.txid && d.satoshis === o.satoshis && d.index === o.vout)
             ) {
               ok = true
             }

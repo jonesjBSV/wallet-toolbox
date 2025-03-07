@@ -1,11 +1,5 @@
 import { _tu } from '../utils/TestUtilsWalletStorage'
-import {
-  randomBytesBase64,
-  randomBytesHex,
-  sdk,
-  StorageProvider,
-  TableCommission
-} from '../../src/index.client'
+import { randomBytesBase64, randomBytesHex, sdk, StorageProvider, TableCommission } from '../../src/index.client'
 import { StorageKnex } from '../../src/storage/StorageKnex'
 
 describe('insert tests', () => {
@@ -16,12 +10,7 @@ describe('insert tests', () => {
   const env = _tu.getEnv(chain)
 
   beforeAll(async () => {
-    const localSQLiteFile = await _tu.newTmpFile(
-      'inserttest.sqlite',
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile('inserttest.sqlite', false, false, true)
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
     storages.push(
       new StorageKnex({
@@ -121,12 +110,7 @@ describe('insert tests', () => {
   test('4 insert CertificateField', async () => {
     for (const storage of storages) {
       const c = await _tu.insertTestCertificate(storage)
-      const e = await _tu.insertTestCertificateField(
-        storage,
-        c,
-        'prize',
-        'starship'
-      )
+      const e = await _tu.insertTestCertificateField(storage, c, 'prize', 'starship')
       expect(e.certificateId).toBe(c.certificateId)
       expect(e.userId).toBe(c.userId)
       expect(e.fieldName).toBe('prize')

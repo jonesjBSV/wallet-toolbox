@@ -1,9 +1,7 @@
 import { randomBytesHex, sdk } from '../index.client'
 import { ChaintracksServiceClient } from './chaintracker'
 
-export function createDefaultWalletServicesOptions(
-  chain: sdk.Chain
-): sdk.WalletServicesOptions {
+export function createDefaultWalletServicesOptions(chain: sdk.Chain): sdk.WalletServicesOptions {
   const taalApiKey =
     chain === 'main'
       ? 'mainnet_9596de07e92300c6287e4393594ae39c' // no plan
@@ -45,7 +43,6 @@ export function createDefaultWalletServicesOptions(
 }
 
 export function arcDefaultUrl(chain: sdk.Chain): string {
-  const url =
-    chain === 'main' ? 'https://api.taal.com/arc' : 'https://arc-test.taal.com'
+  const url = chain === 'main' ? 'https://api.taal.com/arc' : 'https://arc-test.taal.com'
   return url
 }

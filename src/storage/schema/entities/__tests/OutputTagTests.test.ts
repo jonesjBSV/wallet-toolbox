@@ -1,8 +1,5 @@
 import { createSyncMap, sdk, SyncMap, TableOutputTag } from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityOutputTag } from '../../../../../src/storage/schema/entities/OutputTag'
 
 describe('OutputTag class method tests', () => {

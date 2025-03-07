@@ -21,9 +21,7 @@ const logFilePath = path.resolve(__dirname, 'createAction2.test.ts')
 
 function sanitizeTestName(testName: string): string {
   const cleanTestName = testName.replace(/[^a-zA-Z0-9_]/g, '_')
-  return cleanTestName.startsWith('LOG_')
-    ? cleanTestName
-    : `LOG_${cleanTestName}`
+  return cleanTestName.startsWith('LOG_') ? cleanTestName : `LOG_${cleanTestName}`
 }
 
 describe('createAction2 nosend transactions', () => {
@@ -68,8 +66,7 @@ describe('createAction2 nosend transactions', () => {
         description: 'Funding transaction',
         options: { noSend: true, randomizeOutputs: false }
       }
-      const fundingResult: CreateActionResult =
-        await wallet.createAction(fundingArgs)
+      const fundingResult: CreateActionResult = await wallet.createAction(fundingArgs)
       expect(fundingResult.tx).toBeDefined()
       const actionsResult = await wallet.listActions({
         labels: [fundingLabel],
@@ -121,8 +118,7 @@ describe('createAction2 nosend transactions', () => {
         description: 'Funding transaction with multiple outputs',
         options: { noSend: true, randomizeOutputs: false }
       }
-      const fundingResult: CreateActionResult =
-        await wallet.createAction(fundingArgs)
+      const fundingResult: CreateActionResult = await wallet.createAction(fundingArgs)
       const actionsResult = await wallet.listActions({
         labels: [fundingLabel],
         includeInputs: true,
@@ -164,14 +160,11 @@ describe('createAction2 nosend transactions', () => {
         description: 'Funding transaction',
         options: { noSend: true, randomizeOutputs: false }
       }
-      const fundingResult: CreateActionResult =
-        await wallet.createAction(fundingArgs)
+      const fundingResult: CreateActionResult = await wallet.createAction(fundingArgs)
       expect(fundingResult.tx).toBeDefined()
       expect(fundingResult.noSendChange).toBeDefined()
       expect(fundingResult.noSendChange!.length).toBe(1)
-      log(
-        `noSendChange returned:${JSON.stringify(fundingResult.noSendChange, null, 2)}`
-      )
+      log(`noSendChange returned:${JSON.stringify(fundingResult.noSendChange, null, 2)}`)
       const outputSatoshis = 2
       const estimatedFee = 1
       const fundingBeef = Beef.fromBinary(fundingResult.tx!)
@@ -200,12 +193,9 @@ describe('createAction2 nosend transactions', () => {
           noSendChange: []
         }
       }
-      const spendingResult: CreateActionResult =
-        await wallet.createAction(spendingArgs)
+      const spendingResult: CreateActionResult = await wallet.createAction(spendingArgs)
       expect(spendingResult.tx).toBeDefined()
-      log(
-        `Spending transaction created:${JSON.stringify(spendingResult, null, 2)}`
-      )
+      log(`Spending transaction created:${JSON.stringify(spendingResult, null, 2)}`)
       const spendingActionsResult = await wallet.listActions({
         labels: ['spending transaction test'],
         includeInputs: true,
@@ -215,11 +205,10 @@ describe('createAction2 nosend transactions', () => {
         includeOutputLockingScripts: true,
         includeLabels: true
       })
-      const totalInputSatoshis =
-        spendingActionsResult.actions[0]?.inputs?.reduce(
-          (sum, input) => sum + input.sourceSatoshis,
-          0
-        )
+      const totalInputSatoshis = spendingActionsResult.actions[0]?.inputs?.reduce(
+        (sum, input) => sum + input.sourceSatoshis,
+        0
+      )
       const expectedChange = totalInputSatoshis! - outputSatoshis - estimatedFee
       const outputs = spendingActionsResult.actions[0]?.outputs || []
       const changeOutput = outputs.find(output => output.basket === 'default')
@@ -258,8 +247,7 @@ describe('createAction2 nosend transactions', () => {
         description: 'Funding transaction',
         options: { noSend: true, randomizeOutputs: false }
       }
-      const fundingResult: CreateActionResult =
-        await wallet.createAction(fundingArgs)
+      const fundingResult: CreateActionResult = await wallet.createAction(fundingArgs)
       expect(fundingResult.tx).toBeDefined()
       const spendingArgs: CreateActionArgs = {
         description: 'Check knownTxids and returnTXIDOnly',
@@ -278,11 +266,8 @@ describe('createAction2 nosend transactions', () => {
           randomizeOutputs: false
         }
       }
-      const spendingResult: CreateActionResult =
-        await wallet.createAction(spendingArgs)
-      expect(spendingArgs.options!.knownTxids).toEqual(
-        expect.arrayContaining(['tx123', 'tx456'])
-      )
+      const spendingResult: CreateActionResult = await wallet.createAction(spendingArgs)
+      expect(spendingArgs.options!.knownTxids).toEqual(expect.arrayContaining(['tx123', 'tx456']))
       const spendingActionsResult = await wallet.listActions({
         labels: ['custom options test'],
         includeInputs: true,
@@ -322,8 +307,7 @@ describe('createAction2 nosend transactions', () => {
         description: 'Funding transaction',
         options: { noSend: true }
       }
-      const fundingResult: CreateActionResult =
-        await wallet.createAction(fundingArgs)
+      const fundingResult: CreateActionResult = await wallet.createAction(fundingArgs)
       expect(fundingResult.tx).toBeDefined()
       const spendingArgs: CreateActionArgs = {
         description: 'Check knownTxids and returnTXIDOnly',
@@ -341,12 +325,9 @@ describe('createAction2 nosend transactions', () => {
           noSend: true
         }
       }
-      const spendingResult: CreateActionResult =
-        await wallet.createAction(spendingArgs)
+      const spendingResult: CreateActionResult = await wallet.createAction(spendingArgs)
       expect(spendingResult.tx).not.toBeDefined()
-      expect(spendingArgs.options!.knownTxids).toEqual(
-        expect.arrayContaining(['tx123', 'tx456'])
-      )
+      expect(spendingArgs.options!.knownTxids).toEqual(expect.arrayContaining(['tx123', 'tx456']))
     }
   })
 
@@ -365,8 +346,7 @@ describe('createAction2 nosend transactions', () => {
         description: 'Funding transaction',
         options: { noSend: true }
       }
-      const fundingResult: CreateActionResult =
-        await wallet.createAction(fundingArgs)
+      const fundingResult: CreateActionResult = await wallet.createAction(fundingArgs)
       expect(fundingResult.tx).toBeDefined()
       const spendingArgs: CreateActionArgs = {
         description: 'Check knownTxids txids',
@@ -384,19 +364,14 @@ describe('createAction2 nosend transactions', () => {
           noSend: true
         }
       }
-      const spendingResult: CreateActionResult =
-        await wallet.createAction(spendingArgs)
+      const spendingResult: CreateActionResult = await wallet.createAction(spendingArgs)
       expect(spendingResult).toBeDefined()
-      expect(spendingArgs.options!.knownTxids).toEqual(
-        expect.arrayContaining(['tx123', 'tx456'])
-      )
+      expect(spendingArgs.options!.knownTxids).toEqual(expect.arrayContaining(['tx123', 'tx456']))
       const fundingBeef = Beef.fromBinary(fundingResult.tx!)
       expect(fundingBeef).toBeDefined()
       const BeefPartyTxids = fundingBeef.txs.map(tx => tx.txid)
       const expectedTxids = ['tx123', 'tx456', ...BeefPartyTxids]
-      expect(spendingArgs.options!.knownTxids?.sort()).toEqual(
-        expectedTxids.sort()
-      )
+      expect(spendingArgs.options!.knownTxids?.sort()).toEqual(expectedTxids.sort())
     }
   })
 
@@ -415,8 +390,7 @@ describe('createAction2 nosend transactions', () => {
         description: 'Funding transaction',
         options: { noSend: true }
       }
-      const fundingResult: CreateActionResult =
-        await wallet.createAction(fundingArgs)
+      const fundingResult: CreateActionResult = await wallet.createAction(fundingArgs)
       expect(fundingResult.tx).toBeDefined()
       const spendingArgs: CreateActionArgs = {
         description: 'Check knownTxids txids extra',
@@ -433,19 +407,14 @@ describe('createAction2 nosend transactions', () => {
           noSend: true
         }
       }
-      const spendingResult: CreateActionResult =
-        await wallet.createAction(spendingArgs)
+      const spendingResult: CreateActionResult = await wallet.createAction(spendingArgs)
       expect(spendingResult).toBeDefined()
-      expect(spendingArgs.options!.knownTxids).toEqual(
-        expect.arrayContaining(['tx123', 'tx456'])
-      )
+      expect(spendingArgs.options!.knownTxids).toEqual(expect.arrayContaining(['tx123', 'tx456']))
       const fundingBeef = Beef.fromBinary(fundingResult.tx!)
       expect(fundingBeef).toBeDefined()
       const partyBeefTxids = fundingBeef.txs.map(tx => tx.txid)
       const expectedTxids = ['tx123', 'tx456', ...partyBeefTxids]
-      expect(spendingArgs.options!.knownTxids?.sort()).toEqual(
-        expectedTxids.sort()
-      )
+      expect(spendingArgs.options!.knownTxids?.sort()).toEqual(expectedTxids.sort())
       const additionalSpendArgs: CreateActionArgs = {
         description: 'Extra spend transaction',
         outputs: [
@@ -462,16 +431,13 @@ describe('createAction2 nosend transactions', () => {
           noSend: true
         }
       }
-      const additionalSpendResult: CreateActionResult =
-        await wallet.createAction(additionalSpendArgs)
+      const additionalSpendResult: CreateActionResult = await wallet.createAction(additionalSpendArgs)
       expect(additionalSpendResult).toBeDefined()
       const finalBeef = Beef.fromBinary(spendingResult.tx!)
       expect(finalBeef).toBeDefined()
       const finalPartyBeefTxids = finalBeef.txs.map(tx => tx.txid)
       const finalExpectedTxids = [...expectedTxids, ...finalPartyBeefTxids]
-      expect(additionalSpendArgs.options!.knownTxids?.sort()).toEqual(
-        finalExpectedTxids.sort()
-      )
+      expect(additionalSpendArgs.options!.knownTxids?.sort()).toEqual(finalExpectedTxids.sort())
     }
   })
 
@@ -635,10 +601,7 @@ describe('createAction2 nosend transactions', () => {
 
 // Helper functions
 
-function getExpectedLog(
-  testName: string,
-  logFilePath: string
-): { log: string; logColor: string } | null {
+function getExpectedLog(testName: string, logFilePath: string): { log: string; logColor: string } | null {
   if (!fs.existsSync(logFilePath)) {
     return null
   }
@@ -662,10 +625,7 @@ function getExpectedLog(
 const normalizeVariableParts = (log: string): string => {
   return log
     .replace(/txid:[a-f0-9]{64}/g, 'txid:PLACEHOLDER') // Replace txids
-    .replace(
-      /unlock:\(\d+\)(?:483045022100[a-f0-9]{64}0220|[a-f0-9]+)/g,
-      'unlock:PLACEHOLDER'
-    )
+    .replace(/unlock:\(\d+\)(?:483045022100[a-f0-9]{64}0220|[a-f0-9]+)/g, 'unlock:PLACEHOLDER')
     .replace(/lock:\(\d+\)76a914[a-f0-9]{40}/g, 'lock:PLACEHOLDER') // Replace locking script
     .replace(/index:\d+ spendable:/g, 'index:PLACEHOLDER spendable:') // Normalize index
     .trim()
@@ -676,10 +636,7 @@ const normalizeVariableParts = (log: string): string => {
  * @param {string} testName - The name of the test.
  * @param {{ log: string; logColor: string }} rl - The log data.
  */
-function appendLogsAsConst(
-  testName: string,
-  rl: { log: string; logColor: string }
-) {
+function appendLogsAsConst(testName: string, rl: { log: string; logColor: string }) {
   const normalizedTestName = testName
     .replace(/[^a-zA-Z0-9_ ]/g, '')
     .trim()
@@ -710,9 +667,7 @@ const ${sanitizedTestName} = {
  * @returns {string} - The formatted field string.
  */
 const formatOptionalField = (fieldName: string, value: any) =>
-  value !== undefined && value !== null && value !== ''
-    ? ` ${fieldName}:${value}`
-    : ''
+  value !== undefined && value !== null && value !== '' ? ` ${fieldName}:${value}` : ''
 
 /**
  * Formats an optional field with quotes if it has a defined value.
@@ -721,9 +676,7 @@ const formatOptionalField = (fieldName: string, value: any) =>
  * @returns {string} - The formatted field string with quotes.
  */
 const formatOptionalFieldWithQuotes = (fieldName: string, value: any) =>
-  value !== undefined && value !== null && value !== ''
-    ? ` ${fieldName}:'${value}'`
-    : ''
+  value !== undefined && value !== null && value !== '' ? ` ${fieldName}:'${value}'` : ''
 
 /**
  * Formats an optional field with color if it has a defined value.
@@ -732,11 +685,7 @@ const formatOptionalFieldWithQuotes = (fieldName: string, value: any) =>
  * @param {(val: string) => string} colorFunc - The function to apply color formatting.
  * @returns {string} - The formatted field string with color.
  */
-const formatOptionalFieldWithColor = (
-  fieldName: string,
-  value: any,
-  colorFunc: (val: string) => string
-) =>
+const formatOptionalFieldWithColor = (fieldName: string, value: any, colorFunc: (val: string) => string) =>
   value !== undefined && value !== null && value !== ''
     ? ` ${chalk.gray(fieldName + ':')}${colorFunc(typeof value === 'string' ? value : String(value))}`
     : ''
@@ -747,17 +696,14 @@ const formatOptionalFieldWithColor = (
  * @returns {string} - The formatted metadata string.
  */
 const formatMetadata = (metadata?: any) =>
-  metadata && !isEmptyObject(metadata)
-    ? `metadata:${JSON.stringify(metadata)}`
-    : ''
+  metadata && !isEmptyObject(metadata) ? `metadata:${JSON.stringify(metadata)}` : ''
 
 /**
  * Formats the Merkle path if present.
  * @param {MerklePath | string} [merklePath] - The Merkle path.
  * @returns {string} - The formatted Merkle path string.
  */
-const formatMerklePath = (merklePath?: MerklePath | string) =>
-  merklePath ? `merklePath:${String(merklePath)}` : ''
+const formatMerklePath = (merklePath?: MerklePath | string) => (merklePath ? `merklePath:${String(merklePath)}` : '')
 
 const MAX_LOG_LINE_LENGTH = 120 // Define in the test
 
@@ -768,11 +714,7 @@ const MAX_LOG_LINE_LENGTH = 120 // Define in the test
  * @param {number} [maxLength=120] - The maximum length of a line.
  * @returns {string} - The wrapped log line.
  */
-const wrapLogLine = (
-  text: string,
-  indent: number,
-  maxLength: number = 120
-): string => {
+const wrapLogLine = (text: string, indent: number, maxLength: number = 120): string => {
   const words = text.trim().split(' ')
   let wrappedText = '  '.repeat(indent)
   let currentLineLength = indent * 2
@@ -796,11 +738,8 @@ const wrapLogLine = (
  * @param {string} content - The content of the line.
  * @returns {string} - The formatted indented line.
  */
-const formatIndentedLineWithWrap = (
-  indent: number,
-  content: string,
-  maxLength: number = 120
-) => wrapLogLine(content.trim(), indent, maxLength)
+const formatIndentedLineWithWrap = (indent: number, content: string, maxLength: number = 120) =>
+  wrapLogLine(content.trim(), indent, maxLength)
 
 /**
  * Formats a list of wallet action inputs for logging.
@@ -816,11 +755,7 @@ const formatInputs = (inputs: WalletActionInput[]) =>
           let color = `${chalk.gray(`${i}:`)} ${chalk.blue(input.sourceOutpoint)} ${chalk.green(`${input.sourceSatoshis} sats`)}`
 
           line += formatOptionalFieldWithQuotes('desc', input.inputDescription)
-          color += formatOptionalFieldWithColor(
-            'desc',
-            input.inputDescription,
-            chalk.white
-          )
+          color += formatOptionalFieldWithColor('desc', input.inputDescription, chalk.white)
 
           if (input.sourceLockingScript) {
             line += ` lock:(${input.sourceLockingScript.length})${truncate(input.sourceLockingScript)}`
@@ -861,45 +796,19 @@ const formatOutputs = (outputs: WalletActionOutput[]) =>
           let color = `${chalk.gray(`${i}:`)} ${chalk.green(`${output.satoshis} sats`)} ${chalk.gray('lock:')}(${output.lockingScript?.length || ''})${chalk.cyan(truncate(output.lockingScript!) ?? 'N/A')}`
 
           line += formatOptionalField('index', output.outputIndex)
-          color += formatOptionalFieldWithColor(
-            'index',
-            output.outputIndex,
-            chalk.white
-          )
+          color += formatOptionalFieldWithColor('index', output.outputIndex, chalk.white)
 
           line += formatOptionalField('spendable', output.spendable)
-          color += formatOptionalFieldWithColor(
-            'spendable',
-            output.spendable,
-            chalk.white
-          )
+          color += formatOptionalFieldWithColor('spendable', output.spendable, chalk.white)
 
-          line += formatOptionalFieldWithQuotes(
-            'custinst',
-            output.customInstructions
-          )
-          color += formatOptionalFieldWithColor(
-            'custinst',
-            output.customInstructions,
-            chalk.white
-          )
+          line += formatOptionalFieldWithQuotes('custinst', output.customInstructions)
+          color += formatOptionalFieldWithColor('custinst', output.customInstructions, chalk.white)
 
           line += formatOptionalFieldWithQuotes('basket', output.basket)
-          color += formatOptionalFieldWithColor(
-            'basket',
-            output.basket,
-            chalk.white
-          )
+          color += formatOptionalFieldWithColor('basket', output.basket, chalk.white)
 
-          line += formatOptionalFieldWithQuotes(
-            'desc',
-            output.outputDescription
-          )
-          color += formatOptionalFieldWithColor(
-            'desc',
-            output.outputDescription,
-            chalk.white
-          )
+          line += formatOptionalFieldWithQuotes('desc', output.outputDescription)
+          color += formatOptionalFieldWithColor('desc', output.outputDescription, chalk.white)
 
           if (output.tags?.length) {
             const tagsString = `[${output.tags.map(tag => `'${truncate(tag)}'`).join(',')}]`
@@ -925,9 +834,7 @@ const formatOutputs = (outputs: WalletActionOutput[]) =>
  * @returns {string} - A formatted string of labels enclosed in brackets.
  */
 const formatLabels = (labels?: string[]) =>
-  labels && labels.length > 0
-    ? `[${labels.map(label => `'${truncate(label)}'`).join(',')}]`
-    : ''
+  labels && labels.length > 0 ? `[${labels.map(label => `'${truncate(label)}'`).join(',')}]` : ''
 
 /**
  * Generates a formatted log string from an AtomicBEEF object.
@@ -972,11 +879,7 @@ export function toLogString(
         ` ${chalk.gray('lockTime:')}${mainTx.lockTime}`,
         ` ${chalk.green(`${action?.satoshis} sats`)}`,
         formatOptionalFieldWithColor('status', action?.status, chalk.white),
-        formatOptionalFieldWithColor(
-          'outgoing',
-          action?.isOutgoing,
-          chalk.white
-        ),
+        formatOptionalFieldWithColor('outgoing', action?.isOutgoing, chalk.white),
         formatOptionalFieldWithColor('desc', action?.description, chalk.white),
         metadataString ? chalk.gray(metadataString) : '',
         merklePathString ? chalk.gray(merklePathString) : '',
@@ -989,9 +892,7 @@ export function toLogString(
     log += `\n${formatIndentedLine(1, `inputs: ${action?.inputs?.length ?? 0}`)}`
     logColor += `\n${formatIndentedLine(1, chalk.gray(`inputs: ${action?.inputs?.length ?? 0}`))}`
 
-    const sortedInputs = (action?.inputs ?? []).sort((a, b) =>
-      a.sourceOutpoint.localeCompare(b.sourceOutpoint)
-    )
+    const sortedInputs = (action?.inputs ?? []).sort((a, b) => a.sourceOutpoint.localeCompare(b.sourceOutpoint))
     const formattedInputs = formatInputs(sortedInputs)
     formattedInputs.forEach(({ log: inputLog, logColor: inputLogColor }) => {
       log += `\n${formatIndentedLine(2, inputLog)}`
@@ -1001,9 +902,7 @@ export function toLogString(
     log += `\n${formatIndentedLineWithWrap(1, `outputs: ${action?.outputs?.length ?? 0}`)}`
     logColor += `\n${formatIndentedLineWithWrap(1, chalk.gray(`outputs: ${action?.outputs?.length ?? 0}`))}`
 
-    const sortedOutputs = action?.outputs
-      ?.slice()
-      .sort((a, b) => a.satoshis - b.satoshis)
+    const sortedOutputs = action?.outputs?.slice().sort((a, b) => a.satoshis - b.satoshis)
     const formattedOutputs = formatOutputs(sortedOutputs!)
     formattedOutputs.forEach(({ log: outputLog, logColor: outputLogColor }) => {
       log += `\n${formatIndentedLine(2, outputLog)}`
@@ -1014,9 +913,7 @@ export function toLogString(
   } catch (error) {
     return {
       log: `Error parsing transaction: ${(error as Error).message}`,
-      logColor: chalk.red(
-        `Error parsing transaction: ${(error as Error).message}`
-      )
+      logColor: chalk.red(`Error parsing transaction: ${(error as Error).message}`)
     }
   }
 }
@@ -1032,12 +929,7 @@ export function createActionResultToTxLogString(
   beef.version = BEEF_V1
   const mainTxid = beef.txs.slice(-1)[0].txid
 
-  return txToLogString(
-    beef.findAtomicTransaction(mainTxid)!,
-    0,
-    showKey,
-    actionsResult
-  )
+  return txToLogString(beef.findAtomicTransaction(mainTxid)!, 0, showKey, actionsResult)
 }
 
 const MAX_RECURSION_DEPTH = 3
@@ -1119,16 +1011,9 @@ const formatTxInputs = (inputs: TransactionInput[], indent: number) =>
           }
 
           if (input.sourceTransaction) {
-            const { log: sourceTxLog, logColor: sourceTxLogColor } =
-              txToLogString(input.sourceTransaction, indent + 6)
-            const sourceTxLogTrimed = sourceTxLog.replace(
-              /\s+Transaction/,
-              'Transaction'
-            )
-            const sourceTxLogColorTrimed = sourceTxLogColor.replace(
-              /\s+Transaction/,
-              'Transaction'
-            )
+            const { log: sourceTxLog, logColor: sourceTxLogColor } = txToLogString(input.sourceTransaction, indent + 6)
+            const sourceTxLogTrimed = sourceTxLog.replace(/\s+Transaction/, 'Transaction')
+            const sourceTxLogColorTrimed = sourceTxLogColor.replace(/\s+Transaction/, 'Transaction')
             line += `\n${formatIndentedLine(indent + 6, `sourceTx:`)}${sourceTxLogTrimed}`
             color += `\n${formatIndentedLine(indent + 6, `${chalk.gray('sourceTx:')}`)}${sourceTxLogColorTrimed}`
           } else {
@@ -1164,23 +1049,15 @@ export function txToLogString(
     if (indent / 2 >= MAX_RECURSION_DEPTH) {
       return {
         log: formatIndentedLine(indent + 4, 'Transaction [Max Depth Reached]'),
-        logColor: chalk.gray(
-          formatIndentedLine(indent + 4, 'Transaction [Max Depth Reached]')
-        )
+        logColor: chalk.gray(formatIndentedLine(indent + 4, 'Transaction [Max Depth Reached]'))
       }
     }
     const beef = Beef.fromBinary(tx.toBEEF())
     const mainTxid = beef.txs.slice(-1)[0].txid
     const metadataString = formatMetadata(tx.metadata)
     const merklePathString = formatMerklePath(tx.merklePath)
-    let log = formatIndentedLine(
-      indent,
-      `Transaction:${truncateTxid(mainTxid)}`
-    )
-    let logColor = formatIndentedLine(
-      indent,
-      `${chalk.gray('Transaction:')}${chalk.blue(truncateTxid(mainTxid))}`
-    )
+    let log = formatIndentedLine(indent, `Transaction:${truncateTxid(mainTxid)}`)
+    let logColor = formatIndentedLine(indent, `${chalk.gray('Transaction:')}${chalk.blue(truncateTxid(mainTxid))}`)
 
     if (showKey) {
       logColor += ` ${chalk.gray(`key:`)} (${chalk.blue('txid/outpoint')} ${chalk.cyan('script')} ${chalk.green('sats')})`
@@ -1197,9 +1074,7 @@ export function txToLogString(
     log += `\n${formatIndentedLine(indent + 2, `inputs: ${tx?.inputs?.length ?? 0}`)}`
     logColor += `\n${formatIndentedLine(indent + 2, chalk.gray(`inputs: ${tx?.inputs?.length ?? 0}`))}`
 
-    const sortedInputs = (tx?.inputs ?? []).sort((a, b) =>
-      a.sourceTXID!.localeCompare(b.sourceTXID!)
-    )
+    const sortedInputs = (tx?.inputs ?? []).sort((a, b) => a.sourceTXID!.localeCompare(b.sourceTXID!))
     const formattedInputs = formatTxInputs(sortedInputs, indent)
     formattedInputs.forEach(({ log: inputLog, logColor: inputLogColor }) => {
       log += `\n${inputLog}`
@@ -1209,24 +1084,18 @@ export function txToLogString(
     log += `\n${formatIndentedLine(indent + 2, `outputs: ${tx?.outputs?.length ?? 0}`)}`
     logColor += `\n${formatIndentedLine(indent + 2, chalk.gray(`outputs: ${tx?.outputs?.length ?? 0}`))}`
 
-    const sortedOutputs = tx?.outputs
-      ?.slice()
-      .sort((a, b) => a.satoshis! - b.satoshis!)
+    const sortedOutputs = tx?.outputs?.slice().sort((a, b) => a.satoshis! - b.satoshis!)
     const formattedTxOutputs = formatTxOutputs(sortedOutputs, indent)
-    formattedTxOutputs.forEach(
-      ({ log: outputLog, logColor: outputLogColor }) => {
-        log += `\n${outputLog}`
-        logColor += `\n${outputLogColor}`
-      }
-    )
+    formattedTxOutputs.forEach(({ log: outputLog, logColor: outputLogColor }) => {
+      log += `\n${outputLog}`
+      logColor += `\n${outputLogColor}`
+    })
 
     return { log, logColor }
   } catch (error) {
     return {
       log: `Error parsing transaction: ${(error as Error).message}`,
-      logColor: chalk.red(
-        `Error parsing transaction: ${(error as Error).message}`
-      )
+      logColor: chalk.red(`Error parsing transaction: ${(error as Error).message}`)
     }
   }
 }
@@ -1240,8 +1109,7 @@ export const isEmptyObject = (obj: unknown): boolean => {
   return !!obj && typeof obj === 'object' && Object.keys(obj).length === 0
 }
 
-const formatIndentedLine = (indent: number, content: string) =>
-  ' '.repeat(indent * 2) + content.trim() // Trim ensures no accidental double spacing
+const formatIndentedLine = (indent: number, content: string) => ' '.repeat(indent * 2) + content.trim() // Trim ensures no accidental double spacing
 
 function log(s: string) {
   if (!noLog) console.log(s)
@@ -1261,9 +1129,8 @@ export function numberArrayToHexString(numbers: number[]): string {
 //appendLogsAsConst(testName, rl1)
 
 // Auto-generated test log - 2025-02-05T13:04:29.906Z
-const LOG_createAction_nosend_transactions_1_transaction_with_single_output_checked_using_toLogString =
-  {
-    log: `transactions:3
+const LOG_createAction_nosend_transactions_1_transaction_with_single_output_checked_using_toLogString = {
+  log: `transactions:3
   txid:30bdac0f5c6491f130820517802ff57e20e5a50c08b5c65e6976627fb82ae930 version:1 lockTime:0 sats:-4 status:nosend 
      outgoing:true desc:'Funding transaction' labels:['funding transaction for createaction','this is an extra long test 
      label that should be truncated at 80 chars when it is...']
@@ -1275,7 +1142,7 @@ const LOG_createAction_nosend_transactions_1_transaction_with_single_output_chec
     0: sats:3 lock:(48)76a914abcdef0123456789abcdef0123456789abcdef88ac index:0 spendable:true basket:'funding basket' 
        desc:'Funding Output' tags:['funding transaction output','test tag']
     1: sats:909 lock:(50)76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac index:1 spendable:true basket:'default'`,
-    logColor: `[90mtransactions:3[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
+  logColor: `[90mtransactions:3[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
   [34m30bdac0f5c6491f130820517802ff57e20e5a50c08b5c65e6976627fb82ae930[39m [90mversion:[39m1 [90mlockTime:[39m0 
      [32m-4 sats[39m [90mstatus:[39m[37mnosend[39m [90moutgoing:[39m[37mtrue[39m [90mdesc:[39m[37mFunding 
      transaction[39m [90mlabels:[39m[37m['funding transaction for createaction','this is an extra long test label that 
@@ -1291,12 +1158,11 @@ const LOG_createAction_nosend_transactions_1_transaction_with_single_output_chec
        [90mdesc:[39m[37mFunding Output[39m [90mtags:[39m[37m['funding transaction output','test tag'][39m
     [90m1:[39m [32m909 sats[39m [90mlock:[39m(50)[36m76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac[39m 
        [90mindex:[39m[37m1[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mdefault[39m`
-  }
+}
 
 // Auto-generated test log - 2025-02-05T13:46:12.091Z
-const LOG_createAction_nosend_transactions_2_transaction_with_multiple_outputs_checked_using_toLogString =
-  {
-    log: `transactions:3
+const LOG_createAction_nosend_transactions_2_transaction_with_multiple_outputs_checked_using_toLogString = {
+  log: `transactions:3
   txid:b3848f2cabf5887ec679ca60347a29f6ecad425fda738700265c2f9d22c18ab5 version:1 lockTime:0 sats:-12 status:nosend 
      outgoing:true desc:'Funding transaction with multiple outputs' labels:['funding transaction for createaction','this 
      is the extra label']
@@ -1310,7 +1176,7 @@ const LOG_createAction_nosend_transactions_2_transaction_with_multiple_outputs_c
     1: sats:6 lock:(48)76a914fedcba9876543210fedcba9876543210fedcba88ac index:1 spendable:true basket:'extra basket' 
        desc:'Extra Output' tags:['extra transaction output','extra test tag']
     2: sats:901 lock:(50)76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac index:2 spendable:true basket:'default'`,
-    logColor: `[90mtransactions:3[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
+  logColor: `[90mtransactions:3[39m [90mkey:[39m ([34mtxid/outpoint[39m [36mscript[39m [32msats[39m)
   [34mb3848f2cabf5887ec679ca60347a29f6ecad425fda738700265c2f9d22c18ab5[39m [90mversion:[39m1 [90mlockTime:[39m0 
      [32m-12 sats[39m [90mstatus:[39m[37mnosend[39m [90moutgoing:[39m[37mtrue[39m [90mdesc:[39m[37mFunding 
      transaction with multiple outputs[39m [90mlabels:[39m[37m['funding transaction for createaction','this is the 
@@ -1330,7 +1196,7 @@ const LOG_createAction_nosend_transactions_2_transaction_with_multiple_outputs_c
        [90mdesc:[39m[37mExtra Output[39m [90mtags:[39m[37m['extra transaction output','extra test tag'][39m
     [90m2:[39m [32m901 sats[39m [90mlock:[39m(50)[36m76a9145947e66cdd43c70fb1780116b79e6f7d96e30e0888ac[39m 
        [90mindex:[39m[37m2[39m [90mspendable:[39m[37mtrue[39m [90mbasket:[39m[37mdefault[39m`
-  }
+}
 
 // Auto-generated test log - 2025-02-05T14:50:57.843Z
 const LOG_createAction_nosend_transactions_3_transaction_with_explicit_change_check_also_uses_toLogString_on_the_spend =

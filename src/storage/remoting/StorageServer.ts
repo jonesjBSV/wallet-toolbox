@@ -7,10 +7,7 @@
 
 import { WalletInterface } from '@bsv/sdk'
 import express, { Request, Response } from 'express'
-import {
-  AuthMiddlewareOptions,
-  createAuthMiddleware
-} from '@bsv/auth-express-middleware'
+import { AuthMiddlewareOptions, createAuthMiddleware } from '@bsv/auth-express-middleware'
 import { createPaymentMiddleware } from '@bsv/payment-express-middleware'
 import { sdk, Wallet, StorageProvider } from '../../index.all'
 
@@ -78,9 +75,7 @@ export class StorageServer {
 
       // Basic JSON-RPC protocol checks:
       if (jsonrpc !== '2.0' || !method || typeof method !== 'string') {
-        return res
-          .status(400)
-          .json({ error: { code: -32600, message: 'Invalid Request' } })
+        return res.status(400).json({ error: { code: -32600, message: 'Invalid Request' } })
       }
 
       try {
@@ -105,9 +100,7 @@ export class StorageServer {
             case 'findOrInsertUser':
               {
                 if (params[0] !== req.auth.identityKey)
-                  throw new sdk.WERR_UNAUTHORIZED(
-                    'function may only access authenticated user.'
-                  )
+                  throw new sdk.WERR_UNAUTHORIZED('function may only access authenticated user.')
               }
               break
             case 'processSyncChunk':
@@ -115,29 +108,17 @@ export class StorageServer {
                 await this.validateParam0(params, req)
                 //const args: sdk.RequestSyncChunkArgs = params[0]
                 const r: sdk.SyncChunk = params[1]
-                if (r.certificateFields)
-                  r.certificateFields = this.validateEntities(
-                    r.certificateFields
-                  )
-                if (r.certificates)
-                  r.certificates = this.validateEntities(r.certificates)
-                if (r.commissions)
-                  r.commissions = this.validateEntities(r.commissions)
-                if (r.outputBaskets)
-                  r.outputBaskets = this.validateEntities(r.outputBaskets)
-                if (r.outputTagMaps)
-                  r.outputTagMaps = this.validateEntities(r.outputTagMaps)
-                if (r.outputTags)
-                  r.outputTags = this.validateEntities(r.outputTags)
+                if (r.certificateFields) r.certificateFields = this.validateEntities(r.certificateFields)
+                if (r.certificates) r.certificates = this.validateEntities(r.certificates)
+                if (r.commissions) r.commissions = this.validateEntities(r.commissions)
+                if (r.outputBaskets) r.outputBaskets = this.validateEntities(r.outputBaskets)
+                if (r.outputTagMaps) r.outputTagMaps = this.validateEntities(r.outputTagMaps)
+                if (r.outputTags) r.outputTags = this.validateEntities(r.outputTags)
                 if (r.outputs) r.outputs = this.validateEntities(r.outputs)
-                if (r.provenTxReqs)
-                  r.provenTxReqs = this.validateEntities(r.provenTxReqs)
-                if (r.provenTxs)
-                  r.provenTxs = this.validateEntities(r.provenTxs)
-                if (r.transactions)
-                  r.transactions = this.validateEntities(r.transactions)
-                if (r.txLabelMaps)
-                  r.txLabelMaps = this.validateEntities(r.txLabelMaps)
+                if (r.provenTxReqs) r.provenTxReqs = this.validateEntities(r.provenTxReqs)
+                if (r.provenTxs) r.provenTxs = this.validateEntities(r.provenTxs)
+                if (r.transactions) r.transactions = this.validateEntities(r.transactions)
+                if (r.txLabelMaps) r.txLabelMaps = this.validateEntities(r.txLabelMaps)
                 if (r.txLabels) r.txLabels = this.validateEntities(r.txLabels)
                 if (r.user) r.user = this.validateEntity(r.user)
               }
@@ -148,13 +129,9 @@ export class StorageServer {
               }
               break
           }
-          console.log(
-            `StorageServer: method=${method} params=${JSON.stringify(params).slice(0, 512)}`
-          )
+          console.log(`StorageServer: method=${method} params=${JSON.stringify(params).slice(0, 512)}`)
           const result = await (this.storage as any)[method](...(params || []))
-          console.log(
-            `StorageServer: method=${method} result=${JSON.stringify(result || 'void').slice(0, 512)}`
-          )
+          console.log(`StorageServer: method=${method} result=${JSON.stringify(result || 'void').slice(0, 512)}`)
           return res.json({ jsonrpc: '2.0', result, id })
         } else {
           // Unknown method
@@ -187,26 +164,17 @@ export class StorageServer {
     if (typeof params[0] !== 'object' || !params[0]) {
       params = [{}]
     }
-    if (
-      params[0]['identityKey'] &&
-      params[0]['identityKey'] !== req.auth.identityKey
-    )
-      throw new sdk.WERR_UNAUTHORIZED(
-        'identityKey does not match authentiation'
-      )
+    if (params[0]['identityKey'] && params[0]['identityKey'] !== req.auth.identityKey)
+      throw new sdk.WERR_UNAUTHORIZED('identityKey does not match authentiation')
     console.log('looking up user with identityKey:', req.auth.identityKey)
-    const { user, isNew } = await this.storage.findOrInsertUser(
-      req.auth.identityKey
-    )
+    const { user, isNew } = await this.storage.findOrInsertUser(req.auth.identityKey)
     params[0].reqAuthUserId = user.userId
     if (params[0]['identityKey']) params[0].userId = user.userId
   }
 
   public start(): void {
     this.app.listen(this.port, () => {
-      console.log(
-        `WalletStorageServer listening at http://localhost:${this.port}`
-      )
+      console.log(`WalletStorageServer listening at http://localhost:${this.port}`)
     })
   }
 
@@ -221,10 +189,7 @@ export class StorageServer {
    * Helper to force uniform behavior across database engines.
    * Use to process all individual records with time stamps retreived from database.
    */
-  validateEntity<T extends sdk.EntityTimeStamp>(
-    entity: T,
-    dateFields?: string[]
-  ): T {
+  validateEntity<T extends sdk.EntityTimeStamp>(entity: T, dateFields?: string[]): T {
     entity.created_at = this.validateDate(entity.created_at)
     entity.updated_at = this.validateDate(entity.updated_at)
     if (dateFields) {
@@ -248,10 +213,7 @@ export class StorageServer {
    * Use to process all arrays of records with time stamps retreived from database.
    * @returns input `entities` array with contained values validated.
    */
-  validateEntities<T extends sdk.EntityTimeStamp>(
-    entities: T[],
-    dateFields?: string[]
-  ): T[] {
+  validateEntities<T extends sdk.EntityTimeStamp>(entities: T[], dateFields?: string[]): T[] {
     for (let i = 0; i < entities.length; i++) {
       entities[i] = this.validateEntity(entities[i], dateFields)
     }

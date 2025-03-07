@@ -16,9 +16,7 @@ describe('StorageMySQLDojoReader tests', () => {
 
   beforeAll(async () => {
     const connection = JSON.parse(
-      (chain === 'test'
-        ? process.env.TEST_DOJO_CONNECTION
-        : process.env.MAIN_DOJO_CONNECTION) || ''
+      (chain === 'test' ? process.env.TEST_DOJO_CONNECTION : process.env.MAIN_DOJO_CONNECTION) || ''
     )
     const readerKnex = _tu.createMySQLFromConnection(connection)
     reader = new StorageMySQLDojoReader({
@@ -29,9 +27,7 @@ describe('StorageMySQLDojoReader tests', () => {
 
     const writerKnex = env.runMySQL
       ? _tu.createLocalMySQL('stagingdojotone')
-      : _tu.createLocalSQLite(
-          await _tu.newTmpFile('stagingdojotone', false, false, true)
-        )
+      : _tu.createLocalSQLite(await _tu.newTmpFile('stagingdojotone', false, false, true))
     writer = new StorageKnex({
       ...StorageKnex.defaultOptions(),
       chain,
@@ -51,17 +47,10 @@ describe('StorageMySQLDojoReader tests', () => {
     const writerSettings = await writer.getSettings()
 
     const identityKey = process.env.MY_TEST_IDENTITY || ''
-    const ss = await EntitySyncState.fromStorage(
-      writer,
-      identityKey,
-      readerSettings
-    )
+    const ss = await EntitySyncState.fromStorage(writer, identityKey, readerSettings)
 
     for (;;) {
-      const args = ss.makeRequestSyncChunkArgs(
-        identityKey,
-        writerSettings.storageIdentityKey
-      )
+      const args = ss.makeRequestSyncChunkArgs(identityKey, writerSettings.storageIdentityKey)
       const chunk = await reader.getSyncChunk(args)
       const r = await ss.processRequestSyncChunkResult(writer, args, chunk)
       //console.log(`${r.maxUpdated_at} inserted ${r.inserts} updated ${r.updates}`)

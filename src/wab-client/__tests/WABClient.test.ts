@@ -26,14 +26,10 @@ describe('WABClient', () => {
     })
     expect(startRes.success).toBe(true)
 
-    const completeRes = await client.completeAuthMethod(
-      twilio,
-      testPresentationKey,
-      {
-        otp: '123456',
-        phoneNumber: '+12223334444'
-      }
-    )
+    const completeRes = await client.completeAuthMethod(twilio, testPresentationKey, {
+      otp: '123456',
+      phoneNumber: '+12223334444'
+    })
     expect(completeRes.success).toBe(true)
     expect(completeRes.presentationKey).toBe(testPresentationKey)
   })

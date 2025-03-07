@@ -1,18 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {
-  Beef,
-  Transaction as BsvTransaction,
-  SignActionResult,
-  SignActionSpend
-} from '@bsv/sdk'
-import {
-  asBsvSdkScript,
-  PendingSignAction,
-  ScriptTemplateBRC29,
-  sdk,
-  Wallet
-} from '../../index.client'
+import { Beef, Transaction as BsvTransaction, SignActionResult, SignActionSpend } from '@bsv/sdk'
+import { asBsvSdkScript, PendingSignAction, ScriptTemplateBRC29, sdk, Wallet } from '../../index.client'
 import { processAction } from './createAction'
 
 export async function signAction(
@@ -22,11 +11,8 @@ export async function signAction(
 ): Promise<SignActionResult> {
   const prior = wallet.pendingSignActions[vargs.reference]
   if (!prior)
-    throw new sdk.WERR_NOT_IMPLEMENTED(
-      'recovery of out-of-session signAction reference data is not yet implemented.'
-    )
-  if (!prior.dcr.inputBeef)
-    throw new sdk.WERR_INTERNAL('prior.dcr.inputBeef must be valid')
+    throw new sdk.WERR_NOT_IMPLEMENTED('recovery of out-of-session signAction reference data is not yet implemented.')
+  if (!prior.dcr.inputBeef) throw new sdk.WERR_INTERNAL('prior.dcr.inputBeef must be valid')
 
   prior.tx = await completeSignedTransaction(prior, vargs.spends, wallet)
 
@@ -34,19 +20,14 @@ export async function signAction(
 
   const r: SignActionResult = {
     txid: prior.tx.id('hex'),
-    tx: vargs.options.returnTXIDOnly
-      ? undefined
-      : makeAtomicBeef(prior.tx, prior.dcr.inputBeef),
+    tx: vargs.options.returnTXIDOnly ? undefined : makeAtomicBeef(prior.tx, prior.dcr.inputBeef),
     sendWithResults
   }
 
   return r
 }
 
-export function makeAtomicBeef(
-  tx: BsvTransaction,
-  beef: number[] | Beef
-): number[] {
+export function makeAtomicBeef(tx: BsvTransaction, beef: number[] | Beef): number[] {
   if (Array.isArray(beef)) beef = Beef.fromBinary(beef)
   beef.mergeTransaction(tx)
   return beef.toBinaryAtomic(tx.id('hex'))
@@ -64,12 +45,7 @@ export async function completeSignedTransaction(
     const vin = Number(key)
     const createInput = prior.args.inputs[vin]
     const input = prior.tx.inputs[vin]
-    if (
-      !createInput ||
-      !input ||
-      createInput.unlockingScript ||
-      !Number.isInteger(createInput.unlockingScriptLength)
-    )
+    if (!createInput || !input || createInput.unlockingScript || !Number.isInteger(createInput.unlockingScriptLength))
       throw new sdk.WERR_INVALID_PARAMETER(
         'args',
         `spend does not correspond to prior input with valid unlockingScriptLength.`
@@ -80,8 +56,7 @@ export async function completeSignedTransaction(
         `spend unlockingScript length ${spend.unlockingScript.length} exceeds expected length ${createInput.unlockingScriptLength}`
       )
     input.unlockingScript = asBsvSdkScript(spend.unlockingScript)
-    if (spend.sequenceNumber !== undefined)
-      input.sequence = spend.sequenceNumber
+    if (spend.sequenceNumber !== undefined) input.sequence = spend.sequenceNumber
   }
 
   const results = {
@@ -102,12 +77,7 @@ export async function completeSignedTransaction(
     const unlockerPubKey = pdi.unlockerPubKey || keys.publicKey
     const sourceSatoshis = pdi.sourceSatoshis
     const lockingScript = asBsvSdkScript(pdi.lockingScript)
-    const unlockTemplate = sabppp.unlock(
-      lockerPrivKey,
-      unlockerPubKey,
-      sourceSatoshis,
-      lockingScript
-    )
+    const unlockTemplate = sabppp.unlock(lockerPrivKey, unlockerPubKey, sourceSatoshis, lockingScript)
     const input = prior.tx.inputs[pdi.vin]
     input.unlockingScriptTemplate = unlockTemplate
   }

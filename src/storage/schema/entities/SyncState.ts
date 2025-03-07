@@ -52,12 +52,8 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
         syncMap: JSON.stringify(createSyncMap())
       }
     )
-    this.errorLocal = this.api.errorLocal
-      ? <SyncError>JSON.parse(this.api.errorLocal)
-      : undefined
-    this.errorOther = this.api.errorOther
-      ? <SyncError>JSON.parse(this.api.errorOther)
-      : undefined
+    this.errorLocal = this.api.errorLocal ? <SyncError>JSON.parse(this.api.errorLocal) : undefined
+    this.errorOther = this.api.errorOther ? <SyncError>JSON.parse(this.api.errorOther) : undefined
     this.syncMap = <SyncMap>JSON.parse(this.api.syncMap)
     this.validateSyncMap(this.syncMap)
   }
@@ -65,8 +61,7 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
   validateSyncMap(sm: SyncMap) {
     for (const key of Object.keys(sm)) {
       const esm: EntitySyncMap = sm[key]
-      if (typeof esm.maxUpdated_at === 'string')
-        esm.maxUpdated_at = new Date(esm.maxUpdated_at)
+      if (typeof esm.maxUpdated_at === 'string') esm.maxUpdated_at = new Date(esm.maxUpdated_at)
     }
   }
 
@@ -75,9 +70,7 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
     userIdentityKey: string,
     remoteSettings: TableSettings
   ): Promise<EntitySyncState> {
-    const { user } = verifyTruthy(
-      await storage.findOrInsertUser(userIdentityKey)
-    )
+    const { user } = verifyTruthy(await storage.findOrInsertUser(userIdentityKey))
     let { syncState: api } = verifyTruthy(
       await storage.findOrInsertSyncStateAuth(
         { userId: user.userId, identityKey: userIdentityKey },
@@ -85,6 +78,7 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
         remoteSettings.storageName
       )
     )
+    if (!api.syncMap || api.syncMap === '{}') api.syncMap = JSON.stringify(createSyncMap())
     const ss = new EntitySyncState(api)
     return ss
   }
@@ -95,11 +89,7 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
    * @param notSyncMap if not new and true, excludes updating syncMap in storage.
    * @param trx
    */
-  async updateStorage(
-    storage: EntityStorage,
-    notSyncMap?: boolean,
-    trx?: sdk.TrxToken
-  ) {
+  async updateStorage(storage: EntityStorage, notSyncMap?: boolean, trx?: sdk.TrxToken) {
     this.updated_at = new Date()
     this.updateApi(notSyncMap && this.id > 0)
     if (this.id === 0) {
@@ -203,10 +193,7 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
     return 'sync_states'
   }
 
-  static mergeIdMap(
-    fromMap: Record<number, number>,
-    toMap: Record<number, number>
-  ) {
+  static mergeIdMap(fromMap: Record<number, number>, toMap: Record<number, number>) {
     for (const [key, value] of Object.entries(fromMap)) {
       const fromValue = fromMap[key]
       const toValue = toMap[key]
@@ -223,42 +210,15 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
    * @param iSyncMap
    */
   mergeSyncMap(iSyncMap: SyncMap) {
-    EntitySyncState.mergeIdMap(
-      iSyncMap.provenTx.idMap!,
-      this.syncMap.provenTx.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.outputBasket.idMap!,
-      this.syncMap.outputBasket.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.transaction.idMap!,
-      this.syncMap.transaction.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.provenTxReq.idMap!,
-      this.syncMap.provenTxReq.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.txLabel.idMap!,
-      this.syncMap.txLabel.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.output.idMap!,
-      this.syncMap.output.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.outputTag.idMap!,
-      this.syncMap.outputTag.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.certificate.idMap!,
-      this.syncMap.certificate.idMap!
-    )
-    EntitySyncState.mergeIdMap(
-      iSyncMap.commission.idMap!,
-      this.syncMap.commission.idMap!
-    )
+    EntitySyncState.mergeIdMap(iSyncMap.provenTx.idMap!, this.syncMap.provenTx.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.outputBasket.idMap!, this.syncMap.outputBasket.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.transaction.idMap!, this.syncMap.transaction.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.provenTxReq.idMap!, this.syncMap.provenTxReq.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.txLabel.idMap!, this.syncMap.txLabel.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.output.idMap!, this.syncMap.output.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.outputTag.idMap!, this.syncMap.outputTag.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.certificate.idMap!, this.syncMap.certificate.idMap!)
+    EntitySyncState.mergeIdMap(iSyncMap.commission.idMap!, this.syncMap.commission.idMap!)
   }
 
   // stringified api properties
@@ -330,9 +290,45 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
       this.syncMap.commission,
       this.syncMap.provenTxReq
     ]) {
+      if (!ess || !ess.entityName) debugger
       a.offsets.push({ name: ess.entityName, offset: ess.count })
     }
     return a
+  }
+
+  static syncChunkSummary(c: sdk.SyncChunk): string {
+    let log = ''
+    log += `SYNC CHUNK SUMMARY
+  from storage: ${c.fromStorageIdentityKey}
+  to storage: ${c.toStorageIdentityKey}
+  for user: ${c.userIdentityKey}
+`
+    if (c.user) log += `  USER activeStorage ${c.user.activeStorage}\n`
+    if (!!c.provenTxs) {
+      log += `  PROVEN_TXS\n`
+      for (const r of c.provenTxs) {
+        log += `    ${r.provenTxId} ${r.txid}\n`
+      }
+    }
+    if (!!c.provenTxReqs) {
+      log += `  PROVEN_TX_REQS\n`
+      for (const r of c.provenTxReqs) {
+        log += `    ${r.provenTxReqId} ${r.txid} ${r.status} ${r.provenTxId || ''}\n`
+      }
+    }
+    if (!!c.transactions) {
+      log += `  TRANSACTIONS\n`
+      for (const r of c.transactions) {
+        log += `    ${r.transactionId} ${r.txid} ${r.status} ${r.provenTxId || ''} sats:${r.satoshis}\n`
+      }
+    }
+    if (!!c.outputs) {
+      log += `  OUTPUTS\n`
+      for (const r of c.outputs) {
+        log += `    ${r.outputId} ${r.txid}.${r.vout} ${r.transactionId} ${r.spendable ? 'spendable' : ''} sats:${r.satoshis}\n`
+      }
+    }
+    return log
   }
 
   async processSyncChunk(
@@ -346,66 +342,18 @@ export class EntitySyncState extends EntityBase<TableSyncState> {
     inserts: number
   }> {
     const mes = [
-      new MergeEntity(
-        chunk.provenTxs,
-        EntityProvenTx.mergeFind,
-        this.syncMap.provenTx
-      ),
-      new MergeEntity(
-        chunk.outputBaskets,
-        EntityOutputBasket.mergeFind,
-        this.syncMap.outputBasket
-      ),
-      new MergeEntity(
-        chunk.outputTags,
-        EntityOutputTag.mergeFind,
-        this.syncMap.outputTag
-      ),
-      new MergeEntity(
-        chunk.txLabels,
-        EntityTxLabel.mergeFind,
-        this.syncMap.txLabel
-      ),
-      new MergeEntity(
-        chunk.transactions,
-        EntityTransaction.mergeFind,
-        this.syncMap.transaction
-      ),
-      new MergeEntity(
-        chunk.outputs,
-        EntityOutput.mergeFind,
-        this.syncMap.output
-      ),
-      new MergeEntity(
-        chunk.txLabelMaps,
-        EntityTxLabelMap.mergeFind,
-        this.syncMap.txLabelMap
-      ),
-      new MergeEntity(
-        chunk.outputTagMaps,
-        EntityOutputTagMap.mergeFind,
-        this.syncMap.outputTagMap
-      ),
-      new MergeEntity(
-        chunk.certificates,
-        EntityCertificate.mergeFind,
-        this.syncMap.certificate
-      ),
-      new MergeEntity(
-        chunk.certificateFields,
-        EntityCertificateField.mergeFind,
-        this.syncMap.certificateField
-      ),
-      new MergeEntity(
-        chunk.commissions,
-        EntityCommission.mergeFind,
-        this.syncMap.commission
-      ),
-      new MergeEntity(
-        chunk.provenTxReqs,
-        EntityProvenTxReq.mergeFind,
-        this.syncMap.provenTxReq
-      )
+      new MergeEntity(chunk.provenTxs, EntityProvenTx.mergeFind, this.syncMap.provenTx),
+      new MergeEntity(chunk.outputBaskets, EntityOutputBasket.mergeFind, this.syncMap.outputBasket),
+      new MergeEntity(chunk.outputTags, EntityOutputTag.mergeFind, this.syncMap.outputTag),
+      new MergeEntity(chunk.txLabels, EntityTxLabel.mergeFind, this.syncMap.txLabel),
+      new MergeEntity(chunk.transactions, EntityTransaction.mergeFind, this.syncMap.transaction),
+      new MergeEntity(chunk.outputs, EntityOutput.mergeFind, this.syncMap.output),
+      new MergeEntity(chunk.txLabelMaps, EntityTxLabelMap.mergeFind, this.syncMap.txLabelMap),
+      new MergeEntity(chunk.outputTagMaps, EntityOutputTagMap.mergeFind, this.syncMap.outputTagMap),
+      new MergeEntity(chunk.certificates, EntityCertificate.mergeFind, this.syncMap.certificate),
+      new MergeEntity(chunk.certificateFields, EntityCertificateField.mergeFind, this.syncMap.certificateField),
+      new MergeEntity(chunk.commissions, EntityCommission.mergeFind, this.syncMap.commission),
+      new MergeEntity(chunk.provenTxReqs, EntityProvenTxReq.mergeFind, this.syncMap.provenTxReq)
     ]
 
     let updates = 0

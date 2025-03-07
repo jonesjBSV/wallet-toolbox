@@ -1,12 +1,6 @@
 import { Beef } from '@bsv/sdk'
 import { Knex } from 'knex'
-import {
-  TableCommission,
-  TableOutput,
-  TableOutputTagMap,
-  TableTransaction,
-  TableTxLabelMap
-} from '../index.client'
+import { TableCommission, TableOutput, TableOutputTagMap, TableTransaction, TableTxLabelMap } from '../index.client'
 import { sdk } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 
@@ -18,9 +12,7 @@ export async function purgeData(
   const r: sdk.PurgeResults = { count: 0, log: '' }
   const defaultAge = 1000 * 60 * 60 * 24 * 14
 
-  const runPurgeQuery = async <T extends object>(
-    pq: PurgeQuery
-  ): Promise<void> => {
+  const runPurgeQuery = async <T extends object>(pq: PurgeQuery): Promise<void> => {
     try {
       pq.sql = pq.q.toString()
       const count = await pq.q
@@ -72,10 +64,7 @@ export async function purgeData(
     if (completedReqIds.length > 0) {
       qs.push({
         log: 'completed proven_tx_reqs deleted',
-        q: storage
-          .toDb(trx)('proven_tx_reqs')
-          .whereIn('provenTxReqId', completedReqIds)
-          .delete()
+        q: storage.toDb(trx)('proven_tx_reqs').whereIn('provenTxReqId', completedReqIds).delete()
       })
     }
 
@@ -107,10 +96,7 @@ export async function purgeData(
     if (invalidReqIds.length > 0)
       qs.push({
         log: 'invalid proven_tx_reqs deleted',
-        q: storage
-          .toDb(trx)('proven_tx_reqs')
-          .whereIn('provenTxReqId', invalidReqIds)
-          .delete()
+        q: storage.toDb(trx)('proven_tx_reqs').whereIn('provenTxReqId', invalidReqIds).delete()
       })
 
     const doubleSpendReqs = await storage
@@ -122,10 +108,7 @@ export async function purgeData(
     if (doubleSpendReqIds.length > 0)
       qs.push({
         log: 'doubleSpend proven_tx_reqs deleted',
-        q: storage
-          .toDb(trx)('proven_tx_reqs')
-          .whereIn('provenTxReqId', doubleSpendReqIds)
-          .delete()
+        q: storage.toDb(trx)('proven_tx_reqs').whereIn('provenTxReqId', doubleSpendReqIds).delete()
       })
 
     for (const q of qs) await runPurgeQuery(q)
@@ -173,9 +156,7 @@ export async function purgeData(
         log: 'spent outputs no longer tracked by spentBy',
         q: storage
           .toDb(trx)<TableOutput>('outputs')
-          .update(
-            storage.validatePartialForUpdate(update, undefined, ['spendable'])
-          )
+          .update(storage.validatePartialForUpdate(update, undefined, ['spendable']))
           .where('spendable', false)
           .whereIn('spentBy', spentTxIds)
       })
@@ -219,34 +200,22 @@ export async function purgeData(
       if (outputIds.length > 0) {
         qs.push({
           log: `${reason} output_tags_map deleted`,
-          q: storage
-            .toDb(trx)<TableOutputTagMap>('output_tags_map')
-            .whereIn('outputId', outputIds)
-            .delete()
+          q: storage.toDb(trx)<TableOutputTagMap>('output_tags_map').whereIn('outputId', outputIds).delete()
         })
         qs.push({
           log: `${reason} outputs deleted`,
-          q: storage
-            .toDb(trx)<TableOutput>('outputs')
-            .whereIn('outputId', outputIds)
-            .delete()
+          q: storage.toDb(trx)<TableOutput>('outputs').whereIn('outputId', outputIds).delete()
         })
       }
 
       qs.push({
         log: `${reason} tx_labels_map deleted`,
-        q: storage
-          .toDb(trx)<TableTxLabelMap>('tx_labels_map')
-          .whereIn('transactionId', transactionIds)
-          .delete()
+        q: storage.toDb(trx)<TableTxLabelMap>('tx_labels_map').whereIn('transactionId', transactionIds).delete()
       })
 
       qs.push({
         log: `${reason} commissions deleted`,
-        q: storage
-          .toDb(trx)<TableCommission>('commissions')
-          .whereIn('transactionId', transactionIds)
-          .delete()
+        q: storage.toDb(trx)<TableCommission>('commissions').whereIn('transactionId', transactionIds).delete()
       })
 
       if (markNotSpentBy) {
@@ -261,10 +230,7 @@ export async function purgeData(
 
       qs.push({
         log: `${reason} transactions deleted`,
-        q: storage
-          .toDb(trx)<TableTransaction>('transactions')
-          .whereIn('transactionId', transactionIds)
-          .delete()
+        q: storage.toDb(trx)<TableTransaction>('transactions').whereIn('transactionId', transactionIds).delete()
       })
     }
   }

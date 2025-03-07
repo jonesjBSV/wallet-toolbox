@@ -1,11 +1,5 @@
-import {
-  mockUnderlyingWallet,
-  MockedBSV_SDK
-} from './WalletPermissionsManager.fixtures'
-import {
-  WalletPermissionsManager,
-  PermissionsManagerConfig
-} from '../WalletPermissionsManager'
+import { mockUnderlyingWallet, MockedBSV_SDK } from './WalletPermissionsManager.fixtures'
+import { WalletPermissionsManager, PermissionsManagerConfig } from '../WalletPermissionsManager'
 
 jest.mock('@bsv/sdk', () => MockedBSV_SDK)
 
@@ -44,11 +38,7 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
       // The rest remain default = true
     }
 
-    const manager = new WalletPermissionsManager(
-      underlying,
-      'admin.domain.com',
-      partialConfig
-    )
+    const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', partialConfig)
     const internalConfig = (manager as any).config
 
     // Overridden to false
@@ -83,11 +73,7 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
       differentiatePrivilegedOperations: false
     }
 
-    const manager = new WalletPermissionsManager(
-      underlying,
-      'admin.domain.com',
-      allFalse
-    )
+    const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', allFalse)
     const internalConfig = (manager as any).config
 
     for (const [k, v] of Object.entries(allFalse)) {
@@ -129,13 +115,9 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
   })
 
   it('should skip protocol permission checks for signing if seekProtocolPermissionsForSigning=false', async () => {
-    const manager = new WalletPermissionsManager(
-      underlying,
-      'admin.domain.com',
-      {
-        seekProtocolPermissionsForSigning: false
-      }
-    )
+    const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+      seekProtocolPermissionsForSigning: false
+    })
 
     // Non-admin origin attempts "createSignature" with a protocolID
     // Normally, if config was true, we'd expect a request for permission.
@@ -162,13 +144,9 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
 
   it('should enforce protocol permission checks for signing if seekProtocolPermissionsForSigning=true', async () => {
     // By default, or explicitly set to true, the manager enforces permission checks
-    const manager = new WalletPermissionsManager(
-      underlying,
-      'admin.domain.com',
-      {
-        seekProtocolPermissionsForSigning: true
-      }
-    )
+    const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+      seekProtocolPermissionsForSigning: true
+    })
 
     // Non-admin origin tries createSignature -> must prompt for protocol permission
     const createSigPromise = manager.createSignature(
@@ -202,13 +180,9 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
   })
 
   it('should skip basket insertion permission checks if seekBasketInsertionPermissions=false', async () => {
-    const manager = new WalletPermissionsManager(
-      underlying,
-      'admin.domain.com',
-      {
-        seekBasketInsertionPermissions: false
-      }
-    )
+    const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+      seekBasketInsertionPermissions: false
+    })
     // Spending authorization is still required, grant it.
     manager.bindCallback(
       'onSpendingAuthorizationRequested',
@@ -241,42 +215,35 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
   })
 
   it('should skip all permission checks if all relevant config flags are false (except admin-only baskets, etc.)', async () => {
-    const manager = new WalletPermissionsManager(
-      underlying,
-      'admin.domain.com',
-      {
-        // Only turning off relevant categories, i.e. we might set all false except we keep
-        // differentiatePrivilegedOperations at default just to verify. Or set it to false as well.
-        seekProtocolPermissionsForSigning: false,
-        seekProtocolPermissionsForEncrypting: false,
-        seekProtocolPermissionsForHMAC: false,
-        seekPermissionsForKeyLinkageRevelation: false,
-        seekPermissionsForPublicKeyRevelation: false,
-        seekPermissionsForIdentityKeyRevelation: false,
-        seekPermissionsForIdentityResolution: false,
-        seekBasketInsertionPermissions: false,
-        seekBasketRemovalPermissions: false,
-        seekBasketListingPermissions: false,
-        seekPermissionWhenApplyingActionLabels: false,
-        seekPermissionWhenListingActionsByLabel: false,
-        seekCertificateDisclosurePermissions: false,
-        seekCertificateAcquisitionPermissions: false,
-        seekCertificateRelinquishmentPermissions: false,
-        seekCertificateListingPermissions: false,
-        encryptWalletMetadata: false,
-        seekSpendingPermissions: false,
-        differentiatePrivilegedOperations: false
-      }
-    )
+    const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+      // Only turning off relevant categories, i.e. we might set all false except we keep
+      // differentiatePrivilegedOperations at default just to verify. Or set it to false as well.
+      seekProtocolPermissionsForSigning: false,
+      seekProtocolPermissionsForEncrypting: false,
+      seekProtocolPermissionsForHMAC: false,
+      seekPermissionsForKeyLinkageRevelation: false,
+      seekPermissionsForPublicKeyRevelation: false,
+      seekPermissionsForIdentityKeyRevelation: false,
+      seekPermissionsForIdentityResolution: false,
+      seekBasketInsertionPermissions: false,
+      seekBasketRemovalPermissions: false,
+      seekBasketListingPermissions: false,
+      seekPermissionWhenApplyingActionLabels: false,
+      seekPermissionWhenListingActionsByLabel: false,
+      seekCertificateDisclosurePermissions: false,
+      seekCertificateAcquisitionPermissions: false,
+      seekCertificateRelinquishmentPermissions: false,
+      seekCertificateListingPermissions: false,
+      encryptWalletMetadata: false,
+      seekSpendingPermissions: false,
+      differentiatePrivilegedOperations: false
+    })
 
     // We'll do a few calls that would normally require checks:
 
     // 1) createSignature from non-admin
     await expect(
-      manager.createSignature(
-        { protocolID: [1, 'some-protocol'], data: [0x01], keyID: '1' },
-        'nonadmin.com'
-      )
+      manager.createSignature({ protocolID: [1, 'some-protocol'], data: [0x01], keyID: '1' }, 'nonadmin.com')
     ).resolves.not.toThrow()
 
     // 2) createAction to insert in a basket

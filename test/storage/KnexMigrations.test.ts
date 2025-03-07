@@ -9,12 +9,7 @@ describe('KnexMigrations tests', () => {
   const env = _tu.getEnv('test')
 
   beforeAll(async () => {
-    const localSQLiteFile = await _tu.newTmpFile(
-      'migratetest.sqlite',
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile('migratetest.sqlite', false, false, true)
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
     knexs.push(knexSQLite)
 
@@ -42,12 +37,7 @@ describe('KnexMigrations tests', () => {
   test('0 migragte down', async () => {
     for (const knex of knexs) {
       const config = {
-        migrationSource: new KnexMigrations(
-          'test',
-          '0 migration test',
-          '1'.repeat(64),
-          1000
-        )
+        migrationSource: new KnexMigrations('test', '0 migration test', '1'.repeat(64), 1000)
       }
       const count = Object.keys(config.migrationSource.migrations).length
       for (let i = 0; i < count; i++) {
@@ -66,12 +56,7 @@ describe('KnexMigrations tests', () => {
     await waitFor0()
     for (const knex of knexs) {
       const config = {
-        migrationSource: new KnexMigrations(
-          'test',
-          '0 migration test',
-          '1'.repeat(64),
-          1000
-        )
+        migrationSource: new KnexMigrations('test', '0 migration test', '1'.repeat(64), 1000)
       }
       const latest = await KnexMigrations.latestMigration()
       await knex.migrate.latest(config)

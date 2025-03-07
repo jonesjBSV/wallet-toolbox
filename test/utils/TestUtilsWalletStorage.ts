@@ -58,6 +58,7 @@ import {
 import { Knex, knex as makeKnex } from 'knex'
 
 import * as dotenv from 'dotenv'
+import { WalletServicesOptions } from '../../src/sdk'
 dotenv.config()
 
 const localMySqlConnection = process.env.MYSQL_CONNECTION || ''
@@ -67,6 +68,8 @@ export interface TuEnv {
   identityKey: string
   identityKey2: string
   taalApiKey: string
+  bitailsApiKey: string
+  whatsonchainApiKey: string
   devKeys: Record<string, string>
   runMySQL: boolean
   runSlowTests: boolean
@@ -115,41 +118,28 @@ export abstract class TestUtilsWalletStorage {
 
   static getEnv(chain: sdk.Chain): TuEnv {
     // Identity keys of the lead maintainer of this repo...
-    const identityKey =
-      (chain === 'main'
-        ? process.env.MY_MAIN_IDENTITY
-        : process.env.MY_TEST_IDENTITY) || ''
-    const filePath =
-      chain === 'main'
-        ? process.env.MY_MAIN_FILEPATH
-        : process.env.MY_TEST_FILEPATH
-    const identityKey2 =
-      (chain === 'main'
-        ? process.env.MY_MAIN_IDENTITY2
-        : process.env.MY_TEST_IDENTITY2) || ''
-    const testIdentityKey =
-      chain === 'main'
-        ? process.env.TEST_MAIN_IDENTITY
-        : process.env.TEST_TEST_IDENTITY
-    const testFilePath =
-      chain === 'main'
-        ? process.env.TEST_MAIN_FILEPATH
-        : process.env.TEST_TEST_FILEPATH
+    const identityKey = (chain === 'main' ? process.env.MY_MAIN_IDENTITY : process.env.MY_TEST_IDENTITY) || ''
+    const filePath = chain === 'main' ? process.env.MY_MAIN_FILEPATH : process.env.MY_TEST_FILEPATH
+    const identityKey2 = (chain === 'main' ? process.env.MY_MAIN_IDENTITY2 : process.env.MY_TEST_IDENTITY2) || ''
+    const testIdentityKey = chain === 'main' ? process.env.TEST_MAIN_IDENTITY : process.env.TEST_TEST_IDENTITY
+    const testFilePath = chain === 'main' ? process.env.TEST_MAIN_FILEPATH : process.env.TEST_TEST_FILEPATH
     const cloudMySQLConnection =
-      chain === 'main'
-        ? process.env.MAIN_CLOUD_MYSQL_CONNECTION
-        : process.env.TEST_CLOUD_MYSQL_CONNECTION
+      chain === 'main' ? process.env.MAIN_CLOUD_MYSQL_CONNECTION : process.env.TEST_CLOUD_MYSQL_CONNECTION
     const DEV_KEYS = process.env.DEV_KEYS || '{}'
     const logTests = !!process.env.LOGTESTS
     const runMySQL = !!process.env.RUNMYSQL
     const runSlowTests = !!process.env.RUNSLOWTESTS
-    const mainTaalApiKey = process.env.MAIN_TAAL_API_KEY || ''
-    const testTaalApiKey = process.env.TEST_TAAL_API_KEY || ''
+    const taalApiKey = (chain === 'main' ? process.env.MAIN_TAAL_API_KEY : process.env.TEST_TAAL_API_KEY) || ''
+    const bitailsApiKey = (chain === 'main' ? process.env.MAIN_BITAILS_API_KEY : process.env.TEST_BITAILS_API_KEY) || ''
+    const whatsonchainApiKey =
+      (chain === 'main' ? process.env.MAIN_WHATSONCHAIN_API_KEY : process.env.TEST_WHATSONCHAIN_API_KEY) || ''
     return {
       chain,
       identityKey,
       identityKey2,
-      taalApiKey: chain === 'main' ? mainTaalApiKey : testTaalApiKey,
+      taalApiKey,
+      bitailsApiKey,
+      whatsonchainApiKey,
       devKeys: JSON.parse(DEV_KEYS) as Record<string, string>,
       runMySQL,
       runSlowTests,
@@ -172,13 +162,7 @@ export abstract class TestUtilsWalletStorage {
     cr: CreateActionResult
     sr: SignActionResult
   }> {
-    return await _tu.createNoSendP2PKHTestOutpoints(
-      1,
-      address,
-      satoshis,
-      noSendChange,
-      wallet
-    )
+    return await _tu.createNoSendP2PKHTestOutpoints(1, address, satoshis, noSendChange, wallet)
   }
 
   static async createNoSendP2PKHTestOutpoints(
@@ -292,18 +276,16 @@ export abstract class TestUtilsWalletStorage {
     const identityKey = rootKey.toPublicKey().toString()
     const keyDeriver = new KeyDeriver(rootKey)
     const chain = args.chain
-    const storage = new WalletStorageManager(
-      identityKey,
-      args.active,
-      args.backups
-    )
+    const storage = new WalletStorageManager(identityKey, args.active, args.backups)
     if (storage.canMakeAvailable()) await storage.makeAvailable()
-    const services = new Services(args.chain)
-    const monopts = Monitor.createDefaultWalletMonitorOptions(
-      chain,
-      storage,
-      services
-    )
+    const env = _tu.getEnv(args.chain!)
+    const serviceOptions: WalletServicesOptions = Services.createDefaultOptions(env.chain)
+    serviceOptions.taalApiKey = env.taalApiKey
+    serviceOptions.arcConfig.apiKey = env.taalApiKey
+    serviceOptions.bitailsApiKey = env.bitailsApiKey
+    serviceOptions.whatsOnChainApiKey = env.whatsonchainApiKey
+    const services = new Services(serviceOptions)
+    const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
     monitor.addDefaultTasks()
     let privilegedKeyManager: sdk.PrivilegedKeyManager | undefined = undefined
@@ -344,9 +326,7 @@ export abstract class TestUtilsWalletStorage {
    *
    * @returns {TestWalletNoSetup}
    */
-  static async createTestWallet(
-    args: sdk.Chain | CreateTestWalletArgs
-  ): Promise<TestWalletNoSetup> {
+  static async createTestWallet(args: sdk.Chain | CreateTestWalletArgs): Promise<TestWalletNoSetup> {
     let chain: sdk.Chain
     let rootKeyHex: string
     let filePath: string
@@ -357,10 +337,7 @@ export abstract class TestUtilsWalletStorage {
       chain = args
       const env = _tu.getEnv(chain)
       if (!env.testIdentityKey || !env.testFilePath) {
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'env.testIdentityKey and env.testFilePath',
-          'valid'
-        )
+        throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey and env.testFilePath', 'valid')
       }
       rootKeyHex = env.devKeys[env.testIdentityKey!]
       filePath = env.testFilePath
@@ -385,11 +362,7 @@ export abstract class TestUtilsWalletStorage {
     let client: sdk.WalletStorageProvider
     if (useMySQLConnectionForClient) {
       const env = _tu.getEnv(chain)
-      if (!env.cloudMySQLConnection)
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'env.cloundMySQLConnection',
-          'valid'
-        )
+      if (!env.cloudMySQLConnection) throw new sdk.WERR_INVALID_PARAMETER('env.cloundMySQLConnection', 'valid')
       const connection = JSON.parse(env.cloudMySQLConnection)
       client = new StorageKnex({
         ...StorageKnex.defaultOptions(),
@@ -398,15 +371,11 @@ export abstract class TestUtilsWalletStorage {
       })
     } else {
       const endpointUrl =
-        chain === 'main'
-          ? 'https://storage.babbage.systems'
-          : 'https://staging-storage.babbage.systems'
+        chain === 'main' ? 'https://storage.babbage.systems' : 'https://staging-storage.babbage.systems'
 
       client = new StorageClient(setup.wallet, endpointUrl)
     }
-    setup.clientStorageIdentityKey = (
-      await client.makeAvailable()
-    ).storageIdentityKey
+    setup.clientStorageIdentityKey = (await client.makeAvailable()).storageIdentityKey
     await setup.wallet.storage.addWalletStorageProvider(client)
 
     if (addLocalBackup) {
@@ -418,9 +387,7 @@ export abstract class TestUtilsWalletStorage {
         chain
       })
       await localBackup.migrate(backupName, randomBytesHex(33))
-      setup.localBackupStorageIdentityKey = (
-        await localBackup.makeAvailable()
-      ).storageIdentityKey
+      setup.localBackupStorageIdentityKey = (await localBackup.makeAvailable()).storageIdentityKey
       await setup.wallet.storage.addWalletStorageProvider(localBackup)
     }
 
@@ -428,11 +395,9 @@ export abstract class TestUtilsWalletStorage {
     // SETTING ACTIVE
     // SETTING ACTIVE
     const log = await setup.storage.setActive(
-      setActiveClient
-        ? setup.clientStorageIdentityKey
-        : setup.localStorageIdentityKey
+      setActiveClient ? setup.clientStorageIdentityKey : setup.localStorageIdentityKey
     )
-    console.log(log)
+    logger(log)
 
     let needsBackup = false
 
@@ -445,10 +410,7 @@ export abstract class TestUtilsWalletStorage {
           }
         })
       )
-      if (
-        basket.minimumDesiredUTXOValue !== 5 ||
-        basket.numberOfDesiredUTXOs < 32
-      ) {
+      if (basket.minimumDesiredUTXOValue !== 5 || basket.numberOfDesiredUTXOs < 32) {
         needsBackup = true
         await setup.activeStorage.updateOutputBasket(basket.basketId, {
           minimumDesiredUTXOValue: 5,
@@ -490,9 +452,7 @@ export abstract class TestUtilsWalletStorage {
       rootKeyHex: args.rootKeyHex
     })
     args.endpointUrl ||=
-      args.chain === 'main'
-        ? 'https://storage.babbage.systems'
-        : 'https://staging-storage.babbage.systems'
+      args.chain === 'main' ? 'https://storage.babbage.systems' : 'https://staging-storage.babbage.systems'
 
     const client = new StorageClient(wo.wallet, args.endpointUrl)
     await wo.storage.addWalletStorageProvider(client)
@@ -577,9 +537,7 @@ export abstract class TestUtilsWalletStorage {
         }
       }
     if (copyToTmp) {
-      const srcPath = p.dir
-        ? path.resolve(filename)
-        : path.resolve(`./test/data/${filename}`)
+      const srcPath = p.dir ? path.resolve(filename) : path.resolve(`./test/data/${filename}`)
       await fsp.copyFile(srcPath, dstPath)
     }
     return dstPath
@@ -673,9 +631,7 @@ export abstract class TestUtilsWalletStorage {
     dropAll?: boolean
     privKeyHex?: string
   }): Promise<TestWalletNoSetup> {
-    const localSQLiteFile =
-      args.filePath ||
-      (await _tu.newTmpFile(`${args.databaseName}.sqlite`, false, false, true))
+    const localSQLiteFile = args.filePath || (await _tu.newTmpFile(`${args.databaseName}.sqlite`, false, false, true))
     return await this.createKnexTestWallet({
       ...args,
       knex: _tu.createLocalSQLite(localSQLiteFile)
@@ -687,12 +643,7 @@ export abstract class TestUtilsWalletStorage {
     chain?: sdk.Chain
     rootKeyHex?: string
   }): Promise<TestWallet<TestSetup1>> {
-    const localSQLiteFile = await _tu.newTmpFile(
-      `${args.databaseName}.sqlite`,
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile(`${args.databaseName}.sqlite`, false, false, true)
     return await this.createKnexTestSetup1Wallet({
       ...args,
       dropAll: true,
@@ -706,12 +657,7 @@ export abstract class TestUtilsWalletStorage {
     chain?: sdk.Chain
     rootKeyHex?: string
   }): Promise<TestWallet<TestSetup2>> {
-    const localSQLiteFile = await _tu.newTmpFile(
-      `${args.databaseName}.sqlite`,
-      false,
-      false,
-      true
-    )
+    const localSQLiteFile = await _tu.newTmpFile(`${args.databaseName}.sqlite`, false, false, true)
     return await this.createKnexTestSetup2Wallet({
       ...args,
       dropAll: true,
@@ -773,26 +719,13 @@ export abstract class TestUtilsWalletStorage {
   }
 
   //if (await _tu.fileExists(walletFile))
-  static async createLegacyWalletSQLiteCopy(
-    databaseName: string
-  ): Promise<TestWalletNoSetup> {
-    const walletFile = await _tu.newTmpFile(
-      `${databaseName}.sqlite`,
-      false,
-      false,
-      true
-    )
+  static async createLegacyWalletSQLiteCopy(databaseName: string): Promise<TestWalletNoSetup> {
+    const walletFile = await _tu.newTmpFile(`${databaseName}.sqlite`, false, false, true)
     const walletKnex = _tu.createLocalSQLite(walletFile)
-    return await _tu.createLegacyWalletCopy(
-      databaseName,
-      walletKnex,
-      walletFile
-    )
+    return await _tu.createLegacyWalletCopy(databaseName, walletKnex, walletFile)
   }
 
-  static async createLegacyWalletMySQLCopy(
-    databaseName: string
-  ): Promise<TestWalletNoSetup> {
+  static async createLegacyWalletMySQLCopy(databaseName: string): Promise<TestWalletNoSetup> {
     const walletKnex = _tu.createLocalMySQL(databaseName)
     return await _tu.createLegacyWalletCopy(databaseName, walletKnex)
   }
@@ -821,12 +754,7 @@ export abstract class TestUtilsWalletStorage {
     })
   }
 
-  static legacyRootKeyHex =
-    '153a3df216' +
-    '686f55b253991c' +
-    '7039da1f648' +
-    'ffc5bfe93d6ac2c25ac' +
-    '2d4070918d'
+  static legacyRootKeyHex = '153a3df216' + '686f55b253991c' + '7039da1f648' + 'ffc5bfe93d6ac2c25ac' + '2d4070918d'
 
   static async createLegacyWalletCopy(
     databaseName: string,
@@ -842,8 +770,7 @@ export abstract class TestUtilsWalletStorage {
     }
     const chain: sdk.Chain = 'test'
     const rootKeyHex = _tu.legacyRootKeyHex
-    const identityKey =
-      '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
+    const identityKey = '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
     const rootKey = PrivateKey.fromHex(rootKeyHex)
     const keyDeriver = new KeyDeriver(rootKey)
     const activeStorage = new StorageKnex({
@@ -868,23 +795,14 @@ export abstract class TestUtilsWalletStorage {
         feeModel: { model: 'sat/kb', value: 1 }
       })
       await reader.makeAvailable()
-      await storage.syncFromReader(
-        identityKey,
-        new StorageSyncReader({ identityKey }, reader)
-      )
+      await storage.syncFromReader(identityKey, new StorageSyncReader({ identityKey }, reader))
       await reader.destroy()
     }
     const services = new Services(chain)
-    const monopts = Monitor.createDefaultWalletMonitorOptions(
-      chain,
-      storage,
-      services
-    )
+    const monopts = Monitor.createDefaultWalletMonitorOptions(chain, storage, services)
     const monitor = new Monitor(monopts)
     const wallet = new Wallet({ chain, keyDeriver, storage, services, monitor })
-    const userId = verifyTruthy(
-      await activeStorage.findUserByIdentityKey(identityKey)
-    ).userId
+    const userId = verifyTruthy(await activeStorage.findUserByIdentityKey(identityKey)).userId
     const r: TestWallet<{}> = {
       rootKey,
       identityKey,
@@ -912,8 +830,7 @@ export abstract class TestUtilsWalletStorage {
     const cert: WalletCertificate = {
       type: Utils.toBase64(new Array(32).fill(1)),
       serialNumber: Utils.toBase64(new Array(32).fill(2)),
-      revocationOutpoint:
-        'deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef.1',
+      revocationOutpoint: 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef.1',
       subject,
       certifier: certifier.toPublicKey().toString(),
       fields: {
@@ -1006,12 +923,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestCertificateField(
-    storage: StorageProvider,
-    c: TableCertificate,
-    name: string,
-    value: string
-  ) {
+  static async insertTestCertificateField(storage: StorageProvider, c: TableCertificate, name: string, value: string) {
     const now = new Date()
     const e: TableCertificateField = {
       created_at: now,
@@ -1036,9 +948,7 @@ export abstract class TestUtilsWalletStorage {
     if (u === undefined) {
       user = await _tu.insertTestUser(storage)
     } else if (typeof u === 'number') {
-      user = verifyOne(
-        await storage.findUsers({ partial: { userId: u } })
-      ) as TableUser
+      user = verifyOne(await storage.findUsers({ partial: { userId: u } })) as TableUser
     } else {
       user = u
     }
@@ -1129,11 +1039,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestOutputTag(
-    storage: StorageProvider,
-    u: TableUser,
-    partial?: Partial<TableOutputTag>
-  ) {
+  static async insertTestOutputTag(storage: StorageProvider, u: TableUser, partial?: Partial<TableOutputTag>) {
     const now = new Date()
     const e: TableOutputTag = {
       created_at: now,
@@ -1148,11 +1054,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestOutputTagMap(
-    storage: StorageProvider,
-    o: TableOutput,
-    tag: TableOutputTag
-  ) {
+  static async insertTestOutputTagMap(storage: StorageProvider, o: TableOutput, tag: TableOutputTag) {
     const now = new Date()
     const e: TableOutputTagMap = {
       created_at: now,
@@ -1165,11 +1067,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestTxLabel(
-    storage: StorageProvider,
-    u: TableUser,
-    partial?: Partial<TableTxLabel>
-  ) {
+  static async insertTestTxLabel(storage: StorageProvider, u: TableUser, partial?: Partial<TableTxLabel>) {
     const now = new Date()
     const e: TableTxLabel = {
       created_at: now,
@@ -1234,10 +1132,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async insertTestCommission(
-    storage: StorageProvider,
-    t: TableTransaction
-  ) {
+  static async insertTestCommission(storage: StorageProvider, t: TableTransaction) {
     const now = new Date()
     const e: TableCommission = {
       created_at: now,
@@ -1254,10 +1149,7 @@ export abstract class TestUtilsWalletStorage {
     return e
   }
 
-  static async createTestSetup1(
-    storage: StorageProvider,
-    u1IdentityKey?: string
-  ): Promise<TestSetup1> {
+  static async createTestSetup1(storage: StorageProvider, u1IdentityKey?: string): Promise<TestSetup1> {
     const u1 = await _tu.insertTestUser(storage, u1IdentityKey)
     const u1basket1 = await _tu.insertTestOutputBasket(storage, u1)
     const u1basket2 = await _tu.insertTestOutputBasket(storage, u1)
@@ -1269,43 +1161,16 @@ export abstract class TestUtilsWalletStorage {
     const u1comm1 = await _tu.insertTestCommission(storage, u1tx1)
     const u1tx1label1 = await _tu.insertTestTxLabelMap(storage, u1tx1, u1label1)
     const u1tx1label2 = await _tu.insertTestTxLabelMap(storage, u1tx1, u1label2)
-    const u1tx1o0 = await _tu.insertTestOutput(
-      storage,
-      u1tx1,
-      0,
-      101,
-      u1basket1
-    )
+    const u1tx1o0 = await _tu.insertTestOutput(storage, u1tx1, 0, 101, u1basket1)
     const u1o0tag1 = await _tu.insertTestOutputTagMap(storage, u1tx1o0, u1tag1)
     const u1o0tag2 = await _tu.insertTestOutputTagMap(storage, u1tx1o0, u1tag2)
-    const u1tx1o1 = await _tu.insertTestOutput(
-      storage,
-      u1tx1,
-      1,
-      111,
-      u1basket2
-    )
+    const u1tx1o1 = await _tu.insertTestOutput(storage, u1tx1, 1, 111, u1basket2)
     const u1o1tag1 = await _tu.insertTestOutputTagMap(storage, u1tx1o1, u1tag1)
     const u1cert1 = await _tu.insertTestCertificate(storage, u1)
-    const u1cert1field1 = await _tu.insertTestCertificateField(
-      storage,
-      u1cert1,
-      'bob',
-      'your uncle'
-    )
-    const u1cert1field2 = await _tu.insertTestCertificateField(
-      storage,
-      u1cert1,
-      'name',
-      'alice'
-    )
+    const u1cert1field1 = await _tu.insertTestCertificateField(storage, u1cert1, 'bob', 'your uncle')
+    const u1cert1field2 = await _tu.insertTestCertificateField(storage, u1cert1, 'name', 'alice')
     const u1cert2 = await _tu.insertTestCertificate(storage, u1)
-    const u1cert2field1 = await _tu.insertTestCertificateField(
-      storage,
-      u1cert2,
-      'name',
-      'alice'
-    )
+    const u1cert2field1 = await _tu.insertTestCertificateField(storage, u1cert2, 'name', 'alice')
     const u1cert3 = await _tu.insertTestCertificate(storage, u1)
     const u1sync1 = await _tu.insertTestSyncState(storage, u1)
 
@@ -1315,28 +1180,13 @@ export abstract class TestUtilsWalletStorage {
     const { tx: u2tx1 } = await _tu.insertTestTransaction(storage, u2, true)
     const u2comm1 = await _tu.insertTestCommission(storage, u2tx1)
     const u2tx1label1 = await _tu.insertTestTxLabelMap(storage, u2tx1, u2label1)
-    const u2tx1o0 = await _tu.insertTestOutput(
-      storage,
-      u2tx1,
-      0,
-      101,
-      u2basket1
-    )
+    const u2tx1o0 = await _tu.insertTestOutput(storage, u2tx1, 0, 101, u2basket1)
     const { tx: u2tx2 } = await _tu.insertTestTransaction(storage, u2, true)
     const u2comm2 = await _tu.insertTestCommission(storage, u2tx2)
 
     const proven1 = await _tu.insertTestProvenTx(storage)
-    const req1 = await _tu.insertTestProvenTxReq(
-      storage,
-      undefined,
-      undefined,
-      true
-    )
-    const req2 = await _tu.insertTestProvenTxReq(
-      storage,
-      proven1.txid,
-      proven1.provenTxId
-    )
+    const req1 = await _tu.insertTestProvenTxReq(storage, undefined, undefined, true)
+    const req2 = await _tu.insertTestProvenTxReq(storage, proven1.txid, proven1.provenTxId)
 
     const we1 = await _tu.insertTestMonitorEvent(storage)
     return {
@@ -1404,21 +1254,16 @@ export abstract class TestUtilsWalletStorage {
         let prevOutput = outputMap[input.sourceOutpoint]
 
         if (!prevOutput) {
-          const { tx: transaction } = await _tu.insertTestTransaction(
-            storage,
-            user,
-            false,
-            {
-              txid: input.sourceOutpoint.split('.')[0],
-              satoshis: input.sourceSatoshis,
-              status: 'confirmed' as sdk.TransactionStatus,
-              description: 'Generated transaction for input',
-              lockTime: 0,
-              version: 1,
-              inputBEEF: [1, 2, 3, 4],
-              rawTx: [4, 3, 2, 1]
-            }
-          )
+          const { tx: transaction } = await _tu.insertTestTransaction(storage, user, false, {
+            txid: input.sourceOutpoint.split('.')[0],
+            satoshis: input.sourceSatoshis,
+            status: 'confirmed' as sdk.TransactionStatus,
+            description: 'Generated transaction for input',
+            lockTime: 0,
+            version: 1,
+            inputBEEF: [1, 2, 3, 4],
+            rawTx: [4, 3, 2, 1]
+          })
 
           const basket = await _tu.insertTestOutputBasket(storage, user, {
             name: randomBytesHex(6)
@@ -1454,21 +1299,16 @@ export abstract class TestUtilsWalletStorage {
 
     // Process transactions that spend those previous outputs
     for (const action of mockData.actions) {
-      const { tx: transaction } = await _tu.insertTestTransaction(
-        storage,
-        user,
-        false,
-        {
-          txid: `${action.txid}` || `tx_${action.satoshis}_${Date.now()}`,
-          satoshis: action.satoshis,
-          status: action.status as sdk.TransactionStatus,
-          description: action.description,
-          lockTime: action.lockTime,
-          version: action.version,
-          inputBEEF: [1, 2, 3, 4],
-          rawTx: [4, 3, 2, 1]
-        }
-      )
+      const { tx: transaction } = await _tu.insertTestTransaction(storage, user, false, {
+        txid: `${action.txid}` || `tx_${action.satoshis}_${Date.now()}`,
+        satoshis: action.satoshis,
+        status: action.status as sdk.TransactionStatus,
+        description: action.description,
+        lockTime: action.lockTime,
+        version: action.version,
+        inputBEEF: [1, 2, 3, 4],
+        rawTx: [4, 3, 2, 1]
+      })
 
       // Loop through action inputs and update chosen outputs
       for (const input of action.inputs || []) {
@@ -1476,9 +1316,7 @@ export abstract class TestUtilsWalletStorage {
         const prevOutput = outputMap[input.sourceOutpoint]
 
         if (!prevOutput) {
-          throw new Error(
-            `UTXO not found in outputMap for sourceOutpoint: ${input.sourceOutpoint}`
-          )
+          throw new Error(`UTXO not found in outputMap for sourceOutpoint: ${input.sourceOutpoint}`)
         }
 
         // Set correct output fields as per input fields
@@ -1535,13 +1373,10 @@ export abstract class TestUtilsWalletStorage {
         for (const output of action.outputs) {
           if (output.tags) {
             // Ensure we fetch the correct inserted output for the current transaction
-            const insertedOutput =
-              outputMap[`${action.txid}.${output.outputIndex}`]
+            const insertedOutput = outputMap[`${action.txid}.${output.outputIndex}`]
 
             if (!insertedOutput) {
-              throw new Error(
-                `Output not found for txid: ${action.txid}, vout: ${output.outputIndex}`
-              )
+              throw new Error(`Output not found for txid: ${action.txid}, vout: ${output.outputIndex}`)
             }
 
             for (const tag of output.tags) {
@@ -1556,11 +1391,7 @@ export abstract class TestUtilsWalletStorage {
               })
 
               // Map the inserted tag to the correct output
-              await _tu.insertTestOutputTagMap(
-                storage,
-                insertedOutput,
-                insertedTag
-              )
+              await _tu.insertTestOutputTagMap(storage, insertedOutput, insertedTag)
             }
           }
         }
@@ -1588,14 +1419,10 @@ export abstract class TestUtilsWalletStorage {
     callback: (txid: string) => Promise<sdk.GetMerklePathResult>
   ): void {
     for (const { services } of ctxs) {
-      services.getMerklePath = jest
-        .fn()
-        .mockImplementation(
-          async (txid: string): Promise<sdk.GetMerklePathResult> => {
-            const r = await callback(txid)
-            return r
-          }
-        )
+      services.getMerklePath = jest.fn().mockImplementation(async (txid: string): Promise<sdk.GetMerklePathResult> => {
+        const r = await callback(txid)
+        return r
+      })
     }
   }
 
@@ -1642,7 +1469,9 @@ export abstract class TestUtilsWalletStorage {
   }> {
     let destroyWallet = false
     if (wallet === 'main' || wallet === 'test') {
-      wallet = (await _tu.createWalletSetupEnv(wallet)).wallet
+      const setup = await _tu.createWalletSetupEnv(wallet)
+      wallet = setup.wallet
+      if (!setup.storage.isActiveEnabled) await setup.storage.setActive(setup.storage.getActiveStore())
       destroyWallet = true
     }
 
@@ -1660,9 +1489,7 @@ export abstract class TestUtilsWalletStorage {
     const car = await wallet.createAction({
       outputs: [
         {
-          lockingScript: t
-            .lock(keyDeriver.rootKey.toString(), wallet.identityKey)
-            .toHex(),
+          lockingScript: t.lock(keyDeriver.rootKey.toString(), wallet.identityKey).toHex(),
           satoshis,
           outputDescription: label,
           customInstructions: JSON.stringify({
@@ -1683,11 +1510,7 @@ export abstract class TestUtilsWalletStorage {
     const txidDo = car.txid!
     const outpoint = `${car.txid!}.0`
 
-    const unlock = t.unlock(
-      keyDeriver.rootKey.toString(),
-      wallet.identityKey,
-      satoshis
-    )
+    const unlock = t.unlock(keyDeriver.rootKey.toString(), wallet.identityKey, satoshis)
 
     label = 'undoTxPair'
 
@@ -1835,10 +1658,7 @@ export interface TestWalletOnly {
   wallet: Wallet
 }
 
-async function insertEmptySetup(
-  storage: StorageKnex,
-  identityKey: string
-): Promise<object> {
+async function insertEmptySetup(storage: StorageKnex, identityKey: string): Promise<object> {
   return {}
 }
 
@@ -1856,9 +1676,7 @@ export async function expectToThrowWERR<R>(
   } catch (eu: unknown) {
     const e = sdk.WalletError.fromUnknown(eu)
     if (e.name !== expectedClass.name || !e.isError)
-      console.log(
-        `Error name ${e.name} vs class name ${expectedClass.name}\n${e.stack}\n`
-      )
+      console.log(`Error name ${e.name} vs class name ${expectedClass.name}\n${e.stack}\n`)
     // The output above may help debugging this situation or put a breakpoint
     // on the line below and look at e.stack
     expect(e.name).toBe(expectedClass.name)
@@ -1881,19 +1699,15 @@ function mockPostServices(
 ): void {
   for (const { services } of ctxs) {
     // Mock the services postBeef to avoid actually broadcasting new transactions.
-    services.postBeef = jest
-      .fn()
-      .mockImplementation(
-        (beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
-          status = !callback ? status : callback(beef, txids)
-          const r: sdk.PostBeefResult = {
-            name: 'mock',
-            status: 'success',
-            txidResults: txids.map(txid => ({ txid, status }))
-          }
-          return Promise.resolve([r])
-        }
-      )
+    services.postBeef = jest.fn().mockImplementation((beef: Beef, txids: string[]): Promise<sdk.PostBeefResult[]> => {
+      status = !callback ? status : callback(beef, txids)
+      const r: sdk.PostBeefResult = {
+        name: 'mock',
+        status: 'success',
+        txidResults: txids.map(txid => ({ txid, status }))
+      }
+      return Promise.resolve([r])
+    })
   }
 }
 
@@ -1911,8 +1725,9 @@ let logEnabled: boolean = false
  * log('Test message', someVariable);
  * log('Another message with multiple params', param1, param2);
  */
-export const log = (message: string, ...optionalParams: any[]): void => {
-  if (logEnabled) {
+export const logger = (message: string, ...optionalParams: any[]): void => {
+  const isSingleTest = process.argv.some(arg => arg === '--testNamePattern' || arg === '-t')
+  if (logEnabled || isSingleTest) {
     console.log(message, ...optionalParams)
   }
 }
@@ -1925,7 +1740,7 @@ export const log = (message: string, ...optionalParams: any[]): void => {
  */
 export const updateTable = async (updateFunction, id, testValues) => {
   for (const [key, value] of Object.entries(testValues)) {
-    log('id=', id, '[key]=', [key], 'value=', value)
+    logger('id=', id, '[key]=', [key], 'value=', value)
     await updateFunction(id, { [key]: value })
   }
 }
@@ -1955,9 +1770,7 @@ export const verifyValues = (
 
     if (expectedValue instanceof Date) {
       // Use `validateUpdateTime` for Date comparisons
-      expect(
-        validateUpdateTime(actualValue, expectedValue, referenceTime)
-      ).toBe(true)
+      expect(validateUpdateTime(actualValue, expectedValue, referenceTime)).toBe(true)
     } else {
       // Default to strict equality for other fields
       expect(actualValue).toStrictEqual(expectedValue)
@@ -1990,40 +1803,30 @@ export const validateUpdateTime = (
   const referenceTimestamp = referenceTime.getTime()
 
   if (logEnabled) {
-    log(
+    logger(
       `Validation inputs:\n`,
       `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})\n`,
       `Expected Time: ${expectedTime.toISOString()} (Timestamp: ${expectedTimestamp})\n`,
       `Reference Time: ${referenceTime.toISOString()} (Timestamp: ${referenceTimestamp})`
     )
   }
-  const isWithinTolerance =
-    Math.abs(actualTimestamp - expectedTimestamp) <= toleranceMs
+  const isWithinTolerance = Math.abs(actualTimestamp - expectedTimestamp) <= toleranceMs
   const isGreaterThanReference = actualTimestamp > referenceTimestamp
   const isoMatch = actualTime.toISOString() === expectedTime.toISOString()
   const utcMatch = actualTime.toUTCString() === expectedTime.toUTCString()
-  const humanReadableMatch =
-    actualTime.toDateString() === expectedTime.toDateString()
+  const humanReadableMatch = actualTime.toDateString() === expectedTime.toDateString()
 
   // Updated: Allow test to pass if the difference is too large to fail
-  if (
-    !isWithinTolerance &&
-    Math.abs(actualTimestamp - expectedTimestamp) > 100000000
-  ) {
+  if (!isWithinTolerance && Math.abs(actualTimestamp - expectedTimestamp) > 100000000) {
     if (logEnabled) {
-      log(
+      logger(
         `Skipping validation failure: The difference is unusually large (${Math.abs(actualTimestamp - expectedTimestamp)}ms). Validation passed for extreme outliers.`
       )
     }
     return true
   }
 
-  const isValid =
-    isWithinTolerance ||
-    isGreaterThanReference ||
-    isoMatch ||
-    utcMatch ||
-    humanReadableMatch
+  const isValid = isWithinTolerance || isGreaterThanReference || isoMatch || utcMatch || humanReadableMatch
 
   if (!isValid) {
     console.error(
@@ -2040,10 +1843,7 @@ export const validateUpdateTime = (
     )
   } else {
     if (logEnabled) {
-      log(
-        `Validation succeeded:\n`,
-        `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})`
-      )
+      logger(`Validation succeeded:\n`, `Actual Time: ${actualTime.toISOString()} (Timestamp: ${actualTimestamp})`)
     }
   }
 
@@ -2084,14 +1884,11 @@ export const logUniqueConstraintError = (
     // Construct the expected error message string with the table name prefixed to each column
     const expectedErrorString = `SQLITE_CONSTRAINT: UNIQUE constraint failed: ${columnNames.map(col => `${tableName}.${col}`).join(', ')}`
 
-    log('expectedErrorString=', expectedErrorString)
+    logger('expectedErrorString=', expectedErrorString)
 
     // Check if the error message contains the expected string
     if (error.message.includes(expectedErrorString)) {
-      console.log(
-        `Unique constraint error for columns ${columnNames.join(', ')} caught as expected:`,
-        error.message
-      )
+      console.log(`Unique constraint error for columns ${columnNames.join(', ')} caught as expected:`, error.message)
     } else {
       console.log('Unexpected error message:', error.message)
     }
@@ -2127,12 +1924,10 @@ const logForeignConstraintError = (
   logEnabled: boolean = false
 ): void => {
   if (logEnabled) {
-    if (
-      error.message.includes(`SQLITE_CONSTRAINT: FOREIGN KEY constraint failed`)
-    ) {
-      log(`${columnName} constraint error caught as expected:`, error.message)
+    if (error.message.includes(`SQLITE_CONSTRAINT: FOREIGN KEY constraint failed`)) {
+      logger(`${columnName} constraint error caught as expected:`, error.message)
     } else {
-      log('Unexpected error:', error.message)
+      logger('Unexpected error:', error.message)
       throw new Error(`Unexpected error: ${error.message}`)
     }
   }
@@ -2170,7 +1965,7 @@ export const triggerUniqueConstraintError = async (
 
   const rows = await storage[findMethod]({})
   if (logEnabled) {
-    log('rows=', rows)
+    logger('rows=', rows)
   }
 
   if (!rows || rows.length < 2) {
@@ -2180,9 +1975,7 @@ export const triggerUniqueConstraintError = async (
   }
 
   if (!(columnName in rows[0])) {
-    throw new Error(
-      `Column "${columnName}" does not exist in the table "${tableName}".`
-    )
+    throw new Error(`Column "${columnName}" does not exist in the table "${tableName}".`)
   }
 
   if (id === invalidValue[columnName]) {
@@ -2192,7 +1985,7 @@ export const triggerUniqueConstraintError = async (
   }
 
   if (logEnabled) {
-    log('invalidValue=', invalidValue)
+    logger('invalidValue=', invalidValue)
   }
 
   // Create columnNames from invalidValue keys before the update
@@ -2200,7 +1993,7 @@ export const triggerUniqueConstraintError = async (
 
   try {
     if (logEnabled) {
-      log('update id=', id)
+      logger('update id=', id)
     }
 
     // Attempt the update with the new value that should trigger the constraint error
@@ -2254,9 +2047,7 @@ export const triggerForeignKeyConstraintError = async (
   }
 
   if (!(columnName in rows[0])) {
-    throw new Error(
-      `Column "${columnName}" does not exist in the table "${tableName}".`
-    )
+    throw new Error(`Column "${columnName}" does not exist in the table "${tableName}".`)
   }
 
   if (id === invalidValue[columnName]) {
@@ -2270,7 +2061,7 @@ export const triggerForeignKeyConstraintError = async (
   try {
     // Attempt the update with the invalid value that should trigger the foreign key constraint error
     const r = await storage[updateMethod](id, invalidValue) // Pass the object with the column name and value
-    log('r=', r)
+    logger('r=', r)
     return false
   } catch (error: any) {
     logForeignConstraintError(error, tableName, columnName, logEnabled)
@@ -2312,10 +2103,7 @@ async function cleanTransactionsUsingAbort(
  * @param {StorageKnex} storage - The storage instance to query transactions from.
  * @returns {Promise<boolean>} - Resolves to `true` if all `'nosend'` transactions were successfully aborted.
  */
-export async function cleanUnsentTransactionsUsingAbort(
-  wallet: Wallet,
-  storage: StorageKnex
-): Promise<boolean> {
+export async function cleanUnsentTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
   const result = await cleanTransactionsUsingAbort(wallet, storage, 'nosend')
   expect(result).toBe(true)
   return result
@@ -2328,10 +2116,7 @@ export async function cleanUnsentTransactionsUsingAbort(
  * @param {StorageKnex} storage - The storage instance to query transactions from.
  * @returns {Promise<boolean>} - Resolves to `true` if all `'unsigned'` transactions were successfully aborted.
  */
-export async function cleanUnsignedTransactionsUsingAbort(
-  wallet: Wallet,
-  storage: StorageKnex
-): Promise<boolean> {
+export async function cleanUnsignedTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
   const result = await cleanTransactionsUsingAbort(wallet, storage, 'unsigned')
   expect(result).toBe(true)
   return result
@@ -2344,15 +2129,8 @@ export async function cleanUnsignedTransactionsUsingAbort(
  * @param {StorageKnex} storage - The storage instance to query transactions from.
  * @returns {Promise<boolean>} - Resolves to `true` if all `'unprocessed'` transactions were successfully aborted.
  */
-export async function cleanUnprocessedTransactionsUsingAbort(
-  wallet: Wallet,
-  storage: StorageKnex
-): Promise<boolean> {
-  const result = await cleanTransactionsUsingAbort(
-    wallet,
-    storage,
-    'unprocessed'
-  )
+export async function cleanUnprocessedTransactionsUsingAbort(wallet: Wallet, storage: StorageKnex): Promise<boolean> {
+  const result = await cleanTransactionsUsingAbort(wallet, storage, 'unprocessed')
   expect(result).toBe(true)
   return result
 }
@@ -2370,10 +2148,7 @@ export const normalizeDate = (value: any): string | null => {
   return null
 }
 
-export async function logTransaction(
-  storage: StorageKnex,
-  txid: HexString
-): Promise<string> {
+export async function logTransaction(storage: StorageKnex, txid: HexString): Promise<string> {
   let amount: SatoshiValue = 0
   let log = `\n==== Transaction Log ====\ntxid: ${txid}\n`
 
@@ -2426,10 +2201,7 @@ export async function logTransaction(
   return log
 }
 
-export async function logOutput(
-  storage: StorageKnex,
-  output: TableOutput
-): Promise<string> {
+export async function logOutput(storage: StorageKnex, output: TableOutput): Promise<string> {
   let log = `\n-- Output --\n`
   log += `Outpoint: ${output.txid}:${output.vout}\n`
   log += `Satoshis: ${output.satoshis}\n`
@@ -2508,12 +2280,7 @@ export async function logInput(
         const spentByTxid = spendingTx[0].txid
 
         log += `${indent}  ↳ Spent By TXID: ${spentByTxid}\n`
-        log += await logInput(
-          storage,
-          spentByTxid!,
-          prevOutput.vout,
-          indentLevel + 2
-        )
+        log += await logInput(storage, spentByTxid!, prevOutput.vout, indentLevel + 2)
       } else {
         log += `${indent}  ↳ Spent By TXID Unknown (transactionId: ${prevOutput.spentBy})\n`
       }

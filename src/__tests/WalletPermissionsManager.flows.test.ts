@@ -1,11 +1,5 @@
-import {
-  mockUnderlyingWallet,
-  MockedBSV_SDK
-} from './WalletPermissionsManager.fixtures'
-import {
-  WalletPermissionsManager,
-  PermissionToken
-} from '../WalletPermissionsManager'
+import { mockUnderlyingWallet, MockedBSV_SDK } from './WalletPermissionsManager.fixtures'
+import { WalletPermissionsManager, PermissionToken } from '../WalletPermissionsManager'
 
 import { jest } from '@jest/globals'
 
@@ -20,9 +14,7 @@ jest.mock('@bsv/sdk', () => MockedBSV_SDK)
 function mockNoTokensFound(manager: WalletPermissionsManager) {
   jest.spyOn(manager as any, 'findProtocolToken').mockResolvedValue(undefined)
   jest.spyOn(manager as any, 'findBasketToken').mockResolvedValue(undefined)
-  jest
-    .spyOn(manager as any, 'findCertificateToken')
-    .mockResolvedValue(undefined)
+  jest.spyOn(manager as any, 'findCertificateToken').mockResolvedValue(undefined)
   jest.spyOn(manager as any, 'findSpendingToken').mockResolvedValue(undefined)
 }
 
@@ -95,10 +87,7 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
       await expect(callB).rejects.toThrow(/Permission denied/)
 
       // Confirm activeRequests map is empty after denial
-      const activeRequests = (manager as any).activeRequests as Map<
-        string,
-        any[]
-      >
+      const activeRequests = (manager as any).activeRequests as Map<string, any[]>
       expect(activeRequests.size).toBe(0)
     })
 
@@ -152,10 +141,7 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
       await expect(bCall).rejects.toThrow(/Permission denied/)
 
       // activeRequests is empty
-      const activeRequests = (manager as any).activeRequests as Map<
-        string,
-        any[]
-      >
+      const activeRequests = (manager as any).activeRequests as Map<string, any[]>
       expect(activeRequests.size).toBe(0)
     })
 
@@ -196,9 +182,7 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
       // Now we grant permission for that same requestID
       // Because ephemeral is false by default, the manager will attempt to create on-chain tokens
       // We'll mock the internal createPermissionOnChain so it doesn't blow up
-      const createOnChainSpy = jest
-        .spyOn(manager as any, 'createPermissionOnChain')
-        .mockResolvedValue(undefined)
+      const createOnChainSpy = jest.spyOn(manager as any, 'createPermissionOnChain').mockResolvedValue(undefined)
 
       await manager.grantPermission({ requestID })
 
@@ -207,10 +191,7 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
       await expect(promiseB).resolves.toBe(true)
 
       // activeRequests map is empty
-      const activeRequests = (manager as any).activeRequests as Map<
-        string,
-        any[]
-      >
+      const activeRequests = (manager as any).activeRequests as Map<string, any[]>
       expect(activeRequests.size).toBe(0)
 
       // The manager tried to create an on-chain permission token once
@@ -260,10 +241,7 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
       await expect(p2Promise).rejects.toThrow(/Permission denied/)
 
       // But the first request is still waiting
-      const activeRequests = (manager as any).activeRequests as Map<
-        string,
-        any[]
-      >
+      const activeRequests = (manager as any).activeRequests as Map<string, any[]>
       expect(activeRequests.size).toBe(1)
 
       // Now let's deny the first request too
@@ -288,10 +266,7 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
       manager.bindCallback('onProtocolPermissionRequested', requestCb)
 
       // Force any on-chain creation attempt to be spied on
-      const createTokenSpy = jest.spyOn(
-        manager as any,
-        'createPermissionOnChain'
-      )
+      const createTokenSpy = jest.spyOn(manager as any, 'createPermissionOnChain')
 
       // 1) Call ensureProtocolPermission => triggers request
       const pCall1 = manager.ensureProtocolPermission({
@@ -351,36 +326,32 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
       // But on subsequent calls, we can mock that the manager sees the newly created token.
 
       // Let's spy on "createPermissionOnChain" so we can intercept the new token
-      const createTokenSpy = jest
-        .spyOn(manager as any, 'createPermissionOnChain')
-        .mockResolvedValue(undefined) // no real on-chain creation
+      const createTokenSpy = jest.spyOn(manager as any, 'createPermissionOnChain').mockResolvedValue(undefined) // no real on-chain creation
 
       // Spy on "findProtocolToken" so we can simulate that the second time it's called,
       // there's a valid token. We'll do this by setting the mock to return undefined the first time,
       // and a valid token the second time (or we can just rely on the manager's logic).
       let firstFindCall = true
-      jest
-        .spyOn(manager as any, 'findProtocolToken')
-        .mockImplementation(async () => {
-          if (firstFindCall) {
-            firstFindCall = false
-            return undefined // first time triggers request
-          }
-          // second time => pretend we found a valid token
-          const mockToken: PermissionToken = {
-            txid: 'abcdef',
-            outputIndex: 0,
-            outputScript: '00',
-            satoshis: 1,
-            originator: 'persistentdomain.com',
-            expiry: Math.floor(Date.now() / 1000) + 3600, // unexpired
-            privileged: false,
-            protocol: 'persist-proto',
-            securityLevel: 1,
-            counterparty: 'self'
-          }
-          return mockToken
-        })
+      jest.spyOn(manager as any, 'findProtocolToken').mockImplementation(async () => {
+        if (firstFindCall) {
+          firstFindCall = false
+          return undefined // first time triggers request
+        }
+        // second time => pretend we found a valid token
+        const mockToken: PermissionToken = {
+          txid: 'abcdef',
+          outputIndex: 0,
+          outputScript: '00',
+          satoshis: 1,
+          originator: 'persistentdomain.com',
+          expiry: Math.floor(Date.now() / 1000) + 3600, // unexpired
+          privileged: false,
+          protocol: 'persist-proto',
+          securityLevel: 1,
+          counterparty: 'self'
+        }
+        return mockToken
+      })
 
       // We'll observe the request callback
       const requestCb = jest.fn(() => {})
@@ -440,18 +411,14 @@ describe('WalletPermissionsManager - Permission Request Flow & Active Requests',
         securityLevel: 1,
         counterparty: 'self'
       }
-      jest
-        .spyOn(manager as any, 'findProtocolToken')
-        .mockResolvedValue(expiredToken)
+      jest.spyOn(manager as any, 'findProtocolToken').mockResolvedValue(expiredToken)
 
       // Spy on request callback
       const requestCb = jest.fn(() => {})
       manager.bindCallback('onProtocolPermissionRequested', requestCb)
 
       // We'll also spy on "renewPermissionOnChain" to see if it's called
-      const renewSpy = jest
-        .spyOn(manager as any, 'renewPermissionOnChain')
-        .mockResolvedValue(undefined)
+      const renewSpy = jest.spyOn(manager as any, 'renewPermissionOnChain').mockResolvedValue(undefined)
 
       // Call ensureProtocolPermission => sees expired token => triggers request with renewal
       const promise = manager.ensureProtocolPermission({

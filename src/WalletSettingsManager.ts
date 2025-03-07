@@ -45,11 +45,9 @@ export const DEFAULT_SETTINGS = {
     trustedCertifiers: [
       {
         name: 'Babbage Trust Services',
-        description:
-          'Resolves identity information for Babbage-run APIs and Bitcoin infrastructure.',
+        description: 'Resolves identity information for Babbage-run APIs and Bitcoin infrastructure.',
         iconUrl: 'https://projectbabbage.com/favicon.ico',
-        identityKey:
-          '028703956178067ea7ca405111f1ca698290a0112a3d7cf3d843e195bf58a7cfa6',
+        identityKey: '028703956178067ea7ca405111f1ca698290a0112a3d7cf3d843e195bf58a7cfa6',
         trust: 4
       },
       {
@@ -57,16 +55,14 @@ export const DEFAULT_SETTINGS = {
         description: 'Certifies legal first and last name, and photos',
         iconUrl: 'https://identicert.me/favicon.ico',
         trust: 5,
-        identityKey:
-          '0295bf1c7842d14babf60daf2c733956c331f9dcb2c79e41f85fd1dda6a3fa4549'
+        identityKey: '0295bf1c7842d14babf60daf2c733956c331f9dcb2c79e41f85fd1dda6a3fa4549'
       },
       {
         name: 'SocialCert',
         description: 'Certifies social media handles, phone numbers and emails',
         iconUrl: 'https://socialcert.net/favicon.ico',
         trust: 3,
-        identityKey:
-          '03285263f06139b66fb27f51cf8a92e9dd007c4c4b83876ad6c3e7028db450a4c2'
+        identityKey: '03285263f06139b66fb27f51cf8a92e9dd007c4c4b83876ad6c3e7028db450a4c2'
       }
     ]
   },
@@ -75,12 +71,9 @@ export const DEFAULT_SETTINGS = {
 
 // Mapping of certifier names to their testnet identity keys
 const TESTNET_IDENTITY_KEYS: Record<string, string> = {
-  'Babbage Trust Services':
-    '03d0b36b5c98b000ec9ffed9a2cf005e279244edf6a19cf90545cdebe873162761',
-  IdentiCert:
-    '036dc48522aba1705afbb43df3c04dbd1da373b6154341a875bceaa2a3e7f21528',
-  SocialCert:
-    '02cf6cdf466951d8dfc9e7c9367511d0007ed6fba35ed42d425cc412fd6cfd4a17'
+  'Babbage Trust Services': '03d0b36b5c98b000ec9ffed9a2cf005e279244edf6a19cf90545cdebe873162761',
+  IdentiCert: '036dc48522aba1705afbb43df3c04dbd1da373b6154341a875bceaa2a3e7f21528',
+  SocialCert: '02cf6cdf466951d8dfc9e7c9367511d0007ed6fba35ed42d425cc412fd6cfd4a17'
 }
 
 // Define defaults that can be imported for a testnet environment
@@ -88,14 +81,11 @@ export const TESTNET_DEFAULT_SETTINGS: WalletSettings = {
   ...DEFAULT_SETTINGS,
   trustSettings: {
     ...DEFAULT_SETTINGS.trustSettings,
-    trustedCertifiers: DEFAULT_SETTINGS.trustSettings.trustedCertifiers.map(
-      certifier => ({
-        ...certifier,
-        // Use the testnet key if provided, otherwise fallback to the default
-        identityKey:
-          TESTNET_IDENTITY_KEYS[certifier.name] || certifier.identityKey
-      })
-    )
+    trustedCertifiers: DEFAULT_SETTINGS.trustSettings.trustedCertifiers.map(certifier => ({
+      ...certifier,
+      // Use the testnet key if provided, otherwise fallback to the default
+      identityKey: TESTNET_IDENTITY_KEYS[certifier.name] || certifier.identityKey
+    }))
   }
 }
 
@@ -128,9 +118,7 @@ export class WalletSettingsManager {
       return this.config.defaultSettings
     }
 
-    const { fields } = PushDrop.decode(
-      LockingScript.fromHex(results.outputs[0].lockingScript!)
-    )
+    const { fields } = PushDrop.decode(LockingScript.fromHex(results.outputs[0].lockingScript!))
     // Parse and return settings token
     return JSON.parse(Utils.toUTF8(fields[0]))
   }
@@ -170,9 +158,7 @@ export class WalletSettingsManager {
    * @param newLockingScript - Optional locking script for replacing the settings token.
    * @returns {Promise<boolean>} - True if operation succeeded, throws an error otherwise.
    */
-  private async updateToken(
-    newLockingScript?: LockingScript
-  ): Promise<boolean> {
+  private async updateToken(newLockingScript?: LockingScript): Promise<boolean> {
     const pushdrop = new PushDrop(this.wallet)
 
     // 1. List the existing token UTXO(s) for the settings basket.

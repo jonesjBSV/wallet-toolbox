@@ -1,18 +1,6 @@
-import {
-  CWIStyleWalletManager,
-  UMPTokenInteractor,
-  OverlayUMPTokenInteractor
-} from './CWIStyleWalletManager'
+import { CWIStyleWalletManager, UMPTokenInteractor, OverlayUMPTokenInteractor } from './CWIStyleWalletManager'
 import { PrivilegedKeyManager } from './sdk/PrivilegedKeyManager'
-import {
-  WalletInterface,
-  Random,
-  Utils,
-  Transaction,
-  RPuzzle,
-  PrivateKey,
-  BigNumber
-} from '@bsv/sdk'
+import { WalletInterface, Random, Utils, Transaction, RPuzzle, PrivateKey, BigNumber } from '@bsv/sdk'
 import { WABClient } from './wab-client/WABClient'
 import { AuthMethodInteractor } from './wab-client/auth-method-interactors/AuthMethodInteractor'
 
@@ -29,16 +17,10 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
 
   constructor(
     adminOriginator: string,
-    walletBuilder: (
-      primaryKey: number[],
-      privilegedKeyManager: PrivilegedKeyManager
-    ) => Promise<WalletInterface>,
+    walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>,
     interactor: UMPTokenInteractor = new OverlayUMPTokenInteractor(),
     recoveryKeySaver: (key: number[]) => Promise<true>,
-    passwordRetriever: (
-      reason: string,
-      test: (passwordCandidate: string) => boolean
-    ) => Promise<string>,
+    passwordRetriever: (reason: string, test: (passwordCandidate: string) => boolean) => Promise<string>,
     wabClient: WABClient,
     authMethod?: AuthMethodInteractor,
     stateSnapshot?: number[]
@@ -50,15 +32,9 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
       recoveryKeySaver,
       passwordRetriever,
       // Here, we provide a custom new wallet funder that uses the Secret Server
-      async (
-        presentationKey: number[],
-        wallet: WalletInterface,
-        adminOriginator: string
-      ) => {
+      async (presentationKey: number[], wallet: WalletInterface, adminOriginator: string) => {
         debugger
-        const { paymentData } = await this.wabClient.requestFaucet(
-          Utils.toHex(presentationKey)
-        )
+        const { paymentData } = await this.wabClient.requestFaucet(Utils.toHex(presentationKey))
         if (!paymentData.k || !paymentData.tx) {
           throw new Error('Invalid')
         }
@@ -78,22 +54,16 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
           },
           adminOriginator
         )
-        const faucetRedeemTX = Transaction.fromAtomicBEEF(
-          faucetRedeemTXCreationResult.signableTransaction!.tx
-        )
+        const faucetRedeemTX = Transaction.fromAtomicBEEF(faucetRedeemTXCreationResult.signableTransaction!.tx)
         const faucetRedemptionPuzzle = new RPuzzle()
         const randomRedemptionPrivateKey = PrivateKey.fromRandom()
         const faucetRedeemUnlocker = faucetRedemptionPuzzle.unlock(
           new BigNumber(paymentData.k, 16),
           randomRedemptionPrivateKey
         )
-        const faucetRedeemUnlockingScript = await faucetRedeemUnlocker.sign(
-          faucetRedeemTX,
-          0
-        )
+        const faucetRedeemUnlockingScript = await faucetRedeemUnlocker.sign(faucetRedeemTX, 0)
         const signActionResult = await wallet.signAction({
-          reference:
-            faucetRedeemTXCreationResult.signableTransaction!.reference,
+          reference: faucetRedeemTXCreationResult.signableTransaction!.reference,
           spends: {
             0: {
               unlockingScript: faucetRedeemUnlockingScript.toHex()
@@ -147,20 +117,14 @@ export class WalletAuthenticationManager extends CWIStyleWalletManager {
    */
   public async completeAuth(payload: any): Promise<void> {
     if (!this.authMethod || !this.tempPresentationKey) {
-      throw new Error(
-        'No AuthMethod selected in WalletAuthenticationManager or startAuth has yet to be called.'
-      )
+      throw new Error('No AuthMethod selected in WalletAuthenticationManager or startAuth has yet to be called.')
     }
 
     // Unser the temp presentation key early (for security)
     const tempKey = this.tempPresentationKey
     this.tempPresentationKey = undefined
 
-    const result = await this.wabClient.completeAuthMethod(
-      this.authMethod,
-      tempKey,
-      payload
-    )
+    const result = await this.wabClient.completeAuthMethod(this.authMethod, tempKey, payload)
 
     if (!result.success || !result.presentationKey) {
       throw new Error(result.message || 'Failed to complete WAB auth')

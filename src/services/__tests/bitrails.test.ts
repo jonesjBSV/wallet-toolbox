@@ -1,22 +1,12 @@
-import {
-  convertProofToMerklePath,
-  sdk,
-  Services,
-  TscMerkleProofApi
-} from '../../index.client'
+import { convertProofToMerklePath, sdk, Services, TscMerkleProofApi } from '../../index.client'
 import { Bitails, BitailsMerkleProof } from '../providers/Bitails'
 
 describe('bitrails tests', () => {
   jest.setTimeout(99999999)
 
   test('0 verify merkle proof to merkle path', async () => {
-    const mp = convertProofToMerklePath(
-      '068f2ce0d01b5f1e7c7a07c209c3c67d583aeae83e11e92801b51c36f81d6b67',
-      proof2
-    )
-    const root = mp.computeRoot(
-      '068f2ce0d01b5f1e7c7a07c209c3c67d583aeae83e11e92801b51c36f81d6b67'
-    )
+    const mp = convertProofToMerklePath('068f2ce0d01b5f1e7c7a07c209c3c67d583aeae83e11e92801b51c36f81d6b67', proof2)
+    const root = mp.computeRoot('068f2ce0d01b5f1e7c7a07c209c3c67d583aeae83e11e92801b51c36f81d6b67')
     expect(root).toBe(proof2merkleRoot)
   })
 
@@ -37,8 +27,7 @@ describe('bitrails tests', () => {
   })
 })
 
-const proof2merkleRoot =
-  '22b294aac4c3f6f4fdae30dc4f46f68f90feb94f03531c32bcf2ce33be5d4cb0'
+const proof2merkleRoot = '22b294aac4c3f6f4fdae30dc4f46f68f90feb94f03531c32bcf2ce33be5d4cb0'
 
 const proof2: TscMerkleProofApi = {
   index: 9443,

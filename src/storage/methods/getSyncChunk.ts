@@ -22,10 +22,7 @@ import { StorageReader } from '../StorageReader'
  * @param args
  * @returns
  */
-export async function getSyncChunk(
-  storage: StorageReader,
-  args: sdk.RequestSyncChunkArgs
-): Promise<sdk.SyncChunk> {
+export async function getSyncChunk(storage: StorageReader, args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk> {
   const r: sdk.SyncChunk = {
     fromStorageIdentityKey: args.fromStorageIdentityKey,
     toStorageIdentityKey: args.toStorageIdentityKey,
@@ -37,9 +34,7 @@ export async function getSyncChunk(
   let i = 0
   let done = false
 
-  const user = verifyTruthy(
-    await storage.findUserByIdentityKey(args.identityKey)
-  )
+  const user = verifyTruthy(await storage.findUserByIdentityKey(args.identityKey))
   if (!args.since || user.updated_at > new Date(args.since)) r.user = user
 
   const chunkers: ChunkerArgs[] = [
@@ -52,10 +47,7 @@ export async function getSyncChunk(
       addItem: (i: TableProvenTx) => {
         r.provenTxs!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.getProvenTxsForUser(args)
       }
     },
@@ -68,10 +60,7 @@ export async function getSyncChunk(
       addItem: (i: TableOutputBasket) => {
         r.outputBaskets!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findOutputBaskets({
           partial: { userId: args.userId },
           since: args.since,
@@ -88,10 +77,7 @@ export async function getSyncChunk(
       addItem: (i: TableOutputTag) => {
         r.outputTags!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findOutputTags({
           partial: { userId: args.userId },
           since: args.since,
@@ -108,10 +94,7 @@ export async function getSyncChunk(
       addItem: (i: TableTxLabel) => {
         r.txLabels!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findTxLabels({
           partial: { userId: args.userId },
           since: args.since,
@@ -128,10 +111,7 @@ export async function getSyncChunk(
       addItem: (i: TableTransaction) => {
         r.transactions!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findTransactions({
           partial: { userId: args.userId },
           since: args.since,
@@ -148,10 +128,7 @@ export async function getSyncChunk(
       addItem: (i: TableOutput) => {
         r.outputs!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findOutputs({
           partial: { userId: args.userId },
           since: args.since,
@@ -168,10 +145,7 @@ export async function getSyncChunk(
       addItem: (i: TableTxLabelMap) => {
         r.txLabelMaps!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.getTxLabelMapsForUser(args)
       }
     },
@@ -184,10 +158,7 @@ export async function getSyncChunk(
       addItem: (i: TableOutputTagMap) => {
         r.outputTagMaps!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.getOutputTagMapsForUser(args)
       }
     },
@@ -200,10 +171,7 @@ export async function getSyncChunk(
       addItem: (i: TableCertificate) => {
         r.certificates!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findCertificates({
           partial: { userId: args.userId },
           since: args.since,
@@ -220,10 +188,7 @@ export async function getSyncChunk(
       addItem: (i: TableCertificateField) => {
         r.certificateFields!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findCertificateFields({
           partial: { userId: args.userId },
           since: args.since,
@@ -240,10 +205,7 @@ export async function getSyncChunk(
       addItem: (i: TableCommission) => {
         r.commissions!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.findCommissions({
           partial: { userId: args.userId },
           since: args.since,
@@ -260,10 +222,7 @@ export async function getSyncChunk(
       addItem: (i: TableProvenTxReq) => {
         r.provenTxReqs!.push(i)
       },
-      findItems: async (
-        storage: StorageReader,
-        args: sdk.FindForUserSincePagedArgs
-      ) => {
+      findItems: async (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => {
         return await storage.getProvenTxReqsForUser(args)
       }
     }
@@ -276,16 +235,10 @@ export async function getSyncChunk(
     }
     let { offset, name: oname } = args.offsets[i++]
     if (a.name !== oname)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'offsets',
-        `in dependency order. '${a.name}' expected, found ${oname}.`
-      )
+      throw new sdk.WERR_INVALID_PARAMETER('offsets', `in dependency order. '${a.name}' expected, found ${oname}.`)
     let preAddCalled = false
     for (; !done; ) {
-      const limit = Math.min(
-        itemCount,
-        Math.max(10, args.maxItems / a.maxDivider)
-      )
+      const limit = Math.min(itemCount, Math.max(10, args.maxItems / a.maxDivider))
       if (limit <= 0) break
       const items = await a.findItems(storage, {
         userId: user.userId,
@@ -325,10 +278,7 @@ type ChunkerArgs = {
   maxDivider: number
   preAdd: () => void
   addItem: (i: any) => void
-  findItems: (
-    storage: StorageReader,
-    args: sdk.FindForUserSincePagedArgs
-  ) => Promise<any[]>
+  findItems: (storage: StorageReader, args: sdk.FindForUserSincePagedArgs) => Promise<any[]>
 }
 
 function checkIsDate(v: any) {
@@ -339,7 +289,6 @@ function checkEntityValues(es: object[]) {
   for (const e of es) {
     checkIsDate(e['created_at'])
     checkIsDate(e['updated_at'])
-    for (const key of Object.keys(e))
-      if (e[key] === null) throw new sdk.WERR_INVALID_OPERATION()
+    for (const key of Object.keys(e)) if (e[key] === null) throw new sdk.WERR_INVALID_OPERATION()
   }
 }

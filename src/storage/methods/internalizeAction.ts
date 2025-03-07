@@ -23,8 +23,7 @@ import {
   verifyOneOrNone
 } from '../../index.client'
 
-export interface StorageInternalizeActionResult
-  extends InternalizeActionResult {
+export interface StorageInternalizeActionResult extends InternalizeActionResult {
   /** true if internalizing outputs on an existing storage transaction */
   isMerge: boolean
   /** txid of transaction being internalized */
@@ -165,11 +164,7 @@ class InternalizeActionContext {
   }
 
   async asyncSetup() {
-    ;({
-      ab: this.ab,
-      tx: this.tx,
-      txid: this.txid
-    } = await this.validateAtomicBeef(this.args.tx))
+    ;({ ab: this.ab, tx: this.tx, txid: this.txid } = await this.validateAtomicBeef(this.args.tx))
 
     for (const o of this.args.outputs) {
       if (o.outputIndex < 0 || o.outputIndex >= this.tx.outputs.length)
@@ -225,14 +220,7 @@ class InternalizeActionContext {
         partial: { userId: this.userId, txid: this.txid }
       })
     )
-    if (
-      this.etx &&
-      !(
-        this.etx.status == 'completed' ||
-        this.etx.status === 'unproven' ||
-        this.etx.status === 'nosend'
-      )
-    )
+    if (this.etx && !(this.etx.status == 'completed' || this.etx.status === 'unproven' || this.etx.status === 'nosend'))
       throw new sdk.WERR_INVALID_PARAMETER(
         'tx',
         `target transaction of internalizeAction has invalid status ${this.etx.status}.`
@@ -246,11 +234,7 @@ class InternalizeActionContext {
       for (const eo of this.eos) {
         const bi = this.basketInsertions.find(b => b.vout === eo.vout)
         const wp = this.walletPayments.find(b => b.vout === eo.vout)
-        if (bi && wp)
-          throw new sdk.WERR_INVALID_PARAMETER(
-            'outputs',
-            `unique outputIndex values`
-          )
+        if (bi && wp) throw new sdk.WERR_INVALID_PARAMETER('outputs', `unique outputIndex values`)
         if (bi) bi.eo = eo
         if (wp) wp.eo = eo
       }
@@ -290,19 +274,11 @@ class InternalizeActionContext {
 
   async validateAtomicBeef(atomicBeef: number[]) {
     const ab = Beef.fromBinary(atomicBeef)
-    const txValid = await ab.verify(
-      await this.storage.getServices().getChainTracker(),
-      false
-    )
-    if (!txValid || !ab.atomicTxid)
-      throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF')
+    const txValid = await ab.verify(await this.storage.getServices().getChainTracker(), false)
+    if (!txValid || !ab.atomicTxid) throw new sdk.WERR_INVALID_PARAMETER('tx', 'valid AtomicBEEF')
     const txid = ab.atomicTxid
     const btx = ab.findTxid(txid)
-    if (!btx)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'tx',
-        `valid AtomicBEEF with newest txid of ${txid}`
-      )
+    if (!btx) throw new sdk.WERR_INVALID_PARAMETER('tx', `valid AtomicBEEF with newest txid of ${txid}`)
     const tx = btx.tx!
 
     /*
@@ -321,10 +297,7 @@ class InternalizeActionContext {
     return { ab, tx, txid }
   }
 
-  async findOrInsertTargetTransaction(
-    satoshis: number,
-    status: sdk.TransactionStatus
-  ): Promise<TableTransaction> {
+  async findOrInsertTargetTransaction(satoshis: number, status: sdk.TransactionStatus): Promise<TableTransaction> {
     const now = new Date()
     const newTx: TableTransaction = {
       created_at: now,
@@ -365,34 +338,24 @@ class InternalizeActionContext {
     await this.addLabels(transactionId)
 
     for (const payment of this.walletPayments) {
-      if (payment.eo && !payment.ignore)
-        await this.mergeWalletPaymentForOutput(transactionId, payment)
-      else if (!payment.ignore)
-        await this.storeNewWalletPaymentForOutput(transactionId, payment)
+      if (payment.eo && !payment.ignore) await this.mergeWalletPaymentForOutput(transactionId, payment)
+      else if (!payment.ignore) await this.storeNewWalletPaymentForOutput(transactionId, payment)
     }
 
     for (const basket of this.basketInsertions) {
-      if (basket.eo)
-        await this.mergeBasketInsertionForOutput(transactionId, basket)
+      if (basket.eo) await this.mergeBasketInsertionForOutput(transactionId, basket)
       else await this.storeNewBasketInsertionForOutput(transactionId, basket)
     }
   }
 
   async newInternalize() {
-    this.etx = await this.findOrInsertTargetTransaction(
-      this.satoshis,
-      'unproven'
-    )
+    this.etx = await this.findOrInsertTargetTransaction(this.satoshis, 'unproven')
 
     const transactionId = this.etx!.transactionId!
 
     // transaction record for user is new, but the txid may not be new to storage
     // make sure storage pursues getting a proof for it.
-    const newReq = EntityProvenTxReq.fromTxid(
-      this.txid,
-      this.tx.toBinary(),
-      this.args.tx
-    )
+    const newReq = EntityProvenTxReq.fromTxid(this.txid, this.tx.toBinary(), this.args.tx)
     newReq.status = 'unmined'
     newReq.addHistoryNote({ what: 'internalizeAction', userId: this.userId })
     newReq.addNotifyTransactionId(transactionId)
@@ -412,10 +375,7 @@ class InternalizeActionContext {
   async addLabels(transactionId: number) {
     for (const label of this.vargs.labels) {
       const txLabel = await this.storage.findOrInsertTxLabel(this.userId, label)
-      await this.storage.findOrInsertTxLabelMap(
-        verifyId(transactionId),
-        verifyId(txLabel.txLabelId)
-      )
+      await this.storage.findOrInsertTxLabelMap(verifyId(transactionId), verifyId(txLabel.txLabelId))
     }
   }
 
@@ -425,10 +385,7 @@ class InternalizeActionContext {
     }
   }
 
-  async storeNewWalletPaymentForOutput(
-    transactionId: number,
-    payment: WalletPaymentX
-  ): Promise<void> {
+  async storeNewWalletPaymentForOutput(transactionId: number, payment: WalletPaymentX): Promise<void> {
     const now = new Date()
     const txOut: TableOutput = {
       created_at: now,
@@ -459,10 +416,7 @@ class InternalizeActionContext {
     payment.eo = txOut
   }
 
-  async mergeWalletPaymentForOutput(
-    transactionId: number,
-    payment: WalletPaymentX
-  ) {
+  async mergeWalletPaymentForOutput(transactionId: number, payment: WalletPaymentX) {
     const outputId = payment.eo!.outputId!
     const update: Partial<TableOutput> = {
       basketId: this.changeBasket.basketId,
@@ -479,10 +433,7 @@ class InternalizeActionContext {
     payment.eo = { ...payment.eo!, ...update }
   }
 
-  async mergeBasketInsertionForOutput(
-    transactionId: number,
-    basket: BasketInsertionX
-  ) {
+  async mergeBasketInsertionForOutput(transactionId: number, basket: BasketInsertionX) {
     const outputId = basket.eo!.outputId!
     const update: Partial<TableOutput> = {
       basketId: (await this.getBasket(basket.basket)).basketId,
@@ -499,10 +450,7 @@ class InternalizeActionContext {
     basket.eo = { ...basket.eo!, ...update }
   }
 
-  async storeNewBasketInsertionForOutput(
-    transactionId: number,
-    basket: BasketInsertionX
-  ): Promise<void> {
+  async storeNewBasketInsertionForOutput(transactionId: number, basket: BasketInsertionX): Promise<void> {
     const now = new Date()
     const txOut: TableOutput = {
       created_at: now,

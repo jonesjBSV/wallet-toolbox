@@ -1,14 +1,5 @@
-import {
-  createSyncMap,
-  sdk,
-  SyncMap,
-  TableCertificate,
-  TableCertificateField
-} from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { createSyncMap, sdk, SyncMap, TableCertificate, TableCertificateField } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityCertificateField } from '../../../../../src/storage/schema/entities/CertificateField'
 
 describe('CertificateField class method tests', () => {
@@ -21,9 +12,7 @@ describe('CertificateField class method tests', () => {
   beforeAll(async () => {
     if (env.runMySQL) {
       ctxs.push(await _tu.createLegacyWalletMySQLCopy('CertificateFieldTests'))
-      ctxs2.push(
-        await _tu.createLegacyWalletMySQLCopy('CertificateFieldTests2')
-      )
+      ctxs2.push(await _tu.createLegacyWalletMySQLCopy('CertificateFieldTests2'))
     }
     ctxs.push(await _tu.createLegacyWalletSQLiteCopy('CertificateFieldTests'))
     ctxs2.push(await _tu.createLegacyWalletSQLiteCopy('CertificateFieldTests2'))
@@ -50,14 +39,10 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType').toString('base64'), // Base64-encoded string
         serialNumber: Buffer.from('serial123').toString('base64'), // Base64-encoded string
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // PubKeyHex
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // PubKeyHex
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // OutpointString
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // HexString
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // PubKeyHex
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // PubKeyHex
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // OutpointString
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // HexString
         isDeleted: false
       }
 
@@ -106,14 +91,10 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType1').toString('base64'), // Unique Base64-encoded string
         serialNumber: Buffer.from('serial123-1').toString('base64'), // Unique Base64-encoded string
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // Same PubKeyHex
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // Same OutpointString
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234', // Same PubKeyHex
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0', // Same OutpointString
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       })
 
@@ -124,14 +105,10 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleType2').toString('base64'), // Unique Base64-encoded string
         serialNumber: Buffer.from('serial123-2').toString('base64'), // Unique Base64-encoded string
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:1', // Unique OutpointString
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678', // Same PubKeyHex
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:1', // Unique OutpointString
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', // Same HexString
         isDeleted: false
       })
 
@@ -187,14 +164,10 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleTypeMerge').toString('base64'),
         serialNumber: Buffer.from('serialMerge123').toString('base64'),
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         isDeleted: false
       })
 
@@ -265,14 +238,10 @@ describe('CertificateField class method tests', () => {
         userId: 1,
         type: Buffer.from('exampleTypeNoMerge').toString('base64'),
         serialNumber: Buffer.from('serialNoMerge123').toString('base64'),
-        certifier:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
-        subject:
-          '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
-        revocationOutpoint:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
-        signature:
-          'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+        certifier: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef1234',
+        subject: '02c123eabcdeff1234567890abcdef1234567890abcdef1234567890abcdef5678',
+        revocationOutpoint: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890:0',
+        signature: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
         isDeleted: false
       })
 

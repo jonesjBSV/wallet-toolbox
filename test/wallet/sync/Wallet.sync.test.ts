@@ -1,13 +1,6 @@
-import {
-  verifyOne,
-  verifyOneOrNone,
-  verifyTruthy,
-  wait,
-  Wallet,
-  WalletStorageManager
-} from '../../../src/index.client'
+import { verifyOne, verifyOneOrNone, verifyTruthy, wait, Wallet, WalletStorageManager } from '../../../src/index.client'
 import { StorageKnex } from '../../../src/storage/StorageKnex'
-import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
+import { _tu, logger, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 
 describe('Wallet sync tests', () => {
   jest.setTimeout(99999999)
@@ -24,12 +17,7 @@ describe('Wallet sync tests', () => {
       storage: storageManager,
       activeStorage: storage
     } = await _tu.createLegacyWalletSQLiteCopy('walletSyncTest1aSource')
-    const localSQLiteFile = await _tu.newTmpFile(
-      'walleltSyncTest0tmp.sqlite',
-      true,
-      false,
-      false
-    )
+    const localSQLiteFile = await _tu.newTmpFile('walleltSyncTest0tmp.sqlite', true, false, false)
     const knexSQLite = _tu.createLocalSQLite(localSQLiteFile)
     const tmpStore = new StorageKnex({
       ...StorageKnex.defaultOptions(),
@@ -68,12 +56,11 @@ describe('Wallet sync tests', () => {
   test('1a setActive to backup and back to original without backup first', async () => {
     // wallet will be the original active wallet, a backup is added, then setActive is used to initiate backup in each direction.
     const ctx = await _tu.createLegacyWalletSQLiteCopy('walletSyncTest1aSource')
-    const { activeStorage: backup, wallet: backupWallet } =
-      await _tu.createSQLiteTestWallet({
-        databaseName: 'walletSyncTest1aBackup',
-        rootKeyHex: ctx.rootKey.toHex(),
-        dropAll: true
-      })
+    const { activeStorage: backup, wallet: backupWallet } = await _tu.createSQLiteTestWallet({
+      databaseName: 'walletSyncTest1aBackup',
+      rootKeyHex: ctx.rootKey.toHex(),
+      dropAll: true
+    })
     await ctx.storage.addWalletStorageProvider(backup)
 
     await setActiveTwice(ctx, false, backup, backupWallet)
@@ -108,11 +95,7 @@ async function setActiveTwice(
   backup: StorageKnex,
   backupWallet?: Wallet
 ) {
-  const {
-    storage: storageManager,
-    activeStorage: original,
-    userId: originalUserId
-  } = ctx
+  const { storage: storageManager, activeStorage: original, userId: originalUserId } = ctx
 
   if (withBackupFirst) {
     if (storageManager.isActiveEnabled) await storageManager.updateBackups()
@@ -123,8 +106,7 @@ async function setActiveTwice(
   }
 
   const backupIdentityKey = (await backup.makeAvailable()).storageIdentityKey
-  const originalIdentityKey = (await original.makeAvailable())
-    .storageIdentityKey
+  const originalIdentityKey = (await original.makeAvailable()).storageIdentityKey
   expect(backupIdentityKey).not.toBe(originalIdentityKey)
 
   const originalAuth = { ...(await storageManager.getAuth()) }
@@ -133,41 +115,32 @@ async function setActiveTwice(
     partial: { userId: originalAuth.userId }
   })
 
-  const originalUserBefore = verifyTruthy(
-    await original.findUserById(originalAuth.userId!)
-  )
+  const originalUserBefore = verifyTruthy(await original.findUserById(originalAuth.userId!))
   const backupUserBefore = verifyOneOrNone(
     await backup.findUsers({
       partial: { identityKey: originalAuth.identityKey }
     })
   )
 
-  expect(
-    originalUserBefore.activeStorage === undefined ||
-      originalUserBefore.activeStorage === originalIdentityKey
-  )
+  expect(originalUserBefore.activeStorage === undefined || originalUserBefore.activeStorage === originalIdentityKey)
 
   let now = Date.now()
 
   expect(originalUserBefore.updated_at.getTime()).toBeLessThan(now)
-  expect(!backupUserBefore || backupUserBefore.updated_at.getTime() < now).toBe(
-    true
-  )
+  expect(!backupUserBefore || backupUserBefore.updated_at.getTime() < now).toBe(true)
 
   expect(storageManager.getActiveStore()).toBe(originalIdentityKey)
   expect(storageManager.getActiveUser().activeStorage).toBe(originalIdentityKey)
 
   // sync to backup and make it active.
   const log = await storageManager.setActive(backupIdentityKey)
-  console.log(log)
+  logger(log)
 
   expect(storageManager.getActiveStore()).toBe(backupIdentityKey)
   expect(storageManager.getActiveUser().activeStorage).toBe(backupIdentityKey)
   expect(storageManager.getBackupStores()).toEqual([originalIdentityKey])
 
-  let originalUserAfter = verifyTruthy(
-    await original.findUserById(originalAuth.userId!)
-  )
+  let originalUserAfter = verifyTruthy(await original.findUserById(originalAuth.userId!))
   let backupUserAfter = verifyOne(
     await backup.findUsers({
       partial: { identityKey: originalAuth.identityKey }
@@ -205,14 +178,10 @@ async function setActiveTwice(
   now = Date.now()
 
   // sync back to original and make it active.
-  const log2 = await storageManager.setActive(
-    original.getSettings().storageIdentityKey
-  )
-  console.log(log2)
+  const log2 = await storageManager.setActive(original.getSettings().storageIdentityKey)
+  logger(log2)
 
-  originalUserAfter = verifyTruthy(
-    await original.findUserById(originalAuth.userId!)
-  )
+  originalUserAfter = verifyTruthy(await original.findUserById(originalAuth.userId!))
   backupUserAfter = verifyOne(
     await backup.findUsers({
       partial: { identityKey: originalAuth.identityKey }

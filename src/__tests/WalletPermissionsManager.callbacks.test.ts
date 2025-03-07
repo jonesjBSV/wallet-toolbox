@@ -1,7 +1,4 @@
-import {
-  mockUnderlyingWallet,
-  MockedBSV_SDK
-} from './WalletPermissionsManager.fixtures'
+import { mockUnderlyingWallet, MockedBSV_SDK } from './WalletPermissionsManager.fixtures'
 import { WalletPermissionsManager } from '../WalletPermissionsManager'
 
 import { jest } from '@jest/globals'
@@ -48,9 +45,7 @@ describe('WalletPermissionsManager - Callbacks & Event Handling', () => {
     expect(cb2).toHaveBeenCalledWith(fakeParam)
 
     // Confirm order
-    expect(cb1.mock.invocationCallOrder[0]).toBeLessThan(
-      cb2.mock.invocationCallOrder[0]
-    )
+    expect(cb1.mock.invocationCallOrder[0]).toBeLessThan(cb2.mock.invocationCallOrder[0])
   })
 
   it('unbindCallback() by numeric ID should prevent the callback from being called again', async () => {

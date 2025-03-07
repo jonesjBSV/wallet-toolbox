@@ -98,10 +98,7 @@ export class SimpleWalletManager implements WalletInterface {
    * returns a new `WalletInterface` instance that handles the actual signing,
    * encryption, transaction building, etc.
    */
-  private walletBuilder: (
-    primaryKey: number[],
-    privilegedKeyManager: PrivilegedKeyManager
-  ) => Promise<WalletInterface>
+  private walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>
 
   /**
    * The underlying wallet instance that is built once authenticated.
@@ -130,10 +127,7 @@ export class SimpleWalletManager implements WalletInterface {
    */
   constructor(
     adminOriginator: OriginatorDomainNameStringUnder250Bytes,
-    walletBuilder: (
-      primaryKey: number[],
-      privilegedKeyManager: PrivilegedKeyManager
-    ) => Promise<WalletInterface>,
+    walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>,
     stateSnapshot?: number[]
   ) {
     this.authenticated = false
@@ -164,9 +158,7 @@ export class SimpleWalletManager implements WalletInterface {
    *
    * @param manager An instance of `PrivilegedKeyManager`.
    */
-  async providePrivilegedKeyManager(
-    manager: PrivilegedKeyManager
-  ): Promise<void> {
+  async providePrivilegedKeyManager(manager: PrivilegedKeyManager): Promise<void> {
     this.underlyingPrivilegedKeyManager = manager
     await this.tryBuildUnderlying()
   }
@@ -183,10 +175,7 @@ export class SimpleWalletManager implements WalletInterface {
       return
     }
     // Build the underlying wallet:
-    this.underlying = await this.walletBuilder(
-      this.primaryKey,
-      this.underlyingPrivilegedKeyManager
-    )
+    this.underlying = await this.walletBuilder(this.primaryKey, this.underlyingPrivilegedKeyManager)
     this.authenticated = true
   }
 
@@ -237,9 +226,7 @@ export class SimpleWalletManager implements WalletInterface {
     const snapshotPreimage = writer.toArray()
 
     // Encrypt the data with the snapshotKey:
-    const encryptedPayload = new SymmetricKey(snapshotKey).encrypt(
-      snapshotPreimage
-    ) as number[]
+    const encryptedPayload = new SymmetricKey(snapshotKey).encrypt(snapshotPreimage) as number[]
 
     // Build the final snapshot: [ snapshotKey (32 bytes) + encryptedPayload ]
     const snapshotWriter = new Utils.Writer()
@@ -268,9 +255,7 @@ export class SimpleWalletManager implements WalletInterface {
       const encryptedPayload = reader.read()
 
       // Decrypt the payload with the snapshotKey:
-      const decrypted = new SymmetricKey(snapshotKey).decrypt(
-        encryptedPayload
-      ) as number[]
+      const decrypted = new SymmetricKey(snapshotKey).decrypt(encryptedPayload) as number[]
 
       const payloadReader = new Utils.Reader(decrypted)
 
@@ -301,10 +286,7 @@ export class SimpleWalletManager implements WalletInterface {
    * @param originator The originator domain, which must not be the admin originator.
    * @throws If not authenticated, or if the originator is the admin.
    */
-  async isAuthenticated(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<AuthenticatedResult> {
+  async isAuthenticated(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> {
     this.ensureCanCall(originator)
     return { authenticated: true }
   }
@@ -506,10 +488,7 @@ export class SimpleWalletManager implements WalletInterface {
     return this.underlying!.discoverByAttributes(args, originator)
   }
 
-  async getHeight(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetHeightResult> {
+  async getHeight(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeightResult> {
     this.ensureCanCall(originator)
     return this.underlying!.getHeight({}, originator)
   }
@@ -522,18 +501,12 @@ export class SimpleWalletManager implements WalletInterface {
     return this.underlying!.getHeaderForHeight(args, originator)
   }
 
-  async getNetwork(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetNetworkResult> {
+  async getNetwork(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> {
     this.ensureCanCall(originator)
     return this.underlying!.getNetwork({}, originator)
   }
 
-  async getVersion(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetVersionResult> {
+  async getVersion(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> {
     this.ensureCanCall(originator)
     return this.underlying!.getVersion({}, originator)
   }

@@ -1,14 +1,6 @@
 import { EntityTxLabelMap } from '../../../../../src/storage/schema/entities/TxLabelMap'
-import {
-  createSyncMap,
-  sdk,
-  SyncMap,
-  TableTxLabelMap
-} from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { createSyncMap, sdk, SyncMap, TableTxLabelMap } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityTransaction } from '../../../../../src/storage/schema/entities/Transaction'
 import { EntityTxLabel } from '../../../../../src/storage/schema/entities/TxLabel'
 
@@ -143,12 +135,7 @@ describe('TxLabelMap Class Tests', () => {
       txLabelId: 456
     }
 
-    const result = await EntityTxLabelMap.mergeFind(
-      storage,
-      1,
-      ei as TableTxLabelMap,
-      syncMap
-    )
+    const result = await EntityTxLabelMap.mergeFind(storage, 1, ei as TableTxLabelMap, syncMap)
     expect(result.found).toBe(true)
     expect(result.eo.transactionId).toBe(999)
     expect(result.eo.txLabelId).toBe(888)
@@ -209,12 +196,7 @@ describe('TxLabelMap Class Tests', () => {
       txLabel: { idMap: { 456: 888 } }
     }
 
-    const result = await txLabelMap.mergeExisting(
-      storage,
-      new Date(),
-      ei,
-      syncMap
-    )
+    const result = await txLabelMap.mergeExisting(storage, new Date(), ei, syncMap)
     expect(result).toBe(true)
     expect(storage.updateTxLabelMap).toHaveBeenCalledWith(
       123,

@@ -33,22 +33,14 @@ export class WABClient {
   /**
    * Start an Auth Method flow
    */
-  public async startAuthMethod(
-    authMethod: AuthMethodInteractor,
-    presentationKey: string,
-    payload: any
-  ) {
+  public async startAuthMethod(authMethod: AuthMethodInteractor, presentationKey: string, payload: any) {
     return authMethod.startAuth(this.serverUrl, presentationKey, payload)
   }
 
   /**
    * Complete an Auth Method flow
    */
-  public async completeAuthMethod(
-    authMethod: AuthMethodInteractor,
-    presentationKey: string,
-    payload: any
-  ) {
+  public async completeAuthMethod(authMethod: AuthMethodInteractor, presentationKey: string, payload: any) {
     return authMethod.completeAuth(this.serverUrl, presentationKey, payload)
   }
 

@@ -1,17 +1,6 @@
-import {
-  Beef,
-  ListOutputsResult,
-  OriginatorDomainNameStringUnder250Bytes,
-  WalletOutput
-} from '@bsv/sdk'
+import { Beef, ListOutputsResult, OriginatorDomainNameStringUnder250Bytes, WalletOutput } from '@bsv/sdk'
 import { TableOutput, TableOutputBasket, TableOutputTag } from '../index.client'
-import {
-  asString,
-  sdk,
-  verifyId,
-  verifyInteger,
-  verifyOne
-} from '../../index.client'
+import { asString, sdk, verifyId, verifyInteger, verifyOne } from '../../index.client'
 import { StorageKnex } from '../StorageKnex'
 import { ValidListOutputsArgs } from '../../sdk'
 
@@ -84,18 +73,9 @@ const basketToSpecOp: Record<string, SpecOp> = {
       let ok = false
       for (const o of outputs) {
         if (o.lockingScript && o.lockingScript.length > 0) {
-          const r = await s
-            .getServices()
-            .getUtxoStatus(asString(o.lockingScript), 'script')
+          const r = await s.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
           if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
-            if (
-              r.details.some(
-                d =>
-                  d.txid === o.txid &&
-                  d.satoshis === o.satoshis &&
-                  d.index === o.vout
-              )
-            ) {
+            if (r.details.some(d => d.txid === o.txid && d.satoshis === o.satoshis && d.index === o.vout)) {
               ok = true
             }
           }
@@ -122,14 +102,9 @@ const basketToSpecOp: Record<string, SpecOp> = {
       specOpTags: string[]
     ): Promise<ListOutputsResult> => {
       if (specOpTags.length !== 2)
-        throw new sdk.WERR_INVALID_PARAMETER(
-          'numberOfDesiredUTXOs and minimumDesiredUTXOValue',
-          'valid'
-        )
+        throw new sdk.WERR_INVALID_PARAMETER('numberOfDesiredUTXOs and minimumDesiredUTXOValue', 'valid')
       const numberOfDesiredUTXOs: number = verifyInteger(Number(specOpTags[0]))
-      const minimumDesiredUTXOValue: number = verifyInteger(
-        Number(specOpTags[1])
-      )
+      const minimumDesiredUTXOValue: number = verifyInteger(Number(specOpTags[1]))
       const basket = verifyOne(
         await s.findOutputBaskets({
           partial: { userId: verifyId(auth.userId), name: 'default' }
@@ -200,19 +175,14 @@ export async function listOutputs(
   let tags = [...vargs.tags]
   const specOpTags: string[] = []
   if (specOp && specOp.tagsParamsCount) {
-    specOpTags.push(
-      ...tags.splice(0, Math.min(tags.length, specOp.tagsParamsCount))
-    )
+    specOpTags.push(...tags.splice(0, Math.min(tags.length, specOp.tagsParamsCount)))
   }
   if (specOp && specOp.tagsToIntercept) {
     // Pull out tags used by current specOp
     const ts = tags
     tags = []
     for (const t of ts) {
-      if (
-        specOp.tagsToIntercept.length === 0 ||
-        specOp.tagsToIntercept.indexOf(t) >= 0
-      ) {
+      if (specOp.tagsToIntercept.length === 0 || specOp.tagsToIntercept.indexOf(t) >= 0) {
         specOpTags.push(t)
       } else {
         tags.push(t)
@@ -297,9 +267,7 @@ export async function listOutputs(
     return { q, qcount }
   }
 
-  const { q, qcount } = noTags
-    ? makeWithoutTagsQueries()
-    : makeWithTagsQueries()
+  const { q, qcount } = noTags ? makeWithoutTagsQueries() : makeWithTagsQueries()
 
   // Sort order when limit and offset are possible must be ascending for determinism.
   if (!specOp || !specOp.ignoreLimit) q.limit(limit).offset(offset)
@@ -309,22 +277,9 @@ export async function listOutputs(
   let outputs: TableOutput[] = await q
 
   if (specOp) {
-    if (specOp.filterOutputs)
-      outputs = await specOp.filterOutputs(
-        dsk,
-        auth,
-        vargs,
-        specOpTags,
-        outputs
-      )
+    if (specOp.filterOutputs) outputs = await specOp.filterOutputs(dsk, auth, vargs, specOpTags, outputs)
     if (specOp.resultFromOutputs) {
-      const r = await specOp.resultFromOutputs(
-        dsk,
-        auth,
-        vargs,
-        specOpTags,
-        outputs
-      )
+      const r = await specOp.resultFromOutputs(dsk, auth, vargs, specOpTags, outputs)
       return r
     }
   }
@@ -378,13 +333,10 @@ export async function listOutputs(
     //    }
     //    wo.basket = basketsById[o.basketId].name
     //}
-    if (vargs.includeCustomInstructions && o.customInstructions)
-      wo.customInstructions = o.customInstructions
+    if (vargs.includeCustomInstructions && o.customInstructions) wo.customInstructions = o.customInstructions
     if (vargs.includeLabels && o.txid) {
       if (labelsByTxid[o.txid] === undefined) {
-        labelsByTxid[o.txid] = (
-          await dsk.getLabelsForTransactionId(o.transactionId, trx)
-        ).map(l => l.label)
+        labelsByTxid[o.txid] = (await dsk.getLabelsForTransactionId(o.transactionId, trx)).map(l => l.label)
       }
       wo.labels = labelsByTxid[o.txid]
     }
@@ -396,13 +348,7 @@ export async function listOutputs(
       if (o.lockingScript) wo.lockingScript = asString(o.lockingScript)
     }
     if (vargs.includeTransactions && !beef.findTxid(o.txid!)) {
-      await dsk.getValidBeefForKnownTxid(
-        o.txid!,
-        beef,
-        undefined,
-        vargs.knownTxids,
-        trx
-      )
+      await dsk.getValidBeefForKnownTxid(o.txid!, beef, undefined, vargs.knownTxids, trx)
     }
   }
 

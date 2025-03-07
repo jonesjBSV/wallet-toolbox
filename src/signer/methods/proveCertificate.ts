@@ -1,8 +1,4 @@
-import {
-  MasterCertificate,
-  ProveCertificateResult,
-  VerifiableCertificate
-} from '@bsv/sdk'
+import { MasterCertificate, ProveCertificateResult } from '@bsv/sdk'
 import { sdk, Wallet } from '../../index.client'
 
 export async function proveCertificate(
@@ -27,8 +23,7 @@ export async function proveCertificate(
   }
 
   const lcr = await wallet.storage.listCertificates(lcargs)
-  if (lcr.certificates.length != 1)
-    throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
+  if (lcr.certificates.length != 1) throw new sdk.WERR_INVALID_PARAMETER('args', `a unique certificate match`)
   const storageCert = lcr.certificates[0]
   const keyringForVerifier = await MasterCertificate.createKeyringForVerifier(
     wallet,

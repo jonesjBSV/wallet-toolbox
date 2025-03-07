@@ -1,9 +1,4 @@
-import {
-  AuthMethodInteractor,
-  AuthPayload,
-  StartAuthResponse,
-  CompleteAuthResponse
-} from './AuthMethodInteractor'
+import { AuthMethodInteractor, AuthPayload, StartAuthResponse, CompleteAuthResponse } from './AuthMethodInteractor'
 
 /**
  * TwilioPhoneInteractor
@@ -21,11 +16,7 @@ export class TwilioPhoneInteractor extends AuthMethodInteractor {
    * @param payload           - { phoneNumber: string } (the phone number to verify)
    * @returns                 - { success, message, data }
    */
-  public async startAuth(
-    serverUrl: string,
-    presentationKey: string,
-    payload: AuthPayload
-  ): Promise<StartAuthResponse> {
+  public async startAuth(serverUrl: string, presentationKey: string, payload: AuthPayload): Promise<StartAuthResponse> {
     const res = await fetch(`${serverUrl}/auth/start`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

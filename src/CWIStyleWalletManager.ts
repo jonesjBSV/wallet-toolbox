@@ -222,9 +222,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    * @param hash The 32-byte SHA-256 hash of the presentation key.
    * @returns A UMPToken object (including currentOutpoint) if found, otherwise undefined.
    */
-  public async findByPresentationKeyHash(
-    hash: number[]
-  ): Promise<UMPToken | undefined> {
+  public async findByPresentationKeyHash(hash: number[]): Promise<UMPToken | undefined> {
     // Query ls_users for the given presentationHash
     const question = {
       service: 'ls_users',
@@ -241,9 +239,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    * @param hash The 32-byte SHA-256 hash of the recovery key.
    * @returns A UMPToken object (including currentOutpoint) if found, otherwise undefined.
    */
-  public async findByRecoveryKeyHash(
-    hash: number[]
-  ): Promise<UMPToken | undefined> {
+  public async findByRecoveryKeyHash(hash: number[]): Promise<UMPToken | undefined> {
     const question = {
       service: 'ls_users',
       query: { recoveryHash: Utils.toHex(hash) }
@@ -332,9 +328,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
     // 4) Build the partial transaction via createAction.
     const createResult = await wallet.createAction(
       {
-        description: oldTokenToConsume
-          ? 'Renew UMP token (consume old, create new)'
-          : 'Create new UMP token',
+        description: oldTokenToConsume ? 'Renew UMP token (consume old, create new)' : 'Create new UMP token',
         inputs,
         outputs,
         inputBEEF: inputToken?.beef
@@ -346,10 +340,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
     // we retrieve the final TXID from the result.
     if (!createResult.signableTransaction) {
       const finalTxid =
-        createResult.txid ||
-        (createResult.tx
-          ? Transaction.fromAtomicBEEF(createResult.tx).id('hex')
-          : undefined)
+        createResult.txid || (createResult.tx ? Transaction.fromAtomicBEEF(createResult.tx).id('hex') : undefined)
       if (!finalTxid) {
         throw new Error('No signableTransaction and no final TX found.')
       }
@@ -373,11 +364,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
 
     if (oldTokenToConsume?.currentOutpoint) {
       // Unlock the old token with a matching PushDrop unlocker
-      const unlocker = new PushDrop(wallet, adminOriginator).unlock(
-        [2, 'admin user management token'],
-        '1',
-        'self'
-      )
+      const unlocker = new PushDrop(wallet, adminOriginator).unlock([2, 'admin user management token'], '1', 'self')
       const unlockingScript = await unlocker.sign(partialTx, 0)
 
       // Provide it to the wallet
@@ -392,11 +379,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
         },
         adminOriginator
       )
-      finalTxid =
-        signResult.txid ||
-        (signResult.tx
-          ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
-          : '')
+      finalTxid = signResult.txid || (signResult.tx ? Transaction.fromAtomicBEEF(signResult.tx).id('hex') : '')
       if (!finalTxid) {
         throw new Error('Could not finalize transaction for renewed UMP token.')
       }
@@ -412,15 +395,8 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       return `${finalTxid}.0`
     } else {
       // Fallbaack
-      const signResult = await wallet.signAction(
-        { reference, spends: {} },
-        adminOriginator
-      )
-      finalTxid =
-        signResult.txid ||
-        (signResult.tx
-          ? Transaction.fromAtomicBEEF(signResult.tx).id('hex')
-          : '')
+      const signResult = await wallet.signAction({ reference, spends: {} }, adminOriginator)
+      finalTxid = signResult.txid || (signResult.tx ? Transaction.fromAtomicBEEF(signResult.tx).id('hex') : '')
       if (!finalTxid) {
         throw new Error('Failed to finalize new UMP token transaction.')
       }
@@ -491,9 +467,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
    * @param outpoint The outpoint we are searching by
    * @returns The result so that we can use it to unlock the transaction
    */
-  private async findByOutpoint(
-    outpoint: string
-  ): Promise<{ beef: number[]; outputIndex: number } | undefined> {
+  private async findByOutpoint(outpoint: string): Promise<{ beef: number[]; outputIndex: number } | undefined> {
     const results = await this.resolver.query({
       service: 'ls_users',
       query: {
@@ -542,10 +516,7 @@ export class CWIStyleWalletManager implements WalletInterface {
    * Only resolve with the correct password or reject with an error.
    * Resolving with an incorrect password will throw an error.
    */
-  private passwordRetriever: (
-    reason: string,
-    test: (passwordCandidate: string) => boolean
-  ) => Promise<string>
+  private passwordRetriever: (reason: string, test: (passwordCandidate: string) => boolean) => Promise<string>
 
   /**
    * An optional function that funds a new Wallet after the new-user flow, before the system proceeds.
@@ -561,10 +532,7 @@ export class CWIStyleWalletManager implements WalletInterface {
   /**
    * Builds the underlying wallet once the user has been authenticated.
    */
-  private walletBuilder: (
-    primaryKey: number[],
-    privilegedKeyManager: PrivilegedKeyManager
-  ) => Promise<WalletInterface>
+  private walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>
 
   /**
    * The current mode of authentication:
@@ -631,16 +599,10 @@ export class CWIStyleWalletManager implements WalletInterface {
    */
   constructor(
     adminOriginator: OriginatorDomainNameStringUnder250Bytes,
-    walletBuilder: (
-      primaryKey: number[],
-      privilegedKeyManager: PrivilegedKeyManager
-    ) => Promise<WalletInterface>,
+    walletBuilder: (primaryKey: number[], privilegedKeyManager: PrivilegedKeyManager) => Promise<WalletInterface>,
     interactor: UMPTokenInteractor = new OverlayUMPTokenInteractor(),
     recoveryKeySaver: (key: number[]) => Promise<true>,
-    passwordRetriever: (
-      reason: string,
-      test: (passwordCandidate: string) => boolean
-    ) => Promise<string>,
+    passwordRetriever: (reason: string, test: (passwordCandidate: string) => boolean) => Promise<string>,
     newWalletFunder?: (
       presentationKey: number[],
       wallet: WalletInterface,
@@ -748,22 +710,16 @@ export class CWIStyleWalletManager implements WalletInterface {
         }
 
         // Decrypt the primary key with XOR(recoveryKey, derivedPasswordKey).
-        const primaryDecryptionKey = this.XOR(
-          this.recoveryKey,
-          derivedPasswordKey
-        )
+        const primaryDecryptionKey = this.XOR(this.recoveryKey, derivedPasswordKey)
         const decryptedPrimary = new SymmetricKey(primaryDecryptionKey).decrypt(
           this.currentUMPToken.passwordRecoveryPrimary
         ) as number[]
 
         // Decrypt the privileged key for immediate use.
-        const privilegedDecryptionKey = this.XOR(
-          decryptedPrimary,
-          derivedPasswordKey
-        )
-        const decryptedPrivileged = new SymmetricKey(
-          privilegedDecryptionKey
-        ).decrypt(this.currentUMPToken.passwordPrimaryPrivileged) as number[]
+        const privilegedDecryptionKey = this.XOR(decryptedPrimary, derivedPasswordKey)
+        const decryptedPrivileged = new SymmetricKey(privilegedDecryptionKey).decrypt(
+          this.currentUMPToken.passwordPrimaryPrivileged
+        ) as number[]
 
         await this.buildUnderlying(decryptedPrimary, decryptedPrivileged)
       }
@@ -773,9 +729,7 @@ export class CWIStyleWalletManager implements WalletInterface {
 
     // Otherwise, handle new user flow (only valid in 'presentation-key-and-password').
     if (this.authenticationMode !== 'presentation-key-and-password') {
-      throw new Error(
-        'New-user flow requires presentation key and password, not recovery key mode.'
-      )
+      throw new Error('New-user flow requires presentation key and password, not recovery key mode.')
     }
 
     if (!this.presentationKey) {
@@ -787,50 +741,28 @@ export class CWIStyleWalletManager implements WalletInterface {
     await this.recoveryKeySaver(recoveryKey)
 
     const passwordSalt = Random(32)
-    const passwordKey = Hash.pbkdf2(
-      Utils.toArray(password, 'utf8'),
-      passwordSalt,
-      PBKDF2_NUM_ROUNDS,
-      32,
-      'sha512'
-    )
+    const passwordKey = Hash.pbkdf2(Utils.toArray(password, 'utf8'), passwordSalt, PBKDF2_NUM_ROUNDS, 32, 'sha512')
 
     const primaryKey = Random(32)
     const privilegedKey = Random(32)
 
     // Build XOR-based symmetrical keys:
-    const presentationPassword = new SymmetricKey(
-      this.XOR(this.presentationKey, passwordKey)
-    )
-    const presentationRecovery = new SymmetricKey(
-      this.XOR(this.presentationKey, recoveryKey)
-    )
-    const recoveryPassword = new SymmetricKey(
-      this.XOR(recoveryKey, passwordKey)
-    )
+    const presentationPassword = new SymmetricKey(this.XOR(this.presentationKey, passwordKey))
+    const presentationRecovery = new SymmetricKey(this.XOR(this.presentationKey, recoveryKey))
+    const recoveryPassword = new SymmetricKey(this.XOR(recoveryKey, passwordKey))
     const primaryPassword = new SymmetricKey(this.XOR(primaryKey, passwordKey))
 
     // Temporarily create a privileged key manager for encrypting the keys in the token.
-    const tempPrivilegedKeyManager = new PrivilegedKeyManager(
-      async () => new PrivateKey(privilegedKey)
-    )
+    const tempPrivilegedKeyManager = new PrivilegedKeyManager(async () => new PrivateKey(privilegedKey))
 
     // Build the new UMP token:
     const newToken: UMPToken = {
       passwordSalt,
-      passwordPresentationPrimary: presentationPassword.encrypt(
-        primaryKey
-      ) as number[],
+      passwordPresentationPrimary: presentationPassword.encrypt(primaryKey) as number[],
       passwordRecoveryPrimary: recoveryPassword.encrypt(primaryKey) as number[],
-      presentationRecoveryPrimary: presentationRecovery.encrypt(
-        primaryKey
-      ) as number[],
-      passwordPrimaryPrivileged: primaryPassword.encrypt(
-        privilegedKey
-      ) as number[],
-      presentationRecoveryPrivileged: presentationRecovery.encrypt(
-        privilegedKey
-      ) as number[],
+      presentationRecoveryPrimary: presentationRecovery.encrypt(primaryKey) as number[],
+      passwordPrimaryPrivileged: primaryPassword.encrypt(privilegedKey) as number[],
+      presentationRecoveryPrivileged: presentationRecovery.encrypt(privilegedKey) as number[],
       presentationHash: Hash.sha256(this.presentationKey),
       recoveryHash: Hash.sha256(recoveryKey),
       presentationKeyEncrypted: (
@@ -864,11 +796,7 @@ export class CWIStyleWalletManager implements WalletInterface {
     // We want to provide a chance for someone to fund it, if they want.
     if (this.newWalletFunder) {
       try {
-        await this.newWalletFunder(
-          this.presentationKey,
-          this.underlying!,
-          this.adminOriginator
-        )
+        await this.newWalletFunder(this.presentationKey, this.underlying!, this.adminOriginator)
       } catch (e) {
         // swallow error
         // TODO: Implement better error handling
@@ -877,12 +805,11 @@ export class CWIStyleWalletManager implements WalletInterface {
     }
 
     // Publish the new UMP token on-chain and store the resulting outpoint.
-    this.currentUMPToken.currentOutpoint =
-      await this.UMPTokenInteractor.buildAndSend(
-        this.underlying!,
-        this.adminOriginator,
-        newToken
-      )
+    this.currentUMPToken.currentOutpoint = await this.UMPTokenInteractor.buildAndSend(
+      this.underlying!,
+      this.adminOriginator,
+      newToken
+    )
   }
 
   /**
@@ -924,9 +851,7 @@ export class CWIStyleWalletManager implements WalletInterface {
 
       // Decrypt the primary key:
       const xorKey = this.XOR(this.presentationKey, recoveryKey)
-      const primaryKey = new SymmetricKey(xorKey).decrypt(
-        this.currentUMPToken.presentationRecoveryPrimary
-      ) as number[]
+      const primaryKey = new SymmetricKey(xorKey).decrypt(this.currentUMPToken.presentationRecoveryPrimary) as number[]
 
       // Decrypt the privileged key (for account recovery).
       const privilegedKey = new SymmetricKey(xorKey).decrypt(
@@ -970,9 +895,7 @@ export class CWIStyleWalletManager implements WalletInterface {
 
     // Encrypt the combined data with the snapshotKey:
     const snapshotPreimage = snapshotPreimageWriter.toArray()
-    const snapshotPayload = new SymmetricKey(snapshotKey).encrypt(
-      snapshotPreimage
-    ) as number[]
+    const snapshotPayload = new SymmetricKey(snapshotKey).encrypt(snapshotPreimage) as number[]
 
     // Build the final snapshot structure: [snapshotKey (32 bytes) + encryptedPayload]
     const snapshotWriter = new Utils.Writer()
@@ -1000,9 +923,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       const encryptedPayload = reader.read()
 
       // Decrypt the payload:
-      const decryptedPayload = new SymmetricKey(snapshotKey).decrypt(
-        encryptedPayload
-      ) as number[]
+      const decryptedPayload = new SymmetricKey(snapshotKey).decrypt(encryptedPayload) as number[]
 
       const payloadReader = new Utils.Reader(decryptedPayload)
 
@@ -1051,13 +972,7 @@ export class CWIStyleWalletManager implements WalletInterface {
     }
 
     const passwordSalt = Random(32)
-    const passwordKey = Hash.pbkdf2(
-      Utils.toArray(newPassword, 'utf8'),
-      passwordSalt,
-      PBKDF2_NUM_ROUNDS,
-      32,
-      'sha512'
-    )
+    const passwordKey = Hash.pbkdf2(Utils.toArray(newPassword, 'utf8'), passwordSalt, PBKDF2_NUM_ROUNDS, 32, 'sha512')
 
     // Decrypt existing factors via the privileged key manager:
     const recoveryKey = (
@@ -1074,9 +989,9 @@ export class CWIStyleWalletManager implements WalletInterface {
         keyID: '1'
       })
     ).plaintext
-    const privilegedKey = new SymmetricKey(
-      this.XOR(presentationKey, recoveryKey)
-    ).decrypt(this.currentUMPToken.presentationRecoveryPrivileged) as number[]
+    const privilegedKey = new SymmetricKey(this.XOR(presentationKey, recoveryKey)).decrypt(
+      this.currentUMPToken.presentationRecoveryPrivileged
+    ) as number[]
 
     await this.updateAuthFactors(
       passwordSalt,
@@ -1137,9 +1052,9 @@ export class CWIStyleWalletManager implements WalletInterface {
         keyID: '1'
       })
     ).plaintext
-    const privilegedKey = new SymmetricKey(
-      this.XOR(passwordKey, this.primaryKey!)
-    ).decrypt(this.currentUMPToken.passwordPrimaryPrivileged) as number[]
+    const privilegedKey = new SymmetricKey(this.XOR(passwordKey, this.primaryKey!)).decrypt(
+      this.currentUMPToken.passwordPrimaryPrivileged
+    ) as number[]
 
     const recoveryKey = Random(32)
     await this.recoveryKeySaver(recoveryKey)
@@ -1183,9 +1098,9 @@ export class CWIStyleWalletManager implements WalletInterface {
         keyID: '1'
       })
     ).plaintext
-    const privilegedKey = new SymmetricKey(
-      this.XOR(passwordKey, this.primaryKey!)
-    ).decrypt(this.currentUMPToken.passwordPrimaryPrivileged) as number[]
+    const privilegedKey = new SymmetricKey(this.XOR(passwordKey, this.primaryKey!)).decrypt(
+      this.currentUMPToken.passwordPrimaryPrivileged
+    ) as number[]
 
     await this.updateAuthFactors(
       this.currentUMPToken.passwordSalt,
@@ -1221,42 +1136,22 @@ export class CWIStyleWalletManager implements WalletInterface {
     }
 
     // Derive symmetrical encryption keys via XOR:
-    const presentationPassword = new SymmetricKey(
-      this.XOR(presentationKey, passwordKey)
-    )
-    const presentationRecovery = new SymmetricKey(
-      this.XOR(presentationKey, recoveryKey)
-    )
-    const recoveryPassword = new SymmetricKey(
-      this.XOR(recoveryKey, passwordKey)
-    )
-    const primaryPassword = new SymmetricKey(
-      this.XOR(this.primaryKey, passwordKey)
-    )
+    const presentationPassword = new SymmetricKey(this.XOR(presentationKey, passwordKey))
+    const presentationRecovery = new SymmetricKey(this.XOR(presentationKey, recoveryKey))
+    const recoveryPassword = new SymmetricKey(this.XOR(recoveryKey, passwordKey))
+    const primaryPassword = new SymmetricKey(this.XOR(this.primaryKey, passwordKey))
 
     // Build a temporary privileged key manager just to encrypt the new fields:
-    const tempPrivilegedKeyManager = new PrivilegedKeyManager(
-      async () => new PrivateKey(privilegedKey)
-    )
+    const tempPrivilegedKeyManager = new PrivilegedKeyManager(async () => new PrivateKey(privilegedKey))
 
     // Construct the new UMP token:
     const newToken: UMPToken = {
       passwordSalt,
-      passwordPresentationPrimary: presentationPassword.encrypt(
-        this.primaryKey
-      ) as number[],
-      passwordRecoveryPrimary: recoveryPassword.encrypt(
-        this.primaryKey
-      ) as number[],
-      presentationRecoveryPrimary: presentationRecovery.encrypt(
-        this.primaryKey
-      ) as number[],
-      passwordPrimaryPrivileged: primaryPassword.encrypt(
-        privilegedKey
-      ) as number[],
-      presentationRecoveryPrivileged: presentationRecovery.encrypt(
-        privilegedKey
-      ) as number[],
+      passwordPresentationPrimary: presentationPassword.encrypt(this.primaryKey) as number[],
+      passwordRecoveryPrimary: recoveryPassword.encrypt(this.primaryKey) as number[],
+      presentationRecoveryPrimary: presentationRecovery.encrypt(this.primaryKey) as number[],
+      passwordPrimaryPrivileged: primaryPassword.encrypt(privilegedKey) as number[],
+      presentationRecoveryPrivileged: presentationRecovery.encrypt(privilegedKey) as number[],
       presentationHash: Hash.sha256(presentationKey),
       recoveryHash: Hash.sha256(recoveryKey),
       presentationKeyEncrypted: (
@@ -1422,77 +1317,59 @@ export class CWIStyleWalletManager implements WalletInterface {
    * @param primaryKey      The user's primary key (32 bytes).
    * @param privilegedKey   Optionally, a privileged key (for short-term usage in account recovery).
    */
-  private async buildUnderlying(
-    primaryKey: number[],
-    privilegedKey?: number[]
-  ): Promise<void> {
+  private async buildUnderlying(primaryKey: number[], privilegedKey?: number[]): Promise<void> {
     if (!this.currentUMPToken) {
-      throw new Error(
-        'A UMP token must exist before building underlying wallet!'
-      )
+      throw new Error('A UMP token must exist before building underlying wallet!')
     }
 
     this.primaryKey = primaryKey
 
     // Create a privileged manager that either uses the ephemeral privilegedKey if provided,
     // or derives it later from the user's password on demand.
-    const privilegedManager = new PrivilegedKeyManager(
-      async (reason: string) => {
-        if (privilegedKey) {
-          // For account recovery: a one-off opportunity to recover.
-          const tempKey = new PrivateKey(privilegedKey)
-          privilegedKey = undefined
-          return tempKey
-        }
-        // Otherwise, ask user for their password to decrypt the privileged key.
-        const password = await this.passwordRetriever(
-          reason,
-          (passwordCandidate: string) => {
-            try {
-              const derivedPasswordKey = Hash.pbkdf2(
-                Utils.toArray(passwordCandidate, 'utf8'),
-                this.currentUMPToken!.passwordSalt,
-                PBKDF2_NUM_ROUNDS,
-                32,
-                'sha512'
-              )
-              // Decrypt the privileged key with XOR(primaryKey, derivedPasswordKey).
-              const privilegedDecryptor = this.XOR(
-                this.primaryKey!,
-                derivedPasswordKey
-              )
-              const decryptedPrivileged = new SymmetricKey(
-                privilegedDecryptor
-              ).decrypt(
-                this.currentUMPToken!.passwordPrimaryPrivileged
-              ) as number[]
-              if (decryptedPrivileged) {
-                return true
-              }
-              return false
-            } catch (e) {
-              return false
-            }
-          }
-        )
-        const derivedPasswordKey = Hash.pbkdf2(
-          Utils.toArray(password, 'utf8'),
-          this.currentUMPToken!.passwordSalt,
-          PBKDF2_NUM_ROUNDS,
-          32,
-          'sha512'
-        )
-        // Decrypt the privileged key with XOR(primaryKey, derivedPasswordKey).
-        const privilegedDecryptor = this.XOR(
-          this.primaryKey!,
-          derivedPasswordKey
-        )
-        const decryptedPrivileged = new SymmetricKey(
-          privilegedDecryptor
-        ).decrypt(this.currentUMPToken!.passwordPrimaryPrivileged) as number[]
-        return new PrivateKey(decryptedPrivileged)
+    const privilegedManager = new PrivilegedKeyManager(async (reason: string) => {
+      if (privilegedKey) {
+        // For account recovery: a one-off opportunity to recover.
+        const tempKey = new PrivateKey(privilegedKey)
+        privilegedKey = undefined
+        return tempKey
       }
-    )
+      // Otherwise, ask user for their password to decrypt the privileged key.
+      const password = await this.passwordRetriever(reason, (passwordCandidate: string) => {
+        try {
+          const derivedPasswordKey = Hash.pbkdf2(
+            Utils.toArray(passwordCandidate, 'utf8'),
+            this.currentUMPToken!.passwordSalt,
+            PBKDF2_NUM_ROUNDS,
+            32,
+            'sha512'
+          )
+          // Decrypt the privileged key with XOR(primaryKey, derivedPasswordKey).
+          const privilegedDecryptor = this.XOR(this.primaryKey!, derivedPasswordKey)
+          const decryptedPrivileged = new SymmetricKey(privilegedDecryptor).decrypt(
+            this.currentUMPToken!.passwordPrimaryPrivileged
+          ) as number[]
+          if (decryptedPrivileged) {
+            return true
+          }
+          return false
+        } catch (e) {
+          return false
+        }
+      })
+      const derivedPasswordKey = Hash.pbkdf2(
+        Utils.toArray(password, 'utf8'),
+        this.currentUMPToken!.passwordSalt,
+        PBKDF2_NUM_ROUNDS,
+        32,
+        'sha512'
+      )
+      // Decrypt the privileged key with XOR(primaryKey, derivedPasswordKey).
+      const privilegedDecryptor = this.XOR(this.primaryKey!, derivedPasswordKey)
+      const decryptedPrivileged = new SymmetricKey(privilegedDecryptor).decrypt(
+        this.currentUMPToken!.passwordPrimaryPrivileged
+      ) as number[]
+      return new PrivateKey(decryptedPrivileged)
+    })
 
     this.underlyingPrivilegedKeyManager = privilegedManager
 
@@ -1517,9 +1394,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.getPublicKey(args, originator)
   }
@@ -1532,9 +1407,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.revealCounterpartyKeyLinkage(args, originator)
   }
@@ -1547,9 +1420,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.revealSpecificKeyLinkage(args, originator)
   }
@@ -1562,9 +1433,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.encrypt(args, originator)
   }
@@ -1577,9 +1446,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.decrypt(args, originator)
   }
@@ -1592,9 +1459,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.createHmac(args, originator)
   }
@@ -1607,9 +1472,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.verifyHmac(args, originator)
   }
@@ -1622,9 +1485,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.createSignature(args, originator)
   }
@@ -1637,9 +1498,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.verifySignature(args, originator)
   }
@@ -1652,9 +1511,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.createAction(args, originator)
   }
@@ -1667,9 +1524,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.signAction(args, originator)
   }
@@ -1682,9 +1537,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.abortAction(args, originator)
   }
@@ -1697,9 +1550,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.listActions(args, originator)
   }
@@ -1712,9 +1563,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.internalizeAction(args, originator)
   }
@@ -1727,9 +1576,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.listOutputs(args, originator)
   }
@@ -1742,9 +1589,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.relinquishOutput(args, originator)
   }
@@ -1757,9 +1602,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.acquireCertificate(args, originator)
   }
@@ -1772,9 +1615,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.listCertificates(args, originator)
   }
@@ -1787,9 +1628,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.proveCertificate(args, originator)
   }
@@ -1802,9 +1641,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.relinquishCertificate(args, originator)
   }
@@ -1817,9 +1654,7 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.discoverByIdentityKey(args, originator)
   }
@@ -1832,24 +1667,17 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.discoverByAttributes(args, originator)
   }
 
-  async isAuthenticated(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<AuthenticatedResult> {
+  async isAuthenticated(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<AuthenticatedResult> {
     if (!this.authenticated) {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return { authenticated: true }
   }
@@ -1859,9 +1687,7 @@ export class CWIStyleWalletManager implements WalletInterface {
     originator?: OriginatorDomainNameStringUnder250Bytes
   ): Promise<AuthenticatedResult> {
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     while (!this.authenticated) {
       await new Promise(resolve => setTimeout(resolve, 100))
@@ -1869,17 +1695,12 @@ export class CWIStyleWalletManager implements WalletInterface {
     return { authenticated: true }
   }
 
-  async getHeight(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetHeightResult> {
+  async getHeight(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetHeightResult> {
     if (!this.authenticated) {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.getHeight({}, originator)
   }
@@ -1892,39 +1713,27 @@ export class CWIStyleWalletManager implements WalletInterface {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.getHeaderForHeight(args, originator)
   }
 
-  async getNetwork(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetNetworkResult> {
+  async getNetwork(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> {
     if (!this.authenticated) {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.getNetwork({}, originator)
   }
 
-  async getVersion(
-    _: {},
-    originator?: OriginatorDomainNameStringUnder250Bytes
-  ): Promise<GetVersionResult> {
+  async getVersion(_: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> {
     if (!this.authenticated) {
       throw new Error('User is not authenticated.')
     }
     if (originator === this.adminOriginator) {
-      throw new Error(
-        'External applications are not allowed to use the admin originator.'
-      )
+      throw new Error('External applications are not allowed to use the admin originator.')
     }
     return this.underlying!.getVersion({}, originator)
   }

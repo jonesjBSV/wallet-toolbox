@@ -1,11 +1,7 @@
 import { OriginatorDomainNameStringUnder250Bytes } from '@bsv/sdk'
 import { listCertificates } from '../../../src/storage/methods/listCertificates'
 import { StorageProvider } from '../../../src/storage/StorageProvider'
-import {
-  sdk,
-  TableCertificate,
-  TableCertificateField
-} from '../../../src/index.all'
+import { sdk, TableCertificate, TableCertificateField } from '../../../src/index.all'
 import { TrxToken } from '../../../src/sdk'
 
 jest.mock('../../../src/storage/StorageProvider')
@@ -19,9 +15,7 @@ describe('listCertificates', () => {
   let originator: OriginatorDomainNameStringUnder250Bytes | undefined
 
   // Helper so we can easily mock the transaction call
-  const mockTransaction = async <T>(
-    callback: (trx: TrxToken) => Promise<T>
-  ): Promise<T> => {
+  const mockTransaction = async <T>(callback: (trx: TrxToken) => Promise<T>): Promise<T> => {
     // We simulate the transaction by simply calling back immediately
     // with an empty object as trx token.
     return callback({} as unknown as TrxToken)
@@ -140,13 +134,11 @@ describe('listCertificates', () => {
 
     mockStorage.findCertificates.mockResolvedValueOnce(fakeCerts)
     // Make sure we return correct fields for each certificate
-    mockStorage.findCertificateFields.mockImplementation(
-      async (args: sdk.FindCertificateFieldsArgs) => {
-        if (args.partial?.certificateId === 1) return fakeFieldsForCert1
-        if (args.partial?.certificateId === 2) return fakeFieldsForCert2
-        return []
-      }
-    )
+    mockStorage.findCertificateFields.mockImplementation(async (args: sdk.FindCertificateFieldsArgs) => {
+      if (args.partial?.certificateId === 1) return fakeFieldsForCert1
+      if (args.partial?.certificateId === 2) return fakeFieldsForCert2
+      return []
+    })
 
     // The returned certs are length=2, which is < limit(10). So we do not call countCertificates
     // Setup a spied or mocked value just in case
@@ -250,9 +242,7 @@ describe('listCertificates', () => {
     const error = new Error('Database error')
     mockStorage.transaction.mockRejectedValueOnce(error)
 
-    await expect(listCertificates(mockStorage, auth, vargs)).rejects.toThrow(
-      'Database error'
-    )
+    await expect(listCertificates(mockStorage, auth, vargs)).rejects.toThrow('Database error')
 
     // Verify mocks
     expect(mockStorage.transaction).toHaveBeenCalledTimes(1)

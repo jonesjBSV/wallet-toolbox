@@ -34,9 +34,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
       })
       if (reqs.length === 0) break
       log += `${reqs.length} reqs with status 'unsent'\n`
-      const agedReqs = reqs.filter(
-        req => verifyTruthy(req.updated_at) < agedLimit
-      )
+      const agedReqs = reqs.filter(req => verifyTruthy(req.updated_at) < agedLimit)
       log += `  Of those reqs, ${agedReqs.length} where last updated before ${agedLimit.toISOString()}.\n`
       log += await this.processUnsent(agedReqs, 2)
       if (reqs.length < limit) break
@@ -62,10 +60,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
    *
    * @param reqApis
    */
-  async processUnsent(
-    reqApis: TableProvenTxReq[],
-    indent = 0
-  ): Promise<string> {
+  async processUnsent(reqApis: TableProvenTxReq[], indent = 0): Promise<string> {
     let log = ''
     for (let i = 0; i < reqApis.length; i++) {
       const reqApi = reqApis[i]
@@ -84,9 +79,7 @@ export class TaskSendWaiting extends WalletMonitorTask {
         })
         for (const bra of batchReqApis) {
           // Remove any matching batchReqApis from reqApis
-          const index = reqApis.findIndex(
-            ra => ra.provenTxReqId === bra.provenTxReqId
-          )
+          const index = reqApis.findIndex(ra => ra.provenTxReqId === bra.provenTxReqId)
           if (index > -1) reqApis.slice(index, index + 1)
           // And add to reqs being processed now:
           reqs.push(new EntityProvenTxReq(bra))

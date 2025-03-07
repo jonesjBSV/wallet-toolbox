@@ -1,7 +1,4 @@
-import {
-  mockUnderlyingWallet,
-  MockedBSV_SDK
-} from './WalletPermissionsManager.fixtures'
+import { mockUnderlyingWallet, MockedBSV_SDK } from './WalletPermissionsManager.fixtures'
 import { WalletPermissionsManager } from '../WalletPermissionsManager'
 import { jest } from '@jest/globals'
 
@@ -21,13 +18,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
 
   describe('Unit Tests for metadata encryption helpers', () => {
     it('should call underlying.encrypt() with the correct protocol and key when encryptWalletMetadata=true', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: true
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: true
+      })
 
       const plaintext = 'Hello, world!'
       await manager['maybeEncryptMetadata'](plaintext)
@@ -47,13 +40,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
     })
 
     it('should NOT call underlying.encrypt() if encryptWalletMetadata=false', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: false
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: false
+      })
 
       const plaintext = 'No encryption needed!'
       const result = await manager['maybeEncryptMetadata'](plaintext)
@@ -63,13 +52,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
     })
 
     it('should call underlying.decrypt() with correct protocol and key, returning plaintext on success', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: true
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: true
+      })
 
       // Underlying decrypt mock returns { plaintext: [42, 42] } by default
       // which would become "**" if using our ASCII interpretation
@@ -96,13 +81,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
     })
 
     it('should fallback to original string if underlying.decrypt() fails', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: true
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: true
+      })
 
       // Make underlying.decrypt() throw an error to simulate failure
       ;(underlying.decrypt as any).mockImplementationOnce(() => {
@@ -119,13 +100,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
 
   describe('Integration Tests for createAction + listActions (round-trip encryption)', () => {
     it('should encrypt metadata fields in createAction when encryptWalletMetadata=true, then decrypt them in listActions', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: true
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: true
+      })
       manager.bindCallback('onSpendingAuthorizationRequested', x => {
         manager.grantPermission({ requestID: x.requestID, ephemeral: true })
       })
@@ -224,13 +201,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
     })
 
     it('should not encrypt metadata if encryptWalletMetadata=false, storing and retrieving plaintext', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: false
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: false
+      })
       manager.bindCallback('onSpendingAuthorizationRequested', x => {
         manager.grantPermission({ requestID: x.requestID, ephemeral: true })
       })
@@ -308,13 +281,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
 
   describe('Integration Test for listOutputs decryption', () => {
     it('should decrypt customInstructions in listOutputs if encryptWalletMetadata=true', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: true
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: true
+      })
       manager.bindCallback('onBasketAccessRequested', x => {
         manager.grantPermission({ requestID: x.requestID, ephemeral: true })
       })
@@ -362,13 +331,9 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
     })
 
     it('should fallback to the original ciphertext if decrypt fails in listOutputs', async () => {
-      const manager = new WalletPermissionsManager(
-        underlying,
-        'admin.domain.com',
-        {
-          encryptWalletMetadata: true
-        }
-      )
+      const manager = new WalletPermissionsManager(underlying, 'admin.domain.com', {
+        encryptWalletMetadata: true
+      })
       manager.bindCallback('onBasketAccessRequested', x => {
         manager.grantPermission({ requestID: x.requestID, ephemeral: true })
       })
@@ -399,9 +364,7 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
 
       expect(outputsResult.outputs.length).toBe(1)
       // Should fall back to the original 'bad-ciphertext-of-some-kind'
-      expect(outputsResult.outputs[0].customInstructions).toBe(
-        'bad-ciphertext-of-some-kind'
-      )
+      expect(outputsResult.outputs[0].customInstructions).toBe('bad-ciphertext-of-some-kind')
     })
   })
 })

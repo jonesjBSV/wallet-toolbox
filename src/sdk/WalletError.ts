@@ -1,8 +1,4 @@
-import {
-  ErrorCodeString10To40Bytes,
-  ErrorDescriptionString20To200Bytes,
-  WalletErrorObject
-} from '@bsv/sdk'
+import { ErrorCodeString10To40Bytes, ErrorDescriptionString20To200Bytes, WalletErrorObject } from '@bsv/sdk'
 
 /**
  * Derived class constructors should use the derived class name as the value for `name`,
@@ -64,8 +60,7 @@ export class WalletError extends Error implements WalletErrorObject {
     let stack: string | undefined
     const details: Record<string, string> = {}
     if (err !== null && typeof err === 'object') {
-      if (err['name'] === 'Error' || err['name'] === 'FetchError')
-        name = err['code'] || err['status'] || 'WERR_UNKNOWN'
+      if (err['name'] === 'Error' || err['name'] === 'FetchError') name = err['code'] || err['status'] || 'WERR_UNKNOWN'
       else name = err['name'] || err['code'] || err['status'] || 'WERR_UNKNOWN'
       if (typeof name !== 'string') name = 'WERR_UNKNOWN'
 
@@ -75,23 +70,12 @@ export class WalletError extends Error implements WalletErrorObject {
       if (typeof err['stack'] === 'string') stack = err['stack']
 
       if (typeof err['sql'] === 'string') details.sql = err['sql']
-      if (typeof err['sqlMessage'] === 'string')
-        details.sqlMessage = err['sqlMessage']
+      if (typeof err['sqlMessage'] === 'string') details.sqlMessage = err['sqlMessage']
     }
-    const e = new WalletError(
-      name,
-      message,
-      stack,
-      Object.keys(details).length > 0 ? details : undefined
-    )
+    const e = new WalletError(name, message, stack, Object.keys(details).length > 0 ? details : undefined)
     if (err !== null && typeof err === 'object') {
       for (const [key, value] of Object.entries(err)) {
-        if (
-          key !== 'walletError' &&
-          typeof value !== 'string' &&
-          typeof value !== 'number' &&
-          !Array.isArray(value)
-        )
+        if (key !== 'walletError' && typeof value !== 'string' && typeof value !== 'number' && !Array.isArray(value))
           continue
         switch (key) {
           case 'walletError':

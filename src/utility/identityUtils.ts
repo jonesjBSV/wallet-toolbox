@@ -52,9 +52,7 @@ export const transformVerifiableCertificatesWithTrust = (
 
     // Lookup and cache certifier details from trustSettings.
     if (!certifierCache[certifier]) {
-      const found = trustSettings.trustedCertifiers.find(
-        x => x.identityKey === certifier
-      )
+      const found = trustSettings.trustedCertifiers.find(x => x.identityKey === certifier)
       if (!found) return // Skip this certificate if its certifier is not trusted.
       certifierCache[certifier] = found
     }
@@ -108,10 +106,7 @@ export const transformVerifiableCertificatesWithTrust = (
  * @param query
  * @returns
  */
-export const queryOverlay = async (
-  query: unknown,
-  resolver: LookupResolver
-): Promise<VerifiableCertificate[]> => {
+export const queryOverlay = async (query: unknown, resolver: LookupResolver): Promise<VerifiableCertificate[]> => {
   const results = await resolver.query({
     service: 'ls_identity',
     query
@@ -126,9 +121,7 @@ export const queryOverlay = async (
  * @param {Output[]} outputs
  * @returns {Promise<VerifiableCertificate[]>}
  */
-export const parseResults = async (
-  lookupResult: LookupAnswer
-): Promise<VerifiableCertificate[]> => {
+export const parseResults = async (lookupResult: LookupAnswer): Promise<VerifiableCertificate[]> => {
   if (lookupResult.type === 'output-list') {
     const parsedResults: VerifiableCertificate[] = []
 
@@ -136,14 +129,10 @@ export const parseResults = async (
       try {
         const tx = Transaction.fromBEEF(output.beef)
         // Decode the Identity token fields from the Bitcoin outputScript
-        const decodedOutput = PushDrop.decode(
-          tx.outputs[output.outputIndex].lockingScript
-        )
+        const decodedOutput = PushDrop.decode(tx.outputs[output.outputIndex].lockingScript)
 
         // Parse out the certificate and relevant data
-        const certificate: VerifiableCertificate = JSON.parse(
-          Utils.toUTF8(decodedOutput.fields[0])
-        ) // TEST
+        const certificate: VerifiableCertificate = JSON.parse(Utils.toUTF8(decodedOutput.fields[0])) // TEST
         const verifiableCert = new VerifiableCertificate(
           certificate.type,
           certificate.serialNumber,
@@ -154,9 +143,7 @@ export const parseResults = async (
           certificate.keyring,
           certificate.signature
         )
-        const decryptedFields = await verifiableCert.decryptFields(
-          new ProtoWallet('anyone')
-        )
+        const decryptedFields = await verifiableCert.decryptFields(new ProtoWallet('anyone'))
         // Verify the certificate signature is correct
         await verifiableCert.verify()
         verifiableCert.decryptedFields = decryptedFields

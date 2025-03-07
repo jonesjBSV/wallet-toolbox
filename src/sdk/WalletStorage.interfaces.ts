@@ -58,32 +58,20 @@ export interface WalletStorage {
 
   getAuth(): Promise<sdk.AuthId>
 
-  findOrInsertUser(
-    identityKey: string
-  ): Promise<{ user: TableUser; isNew: boolean }>
+  findOrInsertUser(identityKey: string): Promise<{ user: TableUser; isNew: boolean }>
 
   abortAction(args: AbortActionArgs): Promise<AbortActionResult>
-  createAction(
-    args: sdk.ValidCreateActionArgs
-  ): Promise<sdk.StorageCreateActionResult>
-  processAction(
-    args: sdk.StorageProcessActionArgs
-  ): Promise<sdk.StorageProcessActionResults>
-  internalizeAction(
-    args: InternalizeActionArgs
-  ): Promise<InternalizeActionResult>
+  createAction(args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult>
+  processAction(args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults>
+  internalizeAction(args: InternalizeActionArgs): Promise<InternalizeActionResult>
 
   findCertificates(args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]>
-  findOutputBaskets(
-    args: sdk.FindOutputBasketsArgs
-  ): Promise<TableOutputBasket[]>
+  findOutputBaskets(args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]>
   findOutputs(args: sdk.FindOutputsArgs): Promise<TableOutput[]>
   findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]>
 
   listActions(args: ListActionsArgs): Promise<ListActionsResult>
-  listCertificates(
-    args: sdk.ValidListCertificatesArgs
-  ): Promise<ListCertificatesResult>
+  listCertificates(args: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>
   listOutputs(args: ListOutputsArgs): Promise<ListOutputsResult>
 
   insertCertificate(certificate: TableCertificateX): Promise<number>
@@ -116,16 +104,10 @@ export interface WalletStorageSync extends WalletStorageWriter {
    * @param auth
    * @param newActiveStorageIdentityKey
    */
-  setActive(
-    auth: sdk.AuthId,
-    newActiveStorageIdentityKey: string
-  ): Promise<number>
+  setActive(auth: sdk.AuthId, newActiveStorageIdentityKey: string): Promise<number>
 
   getSyncChunk(args: sdk.RequestSyncChunkArgs): Promise<sdk.SyncChunk>
-  processSyncChunk(
-    args: sdk.RequestSyncChunkArgs,
-    chunk: sdk.SyncChunk
-  ): Promise<sdk.ProcessSyncChunkResult>
+  processSyncChunk(args: sdk.RequestSyncChunkArgs, chunk: sdk.SyncChunk): Promise<sdk.ProcessSyncChunkResult>
 }
 
 /**
@@ -141,40 +123,17 @@ export interface WalletStorageWriter extends WalletStorageReader {
   migrate(storageName: string, storageIdentityKey: string): Promise<string>
   destroy(): Promise<void>
 
-  findOrInsertUser(
-    identityKey: string
-  ): Promise<{ user: TableUser; isNew: boolean }>
+  findOrInsertUser(identityKey: string): Promise<{ user: TableUser; isNew: boolean }>
 
-  abortAction(
-    auth: sdk.AuthId,
-    args: AbortActionArgs
-  ): Promise<AbortActionResult>
-  createAction(
-    auth: sdk.AuthId,
-    args: sdk.ValidCreateActionArgs
-  ): Promise<sdk.StorageCreateActionResult>
-  processAction(
-    auth: sdk.AuthId,
-    args: sdk.StorageProcessActionArgs
-  ): Promise<sdk.StorageProcessActionResults>
-  internalizeAction(
-    auth: sdk.AuthId,
-    args: InternalizeActionArgs
-  ): Promise<InternalizeActionResult>
+  abortAction(auth: sdk.AuthId, args: AbortActionArgs): Promise<AbortActionResult>
+  createAction(auth: sdk.AuthId, args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult>
+  processAction(auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults>
+  internalizeAction(auth: sdk.AuthId, args: InternalizeActionArgs): Promise<InternalizeActionResult>
 
-  insertCertificateAuth(
-    auth: sdk.AuthId,
-    certificate: TableCertificateX
-  ): Promise<number>
+  insertCertificateAuth(auth: sdk.AuthId, certificate: TableCertificateX): Promise<number>
 
-  relinquishCertificate(
-    auth: sdk.AuthId,
-    args: RelinquishCertificateArgs
-  ): Promise<number>
-  relinquishOutput(
-    auth: sdk.AuthId,
-    args: RelinquishOutputArgs
-  ): Promise<number>
+  relinquishCertificate(auth: sdk.AuthId, args: RelinquishCertificateArgs): Promise<number>
+  relinquishOutput(auth: sdk.AuthId, args: RelinquishOutputArgs): Promise<number>
 }
 
 export interface WalletStorageReader {
@@ -183,32 +142,14 @@ export interface WalletStorageReader {
   getServices(): sdk.WalletServices
   getSettings(): TableSettings
 
-  findCertificatesAuth(
-    auth: sdk.AuthId,
-    args: sdk.FindCertificatesArgs
-  ): Promise<TableCertificateX[]>
-  findOutputBasketsAuth(
-    auth: sdk.AuthId,
-    args: sdk.FindOutputBasketsArgs
-  ): Promise<TableOutputBasket[]>
-  findOutputsAuth(
-    auth: sdk.AuthId,
-    args: sdk.FindOutputsArgs
-  ): Promise<TableOutput[]>
+  findCertificatesAuth(auth: sdk.AuthId, args: sdk.FindCertificatesArgs): Promise<TableCertificateX[]>
+  findOutputBasketsAuth(auth: sdk.AuthId, args: sdk.FindOutputBasketsArgs): Promise<TableOutputBasket[]>
+  findOutputsAuth(auth: sdk.AuthId, args: sdk.FindOutputsArgs): Promise<TableOutput[]>
   findProvenTxReqs(args: sdk.FindProvenTxReqsArgs): Promise<TableProvenTxReq[]>
 
-  listActions(
-    auth: sdk.AuthId,
-    vargs: sdk.ValidListActionsArgs
-  ): Promise<ListActionsResult>
-  listCertificates(
-    auth: sdk.AuthId,
-    vargs: sdk.ValidListCertificatesArgs
-  ): Promise<ListCertificatesResult>
-  listOutputs(
-    auth: sdk.AuthId,
-    vargs: sdk.ValidListOutputsArgs
-  ): Promise<ListOutputsResult>
+  listActions(auth: sdk.AuthId, vargs: sdk.ValidListActionsArgs): Promise<ListActionsResult>
+  listCertificates(auth: sdk.AuthId, vargs: sdk.ValidListCertificatesArgs): Promise<ListCertificatesResult>
+  listOutputs(auth: sdk.AuthId, vargs: sdk.ValidListOutputsArgs): Promise<ListOutputsResult>
 }
 
 export interface AuthId {
@@ -227,8 +168,7 @@ export interface FindForUserSincePagedArgs extends FindSincePagedArgs {
   userId: number
 }
 
-export interface FindPartialSincePagedArgs<T extends object>
-  extends FindSincePagedArgs {
+export interface FindPartialSincePagedArgs<T extends object> extends FindSincePagedArgs {
   partial: Partial<T>
 }
 
@@ -270,8 +210,7 @@ export interface StorageCreateTransactionSdkInput {
   senderIdentityKey?: string
 }
 
-export interface StorageCreateTransactionSdkOutput
-  extends sdk.ValidCreateActionOutput {
+export interface StorageCreateTransactionSdkOutput extends sdk.ValidCreateActionOutput {
   vout: number
   providedBy: StorageProvidedBy
   purpose?: string
@@ -460,12 +399,7 @@ export interface UpdateProvenTxReqWithNewProvenTxResult {
  *
  * unknown: Sync protocol state is unknown.
  */
-export type SyncStatus =
-  | 'success'
-  | 'error'
-  | 'identified'
-  | 'updated'
-  | 'unknown'
+export type SyncStatus = 'success' | 'error' | 'identified' | 'updated' | 'unknown'
 
 export type SyncProtocolVersion = '0.1.0'
 

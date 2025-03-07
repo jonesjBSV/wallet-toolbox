@@ -48,11 +48,7 @@ export class Monitor {
     services?: Services
   ): MonitorOptions {
     services ||= new Services(chain)
-    if (!services.options.chaintracks)
-      throw new sdk.WERR_INVALID_PARAMETER(
-        'services.options.chaintracks',
-        'valid'
-      )
+    if (!services.options.chaintracks) throw new sdk.WERR_INVALID_PARAMETER('services.options.chaintracks', 'valid')
     const o: MonitorOptions = {
       chain,
       services,
@@ -124,14 +120,10 @@ export class Monitor {
   addDefaultTasks(): void {
     this._tasks.push(new TaskClock(this))
     this._tasks.push(new TaskNewHeader(this))
-    this._tasks.push(
-      new TaskSendWaiting(this, 8 * this.oneSecond, 7 * this.oneSecond)
-    ) // Check every 8 seconds but must be 7 seconds old
+    this._tasks.push(new TaskSendWaiting(this, 8 * this.oneSecond, 7 * this.oneSecond)) // Check every 8 seconds but must be 7 seconds old
     this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
     this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
-    this._tasks.push(
-      new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour)
-    )
+    this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
     this._tasks.push(new TaskReviewStatus(this))
   }
 
@@ -142,22 +134,16 @@ export class Monitor {
   addMultiUserTasks(): void {
     this._tasks.push(new TaskClock(this))
     this._tasks.push(new TaskNewHeader(this))
-    this._tasks.push(
-      new TaskSendWaiting(this, 8 * this.oneSecond, 7 * this.oneSecond)
-    ) // Check every 8 seconds but must be 7 seconds old
+    this._tasks.push(new TaskSendWaiting(this, 8 * this.oneSecond, 7 * this.oneSecond)) // Check every 8 seconds but must be 7 seconds old
     this._tasks.push(new TaskCheckForProofs(this, 2 * this.oneHour)) // Every two hours if no block found
     this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
-    this._tasks.push(
-      new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour)
-    )
+    this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
     this._tasks.push(new TaskReviewStatus(this))
   }
 
   addTask(task: WalletMonitorTask): void {
     if (this._tasks.some(t => t.name === task.name))
-      throw new sdk.WERR_BAD_REQUEST(
-        `task ${task.name} has already been added.`
-      )
+      throw new sdk.WERR_BAD_REQUEST(`task ${task.name} has already been added.`)
     this._tasks.push(task)
   }
 
@@ -238,8 +224,7 @@ export class Monitor {
   _runAsyncSetup: boolean = true
 
   async startTasks(): Promise<void> {
-    if (this._tasksRunning)
-      throw new sdk.WERR_BAD_REQUEST('monitor tasks are already runnining.')
+    if (this._tasksRunning) throw new sdk.WERR_BAD_REQUEST('monitor tasks are already runnining.')
 
     this._tasksRunning = true
     for (; this._tasksRunning; ) {

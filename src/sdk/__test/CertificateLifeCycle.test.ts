@@ -14,11 +14,8 @@ describe('CertificateLifeCycle tests', () => {
 
   test('0 encrypt decrypt sign verify', async () => {
     const subjectWallet = new ProtoWallet(PrivateKey.fromRandom())
-    if (!subjectWallet.keyDeriver)
-      throw new sdk.WERR_INVALID_OPERATION('keyDeriver must be valid')
-    const { cert, certifier, subject } = makeSampleCert(
-      subjectWallet.keyDeriver.rootKey.toString()
-    )
+    if (!subjectWallet.keyDeriver) throw new sdk.WERR_INVALID_OPERATION('keyDeriver must be valid')
+    const { cert, certifier, subject } = makeSampleCert(subjectWallet.keyDeriver.rootKey.toString())
 
     const c = new BsvCertificate(
       cert.type,
@@ -39,9 +36,7 @@ describe('CertificateLifeCycle tests', () => {
       async () => c.revocationOutpoint
     )
     const imcSignature = imc.signature
-    await expect(imc.sign(certifierWallet)).rejects.toThrow(
-      'Certificate has already been signed'
-    )
+    await expect(imc.sign(certifierWallet)).rejects.toThrow('Certificate has already been signed')
     expect(imcSignature).toBeTruthy()
     expect(imcSignature).toBe(imc.signature)
     const imcVerified = await imc.verify()
@@ -66,9 +61,7 @@ describe('CertificateLifeCycle tests', () => {
     const co = new sdk.CertOps(certifierWallet, cert)
 
     expect(co.signature).toBe('')
-    await expect(co.verify()).rejects.toThrow(
-      'Signature DER must start with 0x30'
-    )
+    await expect(co.verify()).rejects.toThrow('Signature DER must start with 0x30')
     await co.sign(new ProtoWallet(new KeyDeriver(certifier)))
     expect(await co.verify()).toBe(true)
 
@@ -87,9 +80,7 @@ describe('CertificateLifeCycle tests', () => {
 
     {
       await co.encryptFields()
-      const crypto2 = new ProtoWallet(
-        new KeyDeriver(PrivateKey.fromHex('2'.repeat(64)))
-      )
+      const crypto2 = new ProtoWallet(new KeyDeriver(PrivateKey.fromHex('2'.repeat(64))))
       const co2 = new sdk.CertOps(crypto2, co.toWalletCertificate())
       // even with the keyring, without the right crypto root key decryption will fail.
       co2._keyring = co._keyring
@@ -143,17 +134,11 @@ describe('CertificateLifeCycle tests', () => {
     // And then use a keyRing that their public key will work to reveal decrypted values for 'name' and 'email' only.
     const verifier = PrivateKey.fromRandom()
     // subject makes a keyring for the verifier
-    const exportForVerifier = await cs.exportForCounterparty(
-      verifier.toPublicKey().toString(),
-      ['name', 'email']
-    )
+    const exportForVerifier = await cs.exportForCounterparty(verifier.toPublicKey().toString(), ['name', 'email'])
 
     // The verifier uses their own wallet to import the certificate, verify it, and decrypt their designated fields.
     const verifierWallet = new ProtoWallet(verifier)
-    const cv = await sdk.CertOps.fromCounterparty(
-      verifierWallet,
-      exportForVerifier
-    )
+    const cv = await sdk.CertOps.fromCounterparty(verifierWallet, exportForVerifier)
 
     // verifier must check that the certifier's public key generates a matching signature over all the encrypted
     // certificate field values before using their keyring to decrypt the fields they've been authorized to see.
@@ -173,16 +158,13 @@ function makeSampleCert(subjectRootKeyHex?: string): {
   subject: PrivateKey
   certifier: PrivateKey
 } {
-  const subject = subjectRootKeyHex
-    ? PrivateKey.fromString(subjectRootKeyHex)
-    : PrivateKey.fromRandom()
+  const subject = subjectRootKeyHex ? PrivateKey.fromString(subjectRootKeyHex) : PrivateKey.fromRandom()
   const certifier = PrivateKey.fromRandom()
   const verifier = PrivateKey.fromRandom()
   const cert: WalletCertificate = {
     type: Utils.toBase64(new Array(32).fill(1)),
     serialNumber: Utils.toBase64(new Array(32).fill(2)),
-    revocationOutpoint:
-      'deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef.1',
+    revocationOutpoint: 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef.1',
     subject: subject.toPublicKey().toString(),
     certifier: certifier.toPublicKey().toString(),
     fields: {

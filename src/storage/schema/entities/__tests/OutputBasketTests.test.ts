@@ -1,13 +1,5 @@
-import {
-  createSyncMap,
-  sdk,
-  SyncMap,
-  TableOutputBasket
-} from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
+import { createSyncMap, sdk, SyncMap, TableOutputBasket } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
 import { EntityOutputBasket } from '../../../../../src/storage/schema/entities/OutputBasket'
 
 describe('OutputBasket class method tests', () => {

@@ -29,10 +29,7 @@ export async function backup(): Promise<void> {
 /**
  * @publicbody
  */
-export async function backupWalletClient(
-  env: SetupEnv,
-  identityKey: string
-): Promise<void> {
+export async function backupWalletClient(env: SetupEnv, identityKey: string): Promise<void> {
   const setup = await Setup.createWalletClient({
     env,
     rootKeyHex: env.devKeys[identityKey]
@@ -44,11 +41,7 @@ export async function backupWalletClient(
 /**
  * @publicbody
  */
-export async function backupToSQLite(
-  setup: SetupWallet,
-  filePath?: string,
-  databaseName?: string
-): Promise<void> {
+export async function backupToSQLite(setup: SetupWallet, filePath?: string, databaseName?: string): Promise<void> {
   const env = Setup.getEnv(setup.chain)
   filePath ||= `backup_${setup.identityKey}.sqlite`
   databaseName ||= `${setup.identityKey} backup`

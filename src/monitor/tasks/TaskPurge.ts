@@ -49,8 +49,7 @@ export class TaskPurge extends WalletMonitorTask {
     return {
       run:
         TaskPurge.checkNow ||
-        (this.triggerMsecs > 0 &&
-          nowMsecsSinceEpoch - this.lastRunMsecsSinceEpoch > this.triggerMsecs)
+        (this.triggerMsecs > 0 && nowMsecsSinceEpoch - this.lastRunMsecsSinceEpoch > this.triggerMsecs)
     }
   }
 

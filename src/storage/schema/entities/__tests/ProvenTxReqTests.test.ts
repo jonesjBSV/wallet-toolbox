@@ -1,18 +1,7 @@
 import * as bsv from '@bsv/sdk'
-import {
-  createSyncMap,
-  sdk,
-  SyncMap,
-  TableProvenTxReq
-} from '../../../../../src'
-import {
-  TestUtilsWalletStorage as _tu,
-  TestWalletNoSetup
-} from '../../../../../test/utils/TestUtilsWalletStorage'
-import {
-  EntityProvenTxReq,
-  ProvenTxReqHistorySummaryApi
-} from '../../../../../src/storage/schema/entities/ProvenTxReq'
+import { createSyncMap, sdk, SyncMap, TableProvenTxReq } from '../../../../../src'
+import { TestUtilsWalletStorage as _tu, TestWalletNoSetup } from '../../../../../test/utils/TestUtilsWalletStorage'
+import { EntityProvenTxReq, ProvenTxReqHistorySummaryApi } from '../../../../../src/storage/schema/entities/ProvenTxReq'
 
 describe('ProvenTxReq class method tests', () => {
   jest.setTimeout(99999999)
@@ -333,8 +322,7 @@ describe('ProvenTxReq class method tests', () => {
     const ctx = ctxs[0]
 
     // Fetch terminal statuses if they are stored in the database or available via context
-    const terminalStatuses: sdk.ProvenTxReqStatus[] =
-      sdk.ProvenTxReqTerminalStatus
+    const terminalStatuses: sdk.ProvenTxReqStatus[] = sdk.ProvenTxReqTerminalStatus
 
     // Test cases for valid and invalid statuses
     const testCases: { status: sdk.ProvenTxReqStatus; expected: boolean }[] = [

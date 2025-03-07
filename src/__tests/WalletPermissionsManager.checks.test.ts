@@ -1,11 +1,5 @@
-import {
-  mockUnderlyingWallet,
-  MockedBSV_SDK
-} from './WalletPermissionsManager.fixtures'
-import {
-  WalletPermissionsManager,
-  PermissionToken
-} from '../WalletPermissionsManager'
+import { mockUnderlyingWallet, MockedBSV_SDK } from './WalletPermissionsManager.fixtures'
+import { WalletPermissionsManager, PermissionToken } from '../WalletPermissionsManager'
 
 jest.mock('@bsv/sdk', () => MockedBSV_SDK)
 
@@ -203,9 +197,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
         protocol: 'test-protocol',
         counterparty: 'self'
       }
-      jest
-        .spyOn(manager as any, 'findProtocolToken')
-        .mockResolvedValue(expiredToken)
+      jest.spyOn(manager as any, 'findProtocolToken').mockResolvedValue(expiredToken)
 
       // We'll bind a callback that grants a renewal ephemeral
       manager.bindCallback('onProtocolPermissionRequested', async req => {
@@ -365,9 +357,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
       })
 
       // Attempt to list a user basket
-      await expect(
-        manager.listOutputs({ basket: 'user-basket' }, 'some-user.com')
-      ).rejects.toThrow(/Permission denied/)
+      await expect(manager.listOutputs({ basket: 'user-basket' }, 'some-user.com')).rejects.toThrow(/Permission denied/)
 
       // There is one underlying call: internally, we called listOutputs to check if we had permission
       // (we did not, we sought it, and the user denied). So we see this call here, but we DO NOT see
@@ -562,9 +552,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
         certFields: ['name', 'dob'],
         verifier: '02verifier'
       }
-      jest
-        .spyOn(manager as any, 'findCertificateToken')
-        .mockResolvedValue(expiredCertToken)
+      jest.spyOn(manager as any, 'findCertificateToken').mockResolvedValue(expiredCertToken)
 
       // Callback that grants renewal ephemeral
       manager.bindCallback('onCertificateAccessRequested', async req => {
@@ -685,9 +673,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
         authorizedAmount: 500,
         expiry: 0 // indefinite
       }
-      jest
-        .spyOn(manager as any, 'findSpendingToken')
-        .mockResolvedValue(existingSpendingToken)
+      jest.spyOn(manager as any, 'findSpendingToken').mockResolvedValue(existingSpendingToken)
 
       // Next, manager.querySpentSince(token) sums the user’s monthly spending from labeled actions
       // Let’s stub that to say they've already spent 400.
@@ -732,9 +718,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
         authorizedAmount: 1000,
         expiry: 0
       }
-      jest
-        .spyOn(manager as any, 'findSpendingToken')
-        .mockResolvedValue(dsapToken)
+      jest.spyOn(manager as any, 'findSpendingToken').mockResolvedValue(dsapToken)
 
       // Suppose they've spent 200 so far
       jest.spyOn(manager as any, 'querySpentSince').mockResolvedValue(200)
@@ -790,10 +774,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
 
       // Non-admin applies label "my-app-label"
       await expect(
-        manager.createAction(
-          { description: 'Add label', labels: ['my-app-label'] },
-          'some-app.com'
-        )
+        manager.createAction({ description: 'Add label', labels: ['my-app-label'] }, 'some-app.com')
       ).resolves.not.toThrow()
 
       // No prompt

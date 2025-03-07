@@ -39,8 +39,7 @@ describe('Wallet sync tests', () => {
   }
 
   const env = _tu.getEnv('test')
-  const identityKeyTone =
-    '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
+  const identityKeyTone = '03ac2d10bdb0023f4145cc2eba2fcd2ad3070cb2107b0b48170c46a9440e4cc3fe'
   const rootKeyHex = env.devKeys[identityKeyTone]
 
   test('0 sync staging dojo to local MySQL', async () => {
@@ -57,10 +56,7 @@ describe('Wallet sync tests', () => {
     })
 
     const identityKey = writer.identityKey
-    await writer.storage.syncFromReader(
-      identityKey,
-      new StorageSyncReader({ identityKey }, reader)
-    )
+    await writer.storage.syncFromReader(identityKey, new StorageSyncReader({ identityKey }, reader))
 
     await reader.destroy()
     await writer.activeStorage.destroy()
@@ -68,12 +64,9 @@ describe('Wallet sync tests', () => {
   })
 
   test.skip('0a sync production dojo to local MySQL', async () => {
-    console.log(
-      'Importing from production dojo to local MySQL productiondojotone'
-    )
+    console.log('Importing from production dojo to local MySQL productiondojotone')
     // production faucet key
-    const identityKey =
-      '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // process.env.MY_MAIN_IDENTITY || ''
+    const identityKey = '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // process.env.MY_MAIN_IDENTITY || ''
     const rootKeyHex = env.devKeys[identityKey]
     const chain: sdk.Chain = 'main'
     const connection = JSON.parse(process.env.MAIN_DOJO_CONNECTION || '')
@@ -86,10 +79,7 @@ describe('Wallet sync tests', () => {
       dropAll: true
     })
 
-    await writer.storage.syncFromReader(
-      identityKey,
-      new StorageSyncReader({ identityKey }, reader)
-    )
+    await writer.storage.syncFromReader(identityKey, new StorageSyncReader({ identityKey }, reader))
 
     await reader.destroy()
     await writer.activeStorage.destroy()
@@ -97,8 +87,7 @@ describe('Wallet sync tests', () => {
 
   test.skip('0b sweep mysql dojo sync to new sqlite', async () => {
     const chain: sdk.Chain = 'main'
-    const identityKey =
-      '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // prod faucet
+    const identityKey = '030b78da8101cd8929ec355c694c275fbaf4f73d4eaa104873463779cac69a2a01' // prod faucet
     //const identityKeyTone = process.env.MY_MAIN_IDENTITY || ''
     const rootKeyHex = env.devKeys[identityKey]
 
@@ -154,9 +143,7 @@ describe('Wallet sync tests', () => {
 
   test.skip('2 sync pruned MySQL stagingdojotone to SQLite walletLegacyTestData', async () => {
     await waitFor1()
-    console.log(
-      'syncing local MySQL stagingdojotone to local SQLite walletLegacyTestData in tmp folder'
-    )
+    console.log('syncing local MySQL stagingdojotone to local SQLite walletLegacyTestData in tmp folder')
     const reader = await _tu.createMySQLTestWallet({
       databaseName: 'stagingdojotone',
       chain: 'test',
@@ -170,25 +157,18 @@ describe('Wallet sync tests', () => {
     })
 
     const identityKey = writer.identityKey
-    await writer.storage.syncFromReader(
-      identityKey,
-      new StorageSyncReader({ identityKey }, reader.activeStorage)
-    )
+    await writer.storage.syncFromReader(identityKey, new StorageSyncReader({ identityKey }, reader.activeStorage))
 
     await reader.activeStorage.destroy()
     await writer.activeStorage.destroy()
 
-    console.log(
-      'REMEMBER: copy walletLegacyTestData.sqlite from tmp up to data!'
-    )
+    console.log('REMEMBER: copy walletLegacyTestData.sqlite from tmp up to data!')
     done2 = true
   })
 
   test.skip('3 sync pruned MySQL stagingdojotone to MySQL walletLegacyTestData', async () => {
     await waitFor2()
-    console.log(
-      'syncing local MySQL stagingdojotone to local SQLite walletLegacyTestData in tmp folder'
-    )
+    console.log('syncing local MySQL stagingdojotone to local SQLite walletLegacyTestData in tmp folder')
     const reader = await _tu.createMySQLTestWallet({
       databaseName: 'stagingdojotone',
       chain: 'test',
@@ -202,10 +182,7 @@ describe('Wallet sync tests', () => {
     })
 
     const identityKey = writer.identityKey
-    await writer.storage.syncFromReader(
-      identityKey,
-      new StorageSyncReader({ identityKey }, reader.activeStorage)
-    )
+    await writer.storage.syncFromReader(identityKey, new StorageSyncReader({ identityKey }, reader.activeStorage))
 
     await reader.activeStorage.destroy()
     await writer.activeStorage.destroy()

@@ -6,10 +6,7 @@ import { EntityBase, EntityStorage, EntitySyncMap, SyncMap } from './EntityBase'
  * @param API one of the storage table interfaces.
  * @param DE the corresponding entity class
  */
-export class MergeEntity<
-  API extends sdk.EntityTimeStamp,
-  DE extends EntityBase<API>
-> {
+export class MergeEntity<API extends sdk.EntityTimeStamp, DE extends EntityBase<API>> {
   idMap: Record<number, number>
 
   constructor(
@@ -33,9 +30,7 @@ export class MergeEntity<
     if (map[i] === undefined) {
       map[i] = o
     } else if (map[i] !== o)
-      throw new sdk.WERR_INTERNAL(
-        `updateSyncMap map[${inId}] can't override ${map[i]} with ${o}`
-      )
+      throw new sdk.WERR_INTERNAL(`updateSyncMap map[${inId}] can't override ${map[i]} with ${o}`)
   }
 
   /**
@@ -57,22 +52,20 @@ export class MergeEntity<
        * TODO:
        * Switch to using syncMap. If the ei id is in the map its an existing merge, else its a new merge.
        */
-      const { found, eo, eiId } = await this.find(
-        storage,
-        userId,
-        ei,
-        syncMap,
-        trx
-      )
-      if (found) {
-        if (await eo.mergeExisting(storage, since, ei, syncMap, trx)) {
-          updates++
+      try {
+        const { found, eo, eiId } = await this.find(storage, userId, ei, syncMap, trx)
+        if (found) {
+          if (await eo.mergeExisting(storage, since, ei, syncMap, trx)) {
+            updates++
+          }
+        } else {
+          await eo.mergeNew(storage, userId, syncMap, trx)
+          inserts++
         }
-      } else {
-        await eo.mergeNew(storage, userId, syncMap, trx)
-        inserts++
+        if (eiId > -1) this.updateSyncMap(this.idMap, eiId, eo.id)
+      } catch (eu: unknown) {
+        throw eu
       }
-      if (eiId > -1) this.updateSyncMap(this.idMap, eiId, eo.id)
     }
     return { inserts, updates }
   }

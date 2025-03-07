@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MerklePath } from '@bsv/sdk'
-import {
-  arraysEqual,
-  sdk,
-  TableTxLabelMap,
-  verifyId,
-  verifyOneOrNone
-} from '../../../index.client'
+import { arraysEqual, sdk, TableTxLabelMap, verifyId, verifyOneOrNone } from '../../../index.client'
 import { EntityBase, EntityStorage, SyncMap } from '.'
 
 export class EntityTxLabelMap extends EntityBase<TableTxLabelMap> {
@@ -72,14 +66,8 @@ export class EntityTxLabelMap extends EntityBase<TableTxLabelMap> {
     const eo = this.toApi()
 
     if (
-      eo.transactionId !==
-        (syncMap
-          ? syncMap.transaction.idMap[verifyId(ei.transactionId)]
-          : ei.transactionId) ||
-      eo.txLabelId !==
-        (syncMap
-          ? syncMap.txLabel.idMap[verifyId(ei.txLabelId)]
-          : ei.txLabelId) ||
+      eo.transactionId !== (syncMap ? syncMap.transaction.idMap[verifyId(ei.transactionId)] : ei.transactionId) ||
+      eo.txLabelId !== (syncMap ? syncMap.txLabel.idMap[verifyId(ei.txLabelId)] : ei.txLabelId) ||
       eo.isDeleted !== ei.isDeleted
     )
       return false
@@ -109,12 +97,7 @@ export class EntityTxLabelMap extends EntityBase<TableTxLabelMap> {
     }
   }
 
-  override async mergeNew(
-    storage: EntityStorage,
-    userId: number,
-    syncMap: SyncMap,
-    trx?: sdk.TrxToken
-  ): Promise<void> {
+  override async mergeNew(storage: EntityStorage, userId: number, syncMap: SyncMap, trx?: sdk.TrxToken): Promise<void> {
     this.transactionId = syncMap.transaction.idMap[this.transactionId]
     this.txLabelId = syncMap.txLabel.idMap[this.txLabelId]
     await storage.insertTxLabelMap(this.toApi(), trx)
@@ -130,13 +113,8 @@ export class EntityTxLabelMap extends EntityBase<TableTxLabelMap> {
     let wasMerged = false
     if (ei.updated_at > this.updated_at) {
       this.isDeleted = ei.isDeleted
-      this.updated_at = new Date()
-      await storage.updateTxLabelMap(
-        this.transactionId,
-        this.txLabelId,
-        this.toApi(),
-        trx
-      )
+      this.updated_at = new Date(Math.max(ei.updated_at.getTime(), this.updated_at.getTime()))
+      await storage.updateTxLabelMap(this.transactionId, this.txLabelId, this.toApi(), trx)
       wasMerged = true
     }
     return wasMerged

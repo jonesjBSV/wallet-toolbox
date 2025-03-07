@@ -1,20 +1,6 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest
-} from '@jest/globals'
-import {
-  mockUnderlyingWallet,
-  MockedBSV_SDK
-} from './WalletPermissionsManager.fixtures'
-import {
-  WalletPermissionsManager,
-  PermissionRequest,
-  PermissionToken
-} from '../WalletPermissionsManager'
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals'
+import { mockUnderlyingWallet, MockedBSV_SDK } from './WalletPermissionsManager.fixtures'
+import { WalletPermissionsManager, PermissionRequest, PermissionToken } from '../WalletPermissionsManager'
 
 // Re-mock @bsv/sdk with our fixture classes (MockTransaction, MockLockingScript, etc.)
 jest.mock('@bsv/sdk', () => MockedBSV_SDK)
@@ -61,10 +47,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
       // we can observe how many times it's called & with what plaintext.
       underlying.encrypt.mockClear()
 
-      const fields: number[][] = await privateManager().buildPushdropFields(
-        request,
-        expiry
-      )
+      const fields: number[][] = await privateManager().buildPushdropFields(request, expiry)
 
       // We expect 6 encryption calls (domain, expiry, privileged, secLevel, protoName, cpty).
       expect(underlying.encrypt).toHaveBeenCalledTimes(6)
@@ -99,9 +82,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
 
       // 6th => counterparty => 'some-other-pubkey'
       expect(underlying.encrypt.mock.calls[5][0].plaintext).toEqual(
-        expect.arrayContaining(
-          [...'some-other-pubkey'].map(c => c.charCodeAt(0))
-        )
+        expect.arrayContaining([...'some-other-pubkey'].map(c => c.charCodeAt(0)))
       )
     })
 
@@ -116,10 +97,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
 
       underlying.encrypt.mockClear()
 
-      const fields: number[][] = await privateManager().buildPushdropFields(
-        request,
-        expiry
-      )
+      const fields: number[][] = await privateManager().buildPushdropFields(request, expiry)
 
       // We expect 3 encryption calls: domain, expiry, basket
       expect(underlying.encrypt).toHaveBeenCalledTimes(3)
@@ -142,10 +120,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
 
       underlying.encrypt.mockClear()
 
-      const fields: number[][] = await privateManager().buildPushdropFields(
-        request,
-        expiry
-      )
+      const fields: number[][] = await privateManager().buildPushdropFields(request, expiry)
 
       // DP = domain, expiry, privileged, certType, fieldsJson, verifier
       expect(underlying.encrypt).toHaveBeenCalledTimes(6)
@@ -169,11 +144,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
 
       underlying.encrypt.mockClear()
 
-      const fields: number[][] = await privateManager().buildPushdropFields(
-        request,
-        expiry,
-        /*amount=*/ 10000
-      )
+      const fields: number[][] = await privateManager().buildPushdropFields(request, expiry, /*amount=*/ 10000)
 
       // For DSAP: domain + authorizedAmount (2 fields)
       expect(underlying.encrypt).toHaveBeenCalledTimes(2)
@@ -281,9 +252,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
       expect(outputs).toHaveLength(1)
       // "admin basket-access"
       expect(outputs[0].basket).toBe('admin basket-access')
-      expect(outputs[0].tags).toEqual(
-        expect.arrayContaining(['originator shopper.com', 'basket myBasket'])
-      )
+      expect(outputs[0].tags).toEqual(expect.arrayContaining(['originator shopper.com', 'basket myBasket']))
       // 3 fields => domain, expiry, basket, plus two metadata calls (description, outputDescription)
       expect(underlying.encrypt).toHaveBeenCalledTimes(5)
     })
@@ -318,12 +287,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
       const { outputs } = underlying.createAction.mock.calls[0][0]
       expect(outputs[0].basket).toBe('admin certificate-access')
       expect(outputs[0].tags).toEqual(
-        expect.arrayContaining([
-          'originator org.certs',
-          'privileged true',
-          'type KYC',
-          'verifier 02cccccc'
-        ])
+        expect.arrayContaining(['originator org.certs', 'privileged true', 'type KYC', 'verifier 02cccccc'])
       )
       // DP = domain, expiry, privileged, certType, fieldsJson, verifier => 6 encryption calls
       // Two additional ones for metadata encryption (action description, output description) for 8 total.
@@ -357,9 +321,7 @@ describe('WalletPermissionsManager - On-Chain Token Creation, Renewal & Revocati
       const { outputs } = underlying.createAction.mock.calls[0][0]
       // "admin spending-authorization"
       expect(outputs[0].basket).toBe('admin spending-authorization')
-      expect(outputs[0].tags).toEqual(
-        expect.arrayContaining(['originator spender.com'])
-      )
+      expect(outputs[0].tags).toEqual(expect.arrayContaining(['originator spender.com']))
       // domain, amount => 2 calls, plus two metadata encryption calls (description, outputDescription)
       expect(underlying.encrypt).toHaveBeenCalledTimes(4)
     })
