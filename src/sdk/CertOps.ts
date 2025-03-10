@@ -1,6 +1,5 @@
 import {
   Base64String,
-  Certificate as BsvCertificate,
   Certificate,
   CertificateFieldNameUnder50Bytes,
   GetPublicKeyArgs,
@@ -12,8 +11,7 @@ import {
   WalletDecryptResult,
   WalletEncryptArgs,
   WalletEncryptResult,
-  WalletInterface,
-  WalletProtocol
+  WalletInterface
 } from '@bsv/sdk'
 import { getIdentityKey, sdk } from '../index.client'
 import { SymmetricKey, Utils } from '@bsv/sdk'
@@ -28,7 +26,7 @@ export interface CertOpsWallet {
   decrypt(args: WalletDecryptArgs, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<WalletDecryptResult>
 }
 
-export class CertOps extends BsvCertificate {
+export class CertOps extends Certificate {
   _keyring?: Record<CertificateFieldNameUnder50Bytes, string>
   _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>
   _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>
