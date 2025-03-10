@@ -56,22 +56,22 @@ export function parseWalletOutpoint(outpoint: string): {
 }
 
 function defaultTrue(v?: boolean) {
-  return v === undefined ? true : v
+  return v ?? true
 }
 function defaultFalse(v?: boolean) {
-  return v === undefined ? false : v
+  return v ?? false
 }
 function defaultZero(v?: number) {
-  return v === undefined ? 0 : v
+  return v ?? 0
 }
 function default0xffffffff(v?: number) {
-  return v === undefined ? 0xffffffff : v
+  return v ?? 0xffffffff
 }
 function defaultOne(v?: number) {
-  return v === undefined ? 1 : v
+  return v ?? 1
 }
 function defaultEmpty<T>(v?: T[]) {
-  return v === undefined ? [] : v
+  return v ?? []
 }
 
 function validateOptionalStringLength(
