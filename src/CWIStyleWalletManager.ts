@@ -57,11 +57,9 @@ import {
   OutpointString,
   PrivateKey,
   LookupResolver,
-  Broadcaster,
   LookupAnswer,
   Transaction,
   PushDrop,
-  SHIPBroadcaster as SHIPCast,
   CreateActionInput,
   SHIPBroadcaster,
   HTTPSOverlayBroadcastFacilitator
@@ -193,13 +191,13 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
   /**
    * A `LookupResolver` instance used to query overlay networks.
    */
-  private resolver: LookupResolver
+  private readonly resolver: LookupResolver
 
   /**
    * A SHIP broadcaster that can be used to publish updated UMP tokens
    * under the `tm_users` topic to overlay service peers.
    */
-  private broadcaster: SHIPBroadcaster
+  private readonly broadcaster: SHIPBroadcaster
 
   /**
    * Construct a new OverlayUMPTokenInteractor.
