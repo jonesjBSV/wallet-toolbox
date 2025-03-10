@@ -161,7 +161,7 @@ export class ARC {
         r.data = `${txStatus} ${extraInfo}`
         if (r.txid !== txid) r.data += ` txid altered from ${r.txid} to ${txid}`
         r.txid = txid
-        if (txStatus === 'DOUBLE_SPEND_ATTEMPTED') {
+        if (txStatus === 'DOUBLE_SPEND_ATTEMPTED' || txStatus === 'SEEN_IN_ORPHAN_MEMPOOL') {
           r.status = 'error'
           r.doubleSpend = true
           r.competingTxs = competingTxs

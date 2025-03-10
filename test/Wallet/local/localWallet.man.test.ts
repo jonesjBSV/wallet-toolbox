@@ -27,7 +27,10 @@ import {
 } from '../../../src'
 import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { monitorEventLoopDelay } from 'perf_hooks'
-import { validateCreateActionArgs, ValidCreateActionArgs } from '../../../src/sdk'
+import { specOpInvalidChange, validateCreateActionArgs, ValidCreateActionArgs } from '../../../src/sdk'
+
+const setActiveClient = true
+const useMySQLConnectionForClient = true
 
 describe('localWallet tests', () => {
   jest.setTimeout(99999999)
@@ -82,16 +85,29 @@ describe('localWallet tests', () => {
 
   test('4 review change utxos', async () => {
     const setup = await createSetup('test')
+    const lor = await setup.wallet.listOutputs({
+      basket: specOpInvalidChange,
+      limit: 1000
+    })
+    if (lor.totalOutputs > 0) {
+      debugger
+      const lor = await setup.wallet.listOutputs({
+        basket: specOpInvalidChange,
+        tags: ['release']
+      })
+    }
+    /*
     const storage = setup.activeStorage
     const services = setup.services
     const { invalidSpendableOutputs: notUtxos } = await confirmSpendableOutputs(storage, services)
     const outputsToUpdate = notUtxos.map(o => ({ id: o.outputId, satoshis: o.satoshis }))
     const total: number = outputsToUpdate.reduce((t, o) => t + o.satoshis, 0)
     debugger
-    // *** About set spendable = false for outputs ***/
+    // *** About set spendable = false for outputs ***
     for (const o of outputsToUpdate) {
       await storage.updateOutput(o.id, { spendable: false })
     }
+    */
     await setup.wallet.destroy()
   })
 
@@ -125,9 +141,9 @@ async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
     chain,
     rootKeyHex: env.devKeys[env.testIdentityKey],
     filePath: env.testFilePath,
-    setActiveClient: false,
+    setActiveClient,
     addLocalBackup: false,
-    useMySQLConnectionForClient: false
+    useMySQLConnectionForClient
   })
 
   console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
