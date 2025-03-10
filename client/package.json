@@ -8,9 +8,6 @@
     "type": "git",
     "url": "git+https://github.com/bitcoin-sv/wallet-toolbox.git"
   },
-  "publishConfig": {
-    "registry": "https://npm-registry.babbage.systems/"
-  },
   "author": "Tone Engel",
   "license": "SEE LICENSE IN license.md",
   "keywords": [
