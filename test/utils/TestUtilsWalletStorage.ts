@@ -133,6 +133,9 @@ export abstract class TestUtilsWalletStorage {
     const bitailsApiKey = (chain === 'main' ? process.env.MAIN_BITAILS_API_KEY : process.env.TEST_BITAILS_API_KEY) || ''
     const whatsonchainApiKey =
       (chain === 'main' ? process.env.MAIN_WHATSONCHAIN_API_KEY : process.env.TEST_WHATSONCHAIN_API_KEY) || ''
+    if (!identityKey || !identityKey2 || !testIdentityKey) {
+      throw new sdk.WERR_INVALID_PARAMETER('identityKey, identityKey2, testIdentityKey', 'valid')
+    }
     return {
       chain,
       identityKey,
