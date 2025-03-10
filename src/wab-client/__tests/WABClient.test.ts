@@ -1,3 +1,4 @@
+import { _tu } from '../../../test/utils/TestUtilsWalletStorage'
 import { WABClient } from '../WABClient'
 import { TwilioPhoneInteractor } from '../auth-method-interactors/TwilioPhoneInteractor'
 
@@ -12,6 +13,10 @@ describe('WABClient', () => {
   beforeAll(() => {
     client = new WABClient(serverUrl)
   })
+
+  it('00', () => {})
+  // Don't run any of these tests whe
+  if (_tu.noEnv('main')) return
 
   it('should get server info', async () => {
     const info = await client.getInfo()
