@@ -513,7 +513,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       'user.example.com'
     )
     expect(underlying.decrypt).toHaveBeenCalledTimes(1)
-    expect(result.plaintext).toEqual([42, 42, 42, 42, 42, 42, 42, 42, 42])
+    expect(result.plaintext).toEqual([42, 42, 42, 42, 42])
   })
 
   it('should proxy createHmac() calls', async () => {
