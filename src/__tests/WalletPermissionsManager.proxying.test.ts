@@ -106,8 +106,8 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
     // but we also set them here in case it cross-references them. We'll keep it consistent (2 outputs with total 1000).
     mockTx.outputs = [{ satoshis: 600 }, { satoshis: 400 }]
 
-    // Now override fromAtomicBEEF to return our mockTx:
-    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
+      // Now override fromAtomicBEEF to return our mockTx:
+      ; (MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
 
     // Attempt to create an action from a non-admin origin
     await manager.createAction(
@@ -196,7 +196,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       }
     ]
     mockTx.outputs = [{ satoshis: 100 }]
-    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
+      ; (MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
 
     await expect(
       manager.createAction(
@@ -312,7 +312,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       ]
     })
     // We'll have the manager attempt to decrypt. The manager calls `underlying.decrypt`
-    // which is mocked to return plaintext [42, 42]. That is "asterisk-asterisk" in ASCII
+    // which is mocked to return plaintext [42, 42, 42, 42, 42, 42, 42]. That is "asterisk-asterisk" in ASCII
     // So let's see how the manager transforms it back to a string: fromCharCode(42,42) => "**"
     // However, note that the manager's "maybeDecryptMetadata()" tries to decrypt the field
     // If it works, it returns the decrypted string. Our underlying mock decrypt => "[42,42]" => "**"
@@ -323,10 +323,10 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
     expect(underlying.listActions).toHaveBeenCalledTimes(1)
     // The manager calls ensureLabelAccess first, which triggers a protocol permission request
     // we ephemeral-grant. Then it calls underlying.listActions.
-    expect(result.actions[0].description).toBe('**') // Decrypted from [42, 42]
-    expect(result.actions[0].inputs![0].inputDescription).toBe('**')
-    expect(result.actions[0].outputs![0].outputDescription).toBe('**')
-    expect(result.actions[0].outputs![0].customInstructions).toBe('**')
+    expect(result.actions[0].description).toBe('*****') // Decrypted from [42, 42, 42, 42, 42, 42, 42]
+    expect(result.actions[0].inputs![0].inputDescription).toBe('*****')
+    expect(result.actions[0].outputs![0].outputDescription).toBe('*****')
+    expect(result.actions[0].outputs![0].customInstructions).toBe('*****')
   })
 
   it('should pass internalizeAction calls to underlying, after ensuring basket permissions and encrypting customInstructions if config=on', async () => {
@@ -394,7 +394,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
         'app.example.com' // the actual underlying call
       ]
     ])
-    expect(result.outputs[0].customInstructions).toBe('**') // from [42,42] decryption
+    expect(result.outputs[0].customInstructions).toBe('*****') // from [42,42] decryption
   })
 
   it('should ensure basket removal permission then call relinquishOutput', async () => {
@@ -500,7 +500,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
     )
 
     expect(underlying.encrypt).toHaveBeenCalledTimes(1)
-    expect(result.ciphertext).toEqual([42, 42, 42]) // from the mock
+    expect(result.ciphertext).toEqual([42, 42, 42, 42, 42, 42, 42]) // from the mock
   })
 
   it('should proxy decrypt() calls after checking protocol permission', async () => {
@@ -513,7 +513,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       'user.example.com'
     )
     expect(underlying.decrypt).toHaveBeenCalledTimes(1)
-    expect(result.plaintext).toEqual([42, 42])
+    expect(result.plaintext).toEqual([42, 42, 42, 42, 42, 42, 42, 42, 42])
   })
 
   it('should proxy createHmac() calls', async () => {
