@@ -5,6 +5,9 @@ import { sdk, Wallet } from '../../../src/index.all'
 describe('acquireCertificate tests', () => {
   jest.setTimeout(99999999)
 
+  test('00', () => {})
+  if (_tu.noEnv('test')) return
+
   const env = _tu.getEnv('test')
 
   beforeAll(async () => {})
