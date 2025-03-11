@@ -20,7 +20,7 @@ export class MockTransaction {
   public outputs: any[] = []
   public fee: number = 0
 
-  constructor() {}
+  constructor() { }
   static fromAtomicBEEF() {
     // Mocked below
   }
@@ -35,7 +35,7 @@ export class MockTransaction {
   }
 }
 
-;(MockTransaction as any).fromAtomicBEEF = jest.fn(() => {
+; (MockTransaction as any).fromAtomicBEEF = jest.fn(() => {
   // We skip real validation, returning a MockTransaction with minimal structure.
   const tx = new MockTransaction()
   return tx
@@ -171,7 +171,8 @@ export const MockedBSV_SDK = {
   LockingScript: MockLockingScript,
   PushDrop: MockPushDrop,
   Utils: MockUtils,
-  Random: MockRandom
+  Random: MockRandom,
+  Certificate: null
 }
 
 /* ---------------------------------------------------------------------------
@@ -208,8 +209,8 @@ export function mockUnderlyingWallet(): jest.Mocked<any> {
       keyID: 'testKey',
       proofType: 1
     }),
-    encrypt: jest.fn().mockResolvedValue({ ciphertext: [42, 42, 42] }),
-    decrypt: jest.fn().mockResolvedValue({ plaintext: [42, 42] }),
+    encrypt: jest.fn().mockResolvedValue({ ciphertext: [42, 42, 42, 42, 42, 42, 42] }),
+    decrypt: jest.fn().mockResolvedValue({ plaintext: [42, 42, 42, 42, 42] }),
     createHmac: jest.fn().mockResolvedValue({ hmac: [0xaa] }),
     verifyHmac: jest.fn().mockResolvedValue({ valid: true }),
     createSignature: jest.fn().mockResolvedValue({ signature: [0x30, 0x44] }),
