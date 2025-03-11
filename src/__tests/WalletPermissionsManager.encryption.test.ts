@@ -119,14 +119,14 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
           description: actionDescription,
           inputs: [
             {
-              outpoint: 'txid1.0',
+              outpoint: '0231.0',
               unlockingScriptLength: 73,
               inputDescription: inputDesc
             }
           ],
           outputs: [
             {
-              lockingScript: 'OP_RETURN 1234',
+              lockingScript: '561234',
               satoshis: 500,
               outputDescription: outputDesc,
               customInstructions: customInstr
@@ -217,14 +217,14 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
           description: actionDescription,
           inputs: [
             {
-              outpoint: 'someTx.0',
+              outpoint: '9876.0',
               unlockingScriptLength: 73,
               inputDescription: inputDesc
             }
           ],
           outputs: [
             {
-              lockingScript: 'OP_RETURN ABCD',
+              lockingScript: 'ABCD',
               satoshis: 123,
               outputDescription: outputDesc,
               customInstructions: customInstr
@@ -245,13 +245,13 @@ describe('WalletPermissionsManager - Metadata Encryption & Decryption', () => {
             description: actionDescription,
             inputs: [
               {
-                outpoint: 'someTx.0',
+                outpoint: '0123.0',
                 inputDescription: inputDesc
               }
             ],
             outputs: [
               {
-                lockingScript: 'OP_RETURN ABCD',
+                lockingScript: 'ABCD',
                 satoshis: 123,
                 outputDescription: outputDesc,
                 customInstructions: customInstr
