@@ -253,7 +253,7 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
           description: 'Inserting stuff',
           outputs: [
             {
-              lockingScript: 'op_return ...',
+              lockingScript: '012345',
               satoshis: 1,
               basket: 'user-basket',
               outputDescription: 'some out desc'
