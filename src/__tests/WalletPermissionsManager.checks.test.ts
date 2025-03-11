@@ -298,7 +298,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
             description: 'Insert to user-basket',
             outputs: [
               {
-                lockingScript: 'op_return',
+                lockingScript: '7812',
                 satoshis: 1,
                 basket: 'user-basket',
                 outputDescription: 'Nothing to see here'
@@ -331,7 +331,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
           description: 'Insert to user-basket',
           outputs: [
             {
-              lockingScript: 'op_return',
+              lockingScript: '1234',
               satoshis: 1,
               basket: 'some-basket',
               outputDescription: 'Nothing to see here'
@@ -596,7 +596,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
           description: 'Some spend transaction',
           outputs: [
             {
-              lockingScript: 'script1',
+              lockingScript: '1321',
               satoshis: 200,
               outputDescription: 'Nothing to see here'
             }
@@ -611,7 +611,8 @@ describe('WalletPermissionsManager - Permission Checks', () => {
 
       // Underlying createAction definitely called
       expect(underlying.createAction).toHaveBeenCalledTimes(1)
-      expect(result.signableTransaction).toBeDefined()
+      // If seekSpendingPermissions=false, the result should NOT? contain the signableTransaction
+      expect(result.signableTransaction).not.toBeDefined()
     })
 
     it('should require spending token if netSpent > 0 and seekSpendingPermissions=true', async () => {
@@ -646,7 +647,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
             outputs: [
               {
                 outputDescription: 'Nothing to see here',
-                lockingScript: '0xabc',
+                lockingScript: '1abc',
                 satoshis: 200
               }
             ]
@@ -712,7 +713,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
       const dsapToken: PermissionToken = {
         txid: 'dsap123',
         outputIndex: 0,
-        outputScript: 'scriptHex',
+        outputScript: '9218',
         satoshis: 1,
         originator: 'shopper.com',
         authorizedAmount: 1000,
@@ -730,7 +731,7 @@ describe('WalletPermissionsManager - Permission Checks', () => {
           outputs: [
             {
               outputDescription: 'Nothing to see here',
-              lockingScript: '0xabc',
+              lockingScript: '0abc',
               satoshis: 500
             }
           ]
