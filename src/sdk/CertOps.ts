@@ -4,6 +4,7 @@ import {
   CertificateFieldNameUnder50Bytes,
   GetPublicKeyArgs,
   GetPublicKeyResult,
+  MasterCertificate,
   OriginatorDomainNameStringUnder250Bytes,
   PubKeyHex,
   WalletCertificate,
@@ -133,8 +134,8 @@ export class CertOps extends Certificate {
 
       const encryptedFieldKey = await this.wallet.encrypt({
         plaintext: fieldSymmetricKey.toArray(),
-        counterparty,
-        ...Certificate.getCertificateFieldEncryptionDetails(fieldName, this.serialNumber)
+        ...Certificate.getCertificateFieldEncryptionDetails(fieldName, this.serialNumber),
+        counterparty
       })
       keyring[fieldName] = Utils.toBase64(encryptedFieldKey.ciphertext)
     }
