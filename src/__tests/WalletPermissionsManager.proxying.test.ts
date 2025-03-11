@@ -106,8 +106,8 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
     // but we also set them here in case it cross-references them. We'll keep it consistent (2 outputs with total 1000).
     mockTx.outputs = [{ satoshis: 600 }, { satoshis: 400 }]
 
-      // Now override fromAtomicBEEF to return our mockTx:
-      ; (MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
+    // Now override fromAtomicBEEF to return our mockTx:
+    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
 
     // Attempt to create an action from a non-admin origin
     await manager.createAction(
@@ -196,7 +196,7 @@ describe('WalletPermissionsManager - Regression & Integration with Underlying Wa
       }
     ]
     mockTx.outputs = [{ satoshis: 100 }]
-      ; (MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
+    ;(MockedBSV_SDK.Transaction.fromAtomicBEEF as jest.Mock).mockReturnValue(mockTx)
 
     await expect(
       manager.createAction(
