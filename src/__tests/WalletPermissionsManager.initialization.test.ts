@@ -198,7 +198,7 @@ describe('WalletPermissionsManager - Initialization & Configuration', () => {
           description: 'Insert to user basket',
           outputs: [
             {
-              lockingScript: '0x1234',
+              lockingScript: '1234',
               satoshis: 888,
               basket: 'somebasket',
               outputDescription: 'some out desc'
