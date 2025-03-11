@@ -343,7 +343,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       }
       // Now broadcast to `tm_users` using SHIP
       const broadcastTx = Transaction.fromAtomicBEEF(createResult.tx!)
-      await this.broadcaster.broadcast(broadcastTx)
+      const result = await this.broadcaster.broadcast(broadcastTx)
       console.log('BROADCAST RESULT', result)
       return `${finalTxid}.0`
     }
