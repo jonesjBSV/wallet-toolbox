@@ -1,4 +1,4 @@
-import { AcquireCertificateArgs, ProtoWallet, ProveCertificateArgs } from '@bsv/sdk'
+import { AcquireCertificateArgs, Certificate, MasterCertificate, ProtoWallet, ProveCertificateArgs, VerifiableCertificate } from '@bsv/sdk'
 import { _tu, expectToThrowWERR } from '../../utils/TestUtilsWalletStorage'
 import { sdk, Wallet } from '../../../src/index.all'
 
@@ -42,17 +42,20 @@ describe('acquireCertificate tests', () => {
 
     // Make a test certificate from a random certifier for the wallet's identityKey
     const subject = wallet.keyDeriver.identityKey
-    const { cert, certifier } = _tu.makeSampleCert(subject)
+    const { cert: wcert, certifier } = _tu.makeSampleCert(subject)
 
     // Act as the certifier: create a wallet for them...
     const certifierWallet = new ProtoWallet(certifier)
-    // load the plaintext certificate into a CertOps object
-    const co = new sdk.CertOps(certifierWallet, cert)
-    // encrypt and sign the certificate
-    await co.encryptAndSignNewCertificate()
-    // export the signed certificate and a keyring for this wallet's identity as counterparty
-    const { certificate: c, keyring: kr } = co.exportForSubject()
 
+    const cert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
+      wcert.revocationOutpoint, wcert.fields)
+
+    const r1 = await MasterCertificate.createCertificateFields(certifierWallet, subject, cert.fields)
+    const signedCert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
+      wcert.revocationOutpoint, r1.certificateFields)
+    await signedCert.sign(certifierWallet)
+
+    const c = signedCert
     // args object to create a new certificate via 'direct' protocol.
     const args: AcquireCertificateArgs = {
       serialNumber: c.serialNumber,
@@ -64,7 +67,7 @@ describe('acquireCertificate tests', () => {
       certifier: c.certifier,
       acquisitionProtocol: 'direct',
       fields: c.fields,
-      keyringForSubject: kr,
+      keyringForSubject: r1.masterKeyring,
       keyringRevealer: 'certifier',
       revocationOutpoint: c.revocationOutpoint
     }
@@ -91,12 +94,20 @@ describe('acquireCertificate tests', () => {
       verifier: subject
     }
     const pkr = await wallet.proveCertificate(pkrArgs)
-    const co2 = await sdk.CertOps.fromCounterparty(wallet, {
-      certificate: lc,
-      keyring: pkr.keyringForVerifier,
-      counterparty: pkrArgs.verifier
-    })
-    expect(co2._decryptedFields!['name']).toBe('Alice')
+
+    const veriCert = new VerifiableCertificate(
+      lc.type,
+      lc.serialNumber,
+      lc.subject,
+      lc.certifier,
+      lc.revocationOutpoint,
+      lc.fields,
+      pkr.keyringForVerifier,
+      lc.signature,
+    )
+
+    const r4 = await veriCert.decryptFields(wallet)
+    expect(r4['name']).toBe('Alice')
 
     const certs = await wallet.listCertificates({ types: [], certifiers: [] })
     for (const cert of certs.certificates) {
@@ -121,16 +132,20 @@ describe('acquireCertificate tests', () => {
 
     // Certificate issued to the privileged key must use the privilegedKeyManager's identityKey
     const subject = (await wallet.privilegedKeyManager!.getPublicKey({ identityKey: true })).publicKey
-    const { cert, certifier } = _tu.makeSampleCert(subject)
+    const { cert: wcert, certifier } = _tu.makeSampleCert(subject)
 
     // Act as the certifier: create a wallet for them...
     const certifierWallet = new ProtoWallet(certifier)
-    // load the plaintext certificate into a CertOps object
-    const co = new sdk.CertOps(certifierWallet, cert)
-    // encrypt and sign the certificate
-    await co.encryptAndSignNewCertificate()
-    // export the signed certificate and a keyring for this wallet's identity as counterparty
-    const { certificate: c, keyring: kr } = co.exportForSubject()
+
+    const cert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
+      wcert.revocationOutpoint, wcert.fields)
+
+    const r1 = await MasterCertificate.createCertificateFields(certifierWallet, subject, cert.fields)
+    const signedCert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
+      wcert.revocationOutpoint, r1.certificateFields)
+    await signedCert.sign(certifierWallet)
+
+    const c = signedCert
 
     // args object to create a new certificate via 'direct' protocol.
     const args: AcquireCertificateArgs = {
@@ -143,7 +158,7 @@ describe('acquireCertificate tests', () => {
       certifier: c.certifier,
       acquisitionProtocol: 'direct',
       fields: c.fields,
-      keyringForSubject: kr,
+      keyringForSubject: r1.masterKeyring,
       keyringRevealer: 'certifier',
       revocationOutpoint: c.revocationOutpoint
     }
@@ -167,15 +182,25 @@ describe('acquireCertificate tests', () => {
     const pkrArgs: ProveCertificateArgs = {
       certificate: { serialNumber: lc.serialNumber },
       fieldsToReveal: ['name'],
-      verifier: subject
+      verifier: subject,
+      privileged: true,
+      privilegedReason: 'more cheese'
     }
     const pkr = await wallet.proveCertificate(pkrArgs)
-    const co2 = await sdk.CertOps.fromCounterparty(wallet.privilegedKeyManager!, {
-      certificate: lc,
-      keyring: pkr.keyringForVerifier,
-      counterparty: pkrArgs.verifier
-    })
-    expect(co2._decryptedFields!['name']).toBe('Alice')
+
+    const veriCert = new VerifiableCertificate(
+      lc.type,
+      lc.serialNumber,
+      lc.subject,
+      lc.certifier,
+      lc.revocationOutpoint,
+      lc.fields,
+      pkr.keyringForVerifier,
+      lc.signature,
+    )
+
+    const r4 = await veriCert.decryptFields(wallet, true, 'more cheese')
+    expect(r4['name']).toBe('Alice')
 
     const certs = await wallet.listCertificates({ types: [], certifiers: [] })
     for (const cert of certs.certificates) {
