@@ -1,4 +1,11 @@
-import { AcquireCertificateArgs, Certificate, MasterCertificate, ProtoWallet, ProveCertificateArgs, VerifiableCertificate } from '@bsv/sdk'
+import {
+  AcquireCertificateArgs,
+  Certificate,
+  MasterCertificate,
+  ProtoWallet,
+  ProveCertificateArgs,
+  VerifiableCertificate
+} from '@bsv/sdk'
 import { _tu, expectToThrowWERR } from '../../utils/TestUtilsWalletStorage'
 import { sdk, Wallet } from '../../../src/index.all'
 
@@ -47,12 +54,24 @@ describe('acquireCertificate tests', () => {
     // Act as the certifier: create a wallet for them...
     const certifierWallet = new ProtoWallet(certifier)
 
-    const cert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
-      wcert.revocationOutpoint, wcert.fields)
+    const cert = new Certificate(
+      wcert.type,
+      wcert.serialNumber,
+      wcert.subject,
+      wcert.certifier,
+      wcert.revocationOutpoint,
+      wcert.fields
+    )
 
     const r1 = await MasterCertificate.createCertificateFields(certifierWallet, subject, cert.fields)
-    const signedCert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
-      wcert.revocationOutpoint, r1.certificateFields)
+    const signedCert = new Certificate(
+      wcert.type,
+      wcert.serialNumber,
+      wcert.subject,
+      wcert.certifier,
+      wcert.revocationOutpoint,
+      r1.certificateFields
+    )
     await signedCert.sign(certifierWallet)
 
     const c = signedCert
@@ -103,7 +122,7 @@ describe('acquireCertificate tests', () => {
       lc.revocationOutpoint,
       lc.fields,
       pkr.keyringForVerifier,
-      lc.signature,
+      lc.signature
     )
 
     const r4 = await veriCert.decryptFields(wallet)
@@ -137,12 +156,24 @@ describe('acquireCertificate tests', () => {
     // Act as the certifier: create a wallet for them...
     const certifierWallet = new ProtoWallet(certifier)
 
-    const cert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
-      wcert.revocationOutpoint, wcert.fields)
+    const cert = new Certificate(
+      wcert.type,
+      wcert.serialNumber,
+      wcert.subject,
+      wcert.certifier,
+      wcert.revocationOutpoint,
+      wcert.fields
+    )
 
     const r1 = await MasterCertificate.createCertificateFields(certifierWallet, subject, cert.fields)
-    const signedCert = new Certificate(wcert.type, wcert.serialNumber, wcert.subject, wcert.certifier,
-      wcert.revocationOutpoint, r1.certificateFields)
+    const signedCert = new Certificate(
+      wcert.type,
+      wcert.serialNumber,
+      wcert.subject,
+      wcert.certifier,
+      wcert.revocationOutpoint,
+      r1.certificateFields
+    )
     await signedCert.sign(certifierWallet)
 
     const c = signedCert
@@ -196,7 +227,7 @@ describe('acquireCertificate tests', () => {
       lc.revocationOutpoint,
       lc.fields,
       pkr.keyringForVerifier,
-      lc.signature,
+      lc.signature
     )
 
     const r4 = await veriCert.decryptFields(wallet, true, 'more cheese')

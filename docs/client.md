@@ -4413,11 +4413,10 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [ARC](#class-arc) | [OverlayUMPTokenInteractor](#class-overlayumptokeninteractor) | [WABClient](#class-wabclient) |
-| [AuthMethodInteractor](#class-authmethodinteractor) | [PersonaIDInteractor](#class-personaidinteractor) | [WERR_BAD_REQUEST](#class-werr_bad_request) |
-| [Bitails](#class-bitails) | [PrivilegedKeyManager](#class-privilegedkeymanager) | [WERR_BROADCAST_UNAVAILABLE](#class-werr_broadcast_unavailable) |
-| [CWIStyleWalletManager](#class-cwistylewalletmanager) | [ScriptTemplateBRC29](#class-scripttemplatebrc29) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) |
-| [CertOps](#class-certops) | [SdkWhatsOnChain](#class-sdkwhatsonchain) | [WERR_INTERNAL](#class-werr_internal) |
+| [ARC](#class-arc) | [PersonaIDInteractor](#class-personaidinteractor) | [WERR_BAD_REQUEST](#class-werr_bad_request) |
+| [AuthMethodInteractor](#class-authmethodinteractor) | [PrivilegedKeyManager](#class-privilegedkeymanager) | [WERR_BROADCAST_UNAVAILABLE](#class-werr_broadcast_unavailable) |
+| [Bitails](#class-bitails) | [ScriptTemplateBRC29](#class-scripttemplatebrc29) | [WERR_INSUFFICIENT_FUNDS](#class-werr_insufficient_funds) |
+| [CWIStyleWalletManager](#class-cwistylewalletmanager) | [SdkWhatsOnChain](#class-sdkwhatsonchain) | [WERR_INTERNAL](#class-werr_internal) |
 | [EntityBase](#class-entitybase) | [ServiceCollection](#class-servicecollection) | [WERR_INVALID_OPERATION](#class-werr_invalid_operation) |
 | [EntityCertificate](#class-entitycertificate) | [Services](#class-services) | [WERR_INVALID_PARAMETER](#class-werr_invalid_parameter) |
 | [EntityCertificateField](#class-entitycertificatefield) | [SimpleWalletManager](#class-simplewalletmanager) | [WERR_INVALID_PUBLIC_KEY](#class-werr_invalid_public_key) |
@@ -4435,6 +4434,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [EntityUser](#class-entityuser) | [TaskSendWaiting](#class-tasksendwaiting) | [WalletSigner](#class-walletsigner) |
 | [MergeEntity](#class-mergeentity) | [TaskSyncWhenIdle](#class-tasksyncwhenidle) | [WalletStorageManager](#class-walletstoragemanager) |
 | [Monitor](#class-monitor) | [TwilioPhoneInteractor](#class-twiliophoneinteractor) | [WhatsOnChain](#class-whatsonchain) |
+| [OverlayUMPTokenInteractor](#class-overlayumptokeninteractor) | [WABClient](#class-wabclient) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4884,89 +4884,6 @@ An array of bytes representing the encrypted snapshot.
 Throws
 
 if no primary key or token is currently set.
-
-Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
-
----
-##### Class: CertOps
-
-```ts
-export class CertOps extends Certificate {
-    _keyring?: Record<CertificateFieldNameUnder50Bytes, string>;
-    _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
-    _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>;
-    _proveCertificate?: boolean;
-    constructor(public wallet: CertOpsWallet, wc: WalletCertificate, proveCertificate?: boolean) 
-    static async fromCounterparty(wallet: CertOpsWallet, e: {
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-        counterparty: PubKeyHex;
-    }): Promise<CertOps> 
-    static async fromCertifier(wallet: CertOpsWallet, e: {
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-    }): Promise<CertOps> 
-    static async fromEncrypted(wallet: CertOpsWallet, wc: WalletCertificate, keyring: Record<CertificateFieldNameUnder50Bytes, string>): Promise<CertOps> 
-    static async fromDecrypted(wallet: CertOpsWallet, wc: WalletCertificate): Promise<CertOps> 
-    static copyFields<T>(fields: Record<CertificateFieldNameUnder50Bytes, T>): Record<CertificateFieldNameUnder50Bytes, T> 
-    exportForSubject(): {
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-    } 
-    toWalletCertificate(): WalletCertificate 
-    async encryptFields(counterparty: "self" | PubKeyHex = "self"): Promise<{
-        fields: Record<CertificateFieldNameUnder50Bytes, string>;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-    }> 
-    async decryptFields(counterparty?: PubKeyHex, keyring?: Record<CertificateFieldNameUnder50Bytes, string>): Promise<Record<CertificateFieldNameUnder50Bytes, string>> 
-    async exportForCounterparty(counterparty: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<{
-        certificate: WalletCertificate;
-        keyring: Record<CertificateFieldNameUnder50Bytes, string>;
-        counterparty: PubKeyHex;
-    }> 
-    async createKeyringForVerifier(verifierIdentityKey: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<Record<CertificateFieldNameUnder50Bytes, Base64String>> 
-    async encryptAndSignNewCertificate(): Promise<void> 
-}
-```
-
-See also: [CertOpsWallet](./client.md#interface-certopswallet), [proveCertificate](./client.md#function-provecertificate)
-
-###### Method createKeyringForVerifier
-
-Creates a verifiable certificate structure for a specific verifier, allowing them access to specified fields.
-This method decrypts the master field keys for each field specified in `fieldsToReveal` and re-encrypts them
-for the verifier's identity key. The resulting certificate structure includes only the fields intended to be
-revealed and a verifier-specific keyring for field decryption.
-
-```ts
-async createKeyringForVerifier(verifierIdentityKey: PubKeyHex, fieldsToReveal: CertificateFieldNameUnder50Bytes[]): Promise<Record<CertificateFieldNameUnder50Bytes, Base64String>> 
-```
-
-Returns
-
-- A new certificate structure containing the original encrypted fields, the verifier-specific field decryption keyring, and essential certificate metadata.
-
-Argument Details
-
-+ **verifierIdentityKey**
-  + The public identity key of the verifier who will receive access to the specified fields.
-+ **fieldsToReveal**
-  + An array of field names to be revealed to the verifier. Must be a subset of the certificate's fields.
-
-Throws
-
-Throws an error if:
-- fieldsToReveal is empty or a field in `fieldsToReveal` does not exist in the certificate.
-- The decrypted master field key fails to decrypt the corresponding field (indicating an invalid key).
-
-###### Method encryptAndSignNewCertificate
-
-encrypt plaintext field values for the subject
-update the signature using the certifier's private key.
-
-```ts
-async encryptAndSignNewCertificate(): Promise<void> 
-```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

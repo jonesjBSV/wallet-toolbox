@@ -64,7 +64,7 @@ dotenv.config()
 const localMySqlConnection = process.env.MYSQL_CONNECTION || ''
 
 export interface TuEnvFlags {
-  chain: sdk.Chain,
+  chain: sdk.Chain
   runMySQL: boolean
   runSlowTests: boolean
   logTests: boolean
@@ -128,7 +128,7 @@ export abstract class TestUtilsWalletStorage {
       chain,
       runMySQL,
       runSlowTests,
-      logTests,
+      logTests
     }
   }
 

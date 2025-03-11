@@ -5,7 +5,7 @@ import {
   WalletDecryptArgs,
   WalletDecryptResult,
   WalletEncryptArgs,
-  WalletEncryptResult,
+  WalletEncryptResult
 } from '@bsv/sdk'
 
 export interface CertOpsWallet {
