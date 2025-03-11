@@ -4891,7 +4891,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ##### Class: CertOps
 
 ```ts
-export class CertOps extends BsvCertificate {
+export class CertOps extends Certificate {
     _keyring?: Record<CertificateFieldNameUnder50Bytes, string>;
     _encryptedFields?: Record<CertificateFieldNameUnder50Bytes, Base64String>;
     _decryptedFields?: Record<CertificateFieldNameUnder50Bytes, string>;
