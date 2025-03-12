@@ -61,8 +61,7 @@ import {
   Transaction,
   PushDrop,
   CreateActionInput,
-  SHIPBroadcaster,
-  HTTPSOverlayBroadcastFacilitator
+  SHIPBroadcaster
 } from '@bsv/sdk'
 import { PrivilegedKeyManager } from './sdk/PrivilegedKeyManager'
 
@@ -344,12 +343,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       }
       // Now broadcast to `tm_users` using SHIP
       const broadcastTx = Transaction.fromAtomicBEEF(createResult.tx!)
-      const facilitator = new HTTPSOverlayBroadcastFacilitator()
-      const result = await facilitator.send('https://users.bapp.dev', {
-        topics: ['tm_users'],
-        beef: broadcastTx.toBEEF()
-      })
-      await this.broadcaster.broadcast(broadcastTx)
+      const result = await this.broadcaster.broadcast(broadcastTx)
       console.log('BROADCAST RESULT', result)
       return `${finalTxid}.0`
     }
@@ -384,11 +378,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       // 6) Broadcast to `tm_users`
       const finalAtomicTx = signResult.tx
       const broadcastTx = Transaction.fromAtomicBEEF(finalAtomicTx!)
-      const facilitator = new HTTPSOverlayBroadcastFacilitator()
-      const result = await facilitator.send('https://users.bapp.dev', {
-        topics: ['tm_users'],
-        beef: broadcastTx.toBEEF()
-      })
+      const result = await this.broadcaster.broadcast(broadcastTx)
       console.log('BROADCAST RESULT', result)
       return `${finalTxid}.0`
     } else {
@@ -400,11 +390,7 @@ export class OverlayUMPTokenInteractor implements UMPTokenInteractor {
       }
       const finalAtomicTx = signResult.tx
       const broadcastTx = Transaction.fromAtomicBEEF(finalAtomicTx!)
-      const facilitator = new HTTPSOverlayBroadcastFacilitator()
-      const result = await facilitator.send('https://users.bapp.dev', {
-        topics: ['tm_users'],
-        beef: broadcastTx.toBEEF()
-      })
+      const result = await this.broadcaster.broadcast(broadcastTx)
       console.log('BROADCAST RESULT', result)
       return `${finalTxid}.0`
     }
