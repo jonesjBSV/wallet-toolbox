@@ -29,51 +29,53 @@ import { _tu, TestWalletNoSetup } from '../../utils/TestUtilsWalletStorage'
 import { monitorEventLoopDelay } from 'perf_hooks'
 import { specOpInvalidChange, validateCreateActionArgs, ValidCreateActionArgs } from '../../../src/sdk'
 
+const chain: sdk.Chain = 'test'
 const setActiveClient = true
 const useMySQLConnectionForClient = true
+const useTestIdentityKey = false
+const useIdentityKey2 = true
 
 describe('localWallet tests', () => {
   jest.setTimeout(99999999)
 
   test('00', () => {})
-  if (_tu.noTestEnv('test')) return
-  if (_tu.noTestEnv('main')) return
+  if (_tu.noTestEnv(chain)) return
 
   test('0 monitor runOnce', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     await setup.monitor.runOnce()
     await setup.wallet.destroy()
   })
 
   test('1 recover 1 sat outputs', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     await recoverOneSatTestOutputs(setup)
     await setup.wallet.destroy()
   })
 
   test('2 create 1 sat delayed', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     const car = await createOneSatTestOutput(setup, {}, 1)
     //await trackReqByTxid(setup, car.txid!)
     await setup.wallet.destroy()
   })
 
   test('2a create 1 sat immediate', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     const car = await createOneSatTestOutput(setup, { acceptDelayedBroadcast: false }, 1)
     // await trackReqByTxid(setup, car.txid!)
     await setup.wallet.destroy()
   })
 
   test('2b create 2 nosend and sendWith', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     const car = await createOneSatTestOutput(setup, { noSend: true }, 2)
     //await trackReqByTxid(setup, car.txid!)
     await setup.wallet.destroy()
   })
 
   test('3 return active to cloud client', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     const localBalance = await setup.wallet.balance()
     const log = await setup.storage.setActive(setup.clientStorageIdentityKey!)
     console.log(log)
@@ -84,10 +86,9 @@ describe('localWallet tests', () => {
   })
 
   test('4 review change utxos', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     const lor = await setup.wallet.listOutputs({
-      basket: specOpInvalidChange,
-      limit: 1000
+      basket: specOpInvalidChange
     })
     if (lor.totalOutputs > 0) {
       debugger
@@ -112,7 +113,7 @@ describe('localWallet tests', () => {
   })
 
   test('5 review synchunk', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     const identityKey = setup.identityKey
     const reader = setup.activeStorage
     const readerSettings = reader.getSettings()
@@ -125,7 +126,7 @@ describe('localWallet tests', () => {
   })
 
   test('6 backup', async () => {
-    const setup = await createSetup('test')
+    const setup = await createSetup(chain)
     const log = await setup.storage.updateBackups()
     console.log(log)
     await setup.wallet.destroy()
@@ -134,13 +135,26 @@ describe('localWallet tests', () => {
 
 async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
   const env = _tu.getEnv(chain)
-  if (!env.testIdentityKey) throw new sdk.WERR_INVALID_PARAMETER('env.testIdentityKey', 'valid')
-  if (!env.testFilePath) throw new sdk.WERR_INVALID_PARAMETER('env.testFilePath', 'valid')
+  let identityKey: string | undefined
+  let filePath: string | undefined
+  if (useTestIdentityKey) {
+    identityKey = env.testIdentityKey
+    filePath = env.testFilePath
+  } else {
+    if (useIdentityKey2) {
+      identityKey = env.identityKey2
+    } else {
+      identityKey = env.identityKey
+      filePath = env.filePath
+    } 
+  }
+  if (!identityKey) throw new sdk.WERR_INVALID_PARAMETER('identityKey', 'valid')
+  if (!filePath) filePath = `./backup-${chain}-${identityKey}.sqlite`
 
   const setup = await _tu.createTestWallet({
     chain,
-    rootKeyHex: env.devKeys[env.testIdentityKey],
-    filePath: env.testFilePath,
+    rootKeyHex: env.devKeys[identityKey],
+    filePath,
     setActiveClient,
     addLocalBackup: false,
     useMySQLConnectionForClient

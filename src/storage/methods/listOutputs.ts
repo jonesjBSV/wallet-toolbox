@@ -8,6 +8,7 @@ interface SpecOp {
   name: string
   useBasket?: string
   ignoreLimit?: boolean
+  includeOutputScripts?: boolean
   resultFromTags?: (
     s: StorageKnex,
     auth: sdk.AuthId,
@@ -61,6 +62,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
     name: 'invalidChangeOutputs',
     useBasket: 'default',
     ignoreLimit: true,
+    includeOutputScripts: true,
     tagsToIntercept: ['release'],
     filterOutputs: async (
       s: StorageKnex,
@@ -71,16 +73,24 @@ const basketToSpecOp: Record<string, SpecOp> = {
     ): Promise<TableOutput[]> => {
       const filteredOutputs: TableOutput[] = []
       for (const o of outputs) {
-        let ok = false
+        await s.validateOutputScript(o)
+        let ok: boolean | undefined = false
+        let r: sdk.GetUtxoStatusResult
         if (o.lockingScript && o.lockingScript.length > 0) {
-          const r = await s.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
+          r = await s.getServices().getUtxoStatus(asString(o.lockingScript), 'script')
           if (r.status === 'success' && r.isUtxo && r.details?.length > 0) {
             if (r.details.some(d => d.txid === o.txid && d.satoshis === o.satoshis && d.index === o.vout)) {
               ok = true
+            } else {
+              ok = undefined
             }
+          } else {
+            ok = false
           }
+        } else {
+          ok = undefined
         }
-        if (!ok) {
+        if (ok === false) {
           filteredOutputs.push(o)
         }
       }
