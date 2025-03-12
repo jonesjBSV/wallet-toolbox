@@ -146,7 +146,7 @@ async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {
     } else {
       identityKey = env.identityKey
       filePath = env.filePath
-    } 
+    }
   }
   if (!identityKey) throw new sdk.WERR_INVALID_PARAMETER('identityKey', 'valid')
   if (!filePath) filePath = `./backup-${chain}-${identityKey}.sqlite`
