@@ -31,9 +31,9 @@ import { specOpInvalidChange, validateCreateActionArgs, ValidCreateActionArgs } 
 
 const chain: sdk.Chain = 'test'
 const setActiveClient = true
-const useMySQLConnectionForClient = true
-const useTestIdentityKey = false
-const useIdentityKey2 = true
+const useMySQLConnectionForClient = false
+const useTestIdentityKey = true
+const useIdentityKey2 = false
 
 describe('localWallet tests', () => {
   jest.setTimeout(99999999)
