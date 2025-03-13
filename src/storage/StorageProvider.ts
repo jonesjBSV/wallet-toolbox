@@ -1,12 +1,10 @@
 import {
-  Transaction as BsvTransaction,
+  Transaction,
   AbortActionResult,
   Beef,
   InternalizeActionArgs,
   InternalizeActionResult,
-  ListActionsArgs,
   ListActionsResult,
-  ListOutputsArgs,
   ListOutputsResult,
   PubKeyHex,
   ListCertificatesResult,
@@ -19,7 +17,6 @@ import {
   asArray,
   asString,
   sdk,
-  TableCertificate,
   TableCertificateX,
   TableMonitorEvent,
   TableOutput,
@@ -248,7 +245,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     if (!rawTx || !beef) throw new sdk.WERR_INTERNAL(`req rawTx and beef must be valid.`)
     mergeToBeef.mergeRawTx(asArray(rawTx))
     mergeToBeef.mergeBeef(asArray(beef))
-    const tx = BsvTransaction.fromBinary(asArray(rawTx))
+    const tx = Transaction.fromBinary(asArray(rawTx))
     for (const input of tx.inputs) {
       if (!input.sourceTXID) throw new sdk.WERR_INTERNAL(`req all transaction inputs must have valid sourceTXID`)
       const txid = input.sourceTXID
@@ -441,7 +438,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
       else {
         beef.mergeRawTx(r.rawTx)
         beef.mergeBeef(r.inputBEEF)
-        const tx = BsvTransaction.fromBinary(r.rawTx)
+        const tx = Transaction.fromBinary(r.rawTx)
         for (const input of tx.inputs) {
           const btx = beef.findTxid(input.sourceTXID!)
           if (!btx) {
