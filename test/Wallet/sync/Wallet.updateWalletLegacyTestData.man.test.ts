@@ -101,7 +101,7 @@ describe('Wallet sync tests', () => {
 
     const sweepTo = await _tu.createTestWalletWithStorageClient({
       rootKeyHex: env.devKeys[env.identityKey],
-      chain,
+      chain
     })
 
     //await sweepTo.activeStorage.updateProvenTxReq(2, { status: 'invalid' })
