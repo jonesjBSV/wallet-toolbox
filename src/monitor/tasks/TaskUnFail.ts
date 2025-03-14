@@ -6,12 +6,12 @@ import { StorageKnex } from '../../storage/StorageKnex'
 
 /**
  * Setting provenTxReq status to 'unfail' when 'invalid' will attempt to find a merklePath, and if successful:
- * 
+ *
  * 1. set the req status to 'unmined'
  * 2. set the referenced txs to 'unproven'
  * 3. determine if any inputs match user's existing outputs and if so update spentBy and spendable of those outputs.
  * 4. set the txs outputs to spendable
- * 
+ *
  * If it fails (to find a merklePath), returns the req status to 'invalid'.
  */
 export class TaskUnFail extends WalletMonitorTask {
@@ -61,10 +61,10 @@ export class TaskUnFail extends WalletMonitorTask {
     return log
   }
 
-  async unfail(reqs: TableProvenTxReq[], indent = 0) : Promise<{ log: string }> {
+  async unfail(reqs: TableProvenTxReq[], indent = 0): Promise<{ log: string }> {
     let log = ''
     for (const reqApi of reqs) {
-      const req = new EntityProvenTxReq(reqApi) 
+      const req = new EntityProvenTxReq(reqApi)
       log += ' '.repeat(indent)
       log += `reqId ${reqApi.provenTxReqId} txid ${reqApi.txid}: `
       const r = await this.monitor.services.getMerklePath(req.txid)
@@ -87,12 +87,12 @@ export class TaskUnFail extends WalletMonitorTask {
    * 2. set the referenced txs to 'unproven'
    * 3. determine if any inputs match user's existing outputs and if so update spentBy and spendable of those outputs.
    * 4. set the txs outputs to spendable
-   * 
-   * @param req 
-   * @param indent 
-   * @returns 
+   *
+   * @param req
+   * @param indent
+   * @returns
    */
-  async unfailReq(req: EntityProvenTxReq, indent: number) : Promise<string> {
+  async unfailReq(req: EntityProvenTxReq, indent: number): Promise<string> {
     let log = ''
 
     const storage = this.storage
@@ -106,7 +106,7 @@ export class TaskUnFail extends WalletMonitorTask {
         const tx = await sp.findTransactionById(id, undefined, true)
         if (!tx) {
           log += ' '.repeat(indent) + `transaction ${id} was not found\n`
-          return;
+          return
         }
         await sp.updateTransaction(tx.transactionId, { status: 'unproven' })
         tx.status = 'unproven'
@@ -114,20 +114,24 @@ export class TaskUnFail extends WalletMonitorTask {
         let vin = -1
         for (const bi of bsvtx.inputs) {
           vin++
-          const is = await sp.findOutputs({ partial: { userId: tx.userId, txid: bi.sourceTXID!, vout: bi.sourceOutputIndex }})
+          const is = await sp.findOutputs({
+            partial: { userId: tx.userId, txid: bi.sourceTXID!, vout: bi.sourceOutputIndex }
+          })
           if (is.length !== 1) {
-            log += ' '.repeat(indent+2) + `input ${vin} not matched to user's outputs\n`
+            log += ' '.repeat(indent + 2) + `input ${vin} not matched to user's outputs\n`
           } else {
             const oi = is[0]
-            log += ' '.repeat(indent+2) + `input ${vin} matched to output ${oi.outputId} updated spentBy ${tx.transactionId}\n`
+            log +=
+              ' '.repeat(indent + 2) +
+              `input ${vin} matched to output ${oi.outputId} updated spentBy ${tx.transactionId}\n`
             await sp.updateOutput(oi.outputId, { spendable: false, spentBy: tx.transactionId })
           }
         }
-        const outputs = await sp.findOutputs({ partial: { userId: tx.userId, transactionId: tx.transactionId }})
+        const outputs = await sp.findOutputs({ partial: { userId: tx.userId, transactionId: tx.transactionId } })
         for (const o of outputs) {
           await spk.validateOutputScript(o)
           if (!o.lockingScript) {
-            log += ' '.repeat(indent+2) + `output ${o.outputId} does not have a valid locking script\n`
+            log += ' '.repeat(indent + 2) + `output ${o.outputId} does not have a valid locking script\n`
           } else {
             const or = await services.getUtxoStatus(Utils.toHex(o.lockingScript!))
             const isUtxo = or.isUtxo === true

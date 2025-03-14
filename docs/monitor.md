@@ -131,6 +131,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 | [TaskReviewStatus](#class-taskreviewstatus) |
 | [TaskSendWaiting](#class-tasksendwaiting) |
 | [TaskSyncWhenIdle](#class-tasksyncwhenidle) |
+| [TaskUnFail](#class-taskunfail) |
 | [WalletMonitorTask](#class-walletmonitortask) |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -537,6 +538,57 @@ export class TaskSyncWhenIdle extends WalletMonitorTask {
 ```
 
 See also: [Monitor](./monitor.md#class-monitor), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Class: TaskUnFail
+
+Setting provenTxReq status to 'unfail' when 'invalid' will attempt to find a merklePath, and if successful:
+
+1. set the req status to 'unmined'
+2. set the referenced txs to 'unproven'
+3. determine if any inputs match user's existing outputs and if so update spentBy and spendable of those outputs.
+4. set the txs outputs to spendable
+
+If it fails (to find a merklePath), returns the req status to 'invalid'.
+
+```ts
+export class TaskUnFail extends WalletMonitorTask {
+    static taskName = "UnFail";
+    static checkNow = false;
+    constructor(monitor: Monitor, public triggerMsecs = monitor.oneMinute * 10) 
+    trigger(nowMsecsSinceEpoch: number): {
+        run: boolean;
+    } 
+    async runTask(): Promise<string> 
+    async unfail(reqs: TableProvenTxReq[], indent = 0): Promise<{
+        log: string;
+    }> 
+    async unfailReq(req: EntityProvenTxReq, indent: number): Promise<string> 
+}
+```
+
+See also: [EntityProvenTxReq](./storage.md#class-entityproventxreq), [Monitor](./monitor.md#class-monitor), [TableProvenTxReq](./storage.md#interface-tableproventxreq), [WalletMonitorTask](./monitor.md#class-walletmonitortask)
+
+###### Property checkNow
+
+Set to true to trigger running this task
+
+```ts
+static checkNow = false
+```
+
+###### Method unfailReq
+
+2. set the referenced txs to 'unproven'
+3. determine if any inputs match user's existing outputs and if so update spentBy and spendable of those outputs.
+4. set the txs outputs to spendable
+
+```ts
+async unfailReq(req: EntityProvenTxReq, indent: number): Promise<string> 
+```
+See also: [EntityProvenTxReq](./storage.md#class-entityproventxreq)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
