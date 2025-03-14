@@ -48,6 +48,8 @@ export type Chain = 'main' | 'test'
  * invalid: rawTx is structuraly invalid or was rejected by the network. Will never be re-attempted or completed.
  *
  * completed: proven_txs record added, and notifications are complete.
+ * 
+ * unfail: asigned to force review of a currently invalid ProvenTxReq.
  */
 export type ProvenTxReqStatus =
   | 'sending'
@@ -62,6 +64,7 @@ export type ProvenTxReqStatus =
   | 'completed'
   | 'invalid'
   | 'doubleSpend'
+  | 'unfail'
 
 export const ProvenTxReqTerminalStatus: ProvenTxReqStatus[] = ['completed', 'invalid', 'doubleSpend']
 
