@@ -45,8 +45,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       headers
     }
 
+    const url = `${this.URL}/tx/${txid}/hex`
+
     for (let retry = 0; retry < 2; retry++) {
-      const response = await this.httpClient.request<string>(`${this.URL}/tx/${txid}/hex`, requestOptions)
+      const response = await this.httpClient.request<string>(url, requestOptions)
       if (response.statusText === 'Too Many Requests' && retry < 2) {
         await wait(2000)
         continue
