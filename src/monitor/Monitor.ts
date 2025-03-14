@@ -9,6 +9,7 @@ import { TaskSendWaiting } from './tasks/TaskSendWaiting'
 import { WalletMonitorTask } from './tasks/WalletMonitorTask'
 import { TaskClock } from './tasks/TaskClock'
 import { TaskNewHeader as TaskNewHeader } from './tasks/TaskNewHeader'
+import { TaskUnFail } from './tasks/TaskUnFail'
 
 export type MonitorStorage = WalletStorageManager
 //export type MonitorStorage = sdk.WalletStorage
@@ -125,6 +126,7 @@ export class Monitor {
     this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
     this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
     this._tasks.push(new TaskReviewStatus(this))
+    this._tasks.push(new TaskUnFail(this))
   }
 
   /**
@@ -139,6 +141,7 @@ export class Monitor {
     this._tasks.push(new TaskFailAbandoned(this, 8 * this.oneMinute))
     this._tasks.push(new TaskPurge(this, this.defaultPurgeParams, 6 * this.oneHour))
     this._tasks.push(new TaskReviewStatus(this))
+    this._tasks.push(new TaskUnFail(this))
   }
 
   addTask(task: WalletMonitorTask): void {
