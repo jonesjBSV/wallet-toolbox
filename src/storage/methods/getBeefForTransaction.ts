@@ -1,5 +1,6 @@
 import { Beef } from '@bsv/sdk'
 import { asBsvSdkTx, EntityProvenTx, sdk, StorageProvider, verifyTruthy } from '../../index.client'
+import { getProvenTxFromServices } from './getProvenTxFromServices'
 
 /**
  * Creates a `Beef` to support the validity of a transaction identified by its `txid`.
@@ -45,7 +46,7 @@ async function getProvenOrRawTxFromServices(
   options: sdk.StorageGetBeefOptions
 ): Promise<sdk.ProvenOrRawTx> {
   const services = storage.getServices()
-  const por = await EntityProvenTx.fromTxid(txid, await storage.getServices())
+  const por = await getProvenTxFromServices(txid, await storage.getServices())
   if (por.proven && !options.ignoreStorage && !options.ignoreNewProven) {
     por.proven.provenTxId = await storage.insertProvenTx(por.proven.toApi())
   }

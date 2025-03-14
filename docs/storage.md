@@ -3849,20 +3849,17 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 #### Functions
 
-| | |
-| --- | --- |
-| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) |
-| [createAction](#function-createaction) | [offsetPubKey](#function-offsetpubkey) |
-| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [processAction](#function-processaction) |
-| [createSyncMap](#function-createsyncmap) | [purgeData](#function-purgedata) |
-| [generateChangeSdk](#function-generatechangesdk) | [reviewStatus](#function-reviewstatus) |
-| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [transactionInputSize](#function-transactioninputsize) |
-| [getBeefForTransaction](#function-getbeeffortransaction) | [transactionOutputSize](#function-transactionoutputsize) |
-| [getSyncChunk](#function-getsyncchunk) | [transactionSize](#function-transactionsize) |
-| [internalizeAction](#function-internalizeaction) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
-| [listActions](#function-listactions) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
-| [listCertificates](#function-listcertificates) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
-| [listOutputs](#function-listoutputs) | [varUintSize](#function-varuintsize) |
+| | | |
+| --- | --- | --- |
+| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [internalizeAction](#function-internalizeaction) | [transactionInputSize](#function-transactioninputsize) |
+| [createAction](#function-createaction) | [listActions](#function-listactions) | [transactionOutputSize](#function-transactionoutputsize) |
+| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [listCertificates](#function-listcertificates) | [transactionSize](#function-transactionsize) |
+| [createSyncMap](#function-createsyncmap) | [listOutputs](#function-listoutputs) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
+| [generateChangeSdk](#function-generatechangesdk) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
+| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [offsetPubKey](#function-offsetpubkey) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
+| [getBeefForTransaction](#function-getbeeffortransaction) | [processAction](#function-processaction) | [varUintSize](#function-varuintsize) |
+| [getProvenTxFromServices](#function-getproventxfromservices) | [purgeData](#function-purgedata) |  |
+| [getSyncChunk](#function-getsyncchunk) | [reviewStatus](#function-reviewstatus) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -3975,6 +3972,17 @@ Argument Details
   + the chain on which txid exists.
 + **txid**
   + the transaction hash for which an envelope is requested.
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Function: getProvenTxFromServices
+
+```ts
+export async function getProvenTxFromServices(txid: string, services: sdk.WalletServices, rawTx?: number[]): Promise<ProvenTxFromTxidResult> 
+```
+
+See also: [ProvenTxFromTxidResult](./storage.md#interface-proventxfromtxidresult), [WalletServices](./client.md#interface-walletservices)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
