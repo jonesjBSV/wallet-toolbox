@@ -43,29 +43,43 @@ import {
   TableTransaction,
   TableTxLabel,
   TableTxLabelMap,
-  TableUser
-} from '../index.client'
-import { sdk, Services, EntityProvenTx } from '../../index.client'
+  TableUser,
+  sdk,
+  Services,
+  EntityProvenTx
+} from '../../index.client'
 
 describe('getBeefForTransaction tests', () => {
   jest.setTimeout(99999999)
 
-  test('0_', async () => {
-    const p = new EntityProvenTx()
-    const beef = await new ProtoStorage('main').getBeefForTxid(
-      '794f836052ad73732a550c38bea3697a722c6a1e54bcbe63735ba79e0d23f623'
-    )
-    expect(beef.bumps.length > 0)
-  })
+    test('0_', async () => {
+        const ps = new ProtoStorage('main')
+        for (let i = 0; i < 20; i++) {
+            console.log(i)
+            const beef = await ps.getBeefForTxid(
+                '794f836052ad73732a550c38bea3697a722c6a1e54bcbe63735ba79e0d23f623'
+            )
+            expect(beef.bumps.length > 0)
+            {
+                const beef = await ps.getBeefForTxid(
+                    '53023657e79f446ca457040a0ab3b903000d7281a091397c7853f021726a560e'
+                )
+                expect(beef.bumps.length > 0)
+            }
+        }
+    })
 })
 
 class ProtoStorage extends StorageProvider {
   gbo: StorageGetBeefOptions
+  whatsOnChainApiKey?: string
 
   constructor(chain: sdk.Chain) {
     const o = StorageProvider.createStorageBaseOptions(chain)
     super(o)
-    const s = new Services(chain)
+    const so = Services.createDefaultOptions(chain)
+    // so.whatsOnChainApiKey = 'my_api_key'
+    const s = new Services(so)
     this.setServices(s)
     this.gbo = {
       ignoreNewProven: true,
