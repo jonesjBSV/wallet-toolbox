@@ -60,7 +60,7 @@ export function buildSignableTransaction(
     // Add a dummy output to avoid transaction rejection by processors for having no outputs.
     const output: TransactionOutput = {
       satoshis: 0,
-      lockingScript: Script.fromASM('OP_FALSE OP_RETURN'),
+      lockingScript: Script.fromASM('OP_FALSE OP_RETURN 42'),
       change: false
     }
     tx.addOutput(output)
