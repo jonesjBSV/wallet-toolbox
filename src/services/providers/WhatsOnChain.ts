@@ -56,7 +56,8 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
       if (response.status === 404 && response.statusText === 'Not Found') return undefined
 
-      if (!response.data || !response.ok || response.status !== 200 || response.statusText !== 'OK')
+      // response.statusText is often, but not always 'OK' on success...
+      if (!response.data || !response.ok || response.status !== 200)
         throw new sdk.WERR_INVALID_PARAMETER('txid', `valid transaction. '${txid}' response ${response.statusText}`)
 
       return response.data
