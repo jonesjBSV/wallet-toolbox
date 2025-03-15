@@ -82,9 +82,6 @@ class ProtoStorage extends StorageProvider {
   }
 
   async getBeefForTxid(txid: string): Promise<Beef> {
-    const s = this._services!
-    const rr = await s.getRawTx(txid)
-    console.log(rr.name)
     const beef = this.getBeefForTransaction(txid, this.gbo)
     return beef
   }
