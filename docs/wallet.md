@@ -9571,6 +9571,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     identityKey: string;
     beef: BeefParty;
     includeAllSourceTransactions: boolean = true;
+    autoKnownTxids: boolean = false;
     returnTxidOnly: boolean = false;
     trustSelf?: TrustSelf;
     userParty: string;
@@ -9623,6 +9624,14 @@ export class Wallet implements WalletInterface, ProtoWallet {
 ```
 
 See also: [Chain](./client.md#type-chain), [KeyPair](./client.md#interface-keypair), [Monitor](./monitor.md#class-monitor), [PendingSignAction](./client.md#interface-pendingsignaction), [PrivilegedKeyManager](./client.md#class-privilegedkeymanager), [StorageIdentity](./client.md#interface-storageidentity), [WalletArgs](./client.md#interface-walletargs), [WalletBalance](./client.md#interface-walletbalance), [WalletServices](./client.md#interface-walletservices), [WalletSettingsManager](./client.md#class-walletsettingsmanager), [WalletSigner](./client.md#class-walletsigner), [WalletStorageManager](./storage.md#class-walletstoragemanager), [createAction](./storage.md#function-createaction), [getIdentityKey](./client.md#function-getidentitykey), [internalizeAction](./storage.md#function-internalizeaction), [listActions](./storage.md#function-listactions), [listCertificates](./storage.md#function-listcertificates), [listOutputs](./storage.md#function-listoutputs), [proveCertificate](./client.md#function-provecertificate), [signAction](./client.md#function-signaction)
+
+###### Property autoKnownTxids
+
+If true, txids that are known to the wallet's party beef do not need to be returned from storage.
+
+```ts
+autoKnownTxids: boolean = false
+```
 
 ###### Property beef
 
