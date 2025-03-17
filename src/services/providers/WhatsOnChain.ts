@@ -167,8 +167,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         if (response.ok) {
           const txid = response.data
           r.notes!.push({ ...nn(), what: 'postRawTxSuccess' })
-        }
-        if (response.statusText === 'unexpected response code 500: Transaction already in the mempool') {
+        } else if (response.statusText === 'unexpected response code 500: Transaction already in the mempool') {
           r.notes!.push({ ...nne(), what: 'postRawTxSuccessAlreadyInMempool' })
         } else {
           r.status = 'error'
@@ -179,14 +178,20 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           if (typeof response.data === 'string') {
             n.data = response.data.slice(0, 128)
             r.data = response.data
+          } else {
+            r.data = ''
           }
           if (typeof response.statusText === 'string') {
-            n.statusText = response.data.slice(0, 128)
-            r.data = `${r.data || ''} ${response.statusText}`
+            n.statusText = response.statusText.slice(0, 128)
+            r.data += `,${response.statusText}`
           }
-          if (typeof response.status === 'string' || typeof response.status === 'number') {
-            n.status = response.data.slice(0, 128)
-            r.data = `${r.data || ''} ${response.status}`
+          if (typeof response.status === 'string') {
+            n.status = (response.status as string).slice(0, 128)
+            r.data += `,${response.status}`
+          }
+          if (typeof response.status === 'number') {
+            n.status = response.status
+            r.data += `,${response.status}`
           }
           r.notes!.push(n)
         }
