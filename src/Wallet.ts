@@ -130,6 +130,10 @@ export class Wallet implements WalletInterface, ProtoWallet {
    */
   includeAllSourceTransactions: boolean = true
   /**
+   * If true, txids that are known to the wallet's party beef do not need to be returned from storage.
+   */
+  autoKnownTxids: boolean = false
+  /**
    * If true, beefs returned to the user may contain txidOnly transactions.
    */
   returnTxidOnly: boolean = false
@@ -370,7 +374,9 @@ export class Wallet implements WalletInterface, ProtoWallet {
   ): Promise<ListOutputsResult> {
     sdk.validateOriginator(originator)
     const { vargs } = this.validateAuthAndArgs(args, sdk.validateListOutputsArgs)
-    vargs.knownTxids = this.getKnownTxids()
+    if (this.autoKnownTxids && !vargs.knownTxids) {
+      vargs.knownTxids = this.getKnownTxids()
+    }
     const r = await this.storage.listOutputs(vargs)
     if (r.BEEF) {
       this.beef.mergeBeefFromParty(this.storageParty, r.BEEF)
@@ -664,7 +670,9 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
     if (!args.options) args.options = {}
     args.options.trustSelf ||= this.trustSelf
-    args.options.knownTxids = this.getKnownTxids(args.options.knownTxids)
+    if (this.autoKnownTxids && !args.options.knownTxids) {
+      args.options.knownTxids = this.getKnownTxids(args.options.knownTxids)
+    }
 
     const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateCreateActionArgs)
     vargs.includeAllSourceTransactions = this.includeAllSourceTransactions
