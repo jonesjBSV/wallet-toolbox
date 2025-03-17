@@ -21,8 +21,8 @@ const useIdentityKey2 = false
 describe('localWallet tests', () => {
   jest.setTimeout(99999999)
 
-//  test('00', () => {})
-//  if (_tu.noTestEnv(chain)) return
+  //  test('00', () => {})
+  //  if (_tu.noTestEnv(chain)) return
 
   test('0 monitor runOnce', async () => {
     const setup = await createSetup(chain)
