@@ -167,7 +167,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
         if (response.ok) {
           const txid = response.data
           r.notes!.push({ ...nn(), what: 'postRawTxSuccess' })
-        } else if (response.statusText === 'unexpected response code 500: Transaction already in the mempool') {
+        } else if (response.data === 'unexpected response code 500: Transaction already in the mempool') {
           r.notes!.push({ ...nne(), what: 'postRawTxSuccessAlreadyInMempool' })
         } else {
           r.status = 'error'
