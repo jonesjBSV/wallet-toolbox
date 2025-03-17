@@ -64,7 +64,6 @@ export class TaskCheckForProofs extends WalletMonitorTask {
     }
     return log
   }
-
 }
 
 /**

@@ -66,5 +66,4 @@ export class TaskCheckNoSends extends WalletMonitorTask {
     }
     return log
   }
-
 }
