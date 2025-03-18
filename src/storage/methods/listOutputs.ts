@@ -63,7 +63,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
     useBasket: 'default',
     ignoreLimit: true,
     includeOutputScripts: true,
-    tagsToIntercept: ['release'],
+    tagsToIntercept: ['release','all'],
     filterOutputs: async (
       s: StorageKnex,
       auth: sdk.AuthId,
@@ -82,7 +82,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
             if (r.details.some(d => d.txid === o.txid && d.satoshis === o.satoshis && d.index === o.vout)) {
               ok = true
             } else {
-              ok = undefined
+              ok = false
             }
           } else {
             ok = false
@@ -194,6 +194,9 @@ export async function listOutputs(
     for (const t of ts) {
       if (specOp.tagsToIntercept.length === 0 || specOp.tagsToIntercept.indexOf(t) >= 0) {
         specOpTags.push(t)
+        if (t === 'all') {
+          basketId = undefined
+        }
       } else {
         tags.push(t)
       }
