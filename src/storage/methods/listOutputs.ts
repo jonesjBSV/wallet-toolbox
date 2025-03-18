@@ -97,6 +97,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
       if (specOpTags.indexOf('release') >= 0) {
         for (const o of filteredOutputs) {
           await s.updateOutput(o.outputId, { spendable: false })
+          o.spendable = false
         }
       }
       return filteredOutputs
