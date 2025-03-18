@@ -63,7 +63,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
     useBasket: 'default',
     ignoreLimit: true,
     includeOutputScripts: true,
-    tagsToIntercept: ['release','all'],
+    tagsToIntercept: ['release', 'all'],
     filterOutputs: async (
       s: StorageKnex,
       auth: sdk.AuthId,

@@ -54,7 +54,6 @@ export async function burnOneSatTestOutput(
   options: CreateActionOptions = {},
   howMany: number = 1
 ): Promise<void> {
-
   const outputs = await setup.wallet.listOutputs({
     basket: 'test-output',
     include: 'entire transactions',
@@ -70,11 +69,13 @@ export async function burnOneSatTestOutput(
     const p2pkh = new P2PKH()
     const args: CreateActionArgs = {
       inputBEEF,
-      inputs: [{
-        unlockingScriptLength: 108,
-        outpoint: o.outpoint,
-        inputDescription: 'burn 1 sat output'
-      }],
+      inputs: [
+        {
+          unlockingScriptLength: 108,
+          outpoint: o.outpoint,
+          inputDescription: 'burn 1 sat output'
+        }
+      ],
       description: 'burn output'
     }
     const bcar = await setup.wallet.createAction(args)
@@ -87,7 +88,7 @@ export async function burnOneSatTestOutput(
     const unlockingScript = (await unlock.sign(tx, 0)).toHex()
     const signArgs: SignActionArgs = {
       reference: st.reference,
-      spends: { 0: { unlockingScript } },
+      spends: { 0: { unlockingScript } }
     }
     const sar = await setup.wallet.signAction(signArgs)
     console.log(sar.txid)

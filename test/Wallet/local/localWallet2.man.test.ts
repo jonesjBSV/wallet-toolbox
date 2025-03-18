@@ -1,7 +1,12 @@
 import { EntitySyncState, sdk } from '../../../src'
 import { _tu } from '../../utils/TestUtilsWalletStorage'
 import { specOpInvalidChange } from '../../../src/sdk'
-import { burnOneSatTestOutput, createOneSatTestOutput, createSetup, recoverOneSatTestOutputs } from './localWalletMethods'
+import {
+  burnOneSatTestOutput,
+  createOneSatTestOutput,
+  createSetup,
+  recoverOneSatTestOutputs
+} from './localWalletMethods'
 
 const chain: sdk.Chain = 'test'
 
@@ -47,5 +52,4 @@ describe('localWallet2 tests', () => {
     }
     await setup.wallet.destroy()
   })
-
 })
