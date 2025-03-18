@@ -71,7 +71,7 @@ const labelToSpecOp: Record<string, ListActionsSpecOp> = {
         }
       }
     }
-  },
+  }
 }
 
 export async function listActions(
@@ -150,8 +150,8 @@ export async function listActions(
     'lockTime'
   ]
 
-  const stati: string[] =
-    specOp?.setStatusFilter ? specOp.setStatusFilter()
+  const stati: string[] = specOp?.setStatusFilter
+    ? specOp.setStatusFilter()
     : ['completed', 'unprocessed', 'sending', 'unproven', 'unsigned', 'nosend', 'nonfinal']
 
   const noLabels = labelIds.length === 0
