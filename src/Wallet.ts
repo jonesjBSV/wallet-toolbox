@@ -84,7 +84,7 @@ import { internalizeAction } from './signer/methods/internalizeAction'
 import { WalletSettingsManager } from './WalletSettingsManager'
 import { queryOverlay, transformVerifiableCertificatesWithTrust } from './utility/identityUtils'
 import { maxPossibleSatoshis } from './storage/methods/generateChange'
-import { specOpInvalidChange, specOpSetWalletChangeParams, specOpWalletBalance } from './sdk'
+import { specOpFailedActions, specOpInvalidChange, specOpNoSendActions, specOpSetWalletChangeParams, specOpWalletBalance } from './sdk'
 
 export interface WalletArgs {
   chain: sdk.Chain
@@ -932,6 +932,41 @@ export class Wallet implements WalletInterface, ProtoWallet {
     }
     await this.listOutputs(args)
   }
+
+  /**
+   * Uses `listActions` special operation to return only actions with status 'nosend'.
+   * 
+   * @param abort Defaults to false. If true, runs `abortAction` on each 'nosend' action.
+   * @returns {ListActionsResult} start `listActions` result restricted to 'nosend' (or 'failed' if aborted) actions.
+   */
+  async listNoSendActions(
+    args: ListActionsArgs,
+    abort = false
+  ): Promise<ListActionsResult> {
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListActionsArgs)
+    vargs.labels.push(specOpNoSendActions)
+    if (abort) vargs.labels.push('abort')
+    const r = await this.storage.listActions(vargs)
+    return r
+  }
+
+  /**
+   * Uses `listActions` special operation to return only actions with status 'failed'.
+   * 
+   * @param unfail Defaults to false. If true, queues the action for attempted recovery.
+   * @returns {ListActionsResult} start `listActions` result restricted to 'failed' status actions.
+   */
+  async listFailedActions(
+    args: ListActionsArgs,
+    unfail = false
+  ): Promise<ListActionsResult> {
+    const { vargs } = this.validateAuthAndArgs(args, sdk.validateListActionsArgs)
+    vargs.labels.push(specOpFailedActions)
+    if (unfail) vargs.labels.push('unfail')
+    const r = await this.storage.listActions(vargs)
+    return r
+  }
+
 }
 
 export interface PendingStorageInput {

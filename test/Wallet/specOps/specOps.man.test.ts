@@ -125,6 +125,32 @@ describe('specOps tests', () => {
 
     await setup.wallet.destroy()
   })
+
+  test('3 wallet listNoSendActions method', async () => {
+    const setup = await createSetup('test')
+
+    const r = await setup.wallet.listNoSendActions({ labels: [
+      // 'abort'
+    ] })
+
+    expect(r.totalActions).toBeGreaterThanOrEqual(0)
+    expect(r.actions.length).toBe(r.totalActions)
+
+    await setup.wallet.destroy()
+  })
+
+  test('4 wallet listFailedActions method', async () => {
+    const setup = await createSetup('test')
+
+    const r = await setup.wallet.listFailedActions({ labels: [
+      // 'unfail'
+    ], limit: 1000 })
+
+    expect(r.totalActions).toBeGreaterThanOrEqual(0)
+    expect(r.actions.length).toBe(r.totalActions)
+
+    await setup.wallet.destroy()
+  })
 })
 
 async function createSetup(chain: sdk.Chain): Promise<TestWalletNoSetup> {

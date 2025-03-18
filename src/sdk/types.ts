@@ -80,7 +80,7 @@ export const ProvenTxReqNonTerminalStatus: ProvenTxReqStatus[] = [
   'unconfirmed'
 ]
 
-export type TransactionStatus = 'completed' | 'failed' | 'unprocessed' | 'sending' | 'unproven' | 'unsigned' | 'nosend'
+export type TransactionStatus = 'completed' | 'failed' | 'unprocessed' | 'sending' | 'unproven' | 'unsigned' | 'nosend' | 'nonfinal' | 'unfail'
 
 export interface Paged {
   limit: number
@@ -185,5 +185,5 @@ export const specOpFailedActions = '97d4eb1e49215e3374cc2c1939a7c43a55e95c7427bf
  * @returns true iff the `label` name is a reserved `listActions` special operation identifier.
  */
 export function isListActionsSpecOp(label: string): boolean {
-  return [specOpNoSendActions].indexOf(label) >= 0
+  return [specOpNoSendActions, specOpFailedActions].indexOf(label) >= 0
 }
