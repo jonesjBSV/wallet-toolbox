@@ -9619,7 +9619,12 @@ export class Wallet implements WalletInterface, ProtoWallet {
     async getNetwork(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetNetworkResult> 
     async getVersion(args: {}, originator?: OriginatorDomainNameStringUnder250Bytes): Promise<GetVersionResult> 
     async sweepTo(toWallet: Wallet): Promise<void> 
-    async balance(basket: string = "default"): Promise<sdk.WalletBalance> 
+    async balance(basket: string = "default"): Promise<number> 
+    async balanceAndUtxos(basket: string = "default"): Promise<sdk.WalletBalance> 
+    async reviewSpendableOutputs(all = false, release = false, optionalArgs?: Partial<ListOutputsArgs>): Promise<ListOutputsResult> 
+    async setWalletChangeParams(count: number, satoshis: number): Promise<void> 
+    async listNoSendActions(args: ListActionsArgs, abort = false): Promise<ListActionsResult> 
+    async listFailedActions(args: ListActionsArgs, unfail = false): Promise<ListActionsResult> 
 }
 ```
 
@@ -9676,18 +9681,35 @@ returnTxidOnly: boolean = false
 
 ###### Method balance
 
-Uses `listOutputs` to iterate through all spendable outputs in the 'default' (change) basket.
-
-Outputs in the 'default' basket are managed by the wallet and MUST NOT USED AS UNMANAGED INPUTS.
+Uses `listOutputs` special operation to compute the total value (of satoshis) for
+all spendable outputs in a basket (which defaults to the change 'default' basket).
 
 ```ts
-async balance(basket: string = "default"): Promise<sdk.WalletBalance> 
+async balance(basket: string = "default"): Promise<number> 
+```
+
+Returns
+
+sum of output satoshis
+
+Argument Details
+
++ **basket**
+  + Optional. Defaults to 'default', the wallet change basket.
+
+###### Method balanceAndUtxos
+
+Uses `listOutputs` to iterate over chunks of up to 1000 outputs to
+compute the sum of output satoshis.
+
+```ts
+async balanceAndUtxos(basket: string = "default"): Promise<sdk.WalletBalance> 
 ```
 See also: [WalletBalance](./client.md#interface-walletbalance)
 
 Returns
 
-: number, utxos: { satoshis: number, outpoint: string }[] }
+total sum of output satoshis and utxo details (satoshis and outpoints)
 
 Argument Details
 
@@ -9708,6 +9730,80 @@ Argument Details
 
 + **newKnownTxids**
   + Optional. Additional new txids known to be valid by the caller to be merged.
+
+###### Method listFailedActions
+
+Uses `listActions` special operation to return only actions with status 'failed'.
+
+```ts
+async listFailedActions(args: ListActionsArgs, unfail = false): Promise<ListActionsResult> 
+```
+
+Returns
+
+start `listActions` result restricted to 'failed' status actions.
+
+Argument Details
+
++ **unfail**
+  + Defaults to false. If true, queues the action for attempted recovery.
+
+###### Method listNoSendActions
+
+Uses `listActions` special operation to return only actions with status 'nosend'.
+
+```ts
+async listNoSendActions(args: ListActionsArgs, abort = false): Promise<ListActionsResult> 
+```
+
+Returns
+
+start `listActions` result restricted to 'nosend' (or 'failed' if aborted) actions.
+
+Argument Details
+
++ **abort**
+  + Defaults to false. If true, runs `abortAction` on each 'nosend' action.
+
+###### Method reviewSpendableOutputs
+
+Uses `listOutputs` special operation to review the spendability via `Services` of
+outputs currently considered spendable. Returns the outputs that fail to verify.
+
+Ignores the `limit` and `offset` properties.
+
+```ts
+async reviewSpendableOutputs(all = false, release = false, optionalArgs?: Partial<ListOutputsArgs>): Promise<ListOutputsResult> 
+```
+
+Returns
+
+outputs which are/where considered spendable but currently fail to verify as spendable.
+
+Argument Details
+
++ **all**
+  + Defaults to false. If false, only change outputs ('default' basket) are reviewed. If true, all spendable outputs are reviewed.
++ **release**
+  + Defaults to false. If true, sets outputs that fail to verify to un-spendable (spendable: false)
++ **optionalArgs**
+  + Optional. Additional tags will constrain the outputs processed.
+
+###### Method setWalletChangeParams
+
+Uses `listOutputs` special operation to update the 'default' basket's automatic
+change generation parameters.
+
+```ts
+async setWalletChangeParams(count: number, satoshis: number): Promise<void> 
+```
+
+Argument Details
+
++ **count**
+  + target number of change UTXOs to maintain.
++ **satoshis**
+  + target value for new change outputs.
 
 ###### Method sweepTo
 
@@ -10743,43 +10839,44 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [acquireDirectCertificate](#function-acquiredirectcertificate) | [listOutputs](#function-listoutputs) | [validateCreateActionOutput](#function-validatecreateactionoutput) |
-| [arcDefaultUrl](#function-arcdefaulturl) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateDiscoverByAttributesArgs](#function-validatediscoverbyattributesargs) |
-| [arraysEqual](#function-arraysequal) | [makeAtomicBeef](#function-makeatomicbeef) | [validateDiscoverByIdentityKeyArgs](#function-validatediscoverbyidentitykeyargs) |
-| [asArray](#function-asarray) | [makeAtomicBeef](#function-makeatomicbeef) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
-| [asArray](#function-asarray) | [makeChangeLock](#function-makechangelock) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
-| [asBsvSdkPrivateKey](#function-asbsvsdkprivatekey) | [maxDate](#function-maxdate) | [validateInteger](#function-validateinteger) |
-| [asBsvSdkPublickKey](#function-asbsvsdkpublickkey) | [offsetPubKey](#function-offsetpubkey) | [validateInternalizeActionArgs](#function-validateinternalizeactionargs) |
-| [asBsvSdkScript](#function-asbsvsdkscript) | [optionalArraysEqual](#function-optionalarraysequal) | [validateInternalizeOutput](#function-validateinternalizeoutput) |
-| [asBsvSdkTx](#function-asbsvsdktx) | [parseTxScriptOffsets](#function-parsetxscriptoffsets) | [validateListActionsArgs](#function-validatelistactionsargs) |
-| [asBuffer](#function-asbuffer) | [parseWalletOutpoint](#function-parsewalletoutpoint) | [validateListCertificatesArgs](#function-validatelistcertificatesargs) |
-| [asString](#function-asstring) | [processAction](#function-processaction) | [validateListOutputsArgs](#function-validatelistoutputsargs) |
+| [acquireDirectCertificate](#function-acquiredirectcertificate) | [listOutputs](#function-listoutputs) | [validateDiscoverByAttributesArgs](#function-validatediscoverbyattributesargs) |
+| [arcDefaultUrl](#function-arcdefaulturl) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateDiscoverByIdentityKeyArgs](#function-validatediscoverbyidentitykeyargs) |
+| [arraysEqual](#function-arraysequal) | [makeAtomicBeef](#function-makeatomicbeef) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
+| [asArray](#function-asarray) | [makeAtomicBeef](#function-makeatomicbeef) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
+| [asArray](#function-asarray) | [makeChangeLock](#function-makechangelock) | [validateInteger](#function-validateinteger) |
+| [asBsvSdkPrivateKey](#function-asbsvsdkprivatekey) | [maxDate](#function-maxdate) | [validateInternalizeActionArgs](#function-validateinternalizeactionargs) |
+| [asBsvSdkPublickKey](#function-asbsvsdkpublickkey) | [offsetPubKey](#function-offsetpubkey) | [validateInternalizeOutput](#function-validateinternalizeoutput) |
+| [asBsvSdkScript](#function-asbsvsdkscript) | [optionalArraysEqual](#function-optionalarraysequal) | [validateListActionsArgs](#function-validatelistactionsargs) |
+| [asBsvSdkTx](#function-asbsvsdktx) | [parseTxScriptOffsets](#function-parsetxscriptoffsets) | [validateListCertificatesArgs](#function-validatelistcertificatesargs) |
+| [asBuffer](#function-asbuffer) | [parseWalletOutpoint](#function-parsewalletoutpoint) | [validateListOutputsArgs](#function-validatelistoutputsargs) |
 | [asString](#function-asstring) | [processAction](#function-processaction) | [validateOptionalInteger](#function-validateoptionalinteger) |
-| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [proveCertificate](#function-provecertificate) | [validateOptionalOutpointString](#function-validateoptionaloutpointstring) |
-| [buildSignableTransaction](#function-buildsignabletransaction) | [purgeData](#function-purgedata) | [validateOriginator](#function-validateoriginator) |
-| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytes](#function-randombytes) | [validateOutpointString](#function-validateoutpointstring) |
-| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytesBase64](#function-randombytesbase64) | [validatePositiveIntegerOrZero](#function-validatepositiveintegerorzero) |
-| [convertProofToMerklePath](#function-convertprooftomerklepath) | [randomBytesHex](#function-randombyteshex) | [validateProveCertificateArgs](#function-validateprovecertificateargs) |
-| [createAction](#function-createaction) | [reviewStatus](#function-reviewstatus) | [validateRelinquishCertificateArgs](#function-validaterelinquishcertificateargs) |
-| [createAction](#function-createaction) | [sha256Hash](#function-sha256hash) | [validateRelinquishOutputArgs](#function-validaterelinquishoutputargs) |
-| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [signAction](#function-signaction) | [validateSatoshis](#function-validatesatoshis) |
-| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [stampLog](#function-stamplog) | [validateScriptHash](#function-validatescripthash) |
-| [createSyncMap](#function-createsyncmap) | [stampLogFormat](#function-stamplogformat) | [validateSecondsSinceEpoch](#function-validatesecondssinceepoch) |
-| [doubleSha256BE](#function-doublesha256be) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) | [validateSignActionArgs](#function-validatesignactionargs) |
-| [doubleSha256HashLE](#function-doublesha256hashle) | [toWalletNetwork](#function-towalletnetwork) | [validateSignActionOptions](#function-validatesignactionoptions) |
-| [generateChangeSdk](#function-generatechangesdk) | [transactionInputSize](#function-transactioninputsize) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
-| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [transactionOutputSize](#function-transactionoutputsize) | [validateStringLength](#function-validatestringlength) |
-| [getBeefForTransaction](#function-getbeeffortransaction) | [transactionSize](#function-transactionsize) | [validateWalletPayment](#function-validatewalletpayment) |
-| [getExchangeRatesIo](#function-getexchangeratesio) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) | [varUintSize](#function-varuintsize) |
-| [getIdentityKey](#function-getidentitykey) | [updateExchangeratesapi](#function-updateexchangeratesapi) | [verifyHexString](#function-verifyhexstring) |
-| [getProofs](#function-getproofs) | [validateAbortActionArgs](#function-validateabortactionargs) | [verifyId](#function-verifyid) |
-| [getSyncChunk](#function-getsyncchunk) | [validateAcquireCertificateArgs](#function-validateacquirecertificateargs) | [verifyInteger](#function-verifyinteger) |
-| [internalizeAction](#function-internalizeaction) | [validateAcquireDirectCertificateArgs](#function-validateacquiredirectcertificateargs) | [verifyNumber](#function-verifynumber) |
-| [internalizeAction](#function-internalizeaction) | [validateAcquireIssuanceCertificateArgs](#function-validateacquireissuancecertificateargs) | [verifyOne](#function-verifyone) |
-| [isHexString](#function-ishexstring) | [validateBasketInsertion](#function-validatebasketinsertion) | [verifyOneOrNone](#function-verifyoneornone) |
-| [isSpecOp](#function-isspecop) | [validateCreateActionArgs](#function-validatecreateactionargs) | [verifyOptionalHexString](#function-verifyoptionalhexstring) |
-| [listActions](#function-listactions) | [validateCreateActionInput](#function-validatecreateactioninput) | [verifyTruthy](#function-verifytruthy) |
-| [listCertificates](#function-listcertificates) | [validateCreateActionOptions](#function-validatecreateactionoptions) | [wait](#function-wait) |
+| [asString](#function-asstring) | [processAction](#function-processaction) | [validateOptionalOutpointString](#function-validateoptionaloutpointstring) |
+| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [proveCertificate](#function-provecertificate) | [validateOriginator](#function-validateoriginator) |
+| [buildSignableTransaction](#function-buildsignabletransaction) | [purgeData](#function-purgedata) | [validateOutpointString](#function-validateoutpointstring) |
+| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytes](#function-randombytes) | [validatePositiveIntegerOrZero](#function-validatepositiveintegerorzero) |
+| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytesBase64](#function-randombytesbase64) | [validateProveCertificateArgs](#function-validateprovecertificateargs) |
+| [convertProofToMerklePath](#function-convertprooftomerklepath) | [randomBytesHex](#function-randombyteshex) | [validateRelinquishCertificateArgs](#function-validaterelinquishcertificateargs) |
+| [createAction](#function-createaction) | [reviewStatus](#function-reviewstatus) | [validateRelinquishOutputArgs](#function-validaterelinquishoutputargs) |
+| [createAction](#function-createaction) | [sha256Hash](#function-sha256hash) | [validateSatoshis](#function-validatesatoshis) |
+| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [signAction](#function-signaction) | [validateScriptHash](#function-validatescripthash) |
+| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [stampLog](#function-stamplog) | [validateSecondsSinceEpoch](#function-validatesecondssinceepoch) |
+| [createSyncMap](#function-createsyncmap) | [stampLogFormat](#function-stamplogformat) | [validateSignActionArgs](#function-validatesignactionargs) |
+| [doubleSha256BE](#function-doublesha256be) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) | [validateSignActionOptions](#function-validatesignactionoptions) |
+| [doubleSha256HashLE](#function-doublesha256hashle) | [toWalletNetwork](#function-towalletnetwork) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
+| [generateChangeSdk](#function-generatechangesdk) | [transactionInputSize](#function-transactioninputsize) | [validateStringLength](#function-validatestringlength) |
+| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [transactionOutputSize](#function-transactionoutputsize) | [validateWalletPayment](#function-validatewalletpayment) |
+| [getBeefForTransaction](#function-getbeeffortransaction) | [transactionSize](#function-transactionsize) | [varUintSize](#function-varuintsize) |
+| [getExchangeRatesIo](#function-getexchangeratesio) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) | [verifyHexString](#function-verifyhexstring) |
+| [getIdentityKey](#function-getidentitykey) | [updateExchangeratesapi](#function-updateexchangeratesapi) | [verifyId](#function-verifyid) |
+| [getProofs](#function-getproofs) | [validateAbortActionArgs](#function-validateabortactionargs) | [verifyInteger](#function-verifyinteger) |
+| [getSyncChunk](#function-getsyncchunk) | [validateAcquireCertificateArgs](#function-validateacquirecertificateargs) | [verifyNumber](#function-verifynumber) |
+| [internalizeAction](#function-internalizeaction) | [validateAcquireDirectCertificateArgs](#function-validateacquiredirectcertificateargs) | [verifyOne](#function-verifyone) |
+| [internalizeAction](#function-internalizeaction) | [validateAcquireIssuanceCertificateArgs](#function-validateacquireissuancecertificateargs) | [verifyOneOrNone](#function-verifyoneornone) |
+| [isHexString](#function-ishexstring) | [validateBasketInsertion](#function-validatebasketinsertion) | [verifyOptionalHexString](#function-verifyoptionalhexstring) |
+| [isListActionsSpecOp](#function-islistactionsspecop) | [validateCreateActionArgs](#function-validatecreateactionargs) | [verifyTruthy](#function-verifytruthy) |
+| [isListOutputsSpecOp](#function-islistoutputsspecop) | [validateCreateActionInput](#function-validatecreateactioninput) | [wait](#function-wait) |
+| [listActions](#function-listactions) | [validateCreateActionOptions](#function-validatecreateactionoptions) |  |
+| [listCertificates](#function-listcertificates) | [validateCreateActionOutput](#function-validatecreateactionoutput) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -11361,10 +11458,28 @@ export function isHexString(s: string): boolean
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
-##### Function: isSpecOp
+##### Function: isListActionsSpecOp
 
 ```ts
-export function isSpecOp(basket: string): boolean 
+export function isListActionsSpecOp(label: string): boolean 
+```
+
+Returns
+
+true iff the `label` name is a reserved `listActions` special operation identifier.
+
+Argument Details
+
++ **label**
+  + Action / Transaction label name value.
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Function: isListOutputsSpecOp
+
+```ts
+export function isListOutputsSpecOp(basket: string): boolean 
 ```
 
 Returns
@@ -12636,7 +12751,7 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ##### Type: TransactionStatus
 
 ```ts
-export type TransactionStatus = "completed" | "failed" | "unprocessed" | "sending" | "unproven" | "unsigned" | "nosend"
+export type TransactionStatus = "completed" | "failed" | "unprocessed" | "sending" | "unproven" | "unsigned" | "nosend" | "nonfinal" | "unfail"
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
@@ -12657,14 +12772,15 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | |
 | --- | --- |
-| [DEFAULT_SETTINGS](#variable-default_settings) | [parseResults](#variable-parseresults) |
-| [PBKDF2_NUM_ROUNDS](#variable-pbkdf2_num_rounds) | [queryOverlay](#variable-queryoverlay) |
+| [DEFAULT_SETTINGS](#variable-default_settings) | [queryOverlay](#variable-queryoverlay) |
+| [PBKDF2_NUM_ROUNDS](#variable-pbkdf2_num_rounds) | [specOpFailedActions](#variable-specopfailedactions) |
 | [ProvenTxReqNonTerminalStatus](#variable-proventxreqnonterminalstatus) | [specOpInvalidChange](#variable-specopinvalidchange) |
-| [ProvenTxReqTerminalStatus](#variable-proventxreqterminalstatus) | [specOpSetWalletChangeParams](#variable-specopsetwalletchangeparams) |
-| [TESTNET_DEFAULT_SETTINGS](#variable-testnet_default_settings) | [specOpWalletBalance](#variable-specopwalletbalance) |
-| [brc29ProtocolID](#variable-brc29protocolid) | [transactionColumnsWithoutRawTx](#variable-transactioncolumnswithoutrawtx) |
-| [maxPossibleSatoshis](#variable-maxpossiblesatoshis) | [transformVerifiableCertificatesWithTrust](#variable-transformverifiablecertificateswithtrust) |
-| [outputColumnsWithoutLockingScript](#variable-outputcolumnswithoutlockingscript) |  |
+| [ProvenTxReqTerminalStatus](#variable-proventxreqterminalstatus) | [specOpNoSendActions](#variable-specopnosendactions) |
+| [TESTNET_DEFAULT_SETTINGS](#variable-testnet_default_settings) | [specOpSetWalletChangeParams](#variable-specopsetwalletchangeparams) |
+| [brc29ProtocolID](#variable-brc29protocolid) | [specOpWalletBalance](#variable-specopwalletbalance) |
+| [maxPossibleSatoshis](#variable-maxpossiblesatoshis) | [transactionColumnsWithoutRawTx](#variable-transactioncolumnswithoutrawtx) |
+| [outputColumnsWithoutLockingScript](#variable-outputcolumnswithoutlockingscript) | [transformVerifiableCertificatesWithTrust](#variable-transformverifiablecertificateswithtrust) |
+| [parseResults](#variable-parseresults) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -12869,10 +12985,28 @@ See also: [parseResults](./client.md#variable-parseresults)
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Variable: specOpFailedActions
+
+```ts
+specOpFailedActions = "97d4eb1e49215e3374cc2c1939a7c43a55e95c7427bf2d45ed63e3b4e0c88153"
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Variable: specOpInvalidChange
 
 ```ts
 specOpInvalidChange = "5a76fd430a311f8bc0553859061710a4475c19fed46e2ff95969aa918e612e57"
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Variable: specOpNoSendActions
+
+```ts
+specOpNoSendActions = "ac6b20a3bb320adafecd637b25c84b792ad828d3aa510d05dc841481f664277d"
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)

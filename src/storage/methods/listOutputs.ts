@@ -4,7 +4,7 @@ import { asString, sdk, verifyId, verifyInteger, verifyOne } from '../../index.c
 import { StorageKnex } from '../StorageKnex'
 import { ValidListOutputsArgs } from '../../sdk'
 
-interface SpecOp {
+interface ListOutputsSpecOp {
   name: string
   useBasket?: string
   ignoreLimit?: boolean
@@ -41,7 +41,7 @@ interface SpecOp {
   tagsParamsCount?: number
 }
 
-const basketToSpecOp: Record<string, SpecOp> = {
+const basketToSpecOp: Record<string, ListOutputsSpecOp> = {
   [sdk.specOpWalletBalance]: {
     name: 'totalOutputsIsWalletBalance',
     useBasket: 'default',
@@ -97,6 +97,7 @@ const basketToSpecOp: Record<string, SpecOp> = {
       if (specOpTags.indexOf('release') >= 0) {
         for (const o of filteredOutputs) {
           await s.updateOutput(o.outputId, { spendable: false })
+          o.spendable = false
         }
       }
       return filteredOutputs
@@ -159,7 +160,7 @@ export async function listOutputs(
         }
     */
 
-  let specOp: SpecOp | undefined = undefined
+  let specOp: ListOutputsSpecOp | undefined = undefined
   let basketId: number | undefined = undefined
   const basketsById: Record<number, TableOutputBasket> = {}
   if (vargs.basket) {

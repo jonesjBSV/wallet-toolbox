@@ -52,7 +52,7 @@ describe('localWallet tests', () => {
     console.log(log)
     console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
     const clientBalance = await setup.wallet.balance()
-    expect(localBalance.total).toBe(clientBalance.total)
+    expect(localBalance).toBe(clientBalance)
     await setup.wallet.destroy()
   })
 
