@@ -49,8 +49,9 @@ async function postBeefTest(services: Services) {
 
   const rs = await services.postBeef(c.beef, txids)
   for (const r of rs) {
-    logger(`r.notes = ${JSON.stringify(r.notes)}`)
-    logger(`r.txidResults = ${JSON.stringify(r.txidResults)}`)
+    const log = r.status === 'success' ? logger : console.log
+    log(`r.notes = ${JSON.stringify(r.notes)}`)
+    log(`r.txidResults = ${JSON.stringify(r.txidResults)}`)
     expect(r.status).toBe('success')
     for (const txid of txids) {
       const tr = r.txidResults.find(tx => tx.txid === txid)
@@ -66,8 +67,9 @@ async function postBeefTest(services: Services) {
 
   const r2s = await services.postBeef(beef2, txids2)
   for (const r2 of r2s) {
-    logger(`r2.notes = ${JSON.stringify(r2.notes)}`)
-    logger(`r2.txidResults = ${JSON.stringify(r2.txidResults)}`)
+    const log = r2.status === 'error' ? logger : console.log
+    log(`r2.notes = ${JSON.stringify(r2.notes)}`)
+    log(`r2.txidResults = ${JSON.stringify(r2.txidResults)}`)
     expect(r2.status).toBe('error')
     for (const txid of txids2) {
       const tr = r2.txidResults.find(tx => tx.txid === txid)

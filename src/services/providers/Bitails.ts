@@ -161,6 +161,8 @@ export class Bitails {
                     rt.doubleSpend = true // this is a possible double spend attempt
                     rt.competingTxs = undefined // not provided with any data for this.
                     rt.notes!.push({ ...nne(), what: 'postRawsErrorMissingInputs' })
+                  } else if ((btr['code'] as string) === 'ECONNRESET') {
+                    rt.notes!.push({ ...nne(), what: 'postRawsErrorECONNRESET', txid, message })
                   } else {
                     rt.notes!.push({ ...nne(), what: 'postRawsError', txid, code, message })
                   }
