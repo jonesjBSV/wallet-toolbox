@@ -31,7 +31,7 @@ export class Services implements sdk.WalletServices {
 
     this.options = typeof optionsOrChain === 'string' ? Services.createDefaultOptions(this.chain) : optionsOrChain
 
-    this.whatsonchain = new WhatsOnChain(this.chain, { apiKey: this.options.whatsOnChainApiKey })
+    this.whatsonchain = new WhatsOnChain(this.chain, { apiKey: this.options.whatsOnChainApiKey }, this)
 
     this.arc = new ARC(this.options.arcUrl, this.options.arcConfig)
 

@@ -1,5 +1,5 @@
 import { Beef, HexString, Utils, WhatsOnChainConfig } from '@bsv/sdk'
-import { asArray, asString, doubleSha256BE, sdk, validateScriptHash, wait } from '../../index.client'
+import { asArray, asString, doubleSha256BE, sdk, Services, validateScriptHash, wait } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
 import SdkWhatsOnChain from './SdkWhatsOnChain'
 import { ReqHistoryNote } from '../../sdk'
@@ -8,8 +8,11 @@ import { ReqHistoryNote } from '../../sdk'
  *
  */
 export class WhatsOnChain extends SdkWhatsOnChain {
-  constructor(chain: sdk.Chain = 'main', config: WhatsOnChainConfig = {}) {
+  services: Services
+
+  constructor(chain: sdk.Chain = 'main', config: WhatsOnChainConfig = {}, services?: Services) {
     super(chain, config)
+    this.services = services || new Services(chain)
   }
 
   /**
@@ -171,29 +174,39 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           r.notes!.push({ ...nne(), what: 'postRawTxSuccessAlreadyInMempool' })
         } else {
           r.status = 'error'
-          const n: ReqHistoryNote = {
-            ...nne(),
-            what: 'postRawTxError'
-          }
-          if (typeof response.data === 'string') {
-            n.data = response.data.slice(0, 128)
-            r.data = response.data
+          if (response.data === 'unexpected response code 500: 258: txn-mempool-conflict') {
+            r.doubleSpend = true // this is a possible double spend attempt
+            r.competingTxs = undefined // not provided with any data for this.
+            r.notes!.push({ ...nne(), what: 'postRawTxErrorMempoolConflict' })
+          } else if (response.data === 'unexpected response code 500: Missing inputs') {
+            r.doubleSpend = true // this is a possible double spend attempt
+            r.competingTxs = undefined // not provided with any data for this.
+            r.notes!.push({ ...nne(), what: 'postRawTxErrorMissingInputs' })
           } else {
-            r.data = ''
+            const n: ReqHistoryNote = {
+              ...nne(),
+              what: 'postRawTxError'
+            }
+            if (typeof response.data === 'string') {
+              n.data = response.data.slice(0, 128)
+              r.data = response.data
+            } else {
+              r.data = ''
+            }
+            if (typeof response.statusText === 'string') {
+              n.statusText = response.statusText.slice(0, 128)
+              r.data += `,${response.statusText}`
+            }
+            if (typeof response.status === 'string') {
+              n.status = (response.status as string).slice(0, 128)
+              r.data += `,${response.status}`
+            }
+            if (typeof response.status === 'number') {
+              n.status = response.status
+              r.data += `,${response.status}`
+            }
+            r.notes!.push(n)
           }
-          if (typeof response.statusText === 'string') {
-            n.statusText = response.statusText.slice(0, 128)
-            r.data += `,${response.statusText}`
-          }
-          if (typeof response.status === 'string') {
-            n.status = (response.status as string).slice(0, 128)
-            r.data += `,${response.status}`
-          }
-          if (typeof response.status === 'number') {
-            n.status = response.status
-            r.data += `,${response.status}`
-          }
-          r.notes!.push(n)
         }
       } catch (eu: unknown) {
         r.status = 'error'
