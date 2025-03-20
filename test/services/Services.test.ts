@@ -1,5 +1,5 @@
-import { Beef } from '@bsv/sdk'
-import { sdk, wait } from '../../src/index.client'
+import { Beef, Utils } from '@bsv/sdk'
+import { sdk, Services, sha256Hash, wait } from '../../src/index.all'
 import { _tu, TestSetup1Wallet } from '../utils/TestUtilsWalletStorage'
 
 describe('Wallet services tests', () => {
@@ -41,6 +41,112 @@ describe('Wallet services tests', () => {
         if (chain === 'main') {
           expect(us.status).toBe('success')
           expect(us.isUtxo).toBe(true)
+        } else {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(false)
+        }
+      }
+    }
+  })
+
+  test('0a getUtxoStatus hashLE', async () => {
+    for (const { chain, wallet, services } of ctxs) {
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
+      {
+        const script = '4104eca750b68551fb5aa893acb428b6a7d2d673498fd055cf2a8d402211b9500bdc27936846c2aa45cf82afe2f566b69cd7f7298154b0ffb25fbfa4fef8986191c4ac'
+        const hash = Utils.toHex(sha256Hash(Utils.toArray(script, 'hex')))
+        const us = await wallet.services.getUtxoStatus(
+          hash,
+          // 'hashLE'
+        )
+        if (chain === 'main') {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(true)
+        } else {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(false)
+        }
+      }
+    }
+  })
+
+  test('0b getUtxoStatus hashBE', async () => {
+    for (const { chain, wallet, services } of ctxs) {
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
+      {
+        const script = '4104eca750b68551fb5aa893acb428b6a7d2d673498fd055cf2a8d402211b9500bdc27936846c2aa45cf82afe2f566b69cd7f7298154b0ffb25fbfa4fef8986191c4ac'
+        const hash = Utils.toHex(sha256Hash(Utils.toArray(script, 'hex')).reverse())
+        const us = await wallet.services.getUtxoStatus(
+          hash,
+          'hashBE'
+        )
+        if (chain === 'main') {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(true)
+        } else {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(false)
+        }
+      }
+    }
+  })
+
+  test('0c getUtxoStatus hashOutputScript method', async () => {
+    for (const { chain, wallet, services } of ctxs) {
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
+      {
+        const script = '4104eca750b68551fb5aa893acb428b6a7d2d673498fd055cf2a8d402211b9500bdc27936846c2aa45cf82afe2f566b69cd7f7298154b0ffb25fbfa4fef8986191c4ac'
+        const hash = wallet.services.hashOutputScript(script)
+        const us = await wallet.services.getUtxoStatus(
+          hash,
+        )
+        if (chain === 'main') {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(true)
+        } else {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(false)
+        }
+      }
+    }
+  })
+
+  test('0d getUtxoStatus outpoint', async () => {
+    for (const { chain, wallet, services } of ctxs) {
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
+      {
+        const script = '4104eca750b68551fb5aa893acb428b6a7d2d673498fd055cf2a8d402211b9500bdc27936846c2aa45cf82afe2f566b69cd7f7298154b0ffb25fbfa4fef8986191c4ac'
+        const hash = wallet.services.hashOutputScript(script)
+        const us = await wallet.services.getUtxoStatus(
+          hash,
+          undefined,
+          "e4154d8ab6993addc9b8705318cc8e971dfc0780e233038ecf44c601229d93ce.0"
+        )
+        if (chain === 'main') {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(true)
+        } else {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(false)
+        }
+      }
+    }
+  })
+
+  test('0e getUtxoStatus invalid outpoint', async () => {
+    for (const { chain, wallet, services } of ctxs) {
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
+      {
+        const script = '4104eca750b68551fb5aa893acb428b6a7d2d673498fd055cf2a8d402211b9500bdc27936846c2aa45cf82afe2f566b69cd7f7298154b0ffb25fbfa4fef8986191c4ac'
+        const hash = wallet.services.hashOutputScript(script)
+        const us = await wallet.services.getUtxoStatus(
+          hash,
+          undefined,
+          "e4154d8ab6993addc9b8705318cc8e971dfc0780e233038ecf44c601229d93ce.1"
+        )
+        if (chain === 'main') {
+          expect(us.status).toBe('success')
+          expect(us.isUtxo).toBe(false)
         } else {
           expect(us.status).toBe('success')
           expect(us.isUtxo).toBe(false)
@@ -109,4 +215,22 @@ describe('Wallet services tests', () => {
       }
     }
   })
+
+  test('6 getScriptHashHistory', async () => {
+    for (const { chain, wallet, services } of ctxs) {
+      if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
+      {
+        let hash = '86e41f4725135ca0db59d074e7d60daae7c1a87699013498bae52dc95cae1a52'
+        const us = await wallet.services.getScriptHashHistory( hash )
+        if (chain === 'main') {
+          expect(us.status).toBe('success')
+          expect(us.history.length).toBeGreaterThan(0)
+        } else {
+          expect(us.status).toBe('success')
+          expect(us.history.length).toBe(0)
+        }
+      }
+    }
+  })
+
 })
