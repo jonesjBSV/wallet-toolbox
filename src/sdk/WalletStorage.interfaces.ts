@@ -241,8 +241,19 @@ export interface StorageProcessActionArgs {
   log?: string
 }
 
-export interface NotDelayedResult {
-  status: PostReqsToNetworkDetailsStatus
+/**
+ * Indicates status of a new Action following a `createAction` or `signAction` in immediate mode:
+ * When `acceptDelayedBroadcast` is falses.
+ * 
+ * 'success': The action has been broadcast and accepted by the bitcoin processing network.
+ * 'doulbeSpend': The action has been confirmed to double spend one or more inputs, and by the "first-seen-rule" is the loosing transaction.
+ * 'invalidTx': The action was rejected by the processing network as an invalid bitcoin transaction.
+ * 'serviceError': The broadcast services are currently unable to reach the bitcoin network. The action is now queued for delayed retries.
+ */
+export type ReviewActionResultStatus = 'success' | 'doubleSpend' | 'serviceError' | 'invalidTx'
+
+export interface ReviewActionResult {
+  status: ReviewActionResultStatus
   /**
    * Any competing double spend txids reported for this txid
    */
@@ -259,7 +270,7 @@ export interface NotDelayedResult {
 
 export interface StorageProcessActionResults {
   sendWithResults?: SendWithResult[]
-  notDelayedResults?: NotDelayedResult[]
+  notDelayedResults?: ReviewActionResult[]
   log?: string
 }
 

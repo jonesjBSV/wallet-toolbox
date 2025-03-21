@@ -984,16 +984,16 @@ function throwIfAnyUnsuccessfulCreateActions(r: CreateActionResultX) {
   const ndrs = r.notDelayedResults
   const swrs = r.sendWithResults
 
-  if (!swrs || swrs.every(r => r.status === 'unproven')) return
+  if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
 
-  throw new sdk.WERR_REVIEW_ACTIONS(r.txid, r.tx, r.noSendChange, r.sendWithResults, r.notDelayedResults)
+  throw new sdk.WERR_REVIEW_ACTIONS(swrs, ndrs, r.txid, r.tx, r.noSendChange)
 }
 
 function throwIfAnyUnsuccessfulSignActions(r: SignActionResultX) {
   const ndrs = r.notDelayedResults
   const swrs = r.sendWithResults
 
-  if (!swrs || swrs.every(r => r.status === 'unproven')) return
+  if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
 
-  throw new sdk.WERR_REVIEW_ACTIONS(r.txid, r.tx, undefined, r.sendWithResults, r.notDelayedResults)
+  throw new sdk.WERR_REVIEW_ACTIONS(swrs, ndrs, r.txid, r.tx)
 }

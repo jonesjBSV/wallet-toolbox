@@ -10,7 +10,7 @@ import {
   Wallet
 } from '../../index.client'
 import { buildSignableTransaction } from './buildSignableTransaction'
-import { NotDelayedResult } from '../../sdk/WalletStorage.interfaces'
+import { ReviewActionResult } from '../../sdk/WalletStorage.interfaces'
 
 export interface CreateActionResultX extends CreateActionResult {
   txid?: TXIDHexString
@@ -18,7 +18,7 @@ export interface CreateActionResultX extends CreateActionResult {
   noSendChange?: OutpointString[]
   sendWithResults?: SendWithResult[]
   signableTransaction?: SignableTransaction
-  notDelayedResults?: NotDelayedResult[]
+  notDelayedResults?: ReviewActionResult[]
 }
 
 export async function createAction(

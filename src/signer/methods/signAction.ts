@@ -3,13 +3,13 @@
 import { AtomicBEEF, Beef, Transaction as BsvTransaction, SendWithResult, SignActionResult, SignActionSpend, TXIDHexString } from '@bsv/sdk'
 import { asBsvSdkScript, PendingSignAction, ScriptTemplateBRC29, sdk, Wallet } from '../../index.client'
 import { processAction } from './createAction'
-import { NotDelayedResult } from '../../sdk/WalletStorage.interfaces'
+import { ReviewActionResult } from '../../sdk/WalletStorage.interfaces'
 
 export interface SignActionResultX extends SignActionResult {
   txid?: TXIDHexString
   tx?: AtomicBEEF
   sendWithResults?: SendWithResult[]
-  notDelayedResults?: NotDelayedResult[]
+  notDelayedResults?: ReviewActionResult[]
 }
 
 export async function signAction(

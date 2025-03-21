@@ -25,7 +25,7 @@ import {
   verifyOneOrNone,
   verifyTruthy
 } from '../../index.client'
-import { NotDelayedResult, ProvenTxReqNonTerminalStatus, StorageGetBeefOptions } from '../../sdk'
+import { ReviewActionResult, ProvenTxReqNonTerminalStatus, StorageGetBeefOptions } from '../../sdk'
 import { PostReqsToNetworkDetails } from './attemptToPostReqsToNetwork'
 
 export async function processAction(
@@ -113,10 +113,10 @@ async function shareReqsWithWorld(
   userId: number,
   txids: string[],
   isDelayed: boolean
-): Promise<{ swr: SendWithResult[], ndr: NotDelayedResult[] | undefined }> {
+): Promise<{ swr: SendWithResult[], ndr: ReviewActionResult[] | undefined }> {
 
   let swr: SendWithResult[] = []
-  let ndr: NotDelayedResult[] | undefined = undefined
+  let ndr: ReviewActionResult[] | undefined = undefined
 
   if (txids.length < 1) return { swr, ndr }
 
@@ -129,7 +129,7 @@ async function shareReqsWithWorld(
     status: SendWithResultStatus
     getReq: GetReqsAndBeefDetail
     postReq?: PostReqsToNetworkDetails
-    ndr?: NotDelayedResult
+    ndr?: ReviewActionResult
   }[] = []
 
   const readyToSendReqs: EntityProvenTxReq[] = []
@@ -193,7 +193,7 @@ async function shareReqsWithWorld(
     const txid = ar.txid
     const d = prtn.details.find(d => d.txid === txid)
     if (!d) throw new sdk.WERR_INTERNAL(`missing details for ${txid}`)
-    ar.ndr = { status: d.status, competingTxs: d.competingTxs, spentInputs: d.spentInputs }
+    ar.ndr = { status: 'success', competingTxs: d.competingTxs, spentInputs: d.spentInputs }
     switch (d.status) {
       case 'success':
         // processing network has accepted this transaction
@@ -202,16 +202,19 @@ async function shareReqsWithWorld(
       case 'doubleSpend':
         // confirmed double spend.
         ar.status = 'failed'
+        ar.ndr.status = 'doubleSpend'
         if (d.competingTxs)
           ar.ndr.competingBeef = await createMergedBeefOfTxids(d.competingTxs, storage)
         break;
       case 'serviceError':
         // services might improve
         ar.status = 'sending'
+        ar.ndr.status = 'serviceError'
         break
       case 'invalidTx':
         // nothing will fix this transaction
         ar.status = 'failed'
+        ar.ndr.status = 'invalidTx'
         break;
       case 'unknown':
       case 'invalid':
@@ -222,7 +225,7 @@ async function shareReqsWithWorld(
 
   return createResults()
 
-  function createResults(): { swr: SendWithResult[], ndr: NotDelayedResult[] | undefined }
+  function createResults(): { swr: SendWithResult[], ndr: ReviewActionResult[] | undefined }
   {
     swr = []
     ndr = isDelayed ? undefined : []

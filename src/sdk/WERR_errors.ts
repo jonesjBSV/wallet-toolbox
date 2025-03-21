@@ -1,6 +1,6 @@
 import { AtomicBEEF, OutpointString, SendWithResult, TXIDHexString, WalletNetwork } from '@bsv/sdk'
 import { WalletError } from './WalletError'
-import { NotDelayedResult } from './WalletStorage.interfaces'
+import { ReviewActionResult } from './WalletStorage.interfaces'
 
 /**
  * Not implemented.
@@ -154,15 +154,15 @@ export class WERR_INVALID_PUBLIC_KEY extends WalletError {
 export class WERR_REVIEW_ACTIONS extends WalletError {
   /**
    * All parameters correspond to their comparable `createAction` or `signSction` results
-   * with the exception of `notDelayedResults`;
+   * with the exception of `reviewActionResults`;
    * which contains more details, particularly for double spend results.
    */
   constructor(
+    public sendWithResults: SendWithResult[],
+    public reviewActionResults: ReviewActionResult[],
     public txid?: TXIDHexString,
     public tx?: AtomicBEEF,
     public noSendChange?: OutpointString[],
-    public sendWithResults?: SendWithResult[],
-    public notDelayedResults?: NotDelayedResult[]
   ) {
     super('WERR_REVIEW_ACTIONS', 'Undelayed createAction or signAction results require review.')
   }
