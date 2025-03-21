@@ -986,7 +986,7 @@ function throwIfAnyUnsuccessfulCreateActions(r: CreateActionResultX) {
 
   if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
 
-  throw new sdk.WERR_REVIEW_ACTIONS(swrs, ndrs, r.txid, r.tx, r.noSendChange)
+  throw new sdk.WERR_REVIEW_ACTIONS(ndrs, swrs, r.txid, r.tx, r.noSendChange)
 }
 
 function throwIfAnyUnsuccessfulSignActions(r: SignActionResultX) {
@@ -995,5 +995,5 @@ function throwIfAnyUnsuccessfulSignActions(r: SignActionResultX) {
 
   if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
 
-  throw new sdk.WERR_REVIEW_ACTIONS(swrs, ndrs, r.txid, r.tx)
+  throw new sdk.WERR_REVIEW_ACTIONS(ndrs, swrs, r.txid, r.tx)
 }

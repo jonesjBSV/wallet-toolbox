@@ -158,8 +158,8 @@ export class WERR_REVIEW_ACTIONS extends WalletError {
    * which contains more details, particularly for double spend results.
    */
   constructor(
-    public sendWithResults: SendWithResult[],
     public reviewActionResults: ReviewActionResult[],
+    public sendWithResults: SendWithResult[],
     public txid?: TXIDHexString,
     public tx?: AtomicBEEF,
     public noSendChange?: OutpointString[],

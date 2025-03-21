@@ -11,7 +11,8 @@ import {
   ListOutputsResult,
   RelinquishCertificateArgs,
   RelinquishOutputArgs,
-  SendWithResult
+  SendWithResult,
+  TXIDHexString
 } from '@bsv/sdk'
 import {
   sdk,
@@ -253,17 +254,18 @@ export interface StorageProcessActionArgs {
 export type ReviewActionResultStatus = 'success' | 'doubleSpend' | 'serviceError' | 'invalidTx'
 
 export interface ReviewActionResult {
+  txid: TXIDHexString
   status: ReviewActionResultStatus
   /**
-   * Any competing double spend txids reported for this txid
+   * Any competing txids reported for this txid, valid when status is 'doubleSpend'.
    */
   competingTxs?: string[]
   /**
-   * Merged beef of competingTxs.
+   * Merged beef of competingTxs, valid when status is 'doubleSpend'.
    */
   competingBeef?: number[]
   /**
-   * Input indices that have been spent, valid when status is 'doubleSpend'
+   * Transaction input indices that have been spent, valid when status is 'doubleSpend'.
    */
   spentInputs?: { vin: number, scriptHash: string }[]
 }
