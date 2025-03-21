@@ -1,4 +1,4 @@
-import { Beef, CreateActionResult, SendWithResult, SignActionResult, SignActionSpend } from '@bsv/sdk'
+import { AtomicBEEF, Beef, CreateActionResult, OutpointString, SendWithResult, SignableTransaction, SignActionResult, SignActionSpend, TXIDHexString } from '@bsv/sdk'
 import { Script, Transaction } from '@bsv/sdk'
 import {
   asBsvSdkScript,
@@ -10,13 +10,23 @@ import {
   Wallet
 } from '../../index.client'
 import { buildSignableTransaction } from './buildSignableTransaction'
+import { NotDelayedResult } from '../../sdk/WalletStorage.interfaces'
+
+export interface CreateActionResultX extends CreateActionResult {
+  txid?: TXIDHexString
+  tx?: AtomicBEEF
+  noSendChange?: OutpointString[]
+  sendWithResults?: SendWithResult[]
+  signableTransaction?: SignableTransaction
+  notDelayedResults?: NotDelayedResult[]
+}
 
 export async function createAction(
   wallet: Wallet,
   auth: sdk.AuthId,
   vargs: sdk.ValidCreateActionArgs
-): Promise<CreateActionResult> {
-  const r: CreateActionResult = {}
+): Promise<CreateActionResultX> {
+  const r: CreateActionResultX = {}
 
   let prior: PendingSignAction | undefined = undefined
 
@@ -34,7 +44,10 @@ export async function createAction(
     if (!vargs.options.returnTXIDOnly) r.tx = makeAtomicBeef(prior.tx, prior.dcr.inputBeef!)
   }
 
-  r.sendWithResults = await processAction(prior, wallet, auth, vargs)
+  const { sendWithResults, notDelayedResults } = await processAction(prior, wallet, auth, vargs)
+
+  r.sendWithResults = sendWithResults
+  r.notDelayedResults = notDelayedResults
 
   return r
 }
@@ -186,7 +199,7 @@ export async function processAction(
   wallet: Wallet,
   auth: sdk.AuthId,
   vargs: sdk.ValidProcessActionArgs
-): Promise<SendWithResult[] | undefined> {
+): Promise<sdk.StorageProcessActionResults> {
   const args: sdk.StorageProcessActionArgs = {
     isNewTx: vargs.isNewTx,
     isSendWith: vargs.isSendWith,
@@ -199,7 +212,7 @@ export async function processAction(
   }
   const r: sdk.StorageProcessActionResults = await wallet.storage.processAction(args)
 
-  return r.sendWithResults
+  return r
 }
 
 function makeDummyTransactionForOutputSatoshis(vout: number, satoshis: number): Transaction {

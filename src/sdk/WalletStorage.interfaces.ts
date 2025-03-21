@@ -33,6 +33,7 @@ import {
   TableTxLabel,
   TableMonitorEvent
 } from '../index.client'
+import { PostReqsToNetworkDetailsStatus } from '../storage/methods/attemptToPostReqsToNetwork'
 
 /**
  * This is the `WalletStorage` interface implemented by a class such as `WalletStorageManager`,
@@ -240,8 +241,25 @@ export interface StorageProcessActionArgs {
   log?: string
 }
 
+export interface NotDelayedResult {
+  status: PostReqsToNetworkDetailsStatus
+  /**
+   * Any competing double spend txids reported for this txid
+   */
+  competingTxs?: string[]
+  /**
+   * Merged beef of competingTxs.
+   */
+  competingBeef?: number[]
+  /**
+   * Input indices that have been spent, valid when status is 'doubleSpend'
+   */
+  spentInputs?: { vin: number, scriptHash: string }[]
+}
+
 export interface StorageProcessActionResults {
   sendWithResults?: SendWithResult[]
+  notDelayedResults?: NotDelayedResult[]
   log?: string
 }
 

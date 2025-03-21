@@ -2,6 +2,7 @@ import { Beef, Transaction } from '@bsv/sdk'
 import { StorageProvider } from '../StorageProvider'
 import { EntityProvenTxReq } from '../schema/entities'
 import { sdk, Services } from '../../index.all'
+import { ReqHistoryNote } from '../../sdk'
 
 /**
  * Attempt to post one or more `ProvenTxReq` with status 'unsent'
@@ -14,113 +15,65 @@ export async function attemptToPostReqsToNetwork(
   reqs: EntityProvenTxReq[],
   trx?: sdk.TrxToken
 ): Promise<PostReqsToNetworkResult> {
+
+  // initialize results, validate reqs ready to post, txids are of the transactions in the beef that we care about.
+
+  const { r, vreqs, txids } = await validateReqsAndMergeBeefs(storage, reqs, trx)
+
+  const services = storage.getServices()
+
+  const pbrs = await services.postBeef(r.beef, txids)
+
+  // post beef results (pbrs) is an array by service provider
+  // for each service provider, there's an aggregate result and individual results by txid.
+
+  await transferNotesToReqHistories(txids, vreqs, pbrs, storage, trx)
+
+  const apbrs = aggregatePostBeefResultsByTxid(txids, vreqs, pbrs)
+
+  await updateReqsFromAggregateResults(txids, r.beef, apbrs, storage, services, trx)
+
+  return r
+}
+
+async function validateReqsAndMergeBeefs(storage: StorageProvider, reqs: EntityProvenTxReq[], trx?: sdk.TrxToken)
+: Promise<{ r: PostReqsToNetworkResult; vreqs: PostReqsToNetworkDetails[], txids: string[] }>
+{
   const r: PostReqsToNetworkResult = {
     status: 'success',
     beef: new Beef(),
     details: [],
     log: ''
   }
+
+  const vreqs: PostReqsToNetworkDetails[] = []
+
   for (const req of reqs) {
-    r.details.push({
-      txid: req.txid,
-      req,
-      status: 'unknown',
-      pbrft: {
-        txid: req.txid,
-        status: 'error'
-      },
-      data: undefined,
-      error: undefined
-    })
-  }
-  const txids = reqs.map(r => r.txid)
-
-  let invalid: boolean = false
-  for (const rb of reqs) {
-    let badReq: boolean = false
-    if (!rb.rawTx) {
-      badReq = true
-      rb.addHistoryNote({ what: 'postToNetworkError', error: 'no rawTx' })
-    }
-    if (!rb.notify.transactionIds || rb.notify.transactionIds.length < 1) {
-      badReq = true
-      rb.addHistoryNote({ what: 'postToNetworkError', error: 'no notify tx' })
-    }
-    if (rb.attempts > 10) {
-      badReq = true
-      rb.addHistoryNote({ what: 'postToNetworkError', error: 'too many attempts', attempts: rb.attempts })
-    }
-
-    // Accumulate batch beefs.
-    if (!badReq) {
-      try {
-        await storage.mergeReqToBeefToShareExternally(rb.api, r.beef, [], trx)
-      } catch (eu: unknown) {
-        const e = sdk.WalletError.fromUnknown(eu)
-        if (e.code === 'WERR_INVALID_PARAMETER' && (e as sdk.WERR_INVALID_PARAMETER).parameter === 'txid') {
-          badReq = true
-          rb.addHistoryNote({ what: 'postToNetworkError', error: 'depends on unknown txid' })
-        }
-      }
-    }
-
-    if (badReq) invalid = true
-  }
-
-  if (invalid) {
-    for (const req of reqs) {
-      // batch passes or fails as a whole...prior to post to network attempt.
+    const noRawTx = !req.rawTx
+    const noTxIds = !req.notify.transactionIds || req.notify.transactionIds.length < 1
+    const noInputBEEF = !req.inputBEEF
+    if (noRawTx || noTxIds || noInputBEEF) {
+      // This should have happened earlier...
+      req.addHistoryNote({ when: new Date().toISOString(), what: 'validateReqFailed', noRawTx, noTxIds, noInputBEEF })
       req.status = 'invalid'
-      await req.updateStorageDynamicProperties(storage)
-      r.log += `status set to ${req.status}\n`
+      await req.updateStorageDynamicProperties(storage, trx)
+      r.details.push({ txid: req.txid, req, status: 'invalid' })
+    } else {
+      const vreq: PostReqsToNetworkDetails = { txid: req.txid, req, status: 'unknown' }
+      vreqs.push(vreq)
+      r.details.push(vreq)
+      await storage.mergeReqToBeefToShareExternally(req.api, r.beef, [], trx)
     }
-    return r
   }
-
-  // Use cwi-external-services to post the aggregate beef
-  // and add the new results to aggregate results.
-  const services = await storage.getServices()
-  const pbrs = await services.postBeef(r.beef, txids)
-
-  // post beef results is an array by service provider
-  // for each service provider, there's an aggregate result and individual results by txid.
-
-  await transferNotesToReqHistories(txids, reqs, pbrs, storage, trx)
-
-  const apbrs = aggregatePostBeefResultsByTxid(txids, reqs, pbrs)
-
-  await updateReqsFromAggregateResults(txids, r.beef, apbrs, storage, services, trx)
-
-  // Fetch the updated history.
-  // log += .req.historyPretty(since, indent + 2)
-  return r
+  return { r, vreqs, txids: vreqs.map(r => r.txid) }
 }
 
-export type PostReqsToNetworkDetailsStatus = 'success' | 'doubleSpend' | 'unknown'
-
-export interface PostReqsToNetworkDetails {
-  txid: string
-  req: EntityProvenTxReq
-  status: PostReqsToNetworkDetailsStatus
-  pbrft: sdk.PostTxResultForTxid
-  data?: string
-  error?: string
-}
-
-export interface PostReqsToNetworkResult {
-  status: 'success' | 'error'
-  beef: Beef
-  details: PostReqsToNetworkDetails[]
-  pbr?: sdk.PostBeefResult
-  log: string
-}
-
-async function transferNotesToReqHistories(txids: string[], reqs: EntityProvenTxReq[], pbrs: sdk.PostBeefResult[], storage: StorageProvider, trx?: sdk.TrxToken)
+async function transferNotesToReqHistories(txids: string[], vreqs: PostReqsToNetworkDetails[], pbrs: sdk.PostBeefResult[], storage: StorageProvider, trx?: sdk.TrxToken)
 : Promise<void>
 {
   for (const txid of txids) {
-    const req = reqs.find(r => r.txid === txid)
-    if (!req) throw new sdk.WERR_INTERNAL();
+    const vreq = vreqs.find(r => r.txid === txid)
+    if (!vreq) throw new sdk.WERR_INTERNAL();
     const notes: sdk.ReqHistoryNote[] = []
     for (const pbr of pbrs) {
       notes.push(...(pbr.notes || []))
@@ -128,9 +81,9 @@ async function transferNotesToReqHistories(txids: string[], reqs: EntityProvenTx
       if (r) notes.push(...(r.notes || []))
     }
     for (const n of notes) {
-      req.addHistoryNote(n)
+      vreq.req.addHistoryNote(n)
     }
-    await req.updateStorageDynamicProperties(storage, trx)
+    await vreq.req.updateStorageDynamicProperties(storage, trx)
   }
 }
 
@@ -149,23 +102,24 @@ async function transferNotesToReqHistories(txids: string[], reqs: EntityProvenTx
  * @param storage 
  * @returns 
  */
-function aggregatePostBeefResultsByTxid(txids: string[], reqs: EntityProvenTxReq[], pbrs: sdk.PostBeefResult[])
+function aggregatePostBeefResultsByTxid(txids: string[], vreqs: PostReqsToNetworkDetails[], pbrs: sdk.PostBeefResult[])
 : Record<string, AggregatePostBeefTxResult>
 {
   const r: Record<string, AggregatePostBeefTxResult> = {}
 
   for (const txid of txids) {
-    const req = reqs.find(r => r.txid === txid)!
+    const vreq = vreqs.find(r => r.txid === txid)!
     const ar: AggregatePostBeefTxResult = {
       txid,
-      req,
+      vreq,
       txidResults: [],
       status: 'success',
       successCount: 0,
       doubleSpendCount: 0,
       statusErrorCount: 0,
       serviceErrorCount: 0,
-      competingTxs: []
+      competingTxs: [],
+      spentInputs: []
     }
     r[txid] = ar
     for (const pbr of pbrs) {
@@ -201,23 +155,6 @@ function aggregatePostBeefResultsByTxid(txids: string[], reqs: EntityProvenTxReq
   return r
 }
 
-type AggregateStatus = 'success' | 'doublespend' | 'invalidTx' | 'serviceError'
-
-interface AggregatePostBeefTxResult {
-  txid: string
-  txidResults: sdk.PostTxResultForTxid[]
-  status: AggregateStatus
-  req: EntityProvenTxReq
-  successCount: number
-  doubleSpendCount: number
-  statusErrorCount: number
-  serviceErrorCount: number
-  /**
-   * Any competing double spend txids reported for this txid
-   */
-  competingTxs: string[]
-}
-
 /**
  * For each txid in submitted `txids`:
  * 
@@ -251,11 +188,27 @@ async function updateReqsFromAggregateResults(
 {
   for (const txid of txids) {
     const ar = apbrs[txid]!
-    await ar.req.refreshFromStorage(storage, trx)
-    if (['completed', 'unmined'].indexOf(ar.req.status) >= 0)
+    const req = ar.vreq.req
+    await req.refreshFromStorage(storage, trx)
+
+    const { successCount, doubleSpendCount, statusErrorCount, serviceErrorCount } = ar
+    const note: ReqHistoryNote = { when: new Date().toISOString(), what: 'aggregateResults',
+      reqStatus: req.status,
+      aggStatus: ar.status,
+      attempts: req.attempts,
+      successCount,
+      doubleSpendCount,
+      statusErrorCount,
+      serviceErrorCount
+     }
+
+    if (['completed', 'unmined'].indexOf(req.status) >= 0)
       // However it happened, don't degrade status if it is somehow already beyond broadcast stage
       continue;
     
+    if (ar.status === 'doublespend' && services && !trx)
+      await confirmDoubleSpend(ar, beef, storage, services);
+
     let newReqStatus: sdk.ProvenTxReqStatus | undefined = undefined
     let newTxStatus: sdk.TransactionStatus | undefined = undefined
     switch (ar.status) {
@@ -266,7 +219,6 @@ async function updateReqsFromAggregateResults(
       case 'doublespend':
         newReqStatus = 'doubleSpend'
         newTxStatus = 'failed'
-        if (services && !trx) await confirmDoubleSpend(ar, beef, storage, services)
         break;
       case 'invalidTx':
         newReqStatus = 'invalid'
@@ -275,33 +227,38 @@ async function updateReqsFromAggregateResults(
       case 'serviceError':
         newReqStatus = 'sending'
         newTxStatus = 'sending'
-        ar.req.attempts++
+        req.attempts++
         break;
       default:
         throw new sdk.WERR_INTERNAL(`unimplemented AggregateStatus ${ar.status}`)
     }
 
+    note.newReqStatus = newReqStatus
+    note.newTxStatus = newTxStatus
+    note.newAttempts = req.attempts
 
     if (newReqStatus)
-      ar.req.status = newReqStatus;
+      req.status = newReqStatus;
 
-    await ar.req.updateStorageDynamicProperties(storage, trx)
+    req.addHistoryNote(note)
+    await req.updateStorageDynamicProperties(storage, trx)
 
     if (newTxStatus) {
-      const ids = ar.req.notify.transactionIds
+      const ids = req.notify.transactionIds
       if (ids) {
         // Also set generated outputs to spendable false and consumed input outputs to spendable true (and clears their spentBy).
         await storage.updateTransactionsStatus(ids, newTxStatus, trx);
       }
     }
   }
-
 }
 
 /**
  * Requires ar.status === 'doubleSpend'
  * 
  * Parse the rawTx and review each input as a possible double spend.
+ * 
+ * If all inputs appear to be unspent, update aggregate status to 'success' if successCount > 0, otherwise 'serviceError'.
  * 
  * @param ar 
  * @param storage 
@@ -310,14 +267,87 @@ async function updateReqsFromAggregateResults(
 async function confirmDoubleSpend(ar: AggregatePostBeefTxResult, beef: Beef, storage: StorageProvider, services: sdk.WalletServices)
 : Promise<void>
 {
-  const tx = Transaction.fromBinary(ar.req.rawTx)
+  const req = ar.vreq.req
+  const note: ReqHistoryNote = { when: new Date().toISOString(), what: 'confirmDoubleSpend' }
+  const tx = Transaction.fromBinary(req.rawTx)
+  ar.spentInputs = []
+  let vin = -1;
   for (const input of tx.inputs) {
+    vin++
     const sourceTx = beef.findTxid(input.sourceTXID!)?.tx
     if (!sourceTx) throw new sdk.WERR_INTERNAL(`beef lacks tx for ${input.sourceTXID}`)
     const lockingScript = sourceTx.outputs[input.sourceOutputIndex].lockingScript.toHex()
     const hash = services.hashOutputScript(lockingScript)
-    const usr = await services.getUtxoStatus(hash, undefined ,`${sourceTx.id('hex')}.$`)
-
+    const usr = await services.getUtxoStatus(hash, undefined ,`${input.sourceTXID}.${input.sourceOutputIndex}`)
+    if (usr.isUtxo === false) {
+      ar.spentInputs.push({ vin, scriptHash: hash })
+    }
   }
+  note.vins = ar.spentInputs.map(si => si.vin.toString()).join(',')
+  if (ar.spentInputs.length === 0) {
+    // Possibly NOT a double spend...
+    if (ar.successCount > 0)
+      ar.status = 'success'
+    else
+      ar.status = 'serviceError'
+    note.newStatus = ar.status
+  } else {
+    // Confirmed double spend.
+    const competingTxids = new Set(ar.competingTxs)
+    for (const si of ar.spentInputs) {
+      const shhrs = await services.getScriptHashHistory(si.scriptHash)
+      if (shhrs.status === 'success') {
+        for (const h of shhrs.history) {
+          competingTxids.add(h.txid)
+        }
+      }
+    }
+    ar.competingTxs = [...competingTxids].slice(0, 24) // keep at most 24, if they were sorted by time, keep oldest
+    note.competingTxs = ar.competingTxs.join(',')
+  }
+  req.addHistoryNote(note)
 }
 
+type AggregateStatus = 'success' | 'doublespend' | 'invalidTx' | 'serviceError'
+
+interface AggregatePostBeefTxResult {
+  txid: string
+  txidResults: sdk.PostTxResultForTxid[]
+  status: AggregateStatus
+  vreq: PostReqsToNetworkDetails
+  successCount: number
+  doubleSpendCount: number
+  statusErrorCount: number
+  serviceErrorCount: number
+  /**
+   * Any competing double spend txids reported for this txid
+   */
+  competingTxs: string[]
+  /**
+   * Input indices that have been spent, valid when status is 'doubleSpend'
+   */
+  spentInputs: { vin: number, scriptHash: string }[]
+}
+
+export type PostReqsToNetworkDetailsStatus = 'success' | 'doubleSpend' | 'unknown' | 'invalid' | 'serviceError' | 'invalidTx'
+
+export interface PostReqsToNetworkDetails {
+  txid: string
+  req: EntityProvenTxReq
+  status: PostReqsToNetworkDetailsStatus
+  /**
+   * Any competing double spend txids reported for this txid
+   */
+  competingTxs?: string[]
+  /**
+   * Input indices that have been spent, valid when status is 'doubleSpend'
+   */
+  spentInputs?: { vin: number, scriptHash: string }[]
+}
+
+export interface PostReqsToNetworkResult {
+  status: 'success' | 'error'
+  beef: Beef
+  details: PostReqsToNetworkDetails[]
+  log: string
+}
