@@ -19,7 +19,7 @@ describe('postBeef service tests', () => {
   })
 })
 
-function createServices(chain: sdk.Chain) : Services {
+function createServices(chain: sdk.Chain): Services {
   const env = _tu.getEnv(chain)
   const options = Services.createDefaultOptions(chain)
 
@@ -27,8 +27,8 @@ function createServices(chain: sdk.Chain) : Services {
     options.taalApiKey = env.taalApiKey
     options.arcConfig.apiKey = env.taalApiKey
   }
-  if (env.whatsonchainApiKey) options.whatsOnChainApiKey = env.whatsonchainApiKey;
-  if (env.bitailsApiKey) options.bitailsApiKey = env.bitailsApiKey;
+  if (env.whatsonchainApiKey) options.whatsOnChainApiKey = env.whatsonchainApiKey
+  if (env.bitailsApiKey) options.bitailsApiKey = env.bitailsApiKey
   console.log(`
 API Keys:
 TAAL ${options.taalApiKey!.slice(0, 20)}
@@ -79,8 +79,7 @@ async function postBeefTest(services: Services) {
       } else {
         expect(tr!.status).toBe('error')
         expect(tr!.doubleSpend).toBe(true)
-        if (tr!.competingTxs?.length)
-          expect(tr!.competingTxs).toEqual([c.txidUndo])
+        if (tr!.competingTxs?.length) expect(tr!.competingTxs).toEqual([c.txidUndo])
       }
     }
   }

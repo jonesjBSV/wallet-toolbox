@@ -47,7 +47,7 @@ describe('ProvenTx class method tests', () => {
     const services: sdk.WalletServices = {
       chain: 'test',
 
-      hashOutputScript: (script: string) : string => {
+      hashOutputScript: (script: string): string => {
         const hash = bsv.Utils.toHex(sha256Hash(bsv.Utils.toArray(script, 'hex')))
         return hash
       },

@@ -381,7 +381,11 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     throw new sdk.WERR_INTERNAL()
   }
 
-  async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat, outpoint?: string): Promise<sdk.GetUtxoStatusResult> {
+  async getUtxoStatus(
+    output: string,
+    outputFormat?: sdk.GetUtxoStatusOutputFormat,
+    outpoint?: string
+  ): Promise<sdk.GetUtxoStatusResult> {
     const r: sdk.GetUtxoStatusResult = {
       name: 'WoC',
       status: 'error',
@@ -433,8 +437,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
             if (outpoint) {
               const { txid, vout } = parseWalletOutpoint(outpoint)
               r.isUtxo = r.details.find(d => d.txid === txid && d.index === vout) !== undefined
-            } else
-              r.isUtxo = r.details.length > 0
+            } else r.isUtxo = r.details.length > 0
           }
         } else {
           throw new sdk.WERR_INTERNAL('data is not an array')
@@ -464,17 +467,13 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     const url = `${this.URL}/script/${hash}/confirmed/history`
 
     for (let retry = 0; ; retry++) {
-
       try {
         const requestOptions = {
           method: 'GET',
           headers: this.getHttpHeaders()
         }
 
-        const response = await this.httpClient.request<WhatsOnChainScriptHashHistoryData>(
-          url,
-          requestOptions
-        )
+        const response = await this.httpClient.request<WhatsOnChainScriptHashHistoryData>(url, requestOptions)
         if (response.statusText === 'Too Many Requests' && retry < 2) {
           await wait(2000)
           continue
@@ -488,7 +487,9 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
         // response.statusText is often, but not always 'OK' on success...
         if (!response.data || !response.ok || response.status !== 200) {
-          r.error = new sdk.WERR_BAD_REQUEST(`WoC getScriptHashConfirmedHistory response ${response.ok} ${response.status} ${response.statusText}`)
+          r.error = new sdk.WERR_BAD_REQUEST(
+            `WoC getScriptHashConfirmedHistory response ${response.ok} ${response.status} ${response.statusText}`
+          )
           return r
         }
 
@@ -526,17 +527,13 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     const url = `${this.URL}/script/${hash}/unconfirmed/history`
 
     for (let retry = 0; ; retry++) {
-
       try {
         const requestOptions = {
           method: 'GET',
           headers: this.getHttpHeaders()
         }
 
-        const response = await this.httpClient.request<WhatsOnChainScriptHashHistoryData>(
-          url,
-          requestOptions
-        )
+        const response = await this.httpClient.request<WhatsOnChainScriptHashHistoryData>(url, requestOptions)
         if (response.statusText === 'Too Many Requests' && retry < 2) {
           await wait(2000)
           continue
@@ -550,7 +547,9 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
         // response.statusText is often, but not always 'OK' on success...
         if (!response.data || !response.ok || response.status !== 200) {
-          r.error = new sdk.WERR_BAD_REQUEST(`WoC getScriptHashUnconfirmedHistory response ${response.ok} ${response.status} ${response.statusText}`)
+          r.error = new sdk.WERR_BAD_REQUEST(
+            `WoC getScriptHashUnconfirmedHistory response ${response.ok} ${response.status} ${response.statusText}`
+          )
           return r
         }
 
@@ -579,11 +578,9 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
   async getScriptHashHistory(hash: string): Promise<sdk.GetScriptHashHistoryResult> {
     const r1 = await this.getScriptHashConfirmedHistory(hash)
-    if (r1.error || r1.status !== 'success')
-      return r1
+    if (r1.error || r1.status !== 'success') return r1
     const r2 = await this.getScriptHashUnconfirmedHistory(hash)
-    if (r2.error || r2.status !== 'success')
-      return r2
+    if (r2.error || r2.status !== 'success') return r2
     r1.history = r1.history.concat(r2.history)
     return r1
   }

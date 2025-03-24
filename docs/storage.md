@@ -324,13 +324,34 @@ export interface PostReqsToNetworkDetails {
     txid: string;
     req: EntityProvenTxReq;
     status: PostReqsToNetworkDetailsStatus;
-    pbrft: sdk.PostTxResultForTxid;
-    data?: string;
-    error?: string;
+    competingTxs?: string[];
+    spentInputs?: {
+        vin: number;
+        scriptHash: string;
+    }[];
 }
 ```
 
-See also: [EntityProvenTxReq](./storage.md#class-entityproventxreq), [PostReqsToNetworkDetailsStatus](./storage.md#type-postreqstonetworkdetailsstatus), [PostTxResultForTxid](./client.md#interface-posttxresultfortxid)
+See also: [EntityProvenTxReq](./storage.md#class-entityproventxreq), [PostReqsToNetworkDetailsStatus](./storage.md#type-postreqstonetworkdetailsstatus)
+
+###### Property competingTxs
+
+Any competing double spend txids reported for this txid
+
+```ts
+competingTxs?: string[]
+```
+
+###### Property spentInputs
+
+Input indices that have been spent, valid when status is 'doubleSpend'
+
+```ts
+spentInputs?: {
+    vin: number;
+    scriptHash: string;
+}[]
+```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -342,12 +363,11 @@ export interface PostReqsToNetworkResult {
     status: "success" | "error";
     beef: Beef;
     details: PostReqsToNetworkDetails[];
-    pbr?: sdk.PostBeefResult;
     log: string;
 }
 ```
 
-See also: [PostBeefResult](./client.md#interface-postbeefresult), [PostReqsToNetworkDetails](./storage.md#interface-postreqstonetworkdetails)
+See also: [PostReqsToNetworkDetails](./storage.md#interface-postreqstonetworkdetails)
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -1718,7 +1738,7 @@ export class EntityProvenTxReq extends EntityBase<TableProvenTxReq> {
     set apiNotify(v: string) 
     updateApi(): void 
     unpackApi(): void 
-    async refreshFromStorage(storage: EntityStorage | WalletStorageManager): Promise<void> 
+    async refreshFromStorage(storage: EntityStorage | WalletStorageManager, trx?: sdk.TrxToken): Promise<void> 
     constructor(api?: TableProvenTxReq) 
     historySince(since: Date): ProvenTxReqHistory 
     historyPretty(since?: Date, indent = 0): string 
@@ -3237,7 +3257,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     async getReqsAndBeefToShareWithWorld(txids: string[], knownTxids: string[], trx?: sdk.TrxToken): Promise<GetReqsAndBeefResult> 
     async mergeReqToBeefToShareExternally(req: TableProvenTxReq, mergeToBeef: Beef, knownTxids: string[], trx?: sdk.TrxToken): Promise<void> 
     async getProvenOrReq(txid: string, newReq?: TableProvenTxReq, trx?: sdk.TrxToken): Promise<sdk.StorageProvenOrReq> 
-    async updateTransactionsStatus(transactionIds: number[], status: sdk.TransactionStatus): Promise<void> 
+    async updateTransactionsStatus(transactionIds: number[], status: sdk.TransactionStatus, trx?: sdk.TrxToken): Promise<void> 
     async updateTransactionStatus(status: sdk.TransactionStatus, transactionId?: number, userId?: number, reference?: string, trx?: sdk.TrxToken): Promise<void> 
     async createAction(auth: sdk.AuthId, args: sdk.ValidCreateActionArgs): Promise<sdk.StorageCreateActionResult> 
     async processAction(auth: sdk.AuthId, args: sdk.StorageProcessActionArgs): Promise<sdk.StorageProcessActionResults> 
@@ -4270,8 +4290,19 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 ##### Type: PostReqsToNetworkDetailsStatus
 
+Indicates status of a new Action following a `createAction` or `signAction` in immediate mode:
+When `acceptDelayedBroadcast` is falses.
+
+'success': The action has been broadcast and accepted by the bitcoin processing network.
+'doulbeSpend': The action has been confirmed to double spend one or more inputs, and by the "first-seen-rule" is the loosing transaction.
+'invalidTx': The action was rejected by the processing network as an invalid bitcoin transaction.
+'serviceError': The broadcast services are currently unable to reach the bitcoin network. The action is now queued for delayed retries.
+
+'invalid': The action was in an invalid state for processing, this status should never be seen by user code.
+'unknown': An internal processing error has occured, this status should never be seen by user code.
+
 ```ts
-export type PostReqsToNetworkDetailsStatus = "success" | "doubleSpend" | "unknown"
+export type PostReqsToNetworkDetailsStatus = "success" | "doubleSpend" | "unknown" | "invalid" | "serviceError" | "invalidTx"
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)

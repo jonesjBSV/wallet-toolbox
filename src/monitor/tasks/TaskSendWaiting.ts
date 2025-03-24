@@ -15,15 +15,15 @@ export class TaskSendWaiting extends WalletMonitorTask {
     monitor: Monitor,
     public triggerMsecs = monitor.oneSecond * 8,
     public agedMsecs = monitor.oneSecond * 7,
-    public sendingMsecs = monitor.oneMinute * 5,
+    public sendingMsecs = monitor.oneMinute * 5
   ) {
     super(monitor, TaskSendWaiting.taskName)
   }
 
   trigger(nowMsecsSinceEpoch: number): { run: boolean } {
-    this.includeSending = !this.lastSendingRunMsecsSinceEpoch || nowMsecsSinceEpoch > this.lastSendingRunMsecsSinceEpoch + this.sendingMsecs
-    if (this.includeSending)
-      this.lastSendingRunMsecsSinceEpoch = nowMsecsSinceEpoch
+    this.includeSending =
+      !this.lastSendingRunMsecsSinceEpoch || nowMsecsSinceEpoch > this.lastSendingRunMsecsSinceEpoch + this.sendingMsecs
+    if (this.includeSending) this.lastSendingRunMsecsSinceEpoch = nowMsecsSinceEpoch
     return {
       run: nowMsecsSinceEpoch > this.lastRunMsecsSinceEpoch + this.triggerMsecs
     }

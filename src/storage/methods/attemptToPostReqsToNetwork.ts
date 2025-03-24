@@ -7,7 +7,7 @@ import { ReqHistoryNote } from '../../sdk'
 /**
  * Attempt to post one or more `ProvenTxReq` with status 'unsent'
  * to the bitcoin network.
- * 
+ *
  * @param reqs
  */
 export async function attemptToPostReqsToNetwork(
@@ -15,7 +15,6 @@ export async function attemptToPostReqsToNetwork(
   reqs: EntityProvenTxReq[],
   trx?: sdk.TrxToken
 ): Promise<PostReqsToNetworkResult> {
-
   // initialize results, validate reqs ready to post, txids are of the transactions in the beef that we care about.
 
   const { r, vreqs, txids } = await validateReqsAndMergeBeefs(storage, reqs, trx)
@@ -36,9 +35,11 @@ export async function attemptToPostReqsToNetwork(
   return r
 }
 
-async function validateReqsAndMergeBeefs(storage: StorageProvider, reqs: EntityProvenTxReq[], trx?: sdk.TrxToken)
-: Promise<{ r: PostReqsToNetworkResult; vreqs: PostReqsToNetworkDetails[], txids: string[] }>
-{
+async function validateReqsAndMergeBeefs(
+  storage: StorageProvider,
+  reqs: EntityProvenTxReq[],
+  trx?: sdk.TrxToken
+): Promise<{ r: PostReqsToNetworkResult; vreqs: PostReqsToNetworkDetails[]; txids: string[] }> {
   const r: PostReqsToNetworkResult = {
     status: 'success',
     beef: new Beef(),
@@ -68,12 +69,16 @@ async function validateReqsAndMergeBeefs(storage: StorageProvider, reqs: EntityP
   return { r, vreqs, txids: vreqs.map(r => r.txid) }
 }
 
-async function transferNotesToReqHistories(txids: string[], vreqs: PostReqsToNetworkDetails[], pbrs: sdk.PostBeefResult[], storage: StorageProvider, trx?: sdk.TrxToken)
-: Promise<void>
-{
+async function transferNotesToReqHistories(
+  txids: string[],
+  vreqs: PostReqsToNetworkDetails[],
+  pbrs: sdk.PostBeefResult[],
+  storage: StorageProvider,
+  trx?: sdk.TrxToken
+): Promise<void> {
   for (const txid of txids) {
     const vreq = vreqs.find(r => r.txid === txid)
-    if (!vreq) throw new sdk.WERR_INTERNAL();
+    if (!vreq) throw new sdk.WERR_INTERNAL()
     const notes: sdk.ReqHistoryNote[] = []
     for (const pbr of pbrs) {
       notes.push(...(pbr.notes || []))
@@ -89,22 +94,24 @@ async function transferNotesToReqHistories(txids: string[], vreqs: PostReqsToNet
 
 /**
  * For each txid, decide on the aggregate success or failure of attempting to broadcast it to the bitcoin processing network.
- * 
+ *
  * Possible results:
  * 1. Success: At least one success, no double spends.
  * 2. DoubleSpend: One or more double spends.
  * 3. InvalidTransaction: No success, no double spend, one or more non-exception errors.
  * 4. Service Failure: No results or all results are exception errors.
- * 
- * @param txids 
- * @param reqs 
- * @param pbrs 
- * @param storage 
- * @returns 
+ *
+ * @param txids
+ * @param reqs
+ * @param pbrs
+ * @param storage
+ * @returns
  */
-function aggregatePostBeefResultsByTxid(txids: string[], vreqs: PostReqsToNetworkDetails[], pbrs: sdk.PostBeefResult[])
-: Record<string, AggregatePostBeefTxResult>
-{
+function aggregatePostBeefResultsByTxid(
+  txids: string[],
+  vreqs: PostReqsToNetworkDetails[],
+  pbrs: sdk.PostBeefResult[]
+): Record<string, AggregatePostBeefTxResult> {
   const r: Record<string, AggregatePostBeefTxResult> = {}
 
   for (const txid of txids) {
@@ -126,30 +133,22 @@ function aggregatePostBeefResultsByTxid(txids: string[], vreqs: PostReqsToNetwor
       const tr = pbr.txidResults.find(tr => tr.txid === txid)
       if (tr) {
         ar.txidResults.push(tr)
-        if (tr.status === 'success')
-          ar.successCount++
+        if (tr.status === 'success') ar.successCount++
         else if (tr.doubleSpend) {
           ar.doubleSpendCount++
           if (tr.competingTxs) {
             ar.competingTxs = [...tr.competingTxs]
           }
-        } else if (tr.serviceError)
-          ar.serviceErrorCount++
-        else
-          ar.statusErrorCount++
+        } else if (tr.serviceError) ar.serviceErrorCount++
+        else ar.statusErrorCount++
       }
-      if (ar.competingTxs.length > 1)
-        ar.competingTxs = [...new Set(ar.competingTxs)] // Remove duplicates
+      if (ar.competingTxs.length > 1) ar.competingTxs = [...new Set(ar.competingTxs)] // Remove duplicates
     }
 
-    if (ar.successCount > 0 && ar.doubleSpendCount === 0)
-      ar.status = 'success'
-    else if (ar.doubleSpendCount > 0)
-      ar.status = 'doublespend'
-    else if (ar.statusErrorCount > 0)
-      ar.status = 'invalidTx'
-    else
-      ar.status = 'serviceError'
+    if (ar.successCount > 0 && ar.doubleSpendCount === 0) ar.status = 'success'
+    else if (ar.doubleSpendCount > 0) ar.status = 'doublespend'
+    else if (ar.statusErrorCount > 0) ar.status = 'invalidTx'
+    else ar.status = 'serviceError'
   }
 
   return r
@@ -157,10 +156,10 @@ function aggregatePostBeefResultsByTxid(txids: string[], vreqs: PostReqsToNetwor
 
 /**
  * For each txid in submitted `txids`:
- * 
+ *
  *   Based on its aggregate status, and whether broadcast happening in background (isDelayed) or immediately (!isDelayed),
  *   and iff current req.status is not 'unproven' or 'completed':
- * 
+ *
  *     'success':
  *       req.status => 'unmined', tx.status => 'unproven'
  *     'doubleSpend':
@@ -169,12 +168,12 @@ function aggregatePostBeefResultsByTxid(txids: string[], vreqs: PostReqsToNetwor
  *       req.status => 'invalid', tx.status => 'failed'
  *     'serviceError':
  *       increment req.attempts
- * 
- * @param txids 
- * @param apbrs 
+ *
+ * @param txids
+ * @param apbrs
  * @param storage
  * @param services if valid, doubleSpend results will be verified (but only if not within a trx. e.g. trx must be undefined)
- * @param trx 
+ * @param trx
  */
 async function updateReqsFromAggregateResults(
   txids: string[],
@@ -183,16 +182,16 @@ async function updateReqsFromAggregateResults(
   storage: StorageProvider,
   services?: sdk.WalletServices,
   trx?: sdk.TrxToken
-)
-: Promise<void>
-{
+): Promise<void> {
   for (const txid of txids) {
     const ar = apbrs[txid]!
     const req = ar.vreq.req
     await req.refreshFromStorage(storage, trx)
 
     const { successCount, doubleSpendCount, statusErrorCount, serviceErrorCount } = ar
-    const note: ReqHistoryNote = { when: new Date().toISOString(), what: 'aggregateResults',
+    const note: ReqHistoryNote = {
+      when: new Date().toISOString(),
+      what: 'aggregateResults',
       reqStatus: req.status,
       aggStatus: ar.status,
       attempts: req.attempts,
@@ -200,14 +199,13 @@ async function updateReqsFromAggregateResults(
       doubleSpendCount,
       statusErrorCount,
       serviceErrorCount
-     }
+    }
 
     if (['completed', 'unmined'].indexOf(req.status) >= 0)
       // However it happened, don't degrade status if it is somehow already beyond broadcast stage
-      continue;
-    
-    if (ar.status === 'doublespend' && services && !trx)
-      await confirmDoubleSpend(ar, beef, storage, services);
+      continue
+
+    if (ar.status === 'doublespend' && services && !trx) await confirmDoubleSpend(ar, beef, storage, services)
 
     let newReqStatus: sdk.ProvenTxReqStatus | undefined = undefined
     let newTxStatus: sdk.TransactionStatus | undefined = undefined
@@ -215,20 +213,20 @@ async function updateReqsFromAggregateResults(
       case 'success':
         newReqStatus = 'unmined'
         newTxStatus = 'unproven'
-        break;
+        break
       case 'doublespend':
         newReqStatus = 'doubleSpend'
         newTxStatus = 'failed'
-        break;
+        break
       case 'invalidTx':
         newReqStatus = 'invalid'
         newTxStatus = 'failed'
-        break;
+        break
       case 'serviceError':
         newReqStatus = 'sending'
         newTxStatus = 'sending'
         req.attempts++
-        break;
+        break
       default:
         throw new sdk.WERR_INTERNAL(`unimplemented AggregateStatus ${ar.status}`)
     }
@@ -237,8 +235,7 @@ async function updateReqsFromAggregateResults(
     note.newTxStatus = newTxStatus
     note.newAttempts = req.attempts
 
-    if (newReqStatus)
-      req.status = newReqStatus;
+    if (newReqStatus) req.status = newReqStatus
 
     req.addHistoryNote(note)
     await req.updateStorageDynamicProperties(storage, trx)
@@ -247,7 +244,7 @@ async function updateReqsFromAggregateResults(
       const ids = req.notify.transactionIds
       if (ids) {
         // Also set generated outputs to spendable false and consumed input outputs to spendable true (and clears their spentBy).
-        await storage.updateTransactionsStatus(ids, newTxStatus, trx);
+        await storage.updateTransactionsStatus(ids, newTxStatus, trx)
       }
     }
   }
@@ -255,30 +252,33 @@ async function updateReqsFromAggregateResults(
 
 /**
  * Requires ar.status === 'doubleSpend'
- * 
+ *
  * Parse the rawTx and review each input as a possible double spend.
- * 
+ *
  * If all inputs appear to be unspent, update aggregate status to 'success' if successCount > 0, otherwise 'serviceError'.
- * 
- * @param ar 
- * @param storage 
- * @param services 
+ *
+ * @param ar
+ * @param storage
+ * @param services
  */
-async function confirmDoubleSpend(ar: AggregatePostBeefTxResult, beef: Beef, storage: StorageProvider, services: sdk.WalletServices)
-: Promise<void>
-{
+async function confirmDoubleSpend(
+  ar: AggregatePostBeefTxResult,
+  beef: Beef,
+  storage: StorageProvider,
+  services: sdk.WalletServices
+): Promise<void> {
   const req = ar.vreq.req
   const note: ReqHistoryNote = { when: new Date().toISOString(), what: 'confirmDoubleSpend' }
   const tx = Transaction.fromBinary(req.rawTx)
   ar.spentInputs = []
-  let vin = -1;
+  let vin = -1
   for (const input of tx.inputs) {
     vin++
     const sourceTx = beef.findTxid(input.sourceTXID!)?.tx
     if (!sourceTx) throw new sdk.WERR_INTERNAL(`beef lacks tx for ${input.sourceTXID}`)
     const lockingScript = sourceTx.outputs[input.sourceOutputIndex].lockingScript.toHex()
     const hash = services.hashOutputScript(lockingScript)
-    const usr = await services.getUtxoStatus(hash, undefined ,`${input.sourceTXID}.${input.sourceOutputIndex}`)
+    const usr = await services.getUtxoStatus(hash, undefined, `${input.sourceTXID}.${input.sourceOutputIndex}`)
     if (usr.isUtxo === false) {
       ar.spentInputs.push({ vin, scriptHash: hash })
     }
@@ -286,10 +286,8 @@ async function confirmDoubleSpend(ar: AggregatePostBeefTxResult, beef: Beef, sto
   note.vins = ar.spentInputs.map(si => si.vin.toString()).join(',')
   if (ar.spentInputs.length === 0) {
     // Possibly NOT a double spend...
-    if (ar.successCount > 0)
-      ar.status = 'success'
-    else
-      ar.status = 'serviceError'
+    if (ar.successCount > 0) ar.status = 'success'
+    else ar.status = 'serviceError'
     note.newStatus = ar.status
   } else {
     // Confirmed double spend.
@@ -326,23 +324,29 @@ interface AggregatePostBeefTxResult {
   /**
    * Input indices that have been spent, valid when status is 'doubleSpend'
    */
-  spentInputs: { vin: number, scriptHash: string }[]
+  spentInputs: { vin: number; scriptHash: string }[]
 }
 
 /**
  * Indicates status of a new Action following a `createAction` or `signAction` in immediate mode:
  * When `acceptDelayedBroadcast` is falses.
- * 
+ *
  * 'success': The action has been broadcast and accepted by the bitcoin processing network.
  * 'doulbeSpend': The action has been confirmed to double spend one or more inputs, and by the "first-seen-rule" is the loosing transaction.
  * 'invalidTx': The action was rejected by the processing network as an invalid bitcoin transaction.
  * 'serviceError': The broadcast services are currently unable to reach the bitcoin network. The action is now queued for delayed retries.
- * 
+ *
  * 'invalid': The action was in an invalid state for processing, this status should never be seen by user code.
  * 'unknown': An internal processing error has occured, this status should never be seen by user code.
- * 
+ *
  */
-export type PostReqsToNetworkDetailsStatus = 'success' | 'doubleSpend' | 'unknown' | 'invalid' | 'serviceError' | 'invalidTx'
+export type PostReqsToNetworkDetailsStatus =
+  | 'success'
+  | 'doubleSpend'
+  | 'unknown'
+  | 'invalid'
+  | 'serviceError'
+  | 'invalidTx'
 
 export interface PostReqsToNetworkDetails {
   txid: string
@@ -355,7 +359,7 @@ export interface PostReqsToNetworkDetails {
   /**
    * Input indices that have been spent, valid when status is 'doubleSpend'
    */
-  spentInputs?: { vin: number, scriptHash: string }[]
+  spentInputs?: { vin: number; scriptHash: string }[]
 }
 
 export interface PostReqsToNetworkResult {

@@ -109,7 +109,7 @@ export class Services implements sdk.WalletServices {
    * @param script Output script to be hashed for `getUtxoStatus` default `outputFormat`
    * @returns script hash in 'hashLE' format, which is the default.
    */
-  hashOutputScript(script: string) : string {
+  hashOutputScript(script: string): string {
     const hash = Utils.toHex(sha256Hash(Utils.toArray(script, 'hex')))
     return hash
   }

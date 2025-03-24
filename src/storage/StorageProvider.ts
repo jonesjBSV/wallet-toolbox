@@ -302,7 +302,11 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
     return r
   }
 
-  async updateTransactionsStatus(transactionIds: number[], status: sdk.TransactionStatus, trx?: sdk.TrxToken): Promise<void> {
+  async updateTransactionsStatus(
+    transactionIds: number[],
+    status: sdk.TransactionStatus,
+    trx?: sdk.TrxToken
+  ): Promise<void> {
     await this.transaction(async trx => {
       for (const id of transactionIds) {
         await this.updateTransactionStatus(status, id, undefined, undefined, trx)
@@ -605,8 +609,7 @@ export abstract class StorageProvider extends StorageReaderWriter implements sdk
           if (o.lockingScript && o.lockingScript.length > 0) {
             const hash = services.hashOutputScript(asString(o.lockingScript))
             const r = await services.getUtxoStatus(hash, undefined, `${o.txid}.${o.vout}`)
-            if (r.isUtxo === true)
-              ok = true;
+            if (r.isUtxo === true) ok = true
           }
           if (!ok) invalidSpendableOutputs.push(o)
         }

@@ -695,8 +695,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
     if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 
-    if (!vargs.isDelayed)
-      throwIfAnyUnsuccessfulCreateActions(r)
+    if (!vargs.isDelayed) throwIfAnyUnsuccessfulCreateActions(r)
 
     return r
   }
@@ -710,8 +709,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateSignActionArgs)
     const r = await signAction(this, auth, vargs)
 
-    if (!vargs.isDelayed)
-      throwIfAnyUnsuccessfulSignActions(r)
+    if (!vargs.isDelayed) throwIfAnyUnsuccessfulSignActions(r)
 
     if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 

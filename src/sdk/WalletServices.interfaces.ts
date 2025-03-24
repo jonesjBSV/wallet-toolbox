@@ -95,7 +95,7 @@ export interface WalletServices {
    * @param script Output script to be hashed for `getUtxoStatus` default `outputFormat`
    * @returns script hash in 'hashBE' format, which is the default.
    */
-  hashOutputScript(script: string) : string
+  hashOutputScript(script: string): string
 
   /**
    * Attempts to determine the UTXO status of a transaction output.
@@ -409,9 +409,13 @@ export interface BlockHeader extends BaseBlockHeader {
   hash: string
 }
 
-export type GetUtxoStatusService = ( output: string, outputFormat?: GetUtxoStatusOutputFormat, outpoint?: string) => Promise<GetUtxoStatusResult>
+export type GetUtxoStatusService = (
+  output: string,
+  outputFormat?: GetUtxoStatusOutputFormat,
+  outpoint?: string
+) => Promise<GetUtxoStatusResult>
 
-export type GetScriptHashHistoryService = ( hash: string ) => Promise<GetScriptHashHistoryResult>
+export type GetScriptHashHistoryService = (hash: string) => Promise<GetScriptHashHistoryResult>
 
 export type GetMerklePathService = (txid: string, services: WalletServices) => Promise<GetMerklePathResult>
 

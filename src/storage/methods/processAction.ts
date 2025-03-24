@@ -113,8 +113,7 @@ async function shareReqsWithWorld(
   userId: number,
   txids: string[],
   isDelayed: boolean
-): Promise<{ swr: SendWithResult[], ndr: ReviewActionResult[] | undefined }> {
-
+): Promise<{ swr: SendWithResult[]; ndr: ReviewActionResult[] | undefined }> {
   let swr: SendWithResult[] = []
   let ndr: ReviewActionResult[] | undefined = undefined
 
@@ -135,8 +134,7 @@ async function shareReqsWithWorld(
   const readyToSendReqs: EntityProvenTxReq[] = []
   for (const getReq of r.details) {
     let status: SendWithResultStatus = 'failed'
-    if (getReq.status === 'alreadySent')
-      status = 'unproven'
+    if (getReq.status === 'alreadySent') status = 'unproven'
     else if (getReq.status === 'readyToSend') {
       status = 'sending'
       readyToSendReqs.push(new EntityProvenTxReq(getReq.req!))
@@ -198,14 +196,13 @@ async function shareReqsWithWorld(
       case 'success':
         // processing network has accepted this transaction
         ar.status = 'unproven'
-        break;
+        break
       case 'doubleSpend':
         // confirmed double spend.
         ar.status = 'failed'
         ar.ndr.status = 'doubleSpend'
-        if (d.competingTxs)
-          ar.ndr.competingBeef = await createMergedBeefOfTxids(d.competingTxs, storage)
-        break;
+        if (d.competingTxs) ar.ndr.competingBeef = await createMergedBeefOfTxids(d.competingTxs, storage)
+        break
       case 'serviceError':
         // services might improve
         ar.status = 'sending'
@@ -215,7 +212,7 @@ async function shareReqsWithWorld(
         // nothing will fix this transaction
         ar.status = 'failed'
         ar.ndr.status = 'invalidTx'
-        break;
+        break
       case 'unknown':
       case 'invalid':
       default:
@@ -225,8 +222,7 @@ async function shareReqsWithWorld(
 
   return createResults()
 
-  function createResults(): { swr: SendWithResult[], ndr: ReviewActionResult[] | undefined }
-  {
+  function createResults(): { swr: SendWithResult[]; ndr: ReviewActionResult[] | undefined } {
     swr = []
     ndr = isDelayed ? undefined : []
     for (const ar of ars) {
@@ -454,9 +450,7 @@ async function commitNewTxToStorage(
   return r
 }
 
-async function createMergedBeefOfTxids(txids: string[], storage: StorageProvider)
-: Promise<number[]>
-{
+async function createMergedBeefOfTxids(txids: string[], storage: StorageProvider): Promise<number[]> {
   const beef = new Beef()
   const options: StorageGetBeefOptions = {
     mergeToBeef: beef,

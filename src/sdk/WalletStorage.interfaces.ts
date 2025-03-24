@@ -245,7 +245,7 @@ export interface StorageProcessActionArgs {
 /**
  * Indicates status of a new Action following a `createAction` or `signAction` in immediate mode:
  * When `acceptDelayedBroadcast` is falses.
- * 
+ *
  * 'success': The action has been broadcast and accepted by the bitcoin processing network.
  * 'doulbeSpend': The action has been confirmed to double spend one or more inputs, and by the "first-seen-rule" is the loosing transaction.
  * 'invalidTx': The action was rejected by the processing network as an invalid bitcoin transaction.
@@ -267,7 +267,7 @@ export interface ReviewActionResult {
   /**
    * Transaction input indices that have been spent, valid when status is 'doubleSpend'.
    */
-  spentInputs?: { vin: number, scriptHash: string }[]
+  spentInputs?: { vin: number; scriptHash: string }[]
 }
 
 export interface StorageProcessActionResults {

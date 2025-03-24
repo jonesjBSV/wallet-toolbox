@@ -162,7 +162,7 @@ export class WERR_REVIEW_ACTIONS extends WalletError {
     public sendWithResults: SendWithResult[],
     public txid?: TXIDHexString,
     public tx?: AtomicBEEF,
-    public noSendChange?: OutpointString[],
+    public noSendChange?: OutpointString[]
   ) {
     super('WERR_REVIEW_ACTIONS', 'Undelayed createAction or signAction results require review.')
   }
