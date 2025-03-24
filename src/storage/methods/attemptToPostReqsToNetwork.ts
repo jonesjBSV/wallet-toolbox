@@ -286,7 +286,12 @@ async function confirmDoubleSpend(
     const hash = services.hashOutputScript(lockingScript)
     const usr = await services.getUtxoStatus(hash, undefined, `${input.sourceTXID}.${input.sourceOutputIndex}`)
     if (usr.isUtxo === false) {
-      ar.spentInputs.push({ vin, scriptHash: hash, sourceTXID: input.sourceTXID!, sourceIndex: input.sourceOutputIndex })
+      ar.spentInputs.push({
+        vin,
+        scriptHash: hash,
+        sourceTXID: input.sourceTXID!,
+        sourceIndex: input.sourceOutputIndex
+      })
     }
   }
   note.vins = ar.spentInputs.map(si => si.vin.toString()).join(',')
@@ -302,8 +307,7 @@ async function confirmDoubleSpend(
       const shhrs = await services.getScriptHashHistory(si.scriptHash)
       if (shhrs.status === 'success') {
         for (const h of shhrs.history) {
-          if (h.txid !== si.sourceTXID)
-          competingTxids.add(h.txid)
+          if (h.txid !== si.sourceTXID) competingTxids.add(h.txid)
         }
       }
     }
@@ -331,7 +335,7 @@ interface AggregatePostBeefTxResult {
   /**
    * Input indices that have been spent, valid when status is 'doubleSpend'
    */
-  spentInputs: { vin: number; scriptHash: string, sourceTXID: string, sourceIndex: number }[]
+  spentInputs: { vin: number; scriptHash: string; sourceTXID: string; sourceIndex: number }[]
 }
 
 /**

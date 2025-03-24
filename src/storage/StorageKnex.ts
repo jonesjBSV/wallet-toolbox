@@ -294,11 +294,11 @@ export class StorageKnex extends StorageProvider implements sdk.WalletStoragePro
 
   override async insertOutput(output: TableOutput, trx?: sdk.TrxToken): Promise<number> {
     try {
-    const e = await this.validateEntityForInsert(output, trx)
-    if (e.outputId === 0) delete e.outputId
-    const [id] = await this.toDb(trx)<TableOutput>('outputs').insert(e)
-    output.outputId = id
-    return output.outputId
+      const e = await this.validateEntityForInsert(output, trx)
+      if (e.outputId === 0) delete e.outputId
+      const [id] = await this.toDb(trx)<TableOutput>('outputs').insert(e)
+      output.outputId = id
+      return output.outputId
     } catch (e) {
       throw e
     }

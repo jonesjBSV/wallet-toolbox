@@ -41,7 +41,9 @@ import {
 } from './generateChange'
 
 let disableDoubleSpendCheckForTest = true
-export function setDisableDoubleSpendCheckForTest(v: boolean) { disableDoubleSpendCheckForTest = v }
+export function setDisableDoubleSpendCheckForTest(v: boolean) {
+  disableDoubleSpendCheckForTest = v
+}
 
 export async function createAction(
   storage: StorageProvider,

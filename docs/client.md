@@ -4729,7 +4729,7 @@ hashOutputScript(script: string): string
 
 Returns
 
-script hash in 'hashBE' format, which is the default.
+script hash in 'hashLE' format, which is the default.
 
 Argument Details
 
@@ -11092,44 +11092,44 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | | |
 | --- | --- | --- |
-| [acquireDirectCertificate](#function-acquiredirectcertificate) | [listOutputs](#function-listoutputs) | [validateDiscoverByAttributesArgs](#function-validatediscoverbyattributesargs) |
-| [arcDefaultUrl](#function-arcdefaulturl) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateDiscoverByIdentityKeyArgs](#function-validatediscoverbyidentitykeyargs) |
-| [arraysEqual](#function-arraysequal) | [makeAtomicBeef](#function-makeatomicbeef) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
-| [asArray](#function-asarray) | [makeAtomicBeef](#function-makeatomicbeef) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
-| [asArray](#function-asarray) | [makeChangeLock](#function-makechangelock) | [validateInteger](#function-validateinteger) |
-| [asBsvSdkPrivateKey](#function-asbsvsdkprivatekey) | [maxDate](#function-maxdate) | [validateInternalizeActionArgs](#function-validateinternalizeactionargs) |
-| [asBsvSdkPublickKey](#function-asbsvsdkpublickkey) | [offsetPubKey](#function-offsetpubkey) | [validateInternalizeOutput](#function-validateinternalizeoutput) |
-| [asBsvSdkScript](#function-asbsvsdkscript) | [optionalArraysEqual](#function-optionalarraysequal) | [validateListActionsArgs](#function-validatelistactionsargs) |
-| [asBsvSdkTx](#function-asbsvsdktx) | [parseTxScriptOffsets](#function-parsetxscriptoffsets) | [validateListCertificatesArgs](#function-validatelistcertificatesargs) |
-| [asBuffer](#function-asbuffer) | [parseWalletOutpoint](#function-parsewalletoutpoint) | [validateListOutputsArgs](#function-validatelistoutputsargs) |
+| [acquireDirectCertificate](#function-acquiredirectcertificate) | [listOutputs](#function-listoutputs) | [validateCreateActionOutput](#function-validatecreateactionoutput) |
+| [arcDefaultUrl](#function-arcdefaulturl) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateDiscoverByAttributesArgs](#function-validatediscoverbyattributesargs) |
+| [arraysEqual](#function-arraysequal) | [makeAtomicBeef](#function-makeatomicbeef) | [validateDiscoverByIdentityKeyArgs](#function-validatediscoverbyidentitykeyargs) |
+| [asArray](#function-asarray) | [makeAtomicBeef](#function-makeatomicbeef) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
+| [asArray](#function-asarray) | [makeChangeLock](#function-makechangelock) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
+| [asBsvSdkPrivateKey](#function-asbsvsdkprivatekey) | [maxDate](#function-maxdate) | [validateInteger](#function-validateinteger) |
+| [asBsvSdkPublickKey](#function-asbsvsdkpublickkey) | [offsetPubKey](#function-offsetpubkey) | [validateInternalizeActionArgs](#function-validateinternalizeactionargs) |
+| [asBsvSdkScript](#function-asbsvsdkscript) | [optionalArraysEqual](#function-optionalarraysequal) | [validateInternalizeOutput](#function-validateinternalizeoutput) |
+| [asBsvSdkTx](#function-asbsvsdktx) | [parseTxScriptOffsets](#function-parsetxscriptoffsets) | [validateListActionsArgs](#function-validatelistactionsargs) |
+| [asBuffer](#function-asbuffer) | [parseWalletOutpoint](#function-parsewalletoutpoint) | [validateListCertificatesArgs](#function-validatelistcertificatesargs) |
+| [asString](#function-asstring) | [processAction](#function-processaction) | [validateListOutputsArgs](#function-validatelistoutputsargs) |
 | [asString](#function-asstring) | [processAction](#function-processaction) | [validateOptionalInteger](#function-validateoptionalinteger) |
-| [asString](#function-asstring) | [processAction](#function-processaction) | [validateOptionalOutpointString](#function-validateoptionaloutpointstring) |
-| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [proveCertificate](#function-provecertificate) | [validateOriginator](#function-validateoriginator) |
-| [buildSignableTransaction](#function-buildsignabletransaction) | [purgeData](#function-purgedata) | [validateOutpointString](#function-validateoutpointstring) |
-| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytes](#function-randombytes) | [validatePositiveIntegerOrZero](#function-validatepositiveintegerorzero) |
-| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytesBase64](#function-randombytesbase64) | [validateProveCertificateArgs](#function-validateprovecertificateargs) |
-| [convertProofToMerklePath](#function-convertprooftomerklepath) | [randomBytesHex](#function-randombyteshex) | [validateRelinquishCertificateArgs](#function-validaterelinquishcertificateargs) |
-| [createAction](#function-createaction) | [reviewStatus](#function-reviewstatus) | [validateRelinquishOutputArgs](#function-validaterelinquishoutputargs) |
-| [createAction](#function-createaction) | [sha256Hash](#function-sha256hash) | [validateSatoshis](#function-validatesatoshis) |
-| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [signAction](#function-signaction) | [validateScriptHash](#function-validatescripthash) |
-| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [stampLog](#function-stamplog) | [validateSecondsSinceEpoch](#function-validatesecondssinceepoch) |
-| [createSyncMap](#function-createsyncmap) | [stampLogFormat](#function-stamplogformat) | [validateSignActionArgs](#function-validatesignactionargs) |
-| [doubleSha256BE](#function-doublesha256be) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) | [validateSignActionOptions](#function-validatesignactionoptions) |
-| [doubleSha256HashLE](#function-doublesha256hashle) | [toWalletNetwork](#function-towalletnetwork) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
-| [generateChangeSdk](#function-generatechangesdk) | [transactionInputSize](#function-transactioninputsize) | [validateStringLength](#function-validatestringlength) |
-| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [transactionOutputSize](#function-transactionoutputsize) | [validateWalletPayment](#function-validatewalletpayment) |
-| [getBeefForTransaction](#function-getbeeffortransaction) | [transactionSize](#function-transactionsize) | [varUintSize](#function-varuintsize) |
-| [getExchangeRatesIo](#function-getexchangeratesio) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) | [verifyHexString](#function-verifyhexstring) |
-| [getIdentityKey](#function-getidentitykey) | [updateExchangeratesapi](#function-updateexchangeratesapi) | [verifyId](#function-verifyid) |
-| [getProofs](#function-getproofs) | [validateAbortActionArgs](#function-validateabortactionargs) | [verifyInteger](#function-verifyinteger) |
-| [getSyncChunk](#function-getsyncchunk) | [validateAcquireCertificateArgs](#function-validateacquirecertificateargs) | [verifyNumber](#function-verifynumber) |
+| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [proveCertificate](#function-provecertificate) | [validateOptionalOutpointString](#function-validateoptionaloutpointstring) |
+| [buildSignableTransaction](#function-buildsignabletransaction) | [purgeData](#function-purgedata) | [validateOriginator](#function-validateoriginator) |
+| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytes](#function-randombytes) | [validateOutpointString](#function-validateoutpointstring) |
+| [completeSignedTransaction](#function-completesignedtransaction) | [randomBytesBase64](#function-randombytesbase64) | [validatePositiveIntegerOrZero](#function-validatepositiveintegerorzero) |
+| [convertProofToMerklePath](#function-convertprooftomerklepath) | [randomBytesHex](#function-randombyteshex) | [validateProveCertificateArgs](#function-validateprovecertificateargs) |
+| [createAction](#function-createaction) | [reviewStatus](#function-reviewstatus) | [validateRelinquishCertificateArgs](#function-validaterelinquishcertificateargs) |
+| [createAction](#function-createaction) | [setDisableDoubleSpendCheckForTest](#function-setdisabledoublespendcheckfortest) | [validateRelinquishOutputArgs](#function-validaterelinquishoutputargs) |
+| [createDefaultWalletServicesOptions](#function-createdefaultwalletservicesoptions) | [sha256Hash](#function-sha256hash) | [validateSatoshis](#function-validatesatoshis) |
+| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [signAction](#function-signaction) | [validateScriptHash](#function-validatescripthash) |
+| [createSyncMap](#function-createsyncmap) | [stampLog](#function-stamplog) | [validateSecondsSinceEpoch](#function-validatesecondssinceepoch) |
+| [doubleSha256BE](#function-doublesha256be) | [stampLogFormat](#function-stamplogformat) | [validateSignActionArgs](#function-validatesignactionargs) |
+| [doubleSha256HashLE](#function-doublesha256hashle) | [toBinaryBaseBlockHeader](#function-tobinarybaseblockheader) | [validateSignActionOptions](#function-validatesignactionoptions) |
+| [generateChangeSdk](#function-generatechangesdk) | [toWalletNetwork](#function-towalletnetwork) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
+| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [transactionInputSize](#function-transactioninputsize) | [validateStringLength](#function-validatestringlength) |
+| [getBeefForTransaction](#function-getbeeffortransaction) | [transactionOutputSize](#function-transactionoutputsize) | [validateWalletPayment](#function-validatewalletpayment) |
+| [getExchangeRatesIo](#function-getexchangeratesio) | [transactionSize](#function-transactionsize) | [varUintSize](#function-varuintsize) |
+| [getIdentityKey](#function-getidentitykey) | [updateChaintracksFiatExchangeRates](#function-updatechaintracksfiatexchangerates) | [verifyHexString](#function-verifyhexstring) |
+| [getProofs](#function-getproofs) | [updateExchangeratesapi](#function-updateexchangeratesapi) | [verifyId](#function-verifyid) |
+| [getSyncChunk](#function-getsyncchunk) | [validateAbortActionArgs](#function-validateabortactionargs) | [verifyInteger](#function-verifyinteger) |
+| [internalizeAction](#function-internalizeaction) | [validateAcquireCertificateArgs](#function-validateacquirecertificateargs) | [verifyNumber](#function-verifynumber) |
 | [internalizeAction](#function-internalizeaction) | [validateAcquireDirectCertificateArgs](#function-validateacquiredirectcertificateargs) | [verifyOne](#function-verifyone) |
-| [internalizeAction](#function-internalizeaction) | [validateAcquireIssuanceCertificateArgs](#function-validateacquireissuancecertificateargs) | [verifyOneOrNone](#function-verifyoneornone) |
-| [isHexString](#function-ishexstring) | [validateBasketInsertion](#function-validatebasketinsertion) | [verifyOptionalHexString](#function-verifyoptionalhexstring) |
-| [isListActionsSpecOp](#function-islistactionsspecop) | [validateCreateActionArgs](#function-validatecreateactionargs) | [verifyTruthy](#function-verifytruthy) |
-| [isListOutputsSpecOp](#function-islistoutputsspecop) | [validateCreateActionInput](#function-validatecreateactioninput) | [wait](#function-wait) |
-| [listActions](#function-listactions) | [validateCreateActionOptions](#function-validatecreateactionoptions) |  |
-| [listCertificates](#function-listcertificates) | [validateCreateActionOutput](#function-validatecreateactionoutput) |  |
+| [isHexString](#function-ishexstring) | [validateAcquireIssuanceCertificateArgs](#function-validateacquireissuancecertificateargs) | [verifyOneOrNone](#function-verifyoneornone) |
+| [isListActionsSpecOp](#function-islistactionsspecop) | [validateBasketInsertion](#function-validatebasketinsertion) | [verifyOptionalHexString](#function-verifyoptionalhexstring) |
+| [isListOutputsSpecOp](#function-islistoutputsspecop) | [validateCreateActionArgs](#function-validatecreateactionargs) | [verifyTruthy](#function-verifytruthy) |
+| [listActions](#function-listactions) | [validateCreateActionInput](#function-validatecreateactioninput) | [wait](#function-wait) |
+| [listCertificates](#function-listcertificates) | [validateCreateActionOptions](#function-validatecreateactionoptions) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -11975,6 +11975,15 @@ See also: [StorageKnex](./storage.md#class-storageknex), [TrxToken](./client.md#
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
 ---
+##### Function: setDisableDoubleSpendCheckForTest
+
+```ts
+export function setDisableDoubleSpendCheckForTest(v: boolean) 
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
 ##### Function: sha256Hash
 
 Calculate the SHA256 hash of an array of bytes
@@ -12758,17 +12767,18 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 
 | | |
 | --- | --- |
-| [Chain](#type-chain) | [PostBeefService](#type-postbeefservice) |
-| [DBType](#type-dbtype) | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) |
-| [DescriptionString5to2000Bytes](#type-descriptionstring5to2000bytes) | [PostTxsService](#type-posttxsservice) |
-| [EntityStorage](#type-entitystorage) | [ProvenTxReqStatus](#type-proventxreqstatus) |
-| [GetMerklePathService](#type-getmerklepathservice) | [ReqHistoryNote](#type-reqhistorynote) |
-| [GetRawTxService](#type-getrawtxservice) | [ReviewActionResultStatus](#type-reviewactionresultstatus) |
+| [Chain](#type-chain) | [PostReqsToNetworkDetailsStatus](#type-postreqstonetworkdetailsstatus) |
+| [DBType](#type-dbtype) | [PostTxsService](#type-posttxsservice) |
+| [DescriptionString5to2000Bytes](#type-descriptionstring5to2000bytes) | [ProvenTxReqStatus](#type-proventxreqstatus) |
+| [EntityStorage](#type-entitystorage) | [ReqHistoryNote](#type-reqhistorynote) |
+| [GetMerklePathService](#type-getmerklepathservice) | [ReviewActionResultStatus](#type-reviewactionresultstatus) |
+| [GetRawTxService](#type-getrawtxservice) | [ScriptHashFormat](#type-scripthashformat) |
 | [GetScriptHashHistoryService](#type-getscripthashhistoryservice) | [StorageProvidedBy](#type-storageprovidedby) |
 | [GetUtxoStatusOutputFormat](#type-getutxostatusoutputformat) | [SyncProtocolVersion](#type-syncprotocolversion) |
 | [GetUtxoStatusService](#type-getutxostatusservice) | [SyncStatus](#type-syncstatus) |
 | [MonitorStorage](#type-monitorstorage) | [TransactionStatus](#type-transactionstatus) |
 | [PermissionEventHandler](#type-permissioneventhandler) | [UpdateFiatExchangeRateService](#type-updatefiatexchangerateservice) |
+| [PostBeefService](#type-postbeefservice) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -13001,6 +13011,15 @@ When `acceptDelayedBroadcast` is falses.
 
 ```ts
 export type ReviewActionResultStatus = "success" | "doubleSpend" | "serviceError" | "invalidTx"
+```
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Type: ScriptHashFormat
+
+```ts
+export type ScriptHashFormat = "hashLE" | "hashBE" | "script"
 ```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)

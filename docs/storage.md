@@ -3869,20 +3869,17 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ---
 #### Functions
 
-| | |
-| --- | --- |
-| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) |
-| [createAction](#function-createaction) | [offsetPubKey](#function-offsetpubkey) |
-| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [processAction](#function-processaction) |
-| [createSyncMap](#function-createsyncmap) | [purgeData](#function-purgedata) |
-| [generateChangeSdk](#function-generatechangesdk) | [reviewStatus](#function-reviewstatus) |
-| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [transactionInputSize](#function-transactioninputsize) |
-| [getBeefForTransaction](#function-getbeeffortransaction) | [transactionOutputSize](#function-transactionoutputsize) |
-| [getSyncChunk](#function-getsyncchunk) | [transactionSize](#function-transactionsize) |
-| [internalizeAction](#function-internalizeaction) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
-| [listActions](#function-listactions) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
-| [listCertificates](#function-listcertificates) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
-| [listOutputs](#function-listoutputs) | [varUintSize](#function-varuintsize) |
+| | | |
+| --- | --- | --- |
+| [attemptToPostReqsToNetwork](#function-attempttopostreqstonetwork) | [listActions](#function-listactions) | [transactionInputSize](#function-transactioninputsize) |
+| [createAction](#function-createaction) | [listCertificates](#function-listcertificates) | [transactionOutputSize](#function-transactionoutputsize) |
+| [createStorageServiceChargeScript](#function-createstorageservicechargescript) | [listOutputs](#function-listoutputs) | [transactionSize](#function-transactionsize) |
+| [createSyncMap](#function-createsyncmap) | [lockScriptWithKeyOffsetFromPubKey](#function-lockscriptwithkeyoffsetfrompubkey) | [validateGenerateChangeSdkParams](#function-validategeneratechangesdkparams) |
+| [generateChangeSdk](#function-generatechangesdk) | [offsetPubKey](#function-offsetpubkey) | [validateGenerateChangeSdkResult](#function-validategeneratechangesdkresult) |
+| [generateChangeSdkMakeStorage](#function-generatechangesdkmakestorage) | [processAction](#function-processaction) | [validateStorageFeeModel](#function-validatestoragefeemodel) |
+| [getBeefForTransaction](#function-getbeeffortransaction) | [purgeData](#function-purgedata) | [varUintSize](#function-varuintsize) |
+| [getSyncChunk](#function-getsyncchunk) | [reviewStatus](#function-reviewstatus) |  |
+| [internalizeAction](#function-internalizeaction) | [setDisableDoubleSpendCheckForTest](#function-setdisabledoublespendcheckfortest) |  |
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 
@@ -4139,6 +4136,15 @@ export async function reviewStatus(storage: StorageKnex, args: {
 ```
 
 See also: [StorageKnex](./storage.md#class-storageknex), [TrxToken](./client.md#interface-trxtoken)
+
+Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
+
+---
+##### Function: setDisableDoubleSpendCheckForTest
+
+```ts
+export function setDisableDoubleSpendCheckForTest(v: boolean) 
+```
 
 Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](#functions), [Types](#types), [Variables](#variables)
 

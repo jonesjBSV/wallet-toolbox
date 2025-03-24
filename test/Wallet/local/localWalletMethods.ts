@@ -20,15 +20,15 @@ import { setDisableDoubleSpendCheckForTest } from '../../../src/storage/methods/
 export interface LocalWalletTestOptions {
   setActiveClient: boolean
   useMySQLConnectionForClient: boolean
-  useTestIdentityKey : boolean
-  useIdentityKey2 : boolean
+  useTestIdentityKey: boolean
+  useIdentityKey2: boolean
 }
 
 export interface LocalTestWalletSetup extends TestWalletNoSetup {
   setActiveClient: boolean
   useMySQLConnectionForClient: boolean
-  useTestIdentityKey : boolean
-  useIdentityKey2 : boolean
+  useTestIdentityKey: boolean
+  useIdentityKey2: boolean
 }
 
 export async function createSetup(chain: sdk.Chain, options: LocalWalletTestOptions): Promise<LocalTestWalletSetup> {
@@ -51,14 +51,14 @@ export async function createSetup(chain: sdk.Chain, options: LocalWalletTestOpti
 
   const setup = {
     ...options,
-    ...await _tu.createTestWallet({
+    ...(await _tu.createTestWallet({
       chain,
       rootKeyHex: env.devKeys[identityKey],
       filePath,
       setActiveClient: options.setActiveClient,
       addLocalBackup: false,
       useMySQLConnectionForClient: options.useMySQLConnectionForClient
-    })
+    }))
   }
 
   console.log(`ACTIVE STORAGE: ${setup.storage.getActiveStoreName()}`)
@@ -262,22 +262,26 @@ export async function trackReqByTxid(setup: LocalTestWalletSetup, txid: string):
 
 /**
  * This method will normally throw an error on the initial createAction call due to the output being doublespent
- * @param setup 
- * @param options 
- * @returns 
+ * @param setup
+ * @param options
+ * @returns
  */
-export async function doubleSpendOldChange(setup: LocalTestWalletSetup, options: SignActionOptions): Promise<SignActionResult> {
+export async function doubleSpendOldChange(
+  setup: LocalTestWalletSetup,
+  options: SignActionOptions
+): Promise<SignActionResult> {
   const auth = await setup.wallet.storage.getAuth(true)
   if (!auth.userId || !setup.wallet.storage.getActive().isStorageProvider)
     throw new Error('active must be StorageProvider')
   const s = setup.wallet.storage.getActive() as StorageKnex
 
-  const o = verifyOne(await s.findOutputs({ partial: { userId: auth.userId!, spendable: false, change: true }, paged: { limit: 1 } }))
+  const o = verifyOne(
+    await s.findOutputs({ partial: { userId: auth.userId!, spendable: false, change: true }, paged: { limit: 1 } })
+  )
   await s.validateOutputScript(o)
   const lockingScript = Script.fromBinary(o.lockingScript!)
   const otx = verifyTruthy(await s.findTransactionById(o.transactionId))
-  if (otx.status !== 'completed')
-    throw new Error('output must be from completed transaction')
+  if (otx.status !== 'completed') throw new Error('output must be from completed transaction')
   const inputBEEF = (await s.getBeefForTransaction(o.txid!, {})).toBinary()
 
   logger(`spending ${o.txid} vout ${o.vout}`)
@@ -289,11 +293,13 @@ export async function doubleSpendOldChange(setup: LocalTestWalletSetup, options:
   })
   const args: CreateActionArgs = {
     inputBEEF,
-    inputs: [{
-      unlockingScriptLength: 108,
-      outpoint: `${o.txid!}.${o.vout}`,
-      inputDescription: 'spent change output'
-    }],
+    inputs: [
+      {
+        unlockingScriptLength: 108,
+        outpoint: `${o.txid!}.${o.vout}`,
+        inputDescription: 'spent change output'
+      }
+    ],
     description: 'intentional doublespend',
     options
   }
@@ -313,7 +319,7 @@ export async function doubleSpendOldChange(setup: LocalTestWalletSetup, options:
   const unlockingScript = (await unlock.sign(tx, 0)).toHex()
   const signArgs: SignActionArgs = {
     reference: st.reference,
-    spends: { "0": { unlockingScript } },
+    spends: { '0': { unlockingScript } },
     options
   }
   const sar = await setup.wallet.signAction(signArgs)
