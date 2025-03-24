@@ -221,6 +221,7 @@ describe('Wallet services tests', () => {
       if (!wallet.services || !services) throw new sdk.WERR_INTERNAL('test requires setup with services')
       {
         let hash = '86e41f4725135ca0db59d074e7d60daae7c1a87699013498bae52dc95cae1a52'
+        hash = Utils.toHex(Utils.toArray(hash, 'hex').reverse())
         const us = await wallet.services.getScriptHashHistory(hash)
         if (chain === 'main') {
           expect(us.status).toBe('success')

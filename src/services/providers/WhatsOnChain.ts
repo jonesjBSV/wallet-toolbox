@@ -464,6 +464,9 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       history: []
     }
 
+    // reverse hash from LE to BE for Woc
+    hash = Utils.toHex(Utils.toArray(hash, 'hex').reverse())
+
     const url = `${this.URL}/script/${hash}/confirmed/history`
 
     for (let retry = 0; ; retry++) {
@@ -523,6 +526,9 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       error: undefined,
       history: []
     }
+
+    // reverse hash from LE to BE for Woc
+    hash = Utils.toHex(Utils.toArray(hash, 'hex').reverse())
 
     const url = `${this.URL}/script/${hash}/unconfirmed/history`
 

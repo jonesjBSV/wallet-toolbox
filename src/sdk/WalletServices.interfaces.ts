@@ -93,7 +93,7 @@ export interface WalletServices {
 
   /**
    * @param script Output script to be hashed for `getUtxoStatus` default `outputFormat`
-   * @returns script hash in 'hashBE' format, which is the default.
+   * @returns script hash in 'hashLE' format, which is the default.
    */
   hashOutputScript(script: string): string
 
@@ -134,6 +134,7 @@ export interface WalletServices {
   nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>
 }
 
+export type ScriptHashFormat = 'hashLE' | 'hashBE' | 'script'
 export type GetUtxoStatusOutputFormat = 'hashLE' | 'hashBE' | 'script'
 
 export interface BsvExchangeRate {

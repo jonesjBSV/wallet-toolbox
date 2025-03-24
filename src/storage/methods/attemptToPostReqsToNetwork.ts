@@ -1,7 +1,7 @@
 import { Beef, Transaction } from '@bsv/sdk'
 import { StorageProvider } from '../StorageProvider'
 import { EntityProvenTxReq } from '../schema/entities'
-import { sdk, Services } from '../../index.all'
+import { sdk } from '../../index.client'
 import { ReqHistoryNote } from '../../sdk'
 
 /**
@@ -30,7 +30,7 @@ export async function attemptToPostReqsToNetwork(
 
   const apbrs = aggregatePostBeefResultsByTxid(txids, vreqs, pbrs)
 
-  await updateReqsFromAggregateResults(txids, r.beef, apbrs, storage, services, trx)
+  await updateReqsFromAggregateResults(txids, r, apbrs, storage, services, trx)
 
   return r
 }
@@ -146,7 +146,7 @@ function aggregatePostBeefResultsByTxid(
     }
 
     if (ar.successCount > 0 && ar.doubleSpendCount === 0) ar.status = 'success'
-    else if (ar.doubleSpendCount > 0) ar.status = 'doublespend'
+    else if (ar.doubleSpendCount > 0) ar.status = 'doubleSpend'
     else if (ar.statusErrorCount > 0) ar.status = 'invalidTx'
     else ar.status = 'serviceError'
   }
@@ -177,7 +177,7 @@ function aggregatePostBeefResultsByTxid(
  */
 async function updateReqsFromAggregateResults(
   txids: string[],
-  beef: Beef,
+  r: PostReqsToNetworkResult,
   apbrs: Record<string, AggregatePostBeefTxResult>,
   storage: StorageProvider,
   services?: sdk.WalletServices,
@@ -205,7 +205,7 @@ async function updateReqsFromAggregateResults(
       // However it happened, don't degrade status if it is somehow already beyond broadcast stage
       continue
 
-    if (ar.status === 'doublespend' && services && !trx) await confirmDoubleSpend(ar, beef, storage, services)
+    if (ar.status === 'doubleSpend' && services && !trx) await confirmDoubleSpend(ar, r.beef, storage, services)
 
     let newReqStatus: sdk.ProvenTxReqStatus | undefined = undefined
     let newTxStatus: sdk.TransactionStatus | undefined = undefined
@@ -214,7 +214,7 @@ async function updateReqsFromAggregateResults(
         newReqStatus = 'unmined'
         newTxStatus = 'unproven'
         break
-      case 'doublespend':
+      case 'doubleSpend':
         newReqStatus = 'doubleSpend'
         newTxStatus = 'failed'
         break
@@ -247,6 +247,12 @@ async function updateReqsFromAggregateResults(
         await storage.updateTransactionsStatus(ids, newTxStatus, trx)
       }
     }
+
+    // Transfer critical results to details going back to the user
+    const details = r.details.find(d => d.txid === txid)!
+    details.status = ar.status
+    details.competingTxs = ar.competingTxs
+    details.spentInputs = ar.spentInputs
   }
 }
 
@@ -280,7 +286,7 @@ async function confirmDoubleSpend(
     const hash = services.hashOutputScript(lockingScript)
     const usr = await services.getUtxoStatus(hash, undefined, `${input.sourceTXID}.${input.sourceOutputIndex}`)
     if (usr.isUtxo === false) {
-      ar.spentInputs.push({ vin, scriptHash: hash })
+      ar.spentInputs.push({ vin, scriptHash: hash, sourceTXID: input.sourceTXID!, sourceIndex: input.sourceOutputIndex })
     }
   }
   note.vins = ar.spentInputs.map(si => si.vin.toString()).join(',')
@@ -296,6 +302,7 @@ async function confirmDoubleSpend(
       const shhrs = await services.getScriptHashHistory(si.scriptHash)
       if (shhrs.status === 'success') {
         for (const h of shhrs.history) {
+          if (h.txid !== si.sourceTXID)
           competingTxids.add(h.txid)
         }
       }
@@ -306,7 +313,7 @@ async function confirmDoubleSpend(
   req.addHistoryNote(note)
 }
 
-type AggregateStatus = 'success' | 'doublespend' | 'invalidTx' | 'serviceError'
+type AggregateStatus = 'success' | 'doubleSpend' | 'invalidTx' | 'serviceError'
 
 interface AggregatePostBeefTxResult {
   txid: string
@@ -324,7 +331,7 @@ interface AggregatePostBeefTxResult {
   /**
    * Input indices that have been spent, valid when status is 'doubleSpend'
    */
-  spentInputs: { vin: number; scriptHash: string }[]
+  spentInputs: { vin: number; scriptHash: string, sourceTXID: string, sourceIndex: number }[]
 }
 
 /**
