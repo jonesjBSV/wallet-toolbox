@@ -130,7 +130,7 @@ export interface WalletBalance {
 export type ReqHistoryNote = {
   when?: string
   what: string
-  [key: string]: string | number | undefined
+  [key: string]: boolean | string | number | undefined
 }
 
 /**

@@ -503,7 +503,9 @@ Links: [API](#api), [Interfaces](#interfaces), [Classes](#classes), [Functions](
 ```ts
 export class TaskSendWaiting extends WalletMonitorTask {
     static taskName = "SendWaiting";
-    constructor(monitor: Monitor, public triggerMsecs = 1000 * 60 * 5, public agedMsecs = 0) 
+    lastSendingRunMsecsSinceEpoch: number | undefined;
+    includeSending: boolean = true;
+    constructor(monitor: Monitor, public triggerMsecs = monitor.oneSecond * 8, public agedMsecs = monitor.oneSecond * 7, public sendingMsecs = monitor.oneMinute * 5) 
     trigger(nowMsecsSinceEpoch: number): {
         run: boolean;
     } 

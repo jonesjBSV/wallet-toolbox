@@ -11,7 +11,8 @@ import {
   ListOutputsResult,
   RelinquishCertificateArgs,
   RelinquishOutputArgs,
-  SendWithResult
+  SendWithResult,
+  TXIDHexString
 } from '@bsv/sdk'
 import {
   sdk,
@@ -33,6 +34,7 @@ import {
   TableTxLabel,
   TableMonitorEvent
 } from '../index.client'
+import { PostReqsToNetworkDetailsStatus } from '../storage/methods/attemptToPostReqsToNetwork'
 
 /**
  * This is the `WalletStorage` interface implemented by a class such as `WalletStorageManager`,
@@ -240,8 +242,37 @@ export interface StorageProcessActionArgs {
   log?: string
 }
 
+/**
+ * Indicates status of a new Action following a `createAction` or `signAction` in immediate mode:
+ * When `acceptDelayedBroadcast` is falses.
+ *
+ * 'success': The action has been broadcast and accepted by the bitcoin processing network.
+ * 'doulbeSpend': The action has been confirmed to double spend one or more inputs, and by the "first-seen-rule" is the loosing transaction.
+ * 'invalidTx': The action was rejected by the processing network as an invalid bitcoin transaction.
+ * 'serviceError': The broadcast services are currently unable to reach the bitcoin network. The action is now queued for delayed retries.
+ */
+export type ReviewActionResultStatus = 'success' | 'doubleSpend' | 'serviceError' | 'invalidTx'
+
+export interface ReviewActionResult {
+  txid: TXIDHexString
+  status: ReviewActionResultStatus
+  /**
+   * Any competing txids reported for this txid, valid when status is 'doubleSpend'.
+   */
+  competingTxs?: string[]
+  /**
+   * Merged beef of competingTxs, valid when status is 'doubleSpend'.
+   */
+  competingBeef?: number[]
+  /**
+   * Transaction input indices that have been spent, valid when status is 'doubleSpend'.
+   */
+  spentInputs?: { vin: number; scriptHash: string }[]
+}
+
 export interface StorageProcessActionResults {
   sendWithResults?: SendWithResult[]
+  notDelayedResults?: ReviewActionResult[]
   log?: string
 }
 

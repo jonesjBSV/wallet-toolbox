@@ -92,6 +92,12 @@ export interface WalletServices {
   postBeef(beef: Beef, txids: string[]): Promise<PostBeefResult[]>
 
   /**
+   * @param script Output script to be hashed for `getUtxoStatus` default `outputFormat`
+   * @returns script hash in 'hashLE' format, which is the default.
+   */
+  hashOutputScript(script: string): string
+
+  /**
    * Attempts to determine the UTXO status of a transaction output.
    *
    * Cycles through configured transaction processing services attempting to get a valid response.
@@ -102,14 +108,18 @@ export interface WalletServices {
    *      'hashLE' little-endian sha256 hash of output script
    *      'hashBE' big-endian sha256 hash of output script
    *      'script' entire transaction output script
-   *      undefined if length of `output` is 32 then 'hashBE`, otherwise 'script'.
+   *      undefined if length of `output` is 32 hex bytes then 'hashBE`, otherwise 'script'.
+   * @param outpoint if valid, result isUtxo is true only if this txid and vout match an unspent occurance of output script. `${txid}.${vout}` format.
    * @param useNext optional, forces skip to next service before starting service requests cycle.
    */
   getUtxoStatus(
     output: string,
     outputFormat?: GetUtxoStatusOutputFormat,
+    outpoint?: string,
     useNext?: boolean
   ): Promise<GetUtxoStatusResult>
+
+  getScriptHashHistory(hash: string, useNext?: boolean): Promise<sdk.GetScriptHashHistoryResult>
 
   /**
    * @returns a block header
@@ -124,6 +134,7 @@ export interface WalletServices {
   nLockTimeIsFinal(txOrLockTime: string | number[] | BsvTransaction | number): Promise<boolean>
 }
 
+export type ScriptHashFormat = 'hashLE' | 'hashBE' | 'script'
 export type GetUtxoStatusOutputFormat = 'hashLE' | 'hashBE' | 'script'
 
 export interface BsvExchangeRate {
@@ -232,6 +243,11 @@ export interface PostTxResultForTxid {
   data?: object | string | PostTxResultForTxidError
 
   notes?: sdk.ReqHistoryNote[]
+
+  /**
+   * true iff service was unable to process a potentially valid transaction
+   */
+  serviceError?: boolean
 }
 
 export interface PostTxResultForTxidError {
@@ -322,6 +338,31 @@ export interface GetUtxoStatusResult {
   details: GetUtxoStatusDetails[]
 }
 
+export interface GetScriptHashHistory {
+  txid: string
+  height?: number
+}
+
+export interface GetScriptHashHistoryResult {
+  /**
+   * The name of the service to which the transaction was submitted for processing
+   */
+  name: string
+  /**
+   * 'success' - the operation was successful, non-error results are valid.
+   * 'error' - the operation failed, error may have relevant information.
+   */
+  status: 'success' | 'error'
+  /**
+   * When status is 'error', provides code and description
+   */
+  error?: sdk.WalletError
+  /**
+   * Transaction txid (and height if mined) that consumes the script hash. May not be a complete history.
+   */
+  history: GetScriptHashHistory[]
+}
+
 /**
  * These are fields of 80 byte serialized header in order whose double sha256 hash is a block's hash value
  * and the next block's previousHash value.
@@ -371,8 +412,11 @@ export interface BlockHeader extends BaseBlockHeader {
 
 export type GetUtxoStatusService = (
   output: string,
-  outputFormat?: GetUtxoStatusOutputFormat
+  outputFormat?: GetUtxoStatusOutputFormat,
+  outpoint?: string
 ) => Promise<GetUtxoStatusResult>
+
+export type GetScriptHashHistoryService = (hash: string) => Promise<GetScriptHashHistoryResult>
 
 export type GetMerklePathService = (txid: string, services: WalletServices) => Promise<GetMerklePathResult>
 

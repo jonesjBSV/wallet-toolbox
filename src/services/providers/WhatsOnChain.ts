@@ -1,15 +1,18 @@
 import { Beef, HexString, Utils, WhatsOnChainConfig } from '@bsv/sdk'
-import { asArray, asString, doubleSha256BE, sdk, validateScriptHash, wait } from '../../index.client'
+import { asArray, asString, doubleSha256BE, sdk, Services, validateScriptHash, wait } from '../../index.client'
 import { convertProofToMerklePath } from '../../utility/tscProofToMerklePath'
 import SdkWhatsOnChain from './SdkWhatsOnChain'
-import { ReqHistoryNote } from '../../sdk'
+import { parseWalletOutpoint, ReqHistoryNote } from '../../sdk'
 
 /**
  *
  */
 export class WhatsOnChain extends SdkWhatsOnChain {
-  constructor(chain: sdk.Chain = 'main', config: WhatsOnChainConfig = {}) {
+  services: Services
+
+  constructor(chain: sdk.Chain = 'main', config: WhatsOnChainConfig = {}, services?: Services) {
     super(chain, config)
+    this.services = services || new Services(chain)
   }
 
   /**
@@ -112,7 +115,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
       const tr = await this.postRawTx(rawTx)
       if (txid !== tr.txid) {
-        throw new sdk.WERR_INTERNAL(`woc returned txid ${tr.txid}, expected ${txid}`)
+        tr.notes!.push({ ...nne(), what: 'postRawTxTxidChanged', txid, trTxid: tr.txid })
       }
 
       r.txidResults.push(tr)
@@ -171,29 +174,39 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           r.notes!.push({ ...nne(), what: 'postRawTxSuccessAlreadyInMempool' })
         } else {
           r.status = 'error'
-          const n: ReqHistoryNote = {
-            ...nne(),
-            what: 'postRawTxError'
-          }
-          if (typeof response.data === 'string') {
-            n.data = response.data.slice(0, 128)
-            r.data = response.data
+          if (response.data === 'unexpected response code 500: 258: txn-mempool-conflict') {
+            r.doubleSpend = true // this is a possible double spend attempt
+            r.competingTxs = undefined // not provided with any data for this.
+            r.notes!.push({ ...nne(), what: 'postRawTxErrorMempoolConflict' })
+          } else if (response.data === 'unexpected response code 500: Missing inputs') {
+            r.doubleSpend = true // this is a possible double spend attempt
+            r.competingTxs = undefined // not provided with any data for this.
+            r.notes!.push({ ...nne(), what: 'postRawTxErrorMissingInputs' })
           } else {
-            r.data = ''
+            const n: ReqHistoryNote = {
+              ...nne(),
+              what: 'postRawTxError'
+            }
+            if (typeof response.data === 'string') {
+              n.data = response.data.slice(0, 128)
+              r.data = response.data
+            } else {
+              r.data = ''
+            }
+            if (typeof response.statusText === 'string') {
+              n.statusText = response.statusText.slice(0, 128)
+              r.data += `,${response.statusText}`
+            }
+            if (typeof response.status === 'string') {
+              n.status = (response.status as string).slice(0, 128)
+              r.data += `,${response.status}`
+            }
+            if (typeof response.status === 'number') {
+              n.status = response.status
+              r.data += `,${response.status}`
+            }
+            r.notes!.push(n)
           }
-          if (typeof response.statusText === 'string') {
-            n.statusText = response.statusText.slice(0, 128)
-            r.data += `,${response.statusText}`
-          }
-          if (typeof response.status === 'string') {
-            n.status = (response.status as string).slice(0, 128)
-            r.data += `,${response.status}`
-          }
-          if (typeof response.status === 'number') {
-            n.status = response.status
-            r.data += `,${response.status}`
-          }
-          r.notes!.push(n)
         }
       } catch (eu: unknown) {
         r.status = 'error'
@@ -204,11 +217,13 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           code: e.code,
           description: e.description
         })
+        r.serviceError = true
         r.data = `${e.code} ${e.description}`
       }
       return r
     }
     r.status = 'error'
+    r.serviceError = true
     r.notes!.push({
       ...nne(),
       what: 'postRawTxRetryLimit',
@@ -366,7 +381,11 @@ export class WhatsOnChain extends SdkWhatsOnChain {
     throw new sdk.WERR_INTERNAL()
   }
 
-  async getUtxoStatus(output: string, outputFormat?: sdk.GetUtxoStatusOutputFormat): Promise<sdk.GetUtxoStatusResult> {
+  async getUtxoStatus(
+    output: string,
+    outputFormat?: sdk.GetUtxoStatusOutputFormat,
+    outpoint?: string
+  ): Promise<sdk.GetUtxoStatusResult> {
     const r: sdk.GetUtxoStatusResult = {
       name: 'WoC',
       status: 'error',
@@ -396,7 +415,7 @@ export class WhatsOnChain extends SdkWhatsOnChain {
 
         // response.statusText is often, but not always 'OK' on success...
         if (!response.data || !response.ok || response.status !== 200)
-          throw new sdk.WERR_INVALID_OPERATION(`WoC exchangerate response ${response.statusText}`)
+          throw new sdk.WERR_INVALID_OPERATION(`WoC getUtxoStatus response ${response.statusText}`)
 
         if (Array.isArray(response.data)) {
           const data = response.data
@@ -407,7 +426,6 @@ export class WhatsOnChain extends SdkWhatsOnChain {
           } else {
             r.status = 'success'
             r.error = undefined
-            r.isUtxo = true
             for (const s of data) {
               r.details.push({
                 txid: s.tx_hash,
@@ -416,6 +434,10 @@ export class WhatsOnChain extends SdkWhatsOnChain {
                 index: s.tx_pos
               })
             }
+            if (outpoint) {
+              const { txid, vout } = parseWalletOutpoint(outpoint)
+              r.isUtxo = r.details.find(d => d.txid === txid && d.index === vout) !== undefined
+            } else r.isUtxo = r.details.length > 0
           }
         } else {
           throw new sdk.WERR_INTERNAL('data is not an array')
@@ -433,6 +455,141 @@ export class WhatsOnChain extends SdkWhatsOnChain {
       }
     }
   }
+
+  async getScriptHashConfirmedHistory(hash: string): Promise<sdk.GetScriptHashHistoryResult> {
+    const r: sdk.GetScriptHashHistoryResult = {
+      name: 'WoC',
+      status: 'error',
+      error: undefined,
+      history: []
+    }
+
+    // reverse hash from LE to BE for Woc
+    hash = Utils.toHex(Utils.toArray(hash, 'hex').reverse())
+
+    const url = `${this.URL}/script/${hash}/confirmed/history`
+
+    for (let retry = 0; ; retry++) {
+      try {
+        const requestOptions = {
+          method: 'GET',
+          headers: this.getHttpHeaders()
+        }
+
+        const response = await this.httpClient.request<WhatsOnChainScriptHashHistoryData>(url, requestOptions)
+        if (response.statusText === 'Too Many Requests' && retry < 2) {
+          await wait(2000)
+          continue
+        }
+
+        if (!response.ok && response.status === 404) {
+          // There is no history for this script hash...
+          r.status = 'success'
+          return r
+        }
+
+        // response.statusText is often, but not always 'OK' on success...
+        if (!response.data || !response.ok || response.status !== 200) {
+          r.error = new sdk.WERR_BAD_REQUEST(
+            `WoC getScriptHashConfirmedHistory response ${response.ok} ${response.status} ${response.statusText}`
+          )
+          return r
+        }
+
+        if (response.data.error) {
+          r.error = new sdk.WERR_BAD_REQUEST(`WoC getScriptHashConfirmedHistory error ${response.data.error}`)
+          return r
+        }
+
+        r.history = response.data.result.map(d => ({ txid: d.tx_hash, height: d.height }))
+        r.status = 'success'
+
+        return r
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        if (e.code !== 'ECONNRESET' || retry > 2) {
+          r.error = new sdk.WERR_INTERNAL(
+            `WoC getScriptHashConfirmedHistory service failure: ${url}, error: ${JSON.stringify(sdk.WalletError.fromUnknown(eu))}`
+          )
+          return r
+        }
+      }
+    }
+
+    return r
+  }
+
+  async getScriptHashUnconfirmedHistory(hash: string): Promise<sdk.GetScriptHashHistoryResult> {
+    const r: sdk.GetScriptHashHistoryResult = {
+      name: 'WoC',
+      status: 'error',
+      error: undefined,
+      history: []
+    }
+
+    // reverse hash from LE to BE for Woc
+    hash = Utils.toHex(Utils.toArray(hash, 'hex').reverse())
+
+    const url = `${this.URL}/script/${hash}/unconfirmed/history`
+
+    for (let retry = 0; ; retry++) {
+      try {
+        const requestOptions = {
+          method: 'GET',
+          headers: this.getHttpHeaders()
+        }
+
+        const response = await this.httpClient.request<WhatsOnChainScriptHashHistoryData>(url, requestOptions)
+        if (response.statusText === 'Too Many Requests' && retry < 2) {
+          await wait(2000)
+          continue
+        }
+
+        if (!response.ok && response.status === 404) {
+          // There is no history for this script hash...
+          r.status = 'success'
+          return r
+        }
+
+        // response.statusText is often, but not always 'OK' on success...
+        if (!response.data || !response.ok || response.status !== 200) {
+          r.error = new sdk.WERR_BAD_REQUEST(
+            `WoC getScriptHashUnconfirmedHistory response ${response.ok} ${response.status} ${response.statusText}`
+          )
+          return r
+        }
+
+        if (response.data.error) {
+          r.error = new sdk.WERR_BAD_REQUEST(`WoC getScriptHashUnconfirmedHistory error ${response.data.error}`)
+          return r
+        }
+
+        r.history = response.data.result.map(d => ({ txid: d.tx_hash, height: d.height }))
+        r.status = 'success'
+
+        return r
+      } catch (eu: unknown) {
+        const e = sdk.WalletError.fromUnknown(eu)
+        if (e.code !== 'ECONNRESET' || retry > 2) {
+          r.error = new sdk.WERR_INTERNAL(
+            `WoC getScriptHashUnconfirmedHistory service failure: ${url}, error: ${JSON.stringify(sdk.WalletError.fromUnknown(eu))}`
+          )
+          return r
+        }
+      }
+    }
+
+    return r
+  }
+
+  async getScriptHashHistory(hash: string): Promise<sdk.GetScriptHashHistoryResult> {
+    const r1 = await this.getScriptHashConfirmedHistory(hash)
+    if (r1.error || r1.status !== 'success') return r1
+    const r2 = await this.getScriptHashUnconfirmedHistory(hash)
+    if (r2.error || r2.status !== 'success') return r2
+    r1.history = r1.history.concat(r2.history)
+    return r1
+  }
 }
 
 interface WhatsOnChainTscProof {
@@ -447,4 +604,16 @@ interface WhatsOnChainUtxoStatus {
   height: number
   tx_pos: number
   tx_hash: string
+}
+
+interface WhatsOnChainScriptHashHistory {
+  tx_hash: string
+  height?: number
+}
+
+interface WhatsOnChainScriptHashHistoryData {
+  script: string
+  result: WhatsOnChainScriptHashHistory[]
+  error?: string
+  nextPageToken?: string
 }

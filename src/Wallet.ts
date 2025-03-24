@@ -78,8 +78,8 @@ import {
 } from './index.client'
 import { acquireDirectCertificate } from './signer/methods/acquireDirectCertificate'
 import { proveCertificate } from './signer/methods/proveCertificate'
-import { createAction } from './signer/methods/createAction'
-import { signAction } from './signer/methods/signAction'
+import { createAction, CreateActionResultX } from './signer/methods/createAction'
+import { signAction, SignActionResultX } from './signer/methods/signAction'
 import { internalizeAction } from './signer/methods/internalizeAction'
 import { WalletSettingsManager } from './WalletSettingsManager'
 import { queryOverlay, transformVerifiableCertificatesWithTrust } from './utility/identityUtils'
@@ -695,13 +695,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
 
     if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 
-    if (
-      !vargs.options.acceptDelayedBroadcast &&
-      r.sendWithResults &&
-      r.sendWithResults.length === 1 &&
-      r.sendWithResults[0].status === 'failed'
-    )
-      throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+    if (!vargs.isDelayed) throwIfAnyUnsuccessfulCreateActions(r)
 
     return r
   }
@@ -715,13 +709,7 @@ export class Wallet implements WalletInterface, ProtoWallet {
     const { auth, vargs } = this.validateAuthAndArgs(args, sdk.validateSignActionArgs)
     const r = await signAction(this, auth, vargs)
 
-    if (
-      !vargs.options.acceptDelayedBroadcast &&
-      r.sendWithResults &&
-      r.sendWithResults.length === 1 &&
-      r.sendWithResults[0].status === 'failed'
-    )
-      throw new sdk.WERR_BROADCAST_UNAVAILABLE()
+    if (!vargs.isDelayed) throwIfAnyUnsuccessfulSignActions(r)
 
     if (r.tx) r.tx = this.verifyReturnedTxidOnlyAtomicBEEF(r.tx)
 
@@ -988,4 +976,22 @@ export interface PendingSignAction {
   tx: BsvTransaction
   amount: number
   pdi: PendingStorageInput[]
+}
+
+function throwIfAnyUnsuccessfulCreateActions(r: CreateActionResultX) {
+  const ndrs = r.notDelayedResults
+  const swrs = r.sendWithResults
+
+  if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
+
+  throw new sdk.WERR_REVIEW_ACTIONS(ndrs, swrs, r.txid, r.tx, r.noSendChange)
+}
+
+function throwIfAnyUnsuccessfulSignActions(r: SignActionResultX) {
+  const ndrs = r.notDelayedResults
+  const swrs = r.sendWithResults
+
+  if (!ndrs || !swrs || swrs.every(r => r.status === 'unproven')) return
+
+  throw new sdk.WERR_REVIEW_ACTIONS(ndrs, swrs, r.txid, r.tx)
 }
