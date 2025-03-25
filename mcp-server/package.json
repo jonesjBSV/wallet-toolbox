@@ -1,0 +1,15 @@
+{
+  "name": "wallet-toolbox-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for wallet-toolbox",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "@bsv/sdk": "latest",
+    "zod": "^3.23.8"
+  }
+}
